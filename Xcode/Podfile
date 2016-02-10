@@ -1,0 +1,12 @@
+platform :ios, '8.0'
+use_frameworks!
+link_with ['Project', 'Tests']
+
+pod 'Webtrekk', :path => '..'
+
+
+post_install do |installer|
+	installer.pods_project.targets.each do |target|
+		target.build_configuration_list.set_setting('ENABLE_TESTABILITY', 'YES')
+	end
+end

@@ -1,0 +1,14 @@
+PODS:
+  - Webtrekk (0.0.1)
+
+DEPENDENCIES:
+  - Webtrekk (from `..`)
+
+EXTERNAL SOURCES:
+  Webtrekk:
+    :path: ".."
+
+SPEC CHECKSUMS:
+  Webtrekk: 86f7e87b328e67e149774e73100809716d6f09d6
+
+COCOAPODS: 0.39.0
