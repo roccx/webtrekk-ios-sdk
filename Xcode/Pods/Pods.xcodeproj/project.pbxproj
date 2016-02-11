@@ -7,15 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0552AEDBEE9A1769B14EB36CBE986387 /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781E2670A1CD4166F77AA05E29479530 /* Order.swift */; };
 		0845DA92B87E05AFA7F7BD136A6A8D21 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 089CAA97CCBA904150073A63548F8909 /* Foundation.framework */; };
+		118258D3BAABCE430890B6F24836C31F /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62D10137E03C6FCCA633259E8D06EDB4 /* Customer.swift */; };
+		2840B0F548BD305B432491D8ABEB0DCC /* GeneralParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D09E6CD7ABE9BD194930DBF5405D4C9A /* GeneralParameter.swift */; };
+		29769C8CDCDD7DA9AE53A2063CD79A9A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12ADE574FA2719E2A98B74B773E8616B /* Extensions.swift */; };
+		2A938C3647CC8F5840F46B81D4A0F394 /* TrackerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE80238DEC39816FC24DD5D3A44534E /* TrackerConfiguration.swift */; };
+		2C3CC722CC9DE8EB0E266EA2DE91C279 /* Webtrekk-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 443163A465AE68798F99D2517795339D /* Webtrekk-dummy.m */; };
+		361F581CACEF96986CC4537671DBC387 /* Webtrekk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00421D5DFF42A847BB4FE5C8D1E0AA9D /* Webtrekk.swift */; };
+		3B29551FAEEED6D6052BFDF1BB344F48 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F796964425ED23D5BC579D42861A93D8 /* Parameter.swift */; };
 		3F413719C314CA88A87FFACF51C34CA5 /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3844742D4FB2C58C333411A697731AD /* AVKit.framework */; };
-		47ABE6BC76C2AD510766997B185A32E2 /* Webtrekk.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EDF8076C93863C2E613022D91FA0DA1 /* Webtrekk.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		47ABE6BC76C2AD510766997B185A32E2 /* Webtrekk.h in Headers */ = {isa = PBXBuildFile; fileRef = 17A713737931CC7974D3B3A973D924A1 /* Webtrekk.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		61AE4E888DE54585185BAC84044D54C4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 089CAA97CCBA904150073A63548F8909 /* Foundation.framework */; };
+		79D918626846B8A9CB83CF88E3E87CB7 /* Product.swift in Sources */ = {isa = PBXBuildFile; fileRef = B504F7B4AE942CB33CAA78FF3F03CFFF /* Product.swift */; };
+		7E617B71F2EDC29F616D06247BF2A2EC /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81B02684AE7D7B67E4C70A09C9847460 /* Tracker.swift */; };
 		91CDC4DF78CD343450790F425FC94AD4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 608B617981D73EB4842FC78699DD124A /* UIKit.framework */; };
-		A5C02E3D6793A181918D10DA5142F8FE /* Webtrekk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D9887D4CFF5E9F4DEFF63642B430E /* Webtrekk.swift */; };
-		ADD8E728BACEA6F11048F81D2CEF1E3D /* Webtrekk-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AA69DDE48B4B780202329A3911F1A30 /* Webtrekk-dummy.m */; };
+		B7B219B71C6CA22D00A237FF /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B219B61C6CA22C00A237FF /* Queue.swift */; };
+		B7B219B91C6CA33100A237FF /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B219B81C6CA33100A237FF /* Logging.swift */; };
+		BA66ADC5B0046786142D79C2F286CB23 /* TrackingParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77D771C2BD53183D3F36C68DFD7CCE8 /* TrackingParameter.swift */; };
 		C2E2B31D8608CE499ADD1E10BCA0B2DA /* Pods-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 894E5DA93A9F359521A89826BE6DA777 /* Pods-dummy.m */; };
+		D9A2F52CED787BFFD52F1B80CB3D7F31 /* ProductParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACDA026381D8B2E82BC3033845BD7D6 /* ProductParameter.swift */; };
+		DE40936229A6488EE8D71D8236420E11 /* PixelParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9081795D5E4FD9E6E782DA9B71828313 /* PixelParameter.swift */; };
 		E2E5D0A47C72B33675851AD24D29A330 /* Pods-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BCC458FDD5F692BBB2BFC64BB5701FC /* Pods-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6496C6479A2A61D6246057FEF105078 /* ParameterName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CC6D9A4E0DA710B031F01697FE7A807 /* ParameterName.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,28 +43,42 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		00421D5DFF42A847BB4FE5C8D1E0AA9D /* Webtrekk.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Webtrekk.swift; sourceTree = "<group>"; };
 		089CAA97CCBA904150073A63548F8909 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		0ACDA026381D8B2E82BC3033845BD7D6 /* ProductParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProductParameter.swift; sourceTree = "<group>"; };
+		12ADE574FA2719E2A98B74B773E8616B /* Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		17A713737931CC7974D3B3A973D924A1 /* Webtrekk.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Webtrekk.h; sourceTree = "<group>"; };
 		2BCC458FDD5F692BBB2BFC64BB5701FC /* Pods-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-umbrella.h"; sourceTree = "<group>"; };
-		3AA69DDE48B4B780202329A3911F1A30 /* Webtrekk-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Webtrekk-dummy.m"; sourceTree = "<group>"; };
-		3EDF8076C93863C2E613022D91FA0DA1 /* Webtrekk.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Webtrekk.h; sourceTree = "<group>"; };
-		493D9887D4CFF5E9F4DEFF63642B430E /* Webtrekk.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Webtrekk.swift; sourceTree = "<group>"; };
+		443163A465AE68798F99D2517795339D /* Webtrekk-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Webtrekk-dummy.m"; sourceTree = "<group>"; };
 		494C2914839EFEAD10989C220F46448B /* Webtrekk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Webtrekk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		608B617981D73EB4842FC78699DD124A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		62D10137E03C6FCCA633259E8D06EDB4 /* Customer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
+		68DA02549AF936FB92EF719C589F0FDB /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6CC6D9A4E0DA710B031F01697FE7A807 /* ParameterName.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ParameterName.swift; sourceTree = "<group>"; };
+		781E2670A1CD4166F77AA05E29479530 /* Order.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
 		79A9DEDC89FE8336BF5FEDAAF75BF7FC /* Pods.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Pods.modulemap; sourceTree = "<group>"; };
+		81B02684AE7D7B67E4C70A09C9847460 /* Tracker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		87B213035BAC5F75386F62D3C75D2342 /* Pods-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-acknowledgements.plist"; sourceTree = "<group>"; };
 		894E5DA93A9F359521A89826BE6DA777 /* Pods-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-dummy.m"; sourceTree = "<group>"; };
-		90F0D99810E1A18E09AC3B424D9E2D75 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8DE80238DEC39816FC24DD5D3A44534E /* TrackerConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackerConfiguration.swift; sourceTree = "<group>"; };
+		9081795D5E4FD9E6E782DA9B71828313 /* PixelParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PixelParameter.swift; sourceTree = "<group>"; };
+		9153FCFAD98E92C79E954FC6A7449DB6 /* Webtrekk-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Webtrekk-prefix.pch"; sourceTree = "<group>"; };
 		977577C045EDA9D9D1F46E2598D19FC7 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Pods.debug.xcconfig; sourceTree = "<group>"; };
-		9DBA16C2780044A9F76CA1F31506EFE0 /* Webtrekk.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Webtrekk.modulemap; sourceTree = "<group>"; };
 		A3844742D4FB2C58C333411A697731AD /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/AVKit.framework; sourceTree = DEVELOPER_DIR; };
-		A413B20014CD40AD5CA4E407EBFF37FD /* Webtrekk.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Webtrekk.xcconfig; sourceTree = "<group>"; };
+		ACFA9047F8F18BE960198E89179946F3 /* Webtrekk.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Webtrekk.xcconfig; sourceTree = "<group>"; };
+		B33A7E97FFE896A2890F5FCFCE29AEBA /* Webtrekk.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Webtrekk.modulemap; sourceTree = "<group>"; };
+		B504F7B4AE942CB33CAA78FF3F03CFFF /* Product.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
+		B7B219B61C6CA22C00A237FF /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		B7B219B81C6CA33100A237FF /* Logging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		CBC0F7C552B739C909B650A0F42F7F38 /* Pods-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-resources.sh"; sourceTree = "<group>"; };
-		CEC69F3E0EC6E9EF12FC556F7CFD5932 /* Webtrekk-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Webtrekk-prefix.pch"; sourceTree = "<group>"; };
 		D0405803033A2A777B8E4DFA0C1800ED /* Pods-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-acknowledgements.markdown"; sourceTree = "<group>"; };
+		D09E6CD7ABE9BD194930DBF5405D4C9A /* GeneralParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GeneralParameter.swift; sourceTree = "<group>"; };
 		DA312349A49333542E6F4B36B329960E /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Pods.release.xcconfig; sourceTree = "<group>"; };
 		E7F21354943D9F42A70697D5A5EF72E9 /* Pods-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-frameworks.sh"; sourceTree = "<group>"; };
 		E8446514FBAD26C0E18F24A5715AEF67 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F77D771C2BD53183D3F36C68DFD7CCE8 /* TrackingParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackingParameter.swift; sourceTree = "<group>"; };
+		F796964425ED23D5BC579D42861A93D8 /* Parameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
 		FEDAED2636419D7BF7C672960B630F2D /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -76,6 +104,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		06F5A64B03003841873B98C015614086 /* Module */ = {
+			isa = PBXGroup;
+			children = (
+				17A713737931CC7974D3B3A973D924A1 /* Webtrekk.h */,
+			);
+			path = Module;
+			sourceTree = "<group>";
+		};
 		122DA2E5084A4393C29BE363C764795C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -87,7 +123,7 @@
 		13CF8F58721A0D59870012C742486BBE /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B54A72657B7E53D0A47CD32475A7B8D2 /* Webtrekk */,
+				9CB6C186DD0AA6DE3613B408ABC58F93 /* Webtrekk */,
 			);
 			name = "Development Pods";
 			sourceTree = "<group>";
@@ -101,12 +137,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		35ABC6EB7F0FC1E4FB74337EE309BCD4 /* Module */ = {
+		5AACFC929D173B4050D6E2008C3AB58C /* Parameter */ = {
 			isa = PBXGroup;
 			children = (
-				3EDF8076C93863C2E613022D91FA0DA1 /* Webtrekk.h */,
+				D09E6CD7ABE9BD194930DBF5405D4C9A /* GeneralParameter.swift */,
+				F796964425ED23D5BC579D42861A93D8 /* Parameter.swift */,
+				6CC6D9A4E0DA710B031F01697FE7A807 /* ParameterName.swift */,
+				9081795D5E4FD9E6E782DA9B71828313 /* PixelParameter.swift */,
+				0ACDA026381D8B2E82BC3033845BD7D6 /* ProductParameter.swift */,
+				F77D771C2BD53183D3F36C68DFD7CCE8 /* TrackingParameter.swift */,
 			);
-			path = Module;
+			path = Parameter;
 			sourceTree = "<group>";
 		};
 		75D98FF52E597A11900E131B6C4E1ADA /* Pods */ = {
@@ -127,17 +168,21 @@
 			path = "Target Support Files/Pods";
 			sourceTree = "<group>";
 		};
-		7C65CB23A47FB18A15954CD4109460C8 /* Support Files */ = {
+		7C0FE0DB2C94F2F0E05B526B0DD33775 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				90F0D99810E1A18E09AC3B424D9E2D75 /* Info.plist */,
-				9DBA16C2780044A9F76CA1F31506EFE0 /* Webtrekk.modulemap */,
-				A413B20014CD40AD5CA4E407EBFF37FD /* Webtrekk.xcconfig */,
-				3AA69DDE48B4B780202329A3911F1A30 /* Webtrekk-dummy.m */,
-				CEC69F3E0EC6E9EF12FC556F7CFD5932 /* Webtrekk-prefix.pch */,
+				62D10137E03C6FCCA633259E8D06EDB4 /* Customer.swift */,
+				12ADE574FA2719E2A98B74B773E8616B /* Extensions.swift */,
+				781E2670A1CD4166F77AA05E29479530 /* Order.swift */,
+				B504F7B4AE942CB33CAA78FF3F03CFFF /* Product.swift */,
+				81B02684AE7D7B67E4C70A09C9847460 /* Tracker.swift */,
+				8DE80238DEC39816FC24DD5D3A44534E /* TrackerConfiguration.swift */,
+				00421D5DFF42A847BB4FE5C8D1E0AA9D /* Webtrekk.swift */,
+				5AACFC929D173B4050D6E2008C3AB58C /* Parameter */,
+				B7B219B61C6CA22C00A237FF /* Queue.swift */,
+				B7B219B81C6CA33100A237FF /* Logging.swift */,
 			);
-			name = "Support Files";
-			path = "Xcode/Pods/Target Support Files/Webtrekk";
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		7DB346D0F39D3F0E887471402A8071AB = {
@@ -151,15 +196,28 @@
 			);
 			sourceTree = "<group>";
 		};
-		B54A72657B7E53D0A47CD32475A7B8D2 /* Webtrekk */ = {
+		9CB6C186DD0AA6DE3613B408ABC58F93 /* Webtrekk */ = {
 			isa = PBXGroup;
 			children = (
-				35ABC6EB7F0FC1E4FB74337EE309BCD4 /* Module */,
-				BB1491E8A5B9C9333A729885F707B964 /* Sources */,
-				7C65CB23A47FB18A15954CD4109460C8 /* Support Files */,
+				06F5A64B03003841873B98C015614086 /* Module */,
+				7C0FE0DB2C94F2F0E05B526B0DD33775 /* Sources */,
+				A98FF0E8099AA979D17D87ADA67C34E4 /* Support Files */,
 			);
 			name = Webtrekk;
 			path = ../..;
+			sourceTree = "<group>";
+		};
+		A98FF0E8099AA979D17D87ADA67C34E4 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				68DA02549AF936FB92EF719C589F0FDB /* Info.plist */,
+				B33A7E97FFE896A2890F5FCFCE29AEBA /* Webtrekk.modulemap */,
+				ACFA9047F8F18BE960198E89179946F3 /* Webtrekk.xcconfig */,
+				443163A465AE68798F99D2517795339D /* Webtrekk-dummy.m */,
+				9153FCFAD98E92C79E954FC6A7449DB6 /* Webtrekk-prefix.pch */,
+			);
+			name = "Support Files";
+			path = "Xcode/Pods/Target Support Files/Webtrekk";
 			sourceTree = "<group>";
 		};
 		B7B80995527643776607AFFA75B91E24 /* Targets Support Files */ = {
@@ -178,14 +236,6 @@
 				608B617981D73EB4842FC78699DD124A /* UIKit.framework */,
 			);
 			name = iOS;
-			sourceTree = "<group>";
-		};
-		BB1491E8A5B9C9333A729885F707B964 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				493D9887D4CFF5E9F4DEFF63642B430E /* Webtrekk.swift */,
-			);
-			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,7 +282,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 605375BFE226C270960D4199F273BB65 /* Build configuration list for PBXNativeTarget "Webtrekk" */;
 			buildPhases = (
-				9FB0AD77DC66540B5D3E94E8ADAE09F6 /* Sources */,
+				61B270E6EBB8AC2C19DD0C01110D2183 /* Sources */,
 				DDA317CA705BE9177294C668F656A277 /* Frameworks */,
 				7EF5DCED9B8EA058485BDBE5234119D8 /* Headers */,
 			);
@@ -273,20 +323,34 @@
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		61B270E6EBB8AC2C19DD0C01110D2183 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				118258D3BAABCE430890B6F24836C31F /* Customer.swift in Sources */,
+				29769C8CDCDD7DA9AE53A2063CD79A9A /* Extensions.swift in Sources */,
+				2840B0F548BD305B432491D8ABEB0DCC /* GeneralParameter.swift in Sources */,
+				0552AEDBEE9A1769B14EB36CBE986387 /* Order.swift in Sources */,
+				3B29551FAEEED6D6052BFDF1BB344F48 /* Parameter.swift in Sources */,
+				F6496C6479A2A61D6246057FEF105078 /* ParameterName.swift in Sources */,
+				DE40936229A6488EE8D71D8236420E11 /* PixelParameter.swift in Sources */,
+				79D918626846B8A9CB83CF88E3E87CB7 /* Product.swift in Sources */,
+				D9A2F52CED787BFFD52F1B80CB3D7F31 /* ProductParameter.swift in Sources */,
+				7E617B71F2EDC29F616D06247BF2A2EC /* Tracker.swift in Sources */,
+				B7B219B71C6CA22D00A237FF /* Queue.swift in Sources */,
+				2A938C3647CC8F5840F46B81D4A0F394 /* TrackerConfiguration.swift in Sources */,
+				BA66ADC5B0046786142D79C2F286CB23 /* TrackingParameter.swift in Sources */,
+				2C3CC722CC9DE8EB0E266EA2DE91C279 /* Webtrekk-dummy.m in Sources */,
+				361F581CACEF96986CC4537671DBC387 /* Webtrekk.swift in Sources */,
+				B7B219B91C6CA33100A237FF /* Logging.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		96400C7F13047E8CA41D1CAD4719F757 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				C2E2B31D8608CE499ADD1E10BCA0B2DA /* Pods-dummy.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9FB0AD77DC66540B5D3E94E8ADAE09F6 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				ADD8E728BACEA6F11048F81D2CEF1E3D /* Webtrekk-dummy.m in Sources */,
-				A5C02E3D6793A181918D10DA5142F8FE /* Webtrekk.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,7 +399,7 @@
 		};
 		9D52A994F387519A2C00E3A692F913CF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A413B20014CD40AD5CA4E407EBFF37FD /* Webtrekk.xcconfig */;
+			baseConfigurationReference = ACFA9047F8F18BE960198E89179946F3 /* Webtrekk.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
@@ -402,7 +466,7 @@
 		};
 		ACD232B54EA60B8FE8E1E602DFE6BEF2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A413B20014CD40AD5CA4E407EBFF37FD /* Webtrekk.xcconfig */;
+			baseConfigurationReference = ACFA9047F8F18BE960198E89179946F3 /* Webtrekk.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;

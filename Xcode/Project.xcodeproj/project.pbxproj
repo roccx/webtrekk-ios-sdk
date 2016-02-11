@@ -12,6 +12,7 @@
 		70C0DB1B461E0A264A40EC33 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A46DC0E911F3ABCA3B5312 /* Pods.framework */; };
 		983679BB160D137C40C1A452 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A46DC0E911F3ABCA3B5312 /* Pods.framework */; };
 		B7957BD81C6B56A200C6161D /* Webtrekk.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7957BD71C6B56A200C6161D /* Webtrekk.swift */; };
+		B7B219BB1C6CAF3300A237FF /* QueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B219BA1C6CAF3300A237FF /* QueueTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		498683331BE405D6001DCBC7 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4986833C1BE410D0001DCBC7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B7957BD71C6B56A200C6161D /* Webtrekk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webtrekk.swift; sourceTree = "<group>"; };
+		B7B219BA1C6CAF3300A237FF /* QueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueueTest.swift; sourceTree = "<group>"; };
 		D7A46DC0E911F3ABCA3B5312 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D7EE4AEE85078DB773D5F4 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -90,6 +92,7 @@
 			children = (
 				4986833C1BE410D0001DCBC7 /* Info.plist */,
 				B7957BD71C6B56A200C6161D /* Webtrekk.swift */,
+				B7B219BA1C6CAF3300A237FF /* QueueTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -308,6 +311,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7957BD81C6B56A200C6161D /* Webtrekk.swift in Sources */,
+				B7B219BB1C6CAF3300A237FF /* QueueTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
