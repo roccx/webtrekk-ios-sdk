@@ -3,7 +3,7 @@ use_frameworks!
 link_with ['Project', 'Tests']
 
 pod 'Webtrekk', :path => '..'
-
+pod 'SWXMLHash', '~> 2.1.0'
 
 post_install do |installer|
 	installer.pods_project.targets.each do |target|

@@ -2,7 +2,7 @@ import XCTest
 
 @testable import Webtrekk
 
-class QueueTests: XCTestCase {
+class QueueTest: XCTestCase {
 
 	// MARK: String Tests
 
