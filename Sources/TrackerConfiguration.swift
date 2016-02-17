@@ -5,7 +5,6 @@ public protocol TrackerConfiguration {
 	var maxRequests:         Int    { get set }
 	var samplingRate:        Int    { get set }
 	var sendDelay:           Int    { get set }
-	var useAdIdentifier:     Bool   { get set }
 	var version:             Int    { get set }
 	var serverUrl:           String { get }
 	var trackingId:          String { get }
@@ -25,6 +24,8 @@ public protocol TrackerConfiguration {
 	var enableRemoteConfiguration: Bool { get set }
 	var remoteConfigurationUrl: String { get set }
 
+	var configFilePath: String { get }
+
 }
 
 internal extension TrackerConfiguration {
@@ -39,7 +40,6 @@ internal struct DefaultTrackerConfiguration: TrackerConfiguration {
 	internal var maxRequests:         Int
 	internal var samplingRate:        Int
 	internal var sendDelay:           Int
-	internal var useAdIdentifier:     Bool
 	internal var version:             Int
 
 	internal private(set) var serverUrl:  String
@@ -59,7 +59,9 @@ internal struct DefaultTrackerConfiguration: TrackerConfiguration {
 	internal var enableRemoteConfiguration: Bool
 	internal var remoteConfigurationUrl: String
 
-	internal init(autoTrack: Bool = true, autoTrackAdvertiserId: Bool = true, autoTrackApiLevel: Bool = true, autoTrackAppUpdate: Bool = true, autoTrackAppVersionName: Bool = true, autoTrackAppVersionCode: Bool = true, autoTrackConnectionType: Bool = true, autoTrackRequestUrlStoreSize: Bool = true, autoTrackScreenOrientation: Bool = true, appVersionParameter: String = "",enableRemoteConfiguration: Bool = false, maxRequests: Int = 1000, remoteConfigurationUrl: String = "", samplingRate: Int = 0, sendDelay: Int = 5 * 60, serverUrl: String, trackingId: String, useAdIdentifier: Bool = false, version: Int = 0) {
+	internal private(set) var configFilePath: String
+
+	internal init(autoTrack: Bool = true, autoTrackAdvertiserId: Bool = true, autoTrackApiLevel: Bool = true, autoTrackAppUpdate: Bool = true, autoTrackAppVersionName: Bool = true, autoTrackAppVersionCode: Bool = true, autoTrackConnectionType: Bool = true, autoTrackRequestUrlStoreSize: Bool = true, autoTrackScreenOrientation: Bool = true, appVersionParameter: String = "", configFilePath: String = "", enableRemoteConfiguration: Bool = false, maxRequests: Int = 1000, remoteConfigurationUrl: String = "", samplingRate: Int = 0, sendDelay: Int = 5 * 60, serverUrl: String, trackingId: String, version: Int = 0) {
 		guard !serverUrl.isEmpty || !trackingId.isEmpty else {
 			fatalError("Need serverUrl and trackingId for minimal Configuration")
 		}
@@ -74,7 +76,6 @@ internal struct DefaultTrackerConfiguration: TrackerConfiguration {
 		self.sendDelay = sendDelay
 		self.serverUrl = serverUrl
 		self.trackingId = trackingId
-		self.useAdIdentifier = useAdIdentifier
 		self.version = version
 		self.autoTrack = autoTrack
 		self.autoTrackApiLevel = autoTrackApiLevel
@@ -87,6 +88,7 @@ internal struct DefaultTrackerConfiguration: TrackerConfiguration {
 		self.autoTrackRequestUrlStoreSize = autoTrackRequestUrlStoreSize
 		self.enableRemoteConfiguration = enableRemoteConfiguration
 		self.remoteConfigurationUrl = remoteConfigurationUrl
+		self.configFilePath = configFilePath
 	}
 
 }
