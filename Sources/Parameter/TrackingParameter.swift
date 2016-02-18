@@ -55,12 +55,12 @@ public struct TrackingParameter {
 		pixelParameter.timestamp = timeStamp
 		pixelParameter.pageName = pageName
 		parameters.append(pixelParameter)
-		parameters.append(GeneralParameter(everId: everId,timestamp: timeStamp, timezoneOffset: timeZoneOffset, userAgent: buildUserAgent))
+		parameters.append(DefaultGeneralParameter(everId: everId,timestamp: timeStamp, timezoneOffset: timeZoneOffset, userAgent: buildUserAgent))
 		if let customer = customer {
 			parameters.append(CustomerParameter(customer: customer))
 		}
-		if let product = product {
-			parameters.append(ProductParameter(product: product))
-		}
+//		if let product = product {
+//			parameters.append(ProductParameter(product: product))
+//		}
 	}
 }
