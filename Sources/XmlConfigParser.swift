@@ -5,65 +5,65 @@ internal class XmlConfigParser: ConfigParser {
 
 	var trackerConfiguration: TrackerConfiguration {
 		get {
-			guard xml[.ROOT].boolValue else {
-				fatalError("xml root node not found")
+			guard xml[.Root].boolValue else {
+				fatalError("xml Root node not found")
 			}
-			guard xml[.ROOT][.TRACKING_DOMAIN].boolValue && xml[.ROOT][.TRACK_ID].boolValue, let serverUrl = xml[.ROOT][.TRACKING_DOMAIN].element?.text, let trackingId = xml[.ROOT][.TRACK_ID].element?.text else {
+			guard xml[.Root][.TrackingDomain].boolValue && xml[.Root][.TrackId].boolValue, let serverUrl = xml[.Root][.TrackingDomain].element?.text, let trackingId = xml[.Root][.TrackId].element?.text else {
 				fatalError("tracking domain and id needs to be set")
 			}
 			var config = DefaultTrackerConfiguration(serverUrl: serverUrl, trackingId: trackingId)
 
-			if xml[.ROOT][.MAX_REQUESTS].boolValue, let maxRequests = Int((xml[.ROOT][.MAX_REQUESTS].element?.text)!) {
+			if xml[.Root][.MaxRequests].boolValue, let maxRequests = Int((xml[.Root][.MaxRequests].element?.text)!) {
 				config.maxRequests = maxRequests
 			}
-			if xml[.ROOT][.SAMPLING].boolValue, let sampling = Int((xml[.ROOT][.SAMPLING].element?.text)!) {
-				config.samplingRate = sampling
+			if xml[.Root][.Sampling].boolValue, let Sampling = Int((xml[.Root][.Sampling].element?.text)!) {
+				config.samplingRate = Sampling
 			}
-			if xml[.ROOT][.SEND_DELAY].boolValue, let sendDelay = Int((xml[.ROOT][.SEND_DELAY].element?.text)!) {
+			if xml[.Root][.SendDelay].boolValue, let sendDelay = Int((xml[.Root][.SendDelay].element?.text)!) {
 				config.sendDelay = sendDelay
 			}
-			if xml[.ROOT][.VERSION].boolValue, let version = Int((xml[.ROOT][.VERSION].element?.text)!) {
+			if xml[.Root][.Version].boolValue, let version = Int((xml[.Root][.Version].element?.text)!) {
 				config.version = version
 			}
 
-			if xml[.ROOT][.ENABLE_REMOTE_CONFIGURATION].boolValue {
-				config.enableRemoteConfiguration = Bool((xml[.ROOT][.ENABLE_REMOTE_CONFIGURATION].element?.text)!.lowercaseString == "true")
+			if xml[.Root][.EnableRemoteConfiguration].boolValue {
+				config.enableRemoteConfiguration = Bool((xml[.Root][.EnableRemoteConfiguration].element?.text)!.lowercaseString == "true")
 			}
-			if xml[.ROOT][.TRACKING_CONFIGURATION_URL].boolValue, let remoteConfigurationUrl = xml[.ROOT][.TRACKING_CONFIGURATION_URL].element?.text {
+			if xml[.Root][.TrackingConfigurationUrl].boolValue, let remoteConfigurationUrl = xml[.Root][.TrackingConfigurationUrl].element?.text {
 				config.remoteConfigurationUrl = remoteConfigurationUrl
 			}
 
-			if xml[.ROOT][.AUTO_TRACKED].boolValue {
-				config.autoTrack = Bool((xml[.ROOT][.AUTO_TRACKED].element?.text)!.lowercaseString == "true")
+			if xml[.Root][.AutoTracked].boolValue {
+				config.autoTrack = Bool((xml[.Root][.AutoTracked].element?.text)!.lowercaseString == "true")
 			}
 
 			guard config.autoTrack else {
 				return config
 			}
 
-			if xml[.ROOT][.AUTO_TRACK_APP_UPDATE].boolValue {
-				config.autoTrackAppUpdate = Bool((xml[.ROOT][.AUTO_TRACK_APP_UPDATE].element?.text)!.lowercaseString == "true")
+			if xml[.Root][.AutoTrackAppUpdate].boolValue {
+				config.autoTrackAppUpdate = Bool((xml[.Root][.AutoTrackAppUpdate].element?.text)!.lowercaseString == "true")
 			}
-			if xml[.ROOT][.AUTO_TRACK_APP_VERSION_NAME].boolValue {
-				config.autoTrackAppVersionName = Bool((xml[.ROOT][.AUTO_TRACK_APP_VERSION_NAME].element?.text)!.lowercaseString == "true")
+			if xml[.Root][.AutoTrackAppVersionName].boolValue {
+				config.autoTrackAppVersionName = Bool((xml[.Root][.AutoTrackAppVersionName].element?.text)!.lowercaseString == "true")
 			}
-			if xml[.ROOT][.AUTO_TRACK_APP_VERSION_CODE].boolValue {
-				config.autoTrackAppVersionCode = Bool((xml[.ROOT][.AUTO_TRACK_APP_VERSION_CODE].element?.text)!.lowercaseString == "true")
+			if xml[.Root][.AutoTrackAppVersionCode].boolValue {
+				config.autoTrackAppVersionCode = Bool((xml[.Root][.AutoTrackAppVersionCode].element?.text)!.lowercaseString == "true")
 			}
-			if xml[.ROOT][.AUTO_TRACK_API_LEVEL].boolValue {
-				config.autoTrackApiLevel = Bool((xml[.ROOT][.AUTO_TRACK_API_LEVEL].element?.text)!.lowercaseString == "true")
+			if xml[.Root][.AutoTrackApiLevel].boolValue {
+				config.autoTrackApiLevel = Bool((xml[.Root][.AutoTrackApiLevel].element?.text)!.lowercaseString == "true")
 			}
-			if xml[.ROOT][.AUTO_TRACK_SCREEN_ORIENTATION].boolValue {
-				config.autoTrackScreenOrientation = Bool((xml[.ROOT][.AUTO_TRACK_SCREEN_ORIENTATION].element?.text)!.lowercaseString == "true")
+			if xml[.Root][.AutoTrackScreenOrientation].boolValue {
+				config.autoTrackScreenOrientation = Bool((xml[.Root][.AutoTrackScreenOrientation].element?.text)!.lowercaseString == "true")
 			}
-			if xml[.ROOT][.AUTO_TRACK_CONNECTION_TYPE].boolValue {
-				config.autoTrackConnectionType = Bool((xml[.ROOT][.AUTO_TRACK_CONNECTION_TYPE].element?.text)!.lowercaseString == "true")
+			if xml[.Root][.AutoTrackConnectionType].boolValue {
+				config.autoTrackConnectionType = Bool((xml[.Root][.AutoTrackConnectionType].element?.text)!.lowercaseString == "true")
 			}
-			if xml[.ROOT][.AUTO_TRACK_REQUEST_URL_STORE_SIZE].boolValue {
-				config.autoTrackRequestUrlStoreSize = Bool((xml[.ROOT][.AUTO_TRACK_REQUEST_URL_STORE_SIZE].element?.text)!.lowercaseString == "true")
+			if xml[.Root][.AutoTrackRequestUrlStoreSize].boolValue {
+				config.autoTrackRequestUrlStoreSize = Bool((xml[.Root][.AutoTrackRequestUrlStoreSize].element?.text)!.lowercaseString == "true")
 			}
-			if xml[.ROOT][.AUTO_TRACK_ADVERTISER_ID].boolValue {
-				config.autoTrackAdvertiserId = Bool((xml[.ROOT][.AUTO_TRACK_ADVERTISER_ID].element?.text)!.lowercaseString == "true")
+			if xml[.Root][.AutoTrackAdvertiserId].boolValue {
+				config.autoTrackAdvertiserId = Bool((xml[.Root][.AutoTrackAdvertiserId].element?.text)!.lowercaseString == "true")
 			}
 
 
@@ -82,37 +82,37 @@ internal class XmlConfigParser: ConfigParser {
 }
 
 internal enum XmlConfigParameter: String {
-	case ROOT = "webtrekkConfiguration"
+	case Root = "webtrekkConfiguration"
 
 	// MARK: required parameters
-	case TRACKING_DOMAIN = "trackDomain"
-	case TRACK_ID = "trackId"
+	case TrackingDomain = "trackDomain"
+	case TrackId = "trackId"
 
 	// MARK: default parameters
-	case MAX_REQUESTS = "maxRequests"
-	case SAMPLING = "sampling"
-	case SEND_DELAY = "sendDelay"
-	case VERSION = "version"
+	case MaxRequests = "maxRequests"
+	case Sampling = "Sampling"
+	case SendDelay = "sendDelay"
+	case Version = "version"
 
 	// MARK: auto parameters
-	case AUTO_TRACKED = "autoTracked"
-	case AUTO_TRACK_APP_UPDATE = "autoTrackAppUpdate"
-	case AUTO_TRACK_APP_VERSION_NAME = "autoTrackAppVersionName"
-	case AUTO_TRACK_APP_VERSION_CODE = "autoTrackAppVersionCode"
-	case AUTO_TRACK_API_LEVEL = "autoTrackApiLevel"
-	case AUTO_TRACK_SCREEN_ORIENTATION = "autoTrackScreenOrientation"
-	case AUTO_TRACK_CONNECTION_TYPE = "autoTrackConnectionType"
-	case AUTO_TRACK_REQUEST_URL_STORE_SIZE = "autoTrackRequestUrlStoreSize"
+	case AutoTracked = "autoTracked"
+	case AutoTrackAppUpdate = "autoTrackAppUpdate"
+	case AutoTrackAppVersionName = "autoTrackAppversionName"
+	case AutoTrackAppVersionCode = "autoTrackAppversionCode"
+	case AutoTrackApiLevel = "autoTrackApiLevel"
+	case AutoTrackScreenOrientation = "autoTrackScreenOrientation"
+	case AutoTrackConnectionType = "autoTrackConnectionType"
+	case AutoTrackRequestUrlStoreSize = "autoTrackRequestUrlStoreSize"
 
 	// MARK: advertiser id
-	case AUTO_TRACK_ADVERTISER_ID = "autoTrackAdvertiserId"
+	case AutoTrackAdvertiserId = "autoTrackAdvertiserId"
 
 	// MARK: remote configuration parameter
-	case ENABLE_REMOTE_CONFIGURATION = "enableRemoteConfiguration"
-	case TRACKING_CONFIGURATION_URL = "trackingConfigurationUrl"
+	case EnableRemoteConfiguration = "EnableRemoteConfiguration"
+	case TrackingConfigurationUrl = "trackingConfigurationUrl"
 
 	// MARK: event based parameter
-	case RESEND_ON_START_EVENT_TIME = "resendOnStartEventTime"
+	case ResendOnStartEventTime = "resendOnStartEventTime"
 }
 
 internal extension XMLIndexer {
