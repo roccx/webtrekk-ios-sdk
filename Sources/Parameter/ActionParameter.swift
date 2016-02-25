@@ -11,7 +11,7 @@ internal struct DefaultActionParameter: ActionParameter {
 	internal var categories: [Int: String]
 	internal var session:    [Int: String]
 
-	internal init(name: String, categories: [Int: String] = [Int: String](), session:   [Int: String] = [Int: String]()) {
+	internal init(categories: [Int: String] = [Int: String](), name: String, session:   [Int: String] = [Int: String]()) {
 		guard !name.isEmpty else {
 			fatalError("name cannot be empty")
 		}

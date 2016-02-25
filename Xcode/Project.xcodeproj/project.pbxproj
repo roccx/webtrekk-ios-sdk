@@ -13,9 +13,11 @@
 		983679BB160D137C40C1A452 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A46DC0E911F3ABCA3B5312 /* Pods.framework */; };
 		B78DF2141C74C730002AADDF /* DefaultConfig.xml in Resources */ = {isa = PBXBuildFile; fileRef = B78DF2121C74C730002AADDF /* DefaultConfig.xml */; };
 		B78DF2151C74C730002AADDF /* DefaultConfigIncludingAndroid.xml in Resources */ = {isa = PBXBuildFile; fileRef = B78DF2131C74C730002AADDF /* DefaultConfigIncludingAndroid.xml */; };
+		B792C5DF1C7B53220093DF35 /* ParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B792C5DE1C7B53220093DF35 /* ParameterTest.swift */; };
 		B7957BD81C6B56A200C6161D /* Webtrekk.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7957BD71C6B56A200C6161D /* Webtrekk.swift */; };
 		B7B219BB1C6CAF3300A237FF /* QueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B219BA1C6CAF3300A237FF /* QueueTest.swift */; };
 		B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */; };
+		B7BBD84C1C7C572800FE4E2A /* HttpClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BBD84B1C7C572800FE4E2A /* HttpClientTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,9 +30,11 @@
 		4986833C1BE410D0001DCBC7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B78DF2121C74C730002AADDF /* DefaultConfig.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DefaultConfig.xml; sourceTree = "<group>"; };
 		B78DF2131C74C730002AADDF /* DefaultConfigIncludingAndroid.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DefaultConfigIncludingAndroid.xml; sourceTree = "<group>"; };
+		B792C5DE1C7B53220093DF35 /* ParameterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterTest.swift; sourceTree = "<group>"; };
 		B7957BD71C6B56A200C6161D /* Webtrekk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webtrekk.swift; sourceTree = "<group>"; };
 		B7B219BA1C6CAF3300A237FF /* QueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueueTest.swift; sourceTree = "<group>"; };
 		B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
+		B7BBD84B1C7C572800FE4E2A /* HttpClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpClientTest.swift; sourceTree = "<group>"; };
 		D7A46DC0E911F3ABCA3B5312 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D7EE4AEE85078DB773D5F4 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -99,9 +103,11 @@
 				4986833C1BE410D0001DCBC7 /* Info.plist */,
 				B7957BD71C6B56A200C6161D /* Webtrekk.swift */,
 				B78DF2121C74C730002AADDF /* DefaultConfig.xml */,
+				B792C5DE1C7B53220093DF35 /* ParameterTest.swift */,
 				B78DF2131C74C730002AADDF /* DefaultConfigIncludingAndroid.xml */,
 				B7B219BA1C6CAF3300A237FF /* QueueTest.swift */,
 				B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */,
+				B7BBD84B1C7C572800FE4E2A /* HttpClientTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -323,7 +329,9 @@
 			files = (
 				B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */,
 				B7957BD81C6B56A200C6161D /* Webtrekk.swift in Sources */,
+				B7BBD84C1C7C572800FE4E2A /* HttpClientTest.swift in Sources */,
 				B7B219BB1C6CAF3300A237FF /* QueueTest.swift in Sources */,
+				B792C5DF1C7B53220093DF35 /* ParameterTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

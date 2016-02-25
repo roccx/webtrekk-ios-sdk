@@ -1,21 +1,14 @@
 import UIKit
 
-public struct TrackingParameter {
-	public var customer: Customer?
-	public var product: Product?
 
-	private let os = NSProcessInfo().operatingSystemVersion
-	private let device = UIDevice.currentDevice().modelName
-	private let language = NSLocale.currentLocale().localeIdentifier
-	private var pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size)
+public protocol TrackingParameter {
+	var ecommerceParameter: EcommerceParameter? { get set }
+	var generalParameter:   GeneralParameter   { get }
+	var pixelParameter:     PixelParameter     { get }
+	var productParameters:  [ProductParameter] { get set }
+}
 
-	private var parameters = [Parameter]()
-
-	private var buildUserAgent: String {
-		get {
-			return "Tracking Library \(Double(pixelParameter.version/100)) (iOS; \(os.majorVersion + os.minorVersion + os.patchVersion); \(UIDevice.currentDevice().modelName); \(language))"
-		}
-	}
+extension TrackingParameter {
 
 	public var everId: String {
 		get {
@@ -33,34 +26,76 @@ public struct TrackingParameter {
 		}
 	}
 
-	public var pageName: String {
+
+	public var userAgent: String {
 		get {
-			return pixelParameter.pageName
-		}
-		set {
-			guard newValue != pixelParameter.pageName else {
-				return
-			}
-			pixelParameter.pageName = newValue
+			let os = NSProcessInfo().operatingSystemVersion
+			return "Tracking Library \(Double(pixelParameter.version/100)) (iOS; \(os.majorVersion). \(os.minorVersion). \(os.patchVersion); \(UIDevice.currentDevice().modelName); \(NSLocale.currentLocale().localeIdentifier))"
 		}
 	}
+}
 
-	internal mutating func prepareForTracking() {
-		guard !pageName.isEmpty else {
-			fatalError("pageName must be set")
-		}
-		parameters.removeAll()
-		let timeStamp = Int(NSDate().timeIntervalSince1970 * 1000)
+public protocol ActionTrackingParameter: TrackingParameter {
+	var actionParameter: ActionParameter { get set }
+}
+
+public protocol PageTrackingParameter: TrackingParameter {
+	var pageParameter: PageParameter { get set }
+}
+
+internal struct DefaultActionTrackingParameter: ActionTrackingParameter{
+	internal var actionParameter:    ActionParameter
+	internal var ecommerceParameter: EcommerceParameter?
+	internal var generalParameter:   GeneralParameter
+	internal var pixelParameter:     PixelParameter
+	internal var productParameters:  [ProductParameter]
+
+
+	internal init(actionParameter: ActionParameter, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
+
+		let timeStamp = Int64(NSDate().timeIntervalSince1970 * 1000)
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
-		pixelParameter.timestamp = timeStamp
-		pixelParameter.pageName = pageName
-		parameters.append(pixelParameter)
-		parameters.append(DefaultGeneralParameter(everId: everId,timestamp: timeStamp, timezoneOffset: timeZoneOffset, userAgent: buildUserAgent))
-		if let customer = customer {
-			parameters.append(CustomerParameter(customer: customer))
-		}
-//		if let product = product {
-//			parameters.append(ProductParameter(product: product))
-//		}
+		self.actionParameter = actionParameter
+		self.ecommerceParameter = ecommerceParameter
+		self.productParameters = productParameters
+		self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
+		self.generalParameter = DefaultGeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
+		generalParameter.everId = self.everId
+		generalParameter.userAgent = userAgent
+	}
+
+}
+
+internal struct DefaultPageTrackingParameter: PageTrackingParameter{
+	internal var pageParameter:      PageParameter
+	internal var ecommerceParameter: EcommerceParameter?
+	internal var generalParameter:   GeneralParameter
+	internal var pixelParameter:     PixelParameter
+	internal var productParameters:  [ProductParameter]
+
+	internal init(pageParameter: PageParameter, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
+
+		let timeStamp = Int64(NSDate().timeIntervalSince1970 * 1000)
+		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
+		self.pageParameter = pageParameter
+		self.ecommerceParameter = ecommerceParameter
+		self.productParameters = productParameters
+		self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
+		self.generalParameter = DefaultGeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
+		generalParameter.everId = self.everId
+		generalParameter.userAgent = userAgent
+	}
+}
+
+extension DefaultGeneralParameter {
+	private init(timeStamp: Int64, timeZoneOffset: Double){
+		self.everId = ""
+		self.firstStart = false
+		self.ip = ""
+		self.nationalCode = ""
+		self.samplingRate = 0
+		self.timeStamp = timeStamp
+		self.timeZoneOffset = timeZoneOffset
+		self.userAgent = ""
 	}
 }
