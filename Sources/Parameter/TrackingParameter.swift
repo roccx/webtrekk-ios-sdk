@@ -13,7 +13,7 @@ extension TrackingParameter {
 	public var everId: String {
 		get {
 			let userDefaults = NSUserDefaults.standardUserDefaults()
-			if let eid = userDefaults.stringForKey("eid") {
+			if let eid = userDefaults.stringForKey(UserStoreKey.Eid) {
 				return eid
 			}
 			let eid = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
@@ -33,25 +33,85 @@ extension TrackingParameter {
 			return "Tracking Library \(Double(pixelParameter.version/100)) (iOS; \(os.majorVersion). \(os.minorVersion). \(os.patchVersion); \(UIDevice.currentDevice().modelName); \(NSLocale.currentLocale().localeIdentifier))"
 		}
 	}
+
+	func urlProductParameters() -> String {
+		guard !productParameters.isEmpty else {
+			return ""
+		}
+		var urlParameter = ""
+		var currency = ""
+		var name = ""
+		var price = ""
+		var quantity = ""
+		var categorieKeys = Set<Int>()
+
+		for productParameter in productParameters {
+			let appendix = productParameter == productParameters.last! ? "" : ";"
+			name += "\(productParameter.name)\(appendix)"
+			currency = productParameter.currency.isEmpty ? currency : productParameter.currency
+			price += "\(productParameter.price)\(appendix)"
+			quantity += "\(productParameter.quantity)\(appendix)"
+
+			for key in productParameter.categories.keys {
+				categorieKeys.insert(key)
+			}
+
+		}
+		var categories = [Int: String] ()
+		for productParameter in productParameters {
+			let appendix = productParameter == productParameters.last! ? "" : ";"
+
+			for key in categorieKeys {
+				var category: String
+
+				if let cat = productParameter.categories[key] {
+					category = cat
+				} else {
+					category = ""
+				}
+
+				if let cat = categories[key] {
+					categories[key] = "\(cat)\(category)\(appendix)"
+				} else {
+					categories[key] = "\(category)\(appendix)"
+				}
+
+			}
+		}
+		urlParameter += "\(ParameterName.ProductName.rawValue)=\(name.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
+		urlParameter += "&\(ParameterName.EcomCurrency.rawValue)=\(currency)"
+		urlParameter += "&\(ParameterName.ProductPrice.rawValue)=\(price)"
+		urlParameter += "&\(ParameterName.ProductQuantity.rawValue)=\(quantity)"
+		for (key, value) in categories {
+			urlParameter += "&\(ParameterName.ProductCategory.rawValue)\(key)=\(value.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
+		}
+		return urlParameter
+	}
 }
 
-public protocol ActionTrackingParameter: TrackingParameter {
-	var actionParameter: ActionParameter { get set }
+extension ActionTrackingParameter {
+	func urlWithAllParameter(config: TrackerConfiguration) -> String {
+		var url = config.baseUrl.absoluteString
+		url += "?\(pixelParameter.urlParameter)"
+		url += "&\(generalParameter.urlParameter)"
+		url += "&\(actionParameter.urlParameter)"
+		if !productParameters.isEmpty {
+			url += "&\(urlProductParameters())"
+		}
+		return url
+	}
 }
 
-public protocol PageTrackingParameter: TrackingParameter {
-	var pageParameter: PageParameter { get set }
-}
 
-internal struct DefaultActionTrackingParameter: ActionTrackingParameter{
-	internal var actionParameter:    ActionParameter
-	internal var ecommerceParameter: EcommerceParameter?
-	internal var generalParameter:   GeneralParameter
-	internal var pixelParameter:     PixelParameter
-	internal var productParameters:  [ProductParameter]
+public struct ActionTrackingParameter: TrackingParameter {
+	public var actionParameter:    ActionParameter
+	public var ecommerceParameter: EcommerceParameter?
+	public var generalParameter:   GeneralParameter
+	public var pixelParameter:     PixelParameter
+	public var productParameters:  [ProductParameter]
 
 
-	internal init(actionParameter: ActionParameter, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
+	public init(actionParameter: ActionParameter, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
 
 		let timeStamp = Int64(NSDate().timeIntervalSince1970 * 1000)
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
@@ -59,21 +119,21 @@ internal struct DefaultActionTrackingParameter: ActionTrackingParameter{
 		self.ecommerceParameter = ecommerceParameter
 		self.productParameters = productParameters
 		self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
-		self.generalParameter = DefaultGeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
+		self.generalParameter = GeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
 		generalParameter.everId = self.everId
 		generalParameter.userAgent = userAgent
 	}
 
 }
 
-internal struct DefaultPageTrackingParameter: PageTrackingParameter{
-	internal var pageParameter:      PageParameter
-	internal var ecommerceParameter: EcommerceParameter?
-	internal var generalParameter:   GeneralParameter
-	internal var pixelParameter:     PixelParameter
-	internal var productParameters:  [ProductParameter]
+public struct PageTrackingParameter: TrackingParameter{
+	public var pageParameter:      PageParameter
+	public var ecommerceParameter: EcommerceParameter?
+	public var generalParameter:   GeneralParameter
+	public var pixelParameter:     PixelParameter
+	public var productParameters:  [ProductParameter]
 
-	internal init(pageParameter: PageParameter, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
+	public init(pageParameter: PageParameter, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
 
 		let timeStamp = Int64(NSDate().timeIntervalSince1970 * 1000)
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
@@ -81,21 +141,8 @@ internal struct DefaultPageTrackingParameter: PageTrackingParameter{
 		self.ecommerceParameter = ecommerceParameter
 		self.productParameters = productParameters
 		self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
-		self.generalParameter = DefaultGeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
+		self.generalParameter = GeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
 		generalParameter.everId = self.everId
 		generalParameter.userAgent = userAgent
-	}
-}
-
-extension DefaultGeneralParameter {
-	private init(timeStamp: Int64, timeZoneOffset: Double){
-		self.everId = ""
-		self.firstStart = false
-		self.ip = ""
-		self.nationalCode = ""
-		self.samplingRate = 0
-		self.timeStamp = timeStamp
-		self.timeZoneOffset = timeZoneOffset
-		self.userAgent = ""
 	}
 }

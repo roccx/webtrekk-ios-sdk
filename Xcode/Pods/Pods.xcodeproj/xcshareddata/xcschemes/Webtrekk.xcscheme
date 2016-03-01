@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '718741D00A5F578F625ECEA6'
+               BlueprintIdentifier = 'BE56FCDF617FC0B1D296CD0C'
                BlueprintName = 'Webtrekk'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'Webtrekk.framework'>

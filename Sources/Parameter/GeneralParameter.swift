@@ -1,28 +1,17 @@
 import Foundation
 
-public protocol GeneralParameter {
-	var everId:         String { get set }
-	var firstStart:     Bool   { get set }
-	var ip:             String { get set }
-	var nationalCode:   String { get set }
-	var samplingRate:   Int    { get set }
-	var timeStamp:      Int64 { get set }
-	var timeZoneOffset: Double { get set }
-	var userAgent:      String { get set }
 
-}
+public struct GeneralParameter {
+	public var everId:         String
+	public var firstStart:     Bool
+	public var ip:             String
+	public var nationalCode:   String
+	public var samplingRate:   Int
+	public var timeStamp:      Int64
+	public var timeZoneOffset: Double
+	public var userAgent:      String
 
-internal struct DefaultGeneralParameter: GeneralParameter {
-	internal var everId:         String
-	internal var firstStart:     Bool
-	internal var ip:             String
-	internal var nationalCode:   String
-	internal var samplingRate:   Int
-	internal var timeStamp:      Int64
-	internal var timeZoneOffset: Double
-	internal var userAgent:      String
-
-	internal init(everId:String,  firstStart: Bool = false, ip: String = "", nationalCode: String = "", samplingRate: Int = 0, timeStamp: Int64, timeZoneOffset: Double, userAgent: String){
+	public init(everId:String,  firstStart: Bool = false, ip: String = "", nationalCode: String = "", samplingRate: Int = 0, timeStamp: Int64, timeZoneOffset: Double, userAgent: String){
 		guard !everId.isEmpty else {
 			fatalError("Ever-Id is not optional")
 		}
@@ -37,33 +26,39 @@ internal struct DefaultGeneralParameter: GeneralParameter {
 	}
 }
 
-extension DefaultGeneralParameter: Parameter {
-
-	internal var queryItems: [NSURLQueryItem] {
+extension GeneralParameter: Parameter {
+	internal var urlParameter: String {
 		get {
-			var queryItems = [NSURLQueryItem]()
-
-			guard !everId.isEmpty else {
-				fatalError("everId should never be empty")
+			var urlParameter = "\(ParameterName.EverId.rawValue)=\(everId)"
+			if firstStart {
+				urlParameter += "&\(ParameterName.FirstStart.rawValue)=1"
 			}
-			queryItems.append(NSURLQueryItem(name: .EverId, value: everId))
+			if !ip.isEmpty {
+				urlParameter += "&\(ParameterName.IpAddress.rawValue)=\(ip)"
+			}
+			if !nationalCode.isEmpty {
+				urlParameter += "&\(ParameterName.NationalCode.rawValue)=\(nationalCode)"
+			}
+			urlParameter += "&\(ParameterName.SamplingRate.rawValue)=\(samplingRate)"
+			urlParameter += "&\(ParameterName.TimeStamp.rawValue)=\(timeStamp)"
+			urlParameter += "&\(ParameterName.TimeZoneOffset.rawValue)=\(timeZoneOffset)"
+			urlParameter += "&\(ParameterName.UserAgent.rawValue)=\(userAgent.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
 
-			queryItems.append(NSURLQueryItem(name: .FirstStart, value: firstStart ? "1" : ""))
-			queryItems.append(NSURLQueryItem(name: .NationalCode, value: nationalCode))
-			queryItems.append(NSURLQueryItem(name: .SamplingRate, value: "\(samplingRate)"))
-			queryItems.append(NSURLQueryItem(name: .TimeStamp, value: "\(timeStamp)"))
-			queryItems.append(NSURLQueryItem(name: .TimeZoneOffset, value: "\(timeZoneOffsetString())"))
-			queryItems.append(NSURLQueryItem(name: .UserAgent, value: userAgent))
-			return queryItems.filter({!$0.value!.isEmpty})
+			return urlParameter
 		}
-	}
-
-	private func timeZoneOffsetString() -> String {
-		if timeZoneOffset == 0 || timeZoneOffset - Double(Int(timeZoneOffset)) == 0 {
-			return "\(Int(timeZoneOffset))"
-		}
-		return "\(timeZoneOffset)"
 	}
 }
 
 
+extension GeneralParameter {
+	internal init(timeStamp: Int64, timeZoneOffset: Double){
+		self.everId = ""
+		self.firstStart = false
+		self.ip = ""
+		self.nationalCode = ""
+		self.samplingRate = 0
+		self.timeStamp = timeStamp
+		self.timeZoneOffset = timeZoneOffset
+		self.userAgent = ""
+	}
+}

@@ -22,8 +22,10 @@ class QueueTest: XCTestCase {
 
 	func testRemoveOneStringItem() {
 		let stringQueue = Queue<String>()
+		XCTAssert(stringQueue.itemCount == 0)
 		for index in 0..<10 {
 			stringQueue.enqueue("Item \(index)")
+			XCTAssert(stringQueue.itemCount == index+1)
 		}
 		let firstItem = stringQueue.dequeue()
 		XCTAssertNotNil(firstItem)
@@ -33,12 +35,15 @@ class QueueTest: XCTestCase {
 
 	func testRemoveAllStringItems() {
 		let stringQueue = Queue<String>()
+		XCTAssert(stringQueue.itemCount == 0)
 		for index in 0..<10 {
 			stringQueue.enqueue("Item \(index)")
+			XCTAssert(stringQueue.itemCount == index+1)
 		}
 		XCTAssertFalse(stringQueue.isEmpty())
 		for index in 0..<10 {
 			XCTAssertEqual(stringQueue.dequeue()!, "Item \(index)")
+			XCTAssert(stringQueue.itemCount == 9 - index)
 		}
 		XCTAssertTrue(stringQueue.isEmpty())
 	}

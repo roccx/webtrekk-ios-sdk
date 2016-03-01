@@ -15,11 +15,11 @@ public struct PixelParameter {
 
 }
 
-extension PixelParameter: Parameter {
 
-	public var queryItems: [NSURLQueryItem] {
+extension PixelParameter: Parameter {
+	internal var urlParameter: String {
 		get {
-			return [NSURLQueryItem(name: .Pixel, value: "\(version),\(pageName),0,\(Int(displaySize.width))x\(Int(displaySize.height)),32,0,\(timeStamp),0,0,0")]
+			return "\(ParameterName.Pixel.rawValue)=\(version),\(pageName),0,\(Int(displaySize.width))x\(Int(displaySize.height)),32,0,\(timeStamp),0,0,0"
 		}
 	}
 }

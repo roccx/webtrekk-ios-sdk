@@ -18,6 +18,8 @@
 		B7B219BB1C6CAF3300A237FF /* QueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B219BA1C6CAF3300A237FF /* QueueTest.swift */; };
 		B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */; };
 		B7BBD84C1C7C572800FE4E2A /* HttpClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BBD84B1C7C572800FE4E2A /* HttpClientTest.swift */; };
+		B7FB48CE1C85DAF4001D794C /* MainTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FB48CD1C85DAF4001D794C /* MainTestViewController.swift */; };
+		B7FB48D01C85E30E001D794C /* FirstTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FB48CF1C85E30E001D794C /* FirstTestViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,8 @@
 		B7B219BA1C6CAF3300A237FF /* QueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueueTest.swift; sourceTree = "<group>"; };
 		B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
 		B7BBD84B1C7C572800FE4E2A /* HttpClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpClientTest.swift; sourceTree = "<group>"; };
+		B7FB48CD1C85DAF4001D794C /* MainTestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTestViewController.swift; sourceTree = "<group>"; };
+		B7FB48CF1C85E30E001D794C /* FirstTestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstTestViewController.swift; sourceTree = "<group>"; };
 		D7A46DC0E911F3ABCA3B5312 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D7EE4AEE85078DB773D5F4 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -93,6 +97,8 @@
 				498683311BE405D6001DCBC7 /* AppDelegate.swift */,
 				498683321BE405D6001DCBC7 /* Info.plist */,
 				498683331BE405D6001DCBC7 /* LaunchScreen.storyboard */,
+				B7FB48CD1C85DAF4001D794C /* MainTestViewController.swift */,
+				B7FB48CF1C85E30E001D794C /* FirstTestViewController.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -320,6 +326,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				498683361BE405D6001DCBC7 /* AppDelegate.swift in Sources */,
+				B7FB48CE1C85DAF4001D794C /* MainTestViewController.swift in Sources */,
+				B7FB48D01C85E30E001D794C /* FirstTestViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +414,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -423,6 +432,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2D2ADB3DFE865C1E82E55688 /* Pods.debug.xcconfig */;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+				);
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Project;
@@ -436,6 +449,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F0D7EE4AEE85078DB773D5F4 /* Pods.release.xcconfig */;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+				);
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Project;

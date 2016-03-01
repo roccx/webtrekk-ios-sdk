@@ -87,30 +87,3 @@ public struct CustomerParameter{
 		self.customer = customer
 	}
 }
-
-
-extension CustomerParameter: Parameter {
-
-
-	public var queryItems: [NSURLQueryItem] {
-		var queryItems = [NSURLQueryItem]()
-		queryItems.append(NSURLQueryItem(name:"cd", value: customer.number))
-		queryItems.append(NSURLQueryItem(name:"uc700", value: customer.eMail))
-		queryItems.append(NSURLQueryItem(name:"uc701", value: customer.eMailRecieverId))
-		queryItems.append(NSURLQueryItem(name:"uc702", value: "\(customer.newsletterSubscriptionValue == 0 ? "" : String(customer.newsletterSubscriptionValue))"))
-		queryItems.append(NSURLQueryItem(name:"uc703", value: customer.firstName))
-		queryItems.append(NSURLQueryItem(name:"uc704", value: customer.lastName))
-		queryItems.append(NSURLQueryItem(name:"uc705", value: customer.phoneNumber))
-		queryItems.append(NSURLQueryItem(name:"uc706", value: "\(customer.gender == 0 ? "" : String(customer.gender))"))
-		queryItems.append(NSURLQueryItem(name:"uc707", value: "\(customer.birthday)"))
-		queryItems.append(NSURLQueryItem(name:"uc708", value: customer.city))
-		queryItems.append(NSURLQueryItem(name:"uc709", value: customer.country))
-		queryItems.append(NSURLQueryItem(name:"uc710", value: customer.zip))
-		queryItems.append(NSURLQueryItem(name:"uc711", value: customer.street))
-		queryItems.append(NSURLQueryItem(name:"uc712", value: customer.streetNumber))
-		for (index, value) in customer.categories {
-			queryItems.append(NSURLQueryItem(name:"uc\(index)", value: value))
-		}
-		return queryItems.filter({!$0.value!.isEmpty})
-	}
-}

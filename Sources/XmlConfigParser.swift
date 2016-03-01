@@ -11,7 +11,7 @@ internal class XmlConfigParser: ConfigParser {
 			guard xml[.Root][.TrackingDomain].boolValue && xml[.Root][.TrackId].boolValue, let serverUrl = xml[.Root][.TrackingDomain].element?.text, let trackingId = xml[.Root][.TrackId].element?.text else {
 				fatalError("tracking domain and id needs to be set")
 			}
-			var config = DefaultTrackerConfiguration(serverUrl: serverUrl, trackingId: trackingId)
+			var config = TrackerConfiguration(serverUrl: serverUrl, trackingId: trackingId)
 
 			if xml[.Root][.MaxRequests].boolValue, let maxRequests = Int((xml[.Root][.MaxRequests].element?.text)!) {
 				config.maxRequests = maxRequests

@@ -4,25 +4,29 @@ internal class Queue<T> {
 
 	internal typealias Element = T
 
-	internal var _front: _QueueItem<Element>
-	internal var _back: _QueueItem<Element>
+	internal var front: QueueItem<Element>
+	internal var back: QueueItem<Element>
+
+	internal var itemCount = 0
 
 	internal init () {
 		// Insert empty item. Will disappear when the first item is added.
-		_back = _QueueItem(nil)
-		_front = _back
+		back = QueueItem(nil)
+		front = back
 	}
 
 	/// Add a item to the back of the queue.
 	internal func enqueue (value: Element) {
-		_back.next = _QueueItem(value)
-		_back = _back.next!
+		back.next = QueueItem(value)
+		back = back.next!
+		itemCount += 1
 	}
 
 	/// Return and remove the item at the front of the queue.
 	internal func dequeue () -> Element? {
-		if let newhead = _front.next {
-			_front = newhead
+		if let newhead = front.next {
+			front = newhead
+			itemCount -= 1
 			return newhead.value
 		} else {
 			return nil
@@ -30,13 +34,13 @@ internal class Queue<T> {
 	}
 
 	internal func isEmpty() -> Bool {
-		return _front === _back
+		return front === back
 	}
 }
 
-internal class _QueueItem<T> {
+internal class QueueItem<T> {
 	internal let value: T!
-	internal var next: _QueueItem?
+	internal var next: QueueItem?
 
 	internal init(_ newvalue: T?) {
 		self.value = newvalue

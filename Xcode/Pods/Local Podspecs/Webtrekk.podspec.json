@@ -21,6 +21,7 @@
   "frameworks": [
     "AVKit",
     "Foundation",
-    "UIKit"
+    "UIKit",
+    "SWXMLHash"
   ]
 }
