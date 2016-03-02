@@ -48,6 +48,20 @@ class QueueTest: XCTestCase {
 		XCTAssertTrue(stringQueue.isEmpty())
 	}
 
+	func testRemoveAllStringItemsTillEmpty() {
+		let stringQueue = Queue<String>()
+		XCTAssert(stringQueue.itemCount == 0)
+		for index in 0..<10 {
+			stringQueue.enqueue("Item \(index)")
+			XCTAssert(stringQueue.itemCount == index+1)
+		}
+		XCTAssertFalse(stringQueue.isEmpty())
+		while(stringQueue.itemCount > 0) {
+			XCTAssertNotNil(stringQueue.dequeue()!)
+		}
+		XCTAssertTrue(stringQueue.isEmpty())
+	}
+
 
 	// MARK: Int Tests
 	func testAddOneIntItem() {
@@ -136,12 +150,14 @@ class QueueTest: XCTestCase {
 		let deletingexpectation = expectationWithDescription("deleting completed")
 		let deletingqueue = dispatch_queue_create( "deleting", DISPATCH_QUEUE_SERIAL)
 		dispatch_async(deletingqueue)  {
+			var adding = 1
 			for i in 0..<numberofiterations {
 				if let result = queue.dequeue() {
-					XCTAssertEqual(result, i + 1)
+					XCTAssertEqual(result, i + adding)
 				} else {
 					print(" pausing deleting for one second")
 					sleep(CUnsignedInt(1))
+					adding -= 1
 				}
 			}
 			deletingexpectation.fulfill()

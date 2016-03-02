@@ -7,7 +7,7 @@ public final class Webtrekk {
 	private var plugins = Set<Plugin>()
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
-	
+	private var queue: WebtrekkQueue?
 
 	// MARK: Lifecycle
 
@@ -34,6 +34,7 @@ public final class Webtrekk {
 
 
 	private func setUp() {
+		setUpQueue()
 		setUpOptedOut()
 		setUpLifecycleObserver()
 	}
@@ -49,8 +50,16 @@ public final class Webtrekk {
 		}
 	}
 
+
 	private func setUpOptedOut() {
 		config.optedOut =	NSUserDefaults.standardUserDefaults().boolForKey(UserStoreKey.OptedOut)
+	}
+
+
+	private func setUpQueue() {
+		// TODO: generate backup File url
+		let backupFileUrl = NSURL()
+		queue = WebtrekkQueue(backupFileUrl: backupFileUrl, sendDelay: config.sendDelay, maximumUrlCount: config.maxRequests)
 	}
 
 
@@ -80,6 +89,7 @@ public final class Webtrekk {
 		}
 
 		plugins.insert(plugin)
+
 	}
 
 
@@ -91,21 +101,6 @@ public final class Webtrekk {
 	public func removeAllPlugins() -> Bool {
 		plugins.removeAll()
 		return plugins.isEmpty
-	}
-
-
-	public func handleAfterPluginCall(trackingParameter: TrackingParameter) {
-		for plugin in plugins {
-			plugin.afterTrackingSend(trackingParameter)
-		}
-	}
-
-	// TODO: Consider if plugins can change the trackingParameter, as to add more default parameters or change others. use inout if needed
-
-	public func handleBeforePluginCall(trackingParameter: TrackingParameter) {
-		for plugin in plugins {
-			plugin.beforeTrackingSend(trackingParameter)
-		}
 	}
 
 }

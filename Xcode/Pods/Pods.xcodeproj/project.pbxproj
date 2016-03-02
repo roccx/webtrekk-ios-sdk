@@ -29,6 +29,7 @@
 		9D04AF06118FA5802315E76D14BFEFEF /* Webtrekk-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C7083332EE4C1FD25F2F2573B566590B /* Webtrekk-dummy.m */; };
 		A37E61DD89EF4DDC844E7E972AE58F79 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = D26404508DC075410730B3818BE53C10 /* Logging.swift */; };
 		AFB5F2FF9A190E2416EBB6F6E2612C95 /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1AFBF7F4D160D07CEF1ED77650BE5FB /* AVKit.framework */; };
+		B7733E601C86F43D007857B5 /* Locks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7733E5F1C86F43D007857B5 /* Locks.swift */; };
 		B7FB48CC1C85C9C8001D794C /* UserStoreKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FB48CB1C85C9C8001D794C /* UserStoreKey.swift */; };
 		B7FB48D21C85EB64001D794C /* WebtrekkQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FB48D11C85EB64001D794C /* WebtrekkQueue.swift */; };
 		C4F40D999DD6CD93210155C78CB6B47E /* SWXMLHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AC9384371FB10CA058A756B1C42197E /* SWXMLHash.framework */; };
@@ -98,6 +99,7 @@
 		A7D375B6CA271BF07F1B9A871C959B99 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A8015ECD78E823FD762F6F4E6348E0D7 /* Parameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
 		B18F01E6975A096B0B9356DDEAC22D08 /* Webtrekk-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Webtrekk-prefix.pch"; sourceTree = "<group>"; };
+		B7733E5F1C86F43D007857B5 /* Locks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Locks.swift; sourceTree = "<group>"; };
 		B7FB48CB1C85C9C8001D794C /* UserStoreKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserStoreKey.swift; sourceTree = "<group>"; };
 		B7FB48D11C85EB64001D794C /* WebtrekkQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkQueue.swift; sourceTree = "<group>"; };
 		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -231,19 +233,20 @@
 				CECC67F439D0859437C0F26756364C4F /* ConfigParser.swift */,
 				A648A5B61A12AA8B383571504D629E39 /* Customer.swift */,
 				39209E4B947F4ACD0E8C13F0107359BE /* Extensions.swift */,
-				B7FB48CB1C85C9C8001D794C /* UserStoreKey.swift */,
 				16486B5EF7E221B0EBB43A4CF4BDF654 /* HttpClient.swift */,
+				B7733E5F1C86F43D007857B5 /* Locks.swift */,
 				D26404508DC075410730B3818BE53C10 /* Logging.swift */,
 				5D96D6BF8441E8CD9354BE454A54B641 /* Order.swift */,
+				1EFEFF273ABE142408C53CCEE50978EB /* Parameter */,
 				723599FA59ECA5E6813BEE0FA6585849 /* Plugin.swift */,
 				41A07643272D947D6419859CE08BFDA1 /* Product.swift */,
 				3A03EAFFC4AF0F6D10472D287421363F /* Queue.swift */,
 				0B453070FF1A016226170D8076D40FCA /* Tracker.swift */,
 				F4968995995CAE31699DAFD55AA83E6D /* TrackerConfiguration.swift */,
+				B7FB48CB1C85C9C8001D794C /* UserStoreKey.swift */,
 				467A44701D8162E51C1A602AA6D31A92 /* Webtrekk.swift */,
-				CD39C6F9878AB42ED4DAD7096EC88102 /* XmlConfigParser.swift */,
-				1EFEFF273ABE142408C53CCEE50978EB /* Parameter */,
 				B7FB48D11C85EB64001D794C /* WebtrekkQueue.swift */,
+				CD39C6F9878AB42ED4DAD7096EC88102 /* XmlConfigParser.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -459,6 +462,7 @@
 				7203755EA0A67A27C959DF75B1D8AAE3 /* ParameterName.swift in Sources */,
 				706688BD39C00A3AA5B34DBECA2E4DCF /* PixelParameter.swift in Sources */,
 				FB6EE98C8B4CF25CC99D10B8EB7FDEEE /* Plugin.swift in Sources */,
+				B7733E601C86F43D007857B5 /* Locks.swift in Sources */,
 				B7FB48D21C85EB64001D794C /* WebtrekkQueue.swift in Sources */,
 				3B9377EFDD4AC197C7980FAC73699A38 /* Product.swift in Sources */,
 				1A965FEED3F522D477A60B340B63F71C /* ProductParameter.swift in Sources */,
