@@ -52,6 +52,20 @@ class HttpClientTest_Integration: XCTestCase {
 
 		waitForExpectationsWithTimeout(5, handler: nil)
 		XCTAssertNotNil(data)
+	}
 
+	func testGetRequestWithCompletion() {
+		let url = NSURL(string: "http://www.widgetlabs.eu")!
+		let expectation = expectationWithDescription("Wait for \(url) to be loaded.")
+		var data: NSData?
+
+		client.get(url) { (theData, error) -> Void in
+			data = theData
+			XCTAssertNil(error)
+			expectation.fulfill()
+		}
+
+		waitForExpectationsWithTimeout(5, handler: nil)
+		XCTAssertNotNil(data)
 	}
 }

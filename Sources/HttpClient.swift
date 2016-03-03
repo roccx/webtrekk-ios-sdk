@@ -9,12 +9,19 @@ internal class HttpClient {
 
 	internal func get(url: NSURL, completion: HTTPResult) {
 		let task = session.dataTaskWithURL(url) { (data, response, error) -> Void in
-			if let _ = error {
-				completion(nil, Error.NetworkError)
+			let recoverable: Bool
+			if let error = error {
+				switch error.code {
+				case NSURLErrorBadServerResponse, NSURLErrorCallIsActive, NSURLErrorCancelled, NSURLErrorCannotConnectToHost, NSURLErrorCannotFindHost, NSURLErrorDataNotAllowed, NSURLErrorDNSLookupFailed, NSURLErrorInternationalRoamingOff, NSURLErrorNetworkConnectionLost, NSURLErrorNotConnectedToInternet, NSURLErrorTimedOut, NSURLErrorZeroByteResource:
+					recoverable = true
+				default:
+					recoverable = false
+				}
+				completion(nil, Error.NetworkError(recoverable: recoverable))
 			} else if let response = response as? NSHTTPURLResponse where 200...299 ~= response.statusCode {
 				completion(data, nil)
 			} else {
-				completion(nil, Error.NetworkError)
+				completion(nil, Error.NetworkError(recoverable: false))
 			}
 		}
 		task.resume()
@@ -23,7 +30,7 @@ internal class HttpClient {
 }
 
 enum Error: ErrorType {
-	case NetworkError
+	case NetworkError(recoverable: Bool)
 }
 
 typealias HTTPResult = (NSData?, ErrorType?) -> Void

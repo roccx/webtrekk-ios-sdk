@@ -33,6 +33,14 @@ internal class Queue<T> {
 		}
 	}
 
+	internal func peek() -> Element? {
+		if let newhead = front.next {
+			return newhead.value
+		} else {
+			return nil
+		}
+	}
+
 	internal func isEmpty() -> Bool {
 		return front === back
 	}

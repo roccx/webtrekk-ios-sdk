@@ -6,18 +6,21 @@ internal final class WebtrekkQueue {
 
 	private let _queue = dispatch_queue_create("de.webtrekk.queue", nil)
 	private var _plugins = [Plugin] ()
+	private let httpClient = HttpClient()
 
 	internal let networkConnectionTimeout = 60 // equals to one minute
 	internal let backgroundSessionName = "Webtrekk.BackgroundSession"
+	internal let maximumFailedSends = 5
 	internal private(set) var queue = Queue<TrackingQueueItem>()
 
 	internal private(set) var backupFileUrl: NSURL
 	internal private(set) var initialSendDelay: Int
 	internal private(set) var maximumUrlCount: Int
 	internal private(set) var numberOfSuccessfulSends = 0
+	internal private(set) var numberOfFailedSends = 0
 	internal private(set) var sendDelay: Int
 	internal private(set) var shutdownRequested = false
-
+	internal private(set) var sendNextRequestQueued = false
 
 	internal var plugins: [Plugin] {
 		get {
@@ -147,9 +150,65 @@ extension WebtrekkQueue { // Sending
 			}
 			// TODO: check if there is not already an open connection
 
-			
+
+			guard !self.sendNextRequestQueued else { // check that we are not having any other request already in for delay
+				return
+			}
+
+			self.sendNextRequestQueued = true
+			let delayInSeconds: Int
+			if self.numberOfSuccessfulSends == 0 && self.numberOfFailedSends <  self.maximumFailedSends {
+				delayInSeconds = self.initialSendDelay
+			} else {
+				delayInSeconds = self.sendDelay
+			}
+			delay(delayInSeconds) {
+				self.sendNextRequest()
+			}
+			log("Will process next URL in \(delayInSeconds) seconds")
+		}
+	}
+
+	private func sendNextRequest() {
+		with(_queue) {
+
+			// TODO: old lib testet here to be on main thread
+
+			self.sendNextRequestQueued = false
+
+			guard !self.shutdownRequested else { // nothing will be send if queue is shutting down
+				return
+			}
+
+			guard self.queue.itemCount > 0 else { // if no item is present, there is nothing to be send
+				log("Nothing to do.")
+				return
+			}
+			// TODO: check if there is not already an open connection
+
+			guard let trackingQueueItem = self.queue.dequeue() else {
+				log("This should never happen, but there is no item on the queue even after testing for that.")
+				return
+			}
+
+			self.handleBeforePluginCall(trackingQueueItem.parameter)
+			// TODO: generate NSURL from config and trackingParameter
+			let url = NSURL(string:"http://widgetlabs.eu")!
+			self.httpClient.get(url) { (theData, error) -> Void in
+				// TODO: handle error
+				guard case .NetworkError(let recoverable) = error as! Error where recoverable else {
+					self.queue.dequeue()
+					return
+				}
+				self.sendNextRequestLater()
+			}
 		}
 	}
 
 
+
+}
+
+internal func delay(seconds: Int, closure: ()->()) {
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(seconds * Int(NSEC_PER_SEC))), dispatch_get_main_queue(), closure)
 }

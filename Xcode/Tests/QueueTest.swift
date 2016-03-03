@@ -166,4 +166,14 @@ class QueueTest: XCTestCase {
 		waitForExpectationsWithTimeout( 600, handler:  nil)
 	}
 
+	func testPeek() {
+		let intQueue = Queue<Int>()
+		for index in 0..<10 {
+			intQueue.enqueue(index)
+		}
+		for index in 0..<10 {
+			XCTAssertEqual(intQueue.peek()!, intQueue.dequeue()!)
+		}
+	}
+
 }
