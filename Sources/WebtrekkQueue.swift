@@ -5,6 +5,8 @@ internal final class WebtrekkQueue {
 	internal typealias TrackingQueueItem = (config: TrackerConfiguration, parameter: TrackingParameter)
 
 	private let _queue = dispatch_queue_create("de.webtrekk.queue", nil)
+	private let _pluginsSaveGuard = dispatch_queue_create("de.webtrekk.pluginsSaveGuard", nil)
+
 	private var _plugins = [Plugin] ()
 	private let httpClient = HttpClient()
 
@@ -25,13 +27,13 @@ internal final class WebtrekkQueue {
 	internal var plugins: [Plugin] {
 		get {
 			var result: [Plugin]?
-			with(_queue) {
+			with(_pluginsSaveGuard) {
 				result = self._plugins
 			}
 			return result!
 		}
 		set {
-			with(_queue) {
+			with(_pluginsSaveGuard) {
 				self._plugins = newValue
 			}
 		}
@@ -73,6 +75,7 @@ internal final class WebtrekkQueue {
 			}
 			self.queue.enqueue(TrackingQueueItem(config: config, parameter: trackingParameter))
 		}
+		self.sendNextRequestLater()
 	}
 
 
@@ -121,6 +124,10 @@ extension WebtrekkQueue {
 extension WebtrekkQueue { // Plugins
 
 	internal func handleAfterPluginCall(trackingParameter: TrackingParameter) {
+		guard !plugins.isEmpty else {
+			return
+		}
+
 		for plugin in plugins {
 			plugin.afterTrackingSend(trackingParameter)
 		}
@@ -129,6 +136,10 @@ extension WebtrekkQueue { // Plugins
 	// TODO: Consider if plugins can change the trackingParameter, as to add more default parameters or change others. use inout if needed
 
 	internal func handleBeforePluginCall(trackingParameter: TrackingParameter) {
+		guard !plugins.isEmpty else {
+			return
+		}
+
 		for plugin in plugins {
 			plugin.beforeTrackingSend(trackingParameter)
 		}
@@ -165,7 +176,7 @@ extension WebtrekkQueue { // Sending
 			delay(delayInSeconds) {
 				self.sendNextRequest()
 			}
-			log("Will process next URL in \(delayInSeconds) seconds")
+
 		}
 	}
 
@@ -186,21 +197,26 @@ extension WebtrekkQueue { // Sending
 			}
 			// TODO: check if there is not already an open connection
 
-			guard let trackingQueueItem = self.queue.dequeue() else {
+			guard let trackingQueueItem = self.queue.peek() else {
 				log("This should never happen, but there is no item on the queue even after testing for that.")
 				return
 			}
 
 			self.handleBeforePluginCall(trackingQueueItem.parameter)
 			// TODO: generate NSURL from config and trackingParameter
-			let url = NSURL(string:"http://widgetlabs.eu")!
+			let url = NSURL(string:"https://widgetlabs.eu")!
 			self.httpClient.get(url) { (theData, error) -> Void in
 				// TODO: handle error
-				guard case .NetworkError(let recoverable) = error as! Error where recoverable else {
+				defer {
+					self.sendNextRequestLater()
+				}
+				guard let error = error else {
 					self.queue.dequeue()
 					return
 				}
-				self.sendNextRequestLater()
+				if case .NetworkError(let recoverable) = error as! Error where !recoverable {
+					self.queue.dequeue()
+				}
 			}
 		}
 	}
@@ -210,5 +226,5 @@ extension WebtrekkQueue { // Sending
 }
 
 internal func delay(seconds: Int, closure: ()->()) {
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(seconds * Int(NSEC_PER_SEC))), dispatch_get_main_queue(), closure)
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(seconds) * Int64(NSEC_PER_SEC)), dispatch_get_main_queue(), closure)
 }

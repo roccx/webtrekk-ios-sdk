@@ -78,6 +78,7 @@ public final class Webtrekk {
 
 	private func enqueue(trackingParameter: TrackingParameter, config: TrackerConfiguration) {
 		// TODO: add to queue
+		queue?.add(trackingParameter, config: config)
 	}
 
 
