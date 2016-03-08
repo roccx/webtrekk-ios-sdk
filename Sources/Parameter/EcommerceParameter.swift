@@ -23,3 +23,22 @@ public enum EcommerceStatus: String {
 	case CONF = "conf"
 	case VIEW = "view"
 }
+
+extension EcommerceParameter: Parameter {
+	internal var urlParameter: String {
+		get {
+			var urlParameter = ""
+			if !currency.isEmpty {
+				urlParameter += ParameterName.urlParameter(fromName: .EcomCurrency, andValue: currency)
+			}
+
+			if !details.isEmpty {
+				for (index, value) in details {
+
+					urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCurrency, withIndex: index, andValue: value))"
+				}
+			}
+			return urlParameter
+		}
+	}
+}

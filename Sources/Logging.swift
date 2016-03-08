@@ -1,11 +1,11 @@
 import Foundation
 
 
-#if DEBUG
+//#if DEBUG
 	public var logEnabled = true
-#else
-	public var logEnabled = false
-#endif
+//#else
+//	public var logEnabled = false
+//#endif
 
 
 public func log(@autoclosure messageClosure: Void throws -> String, function: StaticString = #function, file: StaticString = #file, line: UInt = #line) rethrows {

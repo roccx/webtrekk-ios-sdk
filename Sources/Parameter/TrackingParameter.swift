@@ -3,9 +3,10 @@ import UIKit
 
 public protocol TrackingParameter {
 	var ecommerceParameter: EcommerceParameter? { get set }
-	var generalParameter:   GeneralParameter   { get }
-	var pixelParameter:     PixelParameter     { get }
-	var productParameters:  [ProductParameter] { get set }
+	var generalParameter:   GeneralParameter    { get }
+	var pixelParameter:     PixelParameter      { get }
+	var productParameters:  [ProductParameter]  { get set }
+	//func urlWithAllParameter(config: TrackerConfiguration) -> String // this will render casting uneccessary but will promote the function to public
 }
 
 extension TrackingParameter {
@@ -78,27 +79,21 @@ extension TrackingParameter {
 
 			}
 		}
-		urlParameter += "\(ParameterName.ProductName.rawValue)=\(name.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
-		urlParameter += "&\(ParameterName.EcomCurrency.rawValue)=\(currency)"
-		urlParameter += "&\(ParameterName.ProductPrice.rawValue)=\(price)"
-		urlParameter += "&\(ParameterName.ProductQuantity.rawValue)=\(quantity)"
-		for (key, value) in categories {
-			urlParameter += "&\(ParameterName.ProductCategory.rawValue)\(key)=\(value.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
+		urlParameter += "\(ParameterName.urlParameter(fromName: .ProductName, andValue: name))"
+		if !currency.isEmpty {
+			urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCurrency, andValue: currency))"
+		}
+		if !price.isEmpty {
+			urlParameter += "&\(ParameterName.urlParameter(fromName: .ProductPrice, andValue: price))"
+		}
+		if !quantity.isEmpty {
+			urlParameter += "&\(ParameterName.urlParameter(fromName: .ProductQuantity, andValue: quantity))"
+		}
+
+		for (index, value) in categories {
+			urlParameter += "&\(ParameterName.urlParameter(fromName: .ProductCategory, withIndex: index, andValue: value))"
 		}
 		return urlParameter
-	}
-}
-
-extension ActionTrackingParameter {
-	func urlWithAllParameter(config: TrackerConfiguration) -> String {
-		var url = config.baseUrl.absoluteString
-		url += "?\(pixelParameter.urlParameter)"
-		url += "&\(generalParameter.urlParameter)"
-		url += "&\(actionParameter.urlParameter)"
-		if !productParameters.isEmpty {
-			url += "&\(urlProductParameters())"
-		}
-		return url
 	}
 }
 
@@ -144,5 +139,37 @@ public struct PageTrackingParameter: TrackingParameter{
 		self.generalParameter = GeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
 		generalParameter.everId = self.everId
 		generalParameter.userAgent = userAgent
+	}
+}
+
+
+extension ActionTrackingParameter {
+	func urlWithAllParameter(config: TrackerConfiguration) -> String {
+		var url = config.baseUrl.absoluteString
+		url += "?\(pixelParameter.urlParameter)"
+		url += "&\(generalParameter.urlParameter)"
+		if !actionParameter.urlParameter.isEmpty {
+			url += "&\(actionParameter.urlParameter)"
+		}
+		if !productParameters.isEmpty {
+			url += "&\(urlProductParameters())"
+		}
+		return url
+	}
+}
+
+
+extension PageTrackingParameter {
+	func urlWithAllParameter(config: TrackerConfiguration) -> String {
+		var url = config.baseUrl.absoluteString
+		url += "?\(pixelParameter.urlParameter)"
+		url += "&\(generalParameter.urlParameter)"
+		if !pageParameter.urlParameter.isEmpty {
+			url += "\(pageParameter.urlParameter)"
+		}
+		if !productParameters.isEmpty {
+			url += "&\(urlProductParameters())"
+		}
+		return url
 	}
 }

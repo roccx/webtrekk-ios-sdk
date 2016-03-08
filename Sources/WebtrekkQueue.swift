@@ -151,12 +151,20 @@ extension WebtrekkQueue { // Sending
 
 	private func sendNextRequestLater() {
 		with(_queue) {
-			// TODO: old lib testet here to be on main thread
+
+//			TODO: check old lib ensured to run on main thread
+//			guard NSThread.isMainThread() else {
+//				dispatch_async(dispatch_get_main_queue()) {
+//					self.sendNextRequestLater()
+//				}
+//				return
+//			}
 			guard !self.shutdownRequested else { // nothing will be send if queue is shutting down
 				return
 			}
 
 			guard self.queue.itemCount > 0 else { // if no item is present, there is nothing to be send
+				log("Nothing to do.")
 				return
 			}
 			// TODO: check if there is not already an open connection
@@ -173,6 +181,7 @@ extension WebtrekkQueue { // Sending
 			} else {
 				delayInSeconds = self.sendDelay
 			}
+			log("Sending next request in \(delayInSeconds) sec.")
 			delay(delayInSeconds) {
 				self.sendNextRequest()
 			}
@@ -183,7 +192,14 @@ extension WebtrekkQueue { // Sending
 	private func sendNextRequest() {
 		with(_queue) {
 
-			// TODO: old lib testet here to be on main thread
+//			TODO: check old lib ensured to run on main thread
+//			guard NSThread.isMainThread() else {
+//				dispatch_async(dispatch_get_main_queue()) {
+//					self.sendNextRequestQueued = true
+//					self.sendNextRequest()
+//				}
+//				return
+//			}
 
 			self.sendNextRequestQueued = false
 
@@ -204,16 +220,27 @@ extension WebtrekkQueue { // Sending
 
 			self.handleBeforePluginCall(trackingQueueItem.parameter)
 			// TODO: generate NSURL from config and trackingParameter
-			let url = NSURL(string:"https://widgetlabs.eu")!
+			let url: NSURL // = NSURL(string:"https://widgetlabs.eu")!
+			if let pageTrackingParameter = trackingQueueItem.parameter as? PageTrackingParameter {
+				url = NSURL(string:pageTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
+			} else if let actionTrackingParameter = trackingQueueItem.parameter as? ActionTrackingParameter {
+				url = NSURL(string:actionTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
+			} else {
+				fatalError("only PageTrackingParameter and ActionTrackingParameter expected at this Point")
+			}
+			log("Request \(url) will be send now.")
 			self.httpClient.get(url) { (theData, error) -> Void in
 				// TODO: handle error
 				defer {
 					self.sendNextRequestLater()
 				}
 				guard let error = error else {
+					self.numberOfSuccessfulSends = 1
+					self.numberOfFailedSends = 0
 					self.queue.dequeue()
 					return
 				}
+				self.numberOfFailedSends += 1
 				if case .NetworkError(let recoverable) = error as! Error where !recoverable {
 					self.queue.dequeue()
 				}

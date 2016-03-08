@@ -14,11 +14,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		window = UIWindow(frame: UIScreen.mainScreen().bounds)
 		if let window = window {
 			window.backgroundColor = UIColor.whiteColor()
-			window.rootViewController = UINavigationController(rootViewController: MainTestViewController())
+			let tabBarController = UITabBarController()
+			tabBarController.viewControllers = [MainTestViewController(), FirstTestViewController()]
+			tabBarController
+			window.rootViewController = tabBarController //UINavigationController(rootViewController: MainTestViewController())
 			window.makeKeyAndVisible()
 		}
 
-		webtrekk = Webtrekk(config: TrackerConfiguration(serverUrl: "http://usesecure.domain.plz", trackingId: "123456789012345"))
+		webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://usesecure.domain.plz", trackingId: "123456789012345"))
 
 		print("Startup complete!")
 		return true

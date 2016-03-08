@@ -64,3 +64,16 @@ internal enum ParameterName: String {
 	case MediaVolumn          = "vol"
 
 }
+
+extension ParameterName {
+
+	static func urlParameter(fromName name: ParameterName, andValue value: String) -> String {
+		return "\(name.rawValue)=\(value.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
+	}
+
+
+	static func urlParameter(fromName name: ParameterName, withIndex index: Int, andValue value: String) -> String {
+		return "\(name.rawValue)\(index)=\(value.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
+	}
+
+}

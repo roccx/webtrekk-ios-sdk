@@ -15,6 +15,7 @@
 		B78DF2151C74C730002AADDF /* DefaultConfigIncludingAndroid.xml in Resources */ = {isa = PBXBuildFile; fileRef = B78DF2131C74C730002AADDF /* DefaultConfigIncludingAndroid.xml */; };
 		B792C5DF1C7B53220093DF35 /* ParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B792C5DE1C7B53220093DF35 /* ParameterTest.swift */; };
 		B7957BD81C6B56A200C6161D /* Webtrekk.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7957BD71C6B56A200C6161D /* Webtrekk.swift */; };
+		B7A7529C1C8F2BBC00AC8872 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A7529B1C8F2BBC00AC8872 /* UIHelper.swift */; };
 		B7B219BB1C6CAF3300A237FF /* QueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B219BA1C6CAF3300A237FF /* QueueTest.swift */; };
 		B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */; };
 		B7BBD84C1C7C572800FE4E2A /* HttpClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7BBD84B1C7C572800FE4E2A /* HttpClientTest.swift */; };
@@ -34,6 +35,7 @@
 		B78DF2131C74C730002AADDF /* DefaultConfigIncludingAndroid.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DefaultConfigIncludingAndroid.xml; sourceTree = "<group>"; };
 		B792C5DE1C7B53220093DF35 /* ParameterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterTest.swift; sourceTree = "<group>"; };
 		B7957BD71C6B56A200C6161D /* Webtrekk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Webtrekk.swift; sourceTree = "<group>"; };
+		B7A7529B1C8F2BBC00AC8872 /* UIHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
 		B7B219BA1C6CAF3300A237FF /* QueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueueTest.swift; sourceTree = "<group>"; };
 		B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
 		B7BBD84B1C7C572800FE4E2A /* HttpClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpClientTest.swift; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				498683321BE405D6001DCBC7 /* Info.plist */,
 				498683331BE405D6001DCBC7 /* LaunchScreen.storyboard */,
 				B7FB48CD1C85DAF4001D794C /* MainTestViewController.swift */,
+				B7A7529B1C8F2BBC00AC8872 /* UIHelper.swift */,
 				B7FB48CF1C85E30E001D794C /* FirstTestViewController.swift */,
 			);
 			path = Sources;
@@ -328,6 +331,7 @@
 				498683361BE405D6001DCBC7 /* AppDelegate.swift in Sources */,
 				B7FB48CE1C85DAF4001D794C /* MainTestViewController.swift in Sources */,
 				B7FB48D01C85E30E001D794C /* FirstTestViewController.swift in Sources */,
+				B7A7529C1C8F2BBC00AC8872 /* UIHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

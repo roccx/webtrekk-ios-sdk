@@ -29,20 +29,20 @@ public struct GeneralParameter {
 extension GeneralParameter: Parameter {
 	internal var urlParameter: String {
 		get {
-			var urlParameter = "\(ParameterName.EverId.rawValue)=\(everId)"
+			var urlParameter = ParameterName.urlParameter(fromName: .EverId, andValue: everId)
 			if firstStart {
-				urlParameter += "&\(ParameterName.FirstStart.rawValue)=1"
+				urlParameter += "&\(ParameterName.urlParameter(fromName: .FirstStart, andValue: "1"))"
 			}
 			if !ip.isEmpty {
-				urlParameter += "&\(ParameterName.IpAddress.rawValue)=\(ip)"
+				urlParameter += "&\(ParameterName.urlParameter(fromName: .IpAddress, andValue: ip))"
 			}
 			if !nationalCode.isEmpty {
-				urlParameter += "&\(ParameterName.NationalCode.rawValue)=\(nationalCode)"
+				urlParameter += "&\(ParameterName.urlParameter(fromName: .NationalCode, andValue: nationalCode))"
 			}
-			urlParameter += "&\(ParameterName.SamplingRate.rawValue)=\(samplingRate)"
-			urlParameter += "&\(ParameterName.TimeStamp.rawValue)=\(timeStamp)"
-			urlParameter += "&\(ParameterName.TimeZoneOffset.rawValue)=\(timeZoneOffset)"
-			urlParameter += "&\(ParameterName.UserAgent.rawValue)=\(userAgent.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
+			urlParameter += "&\(ParameterName.urlParameter(fromName: .SamplingRate, andValue: "\(samplingRate)"))"
+			urlParameter += "&\(ParameterName.urlParameter(fromName: .TimeStamp, andValue: "\(timeStamp)"))"
+			urlParameter += "&\(ParameterName.urlParameter(fromName: .TimeZoneOffset, andValue: "\(timeZoneOffset)"))"
+			urlParameter += "&\(ParameterName.urlParameter(fromName: .UserAgent, andValue: userAgent))"
 
 			return urlParameter
 		}

@@ -18,15 +18,17 @@ public struct ActionParameter {
 extension ActionParameter: Parameter {
 	internal var urlParameter: String {
 		get {
-			var urlParameter = "\(ParameterName.ActionName.rawValue)=\(name)"
+			var urlParameter = ParameterName.urlParameter(fromName: .ActionName, andValue: name)
+
 			if !categories.isEmpty {
-				for (key, value) in categories {
-					urlParameter += "&\(ParameterName.ActionCategory.rawValue)\(key)=\(value.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
+				for (index, value) in categories {
+					urlParameter += "&\(ParameterName.urlParameter(fromName: .ActionCategory, withIndex: index, andValue: value))"
 				}
 			}
+
 			if !session.isEmpty {
-				for (key, value) in session {
-					urlParameter += "&\(ParameterName.Session.rawValue)\(key)=\(value.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
+				for (index, value) in session {
+					urlParameter += "&\(ParameterName.urlParameter(fromName: .Session, withIndex: index, andValue: value))"
 				}
 			}
 			return urlParameter
