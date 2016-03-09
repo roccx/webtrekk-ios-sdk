@@ -8,7 +8,7 @@ public struct EcommerceParameter {
 	public var totalValue:   Double
 	public var voucherValue: Double?
 
-	public init(currency: String = "", details: [Int: String] = [Int:String](), orderNumber: String = "", status: EcommerceStatus = .VIEW, totalValue: Double, voucherValue: Double?) {
+	public init(currency: String = "", details: [Int: String] = [Int:String](), orderNumber: String = "", status: EcommerceStatus = .VIEW, totalValue: Double, voucherValue: Double? = nil) {
 		self.currency = currency
 		self.details = details
 		self.orderNumber = orderNumber

@@ -41,7 +41,7 @@ internal enum ParameterName: String {
 	case CustomerCity          = "uc708"
 	case CustomerCountry       = "uc709"
 	case CustomerEmail         = "uc700"
-	case CustomerEmailReciever = "uc701"
+	case CustomerEmailReceiver = "uc701"
 	case CustomerFirstName     = "uc703"
 	case CustomerGender        = "uc706"
 	case CustomerLastName      = "uc704"

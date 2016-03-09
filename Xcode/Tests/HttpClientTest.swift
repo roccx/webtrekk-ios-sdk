@@ -11,7 +11,7 @@ class HttpClientTest: XCTestCase {
 
 	override func setUp() {
 		super.setUp()
-		client = HttpClient(session: session)
+		client = DefaultHttpClient(session: session)
 	}
 
 	func testGetRequest() {
@@ -36,7 +36,7 @@ class HttpClientTest_Integration: XCTestCase {
 
 	override func setUp() {
 		super.setUp()
-		client = HttpClient()
+		client = DefaultHttpClient()
 	}
 
 	func testGetRequest() {

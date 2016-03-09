@@ -8,7 +8,7 @@ internal final class WebtrekkQueue {
 	private let _pluginsSaveGuard = dispatch_queue_create("de.webtrekk.pluginsSaveGuard", nil)
 
 	private var _plugins = [Plugin] ()
-	private let httpClient = HttpClient()
+	private let httpClient = DefaultHttpClient()
 
 	internal let networkConnectionTimeout = 60 // equals to one minute
 	internal let backgroundSessionName = "Webtrekk.BackgroundSession"
