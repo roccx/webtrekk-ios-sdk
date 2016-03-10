@@ -2,7 +2,7 @@ import Foundation
 
 
 //#if DEBUG
-	public var logEnabled = true
+public var logEnabled = true
 //#else
 //	public var logEnabled = false
 //#endif

@@ -21,7 +21,6 @@
 		7155D4B257235C5A0B72B1123632530E /* ActionParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98DD7DF63354CA81669F925398440D43 /* ActionParameter.swift */; };
 		7203755EA0A67A27C959DF75B1D8AAE3 /* ParameterName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128C0A7DAA8CA3E9B92BB19BB94922E0 /* ParameterName.swift */; };
 		79C87CA628B04C13979974007D52F954 /* ConfigParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECC67F439D0859437C0F26756364C4F /* ConfigParser.swift */; };
-		814F569C2F7BEB4A2543A3FE5175DE71 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B453070FF1A016226170D8076D40FCA /* Tracker.swift */; };
 		88764964A77A2DB205D38D51E4994688 /* TrackingParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C09C9D79D375CE2BC95BD2D6EC68C6 /* TrackingParameter.swift */; };
 		8E70DE6C1F24DDD9B9BD6E738004D4CE /* Pods-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 894E5DA93A9F359521A89826BE6DA777 /* Pods-dummy.m */; };
 		9D04AF06118FA5802315E76D14BFEFEF /* Webtrekk-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C7083332EE4C1FD25F2F2573B566590B /* Webtrekk-dummy.m */; };
@@ -32,6 +31,7 @@
 		B708D30A1C90188B00FEFC37 /* NSURLSessionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708D3091C90188B00FEFC37 /* NSURLSessionExtensions.swift */; };
 		B708D3101C90256E00FEFC37 /* CustomerParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708D30F1C90256E00FEFC37 /* CustomerParameter.swift */; };
 		B708D3121C903AFD00FEFC37 /* BackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708D3111C903AFD00FEFC37 /* BackupManager.swift */; };
+		B75D19431C91AB9D00499968 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75D19421C91AB9D00499968 /* FileManager.swift */; };
 		B7733E601C86F43D007857B5 /* Locks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7733E5F1C86F43D007857B5 /* Locks.swift */; };
 		B7FB48CC1C85C9C8001D794C /* UserStoreKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FB48CB1C85C9C8001D794C /* UserStoreKey.swift */; };
 		B7FB48D21C85EB64001D794C /* WebtrekkQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FB48D11C85EB64001D794C /* WebtrekkQueue.swift */; };
@@ -68,7 +68,6 @@
 
 /* Begin PBXFileReference section */
 		0AC9384371FB10CA058A756B1C42197E /* SWXMLHash.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SWXMLHash.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/SWXMLHash.framework; sourceTree = DEVELOPER_DIR; };
-		0B453070FF1A016226170D8076D40FCA /* Tracker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		1258BA723ADDFDB13975E90115493E3E /* ProductParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProductParameter.swift; sourceTree = "<group>"; };
 		128C0A7DAA8CA3E9B92BB19BB94922E0 /* ParameterName.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ParameterName.swift; sourceTree = "<group>"; };
 		21C09C9D79D375CE2BC95BD2D6EC68C6 /* TrackingParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackingParameter.swift; sourceTree = "<group>"; };
@@ -103,6 +102,7 @@
 		B708D3091C90188B00FEFC37 /* NSURLSessionExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSURLSessionExtensions.swift; sourceTree = "<group>"; };
 		B708D30F1C90256E00FEFC37 /* CustomerParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomerParameter.swift; sourceTree = "<group>"; };
 		B708D3111C903AFD00FEFC37 /* BackupManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackupManager.swift; sourceTree = "<group>"; };
+		B75D19421C91AB9D00499968 /* FileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 		B7733E5F1C86F43D007857B5 /* Locks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Locks.swift; sourceTree = "<group>"; };
 		B7FB48CB1C85C9C8001D794C /* UserStoreKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserStoreKey.swift; sourceTree = "<group>"; };
 		B7FB48D11C85EB64001D794C /* WebtrekkQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkQueue.swift; sourceTree = "<group>"; };
@@ -245,10 +245,10 @@
 				B708D3111C903AFD00FEFC37 /* BackupManager.swift */,
 				41A07643272D947D6419859CE08BFDA1 /* Product.swift */,
 				3A03EAFFC4AF0F6D10472D287421363F /* Queue.swift */,
-				0B453070FF1A016226170D8076D40FCA /* Tracker.swift */,
 				F4968995995CAE31699DAFD55AA83E6D /* TrackerConfiguration.swift */,
 				B7FB48CB1C85C9C8001D794C /* UserStoreKey.swift */,
 				467A44701D8162E51C1A602AA6D31A92 /* Webtrekk.swift */,
+				B75D19421C91AB9D00499968 /* FileManager.swift */,
 				B7FB48D11C85EB64001D794C /* WebtrekkQueue.swift */,
 				CD39C6F9878AB42ED4DAD7096EC88102 /* XmlConfigParser.swift */,
 			);
@@ -465,6 +465,7 @@
 				7155D4B257235C5A0B72B1123632530E /* ActionParameter.swift in Sources */,
 				79C87CA628B04C13979974007D52F954 /* ConfigParser.swift in Sources */,
 				B708D30A1C90188B00FEFC37 /* NSURLSessionExtensions.swift in Sources */,
+				B75D19431C91AB9D00499968 /* FileManager.swift in Sources */,
 				6B3F5ADBA2E149FF82596FC6DF76F888 /* EcommerceParameter.swift in Sources */,
 				EC0936E00429488BC60095E9F92E69A2 /* Extensions.swift in Sources */,
 				E91BA7CC6C6C4452EF50C5C087A4E4CE /* GeneralParameter.swift in Sources */,
@@ -481,7 +482,6 @@
 				3B9377EFDD4AC197C7980FAC73699A38 /* Product.swift in Sources */,
 				1A965FEED3F522D477A60B340B63F71C /* ProductParameter.swift in Sources */,
 				EF50ACB19900B5078B0C3ACE49BD51F2 /* Queue.swift in Sources */,
-				814F569C2F7BEB4A2543A3FE5175DE71 /* Tracker.swift in Sources */,
 				B7FB48CC1C85C9C8001D794C /* UserStoreKey.swift in Sources */,
 				B708D3061C90183B00FEFC37 /* HttpClient.swift in Sources */,
 				F4AF1AF0E650933DAD35F84A78EDA5B6 /* TrackerConfiguration.swift in Sources */,

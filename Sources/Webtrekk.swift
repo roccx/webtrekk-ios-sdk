@@ -8,6 +8,7 @@ public final class Webtrekk {
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
 	private var queue: WebtrekkQueue?
+	private lazy var fileManager = FileManager()
 
 	// MARK: Lifecycle
 
@@ -28,15 +29,51 @@ public final class Webtrekk {
 
 	public init(config: TrackerConfiguration) {
 		self.config = config
-
 		setUp()
 	}
 
 
 	private func setUp() {
+		setUpConfig()
 		setUpQueue()
 		setUpOptedOut()
 		setUpLifecycleObserver()
+	}
+
+	private func setUpConfig() {
+		// TODO: check if there is a local dump of the config saved
+		if let localConfig = fileManager.restoreConfiguration(config.trackingId) where localConfig.version > config.version{
+			config = localConfig
+		}
+		else {
+			fileManager.saveConfiguration(config)
+		}
+
+		guard config.enableRemoteConfiguration && !config.remoteConfigurationUrl.isEmpty, let url = NSURL(string: config.remoteConfigurationUrl) else {
+			return
+		}
+
+		let httpClient = DefaultHttpClient()
+		httpClient.get(url) { (data, error) -> Void in
+			guard let xmlData = data else {
+				log("No data could be retrieved from \(self.config.remoteConfigurationUrl).")
+				return
+			}
+			guard let xmlString = String(data: xmlData, encoding: NSUTF8StringEncoding) else {
+				log("Cannot retrieve data retreived from \(self.config.remoteConfigurationUrl)")
+				return
+			}
+
+			let config = XmlConfigParser(xmlString: xmlString).trackerConfiguration
+
+			guard config.version > self.config.version else {
+				log("Remote configuration is not newer then the currently used.")
+				return
+			}
+			log("Updating tracker config from version \(self.config.version) to new version \(config.version)")
+			self.config = config
+			self.fileManager.saveConfiguration(config)
+		}
 	}
 
 

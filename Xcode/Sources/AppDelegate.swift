@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			window.makeKeyAndVisible()
 		}
 
-		webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://usesecure.domain.plz", trackingId: "123456789012345"))
+		webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://usesecure.domain.plz", trackingId: "123456789012345", version: 0))
 
 		print("Startup complete!")
 		return true

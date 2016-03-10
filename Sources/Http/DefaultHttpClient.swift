@@ -26,5 +26,4 @@ internal final class DefaultHttpClient: HttpClient {
 		}
 		task.resume()
 	}
-	
 }

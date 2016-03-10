@@ -30,17 +30,21 @@ internal struct BackupManager {
 			return
 		}
 
+		// TODO: Save to file
+
 	}
 
 
 	internal func restoreFromDisc(config: TrackerConfiguration) -> Queue<WebtrekkQueue.TrackingQueueItem> {
-
+		// TODO: get file storage location based on tracker config
+		
 		return Queue<WebtrekkQueue.TrackingQueueItem>()
 	}
 }
 
 internal protocol Backupable {
 	func toJson() -> [String: AnyObject]
+	static func fromJson(json: [String: AnyObject]) -> Self?
 }
 
 extension TrackerConfiguration: Backupable {
@@ -150,8 +154,27 @@ extension ActionTrackingParameter: Backupable {
 		return items
 	}
 
-	internal static func fromJson(json: [String: AnyObject]) {
-		// TODO: do it
+	internal static func fromJson(json: [String: AnyObject]) -> ActionTrackingParameter? {
+		guard let actionParameterJson = json["actionParameter"] as? [String: AnyObject], let actionParameter = ActionParameter.fromJson(actionParameterJson) else {
+			return nil
+		}
+		var parameter = ActionTrackingParameter(actionParameter: actionParameter)
+
+		guard let pixelParameterJson = json["pixelParameter"] as? [String: AnyObject], let pixelParameter = PixelParameter.fromJson(pixelParameterJson) else {
+			return nil
+		}
+		parameter.pixelParameter = pixelParameter
+
+		guard let generalParameterJson = json["generalParameter"] as? [String: AnyObject], let generalParameter = GeneralParameter.fromJson(generalParameterJson) else {
+			return nil
+		}
+		parameter.generalParameter = generalParameter
+
+		if let productParametersJson = json["productParameters"] as? [[String: AnyObject]] {
+			parameter.productParameters = productParametersJson.map({ProductParameter.fromJson($0)!})
+		}
+
+		return parameter
 	}
 }
 
@@ -169,8 +192,27 @@ extension PageTrackingParameter: Backupable {
 	}
 
 
-	internal static func fromJson(json: [String: AnyObject]) {
-		// TODO: do it
+	internal static func fromJson(json: [String: AnyObject]) -> PageTrackingParameter? {
+		guard let pageParameterJson = json["pageParameter"] as? [String: AnyObject], let pageParameter = PageParameter.fromJson(pageParameterJson) else {
+			return nil
+		}
+		var parameter = PageTrackingParameter(pageParameter: pageParameter)
+
+		guard let pixelParameterJson = json["pixelParameter"] as? [String: AnyObject], let pixelParameter = PixelParameter.fromJson(pixelParameterJson) else {
+			return nil
+		}
+		parameter.pixelParameter = pixelParameter
+
+		guard let generalParameterJson = json["generalParameter"] as? [String: AnyObject], let generalParameter = GeneralParameter.fromJson(generalParameterJson) else {
+			return nil
+		}
+		parameter.generalParameter = generalParameter
+
+		if let productParametersJson = json["productParameters"] as? [[String: AnyObject]] {
+			parameter.productParameters = productParametersJson.map({ProductParameter.fromJson($0)!})
+		}
+
+		return parameter
 	}
 }
 

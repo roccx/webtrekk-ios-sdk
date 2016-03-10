@@ -30,7 +30,7 @@
             hideIssues = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B18D36A5D1D4E4B78586ACA8D9EFF8D2"
+               BlueprintIdentifier = "BA0148FE1E862631B966319EAE5146D3"
                BuildableName = "Webtrekk.framework"
                BlueprintName = "Webtrekk"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
