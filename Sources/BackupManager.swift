@@ -3,13 +3,17 @@ import UIKit
 
 internal struct BackupManager {
 
-	internal func saveToDisc(queue: Queue<WebtrekkQueue.TrackingQueueItem>) {
+	private let fileManager = FileManager()
+
+	internal func saveToDisc(fileUrl: NSURL, queue: Queue<WebtrekkQueue.TrackingQueueItem>) {
 		var json = [AnyObject]()
+		let itemCount = queue.itemCount
+		var array: [WebtrekkQueue.TrackingQueueItem] = []
 		repeat {
 			guard let item = queue.dequeue() else {
 				break
 			}
-
+			array.append(item)
 			var items = [String: AnyObject]()
 			if let action = item.parameter as? ActionTrackingParameter{
 				items["parameters"] = action.toJson()
@@ -25,20 +29,56 @@ internal struct BackupManager {
 			json.append(items)
 		} while queue.itemCount > 0
 
-		guard NSJSONSerialization.isValidJSONObject(json) else {
+		for item in array {
+			queue.enqueue(item)
+		}
+		
+		guard NSJSONSerialization.isValidJSONObject(json), let data = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions()) else {
 			log("something went wrong during backup")
 			return
 		}
 
-		// TODO: Save to file
-
+		fileManager.saveData(toFileUrl: fileUrl, data: data)
+		log("Stored \(itemCount) to disc.")
 	}
 
 
-	internal func restoreFromDisc(config: TrackerConfiguration) -> Queue<WebtrekkQueue.TrackingQueueItem> {
-		// TODO: get file storage location based on tracker config
-		
-		return Queue<WebtrekkQueue.TrackingQueueItem>()
+	internal func restoreFromDisc(fileUrl: NSURL) -> Queue<WebtrekkQueue.TrackingQueueItem> {
+		let queue = Queue<WebtrekkQueue.TrackingQueueItem>()
+		// get file storage location based on tracker config
+		guard let data = fileManager.restoreData(fromFileUrl: fileUrl) else {
+			return queue
+		}
+		guard let json: [AnyObject] = (try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions())) as? [AnyObject] else {
+			log("Data was not a valid json to be restored.")
+			return queue
+		}
+		for item in json {
+			let config: TrackerConfiguration
+			let parameter: TrackingParameter
+			if let type: String = item["type"] as? String where type == "page" {
+				guard let page = PageTrackingParameter.fromJson(item["parameters"] as! [String: AnyObject]) else {
+					continue
+				}
+				parameter = page
+			}
+			else if let type: String = item["type"] as? String where type == "action"{
+				guard let action = ActionTrackingParameter.fromJson(item["parameters"] as! [String: AnyObject]) else {
+					continue
+				}
+				parameter = action
+			}
+			else {
+				log("Item was of neither page or action type and cannot be restored at the moment.")
+				continue
+			}
+			guard let trackerConfig = TrackerConfiguration.fromJson(item["config"] as! [String: AnyObject]) else {
+				continue
+			}
+			config = trackerConfig
+			queue.enqueue(WebtrekkQueue.TrackingQueueItem(config:config, parameter: parameter))
+		}
+		return queue
 	}
 }
 

@@ -32,7 +32,10 @@ public struct CustomerParameter {
 		self.zip = zip
 	}
 
-	
+	// TODO: add to TrackingParameter and implement Backupable
+	// TODO: refactor dates to date obj and only extract string for url generation
+
+
 	public var birthday:        String {
 		didSet{
 			guard oldValue != birthday else {
@@ -41,7 +44,7 @@ public struct CustomerParameter {
 
 			guard birthday.characters.count == 0 || birthday.characters.count == 8 else {
 				log("birthday needs to be formated as yyyymmdd")
-				birthday = ""
+				birthday = oldValue
 				return
 			}
 		}
@@ -55,7 +58,7 @@ public struct CustomerParameter {
 
 			guard gender == "1" || gender == "2" else {
 				log("gender only can have 1 for male or 2 for female as value")
-				newsletter = ""
+				gender = oldValue
 				return
 			}
 		}
@@ -70,7 +73,7 @@ public struct CustomerParameter {
 
 			guard newsletter == "1" || newsletter == "2" else {
 				log("newsletter only can have 1 for true|yes or 2 for false|no as value")
-				newsletter = ""
+				newsletter = oldValue
 				return
 			}
 		}

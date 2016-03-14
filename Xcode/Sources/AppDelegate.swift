@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			let tabBarController = UITabBarController()
 			tabBarController.viewControllers = [MainTestViewController(), FirstTestViewController()]
 			tabBarController
-			window.rootViewController = tabBarController //UINavigationController(rootViewController: MainTestViewController())
+			window.rootViewController = tabBarController
 			window.makeKeyAndVisible()
 		}
 

@@ -41,7 +41,7 @@ public final class Webtrekk {
 	}
 
 	private func setUpConfig() {
-		// TODO: check if there is a local dump of the config saved
+		// check if there is a local dump of the config saved
 		if let localConfig = fileManager.restoreConfiguration(config.trackingId) where localConfig.version > config.version{
 			config = localConfig
 		}
@@ -95,7 +95,7 @@ public final class Webtrekk {
 
 	private func setUpQueue() {
 		// TODO: generate backup File url
-		let backupFileUrl = NSURL()
+		let backupFileUrl: NSURL = fileManager.getConfigurationDirectoryUrl(forTrackingId: config.trackingId).URLByAppendingPathComponent("queue.json")
 		queue = WebtrekkQueue(backupFileUrl: backupFileUrl, sendDelay: config.sendDelay, maximumUrlCount: config.maxRequests)
 	}
 

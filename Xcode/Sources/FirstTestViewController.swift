@@ -7,7 +7,7 @@ internal class FirstTestViewController: UIViewController {
 
 	internal init() {
 		super.init(nibName: nil, bundle: nil)
-		tabBarItem = UITabBarItem(tabBarSystemItem: .History, tag: 2)
+		tabBarItem = UITabBarItem(tabBarSystemItem: .Bookmarks, tag: 2)
 	}
 
 
@@ -23,7 +23,6 @@ internal class FirstTestViewController: UIViewController {
 
 
 	private func setUp() {
-		tabBarItem = UITabBarItem(tabBarSystemItem: .History, tag: 2)
 		button.setTitle("Click", forState: .Normal)
 		button.setTitleColor(.blackColor(), forState: .Normal)
 		button.handle(.TouchUpInside) { (sender:Button) in

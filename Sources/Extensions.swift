@@ -81,15 +81,3 @@ extension UIDevice {
 		}
 	}
 }
-
-extension CGSize {
-	@warn_unused_result(mutable_variant="scaleInPlace")
-	public func scaleBy(scale: CGFloat) -> CGSize {
-		return CGSize(width: width * scale, height: height * scale)
-	}
-
-
-	public mutating func scaleInPlace(scale: CGFloat) {
-		self = scaleBy(scale)
-	}
-}

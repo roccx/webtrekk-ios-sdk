@@ -9,10 +9,12 @@ internal final class WebtrekkQueue {
 
 	private var _plugins = [Plugin] ()
 	private let httpClient = DefaultHttpClient()
+	private lazy var backupManager = BackupManager()
 
 	internal let networkConnectionTimeout = 60 // equals to one minute
 	internal let backgroundSessionName = "Webtrekk.BackgroundSession"
 	internal let maximumFailedSends = 5
+	internal var flush = false
 	internal private(set) var queue = Queue<TrackingQueueItem>()
 
 	internal private(set) var backupFileUrl: NSURL
@@ -70,32 +72,54 @@ internal final class WebtrekkQueue {
 	internal func add(trackingParameter: TrackingParameter, config: TrackerConfiguration) {
 		with(_queue) {
 			if self.queue.itemCount >= self.maximumUrlCount {
-				// max count for store is reached, remove oldest
+				log("Max count for store is reached, removing oldest now.")
 				self.queue.dequeue()
 			}
 			self.queue.enqueue(TrackingQueueItem(config: config, parameter: trackingParameter))
+			if let pageTrackingParameter = trackingParameter as? PageTrackingParameter {
+				log("Adding \(NSURL(string:pageTrackingParameter.urlWithAllParameter(config))!) to the request queue")
+			} else if let actionTrackingParameter = trackingParameter as? ActionTrackingParameter {
+				log("Adding \(NSURL(string:actionTrackingParameter.urlWithAllParameter(config))!) to the request queue")
+			} else {
+				log("Only PageTrackingParameter and ActionTrackingParameter expected at this Point")
+			}
 		}
 		self.sendNextRequestLater()
 	}
 
 
 	private func loadBackups() {
-		// TODO: load backups from file
+		let restoredQueue = backupManager.restoreFromDisc(backupFileUrl)
+		guard !restoredQueue.isEmpty() else {
+			return
+		}
+		
+		with(_queue) {
+			self.queue = restoredQueue
+		}
 	}
 
 
 	private func saveBackup() {
-		// TODO: save queue to backup file
+		with(_queue) {
+			self.backupManager.saveToDisc(self.backupFileUrl, queue: self.queue)
+		}
 	}
 
 
 	private func setUp() {
 		loadBackups()
-
-		if queue.itemCount > 0 {
-			// TODO: has backups which needs to be send now
-		}
 		setUpObserver()
+
+		with(_queue) {
+			guard self.queue.itemCount > 0 else {
+				return
+			}
+			self.flush = true
+		}
+		if flush {
+			self.sendNextRequest()
+		}
 	}
 
 	private func setUpObserver() {
@@ -118,6 +142,16 @@ extension WebtrekkQueue {
 	@objc private func applicationBecomesInactive() {
 		log("Application no longer in foreground")
 		saveBackup()
+		with(_queue) {
+			guard self.queue.itemCount > 0 else {
+				return
+			}
+			log("Trying to send out \(self.queue.itemCount) remaining requests.")
+			self.flush = true
+		}
+		if flush {
+			self.sendNextRequest()
+		}
 	}
 }
 
@@ -167,7 +201,6 @@ extension WebtrekkQueue { // Sending
 				log("Nothing to do.")
 				return
 			}
-			// TODO: check if there is not already an open connection
 
 
 			guard !self.sendNextRequestQueued else { // check that we are not having any other request already in for delay
@@ -208,6 +241,7 @@ extension WebtrekkQueue { // Sending
 			}
 
 			guard self.queue.itemCount > 0 else { // if no item is present, there is nothing to be send
+				self.flush = false
 				log("Nothing to do.")
 				return
 			}
@@ -220,29 +254,39 @@ extension WebtrekkQueue { // Sending
 
 			self.handleBeforePluginCall(trackingQueueItem.parameter)
 			// TODO: generate NSURL from config and trackingParameter
-			let url: NSURL // = NSURL(string:"https://widgetlabs.eu")!
-			if let pageTrackingParameter = trackingQueueItem.parameter as? PageTrackingParameter {
-				url = NSURL(string:pageTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
-			} else if let actionTrackingParameter = trackingQueueItem.parameter as? ActionTrackingParameter {
-				url = NSURL(string:actionTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
-			} else {
-				fatalError("only PageTrackingParameter and ActionTrackingParameter expected at this Point")
-			}
+			let url: NSURL = NSURL(string:"https://widgetlabs.eu")!
+//			if let pageTrackingParameter = trackingQueueItem.parameter as? PageTrackingParameter {
+//				url = NSURL(string:pageTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
+//			} else if let actionTrackingParameter = trackingQueueItem.parameter as? ActionTrackingParameter {
+//				url = NSURL(string:actionTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
+//			} else {
+//				fatalError("Only PageTrackingParameter and ActionTrackingParameter expected at this Point")
+//			}
 			log("Request \(url) will be send now.")
 			self.httpClient.get(url) { (theData, error) -> Void in
 				// TODO: handle error
 				defer {
-					self.sendNextRequestLater()
+					if self.flush {
+						self.saveBackup()
+						self.sendNextRequest()
+					}
+					else {
+						self.sendNextRequestLater()
+					}
 				}
 				guard let error = error else {
 					self.numberOfSuccessfulSends = 1
 					self.numberOfFailedSends = 0
-					self.queue.dequeue()
+					if let item = self.queue.dequeue() {
+						self.handleAfterPluginCall(item.parameter)
+					}
 					return
 				}
 				self.numberOfFailedSends += 1
 				if case .NetworkError(let recoverable) = error as! Error where !recoverable {
-					self.queue.dequeue()
+					if let item = self.queue.dequeue() {
+						self.handleAfterPluginCall(item.parameter)
+					}
 				}
 			}
 		}
@@ -250,8 +294,4 @@ extension WebtrekkQueue { // Sending
 
 
 
-}
-
-internal func delay(seconds: Int, closure: ()->()) {
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(seconds) * Int64(NSEC_PER_SEC)), dispatch_get_main_queue(), closure)
 }

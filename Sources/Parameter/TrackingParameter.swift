@@ -6,7 +6,7 @@ public protocol TrackingParameter {
 	var generalParameter:   GeneralParameter    { get }
 	var pixelParameter:     PixelParameter      { get }
 	var productParameters:  [ProductParameter]  { get set }
-	//func urlWithAllParameter(config: TrackerConfiguration) -> String // this will render casting uneccessary but will promote the function to public
+	//func urlWithAllParameter(config: TrackerConfiguration) -> String // TODO: this will render casting uneccessary but will promote the function to public
 }
 
 extension TrackingParameter {
