@@ -8,7 +8,7 @@ public var logEnabled = true
 //#endif
 
 
-public func log(@autoclosure messageClosure: Void throws -> String, function: StaticString = #function, file: StaticString = #file, line: UInt = #line) rethrows {
+public func log(@autoclosure messageClosure: Void throws -> String, function: StaticString = __FUNCTION__, file: StaticString = __FILE__, line: UInt = __LINE__) rethrows {
 	if !logEnabled {
 		return
 	}
