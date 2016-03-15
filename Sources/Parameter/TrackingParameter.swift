@@ -128,14 +128,19 @@ public struct PageTrackingParameter: TrackingParameter{
 	public var pixelParameter:     PixelParameter
 	public var productParameters:  [ProductParameter]
 
-	public init(pageParameter: PageParameter, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
+	public init(pageName: String = "", pageParameter: PageParameter = PageParameter(), ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
 
 		let timeStamp = Int64(NSDate().timeIntervalSince1970 * 1000)
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
 		self.pageParameter = pageParameter
 		self.ecommerceParameter = ecommerceParameter
 		self.productParameters = productParameters
-		self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
+		if pageName.isEmpty {
+			self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
+		}
+		else {
+			self.pixelParameter = PixelParameter(pageName: pageName, displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
+		}
 		self.generalParameter = GeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
 		generalParameter.everId = self.everId
 		generalParameter.userAgent = userAgent

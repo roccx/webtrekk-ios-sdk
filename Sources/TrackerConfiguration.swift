@@ -8,7 +8,7 @@ internal extension TrackerConfiguration {
 }
 
 public struct TrackerConfiguration {
-	public var appVersionParameter: String
+	public var appVersion: String
 	public var maxRequests:         Int
 	public var samplingRate:        Int
 	public var sendDelay:           Int
@@ -34,7 +34,7 @@ public struct TrackerConfiguration {
 
 	public private(set) var configFilePath: String
 
-	public init(autoTrack: Bool = true, autoTrackAdvertiserId: Bool = true, autoTrackApiLevel: Bool = true, autoTrackAppUpdate: Bool = true, autoTrackAppVersionName: Bool = true, autoTrackAppVersionCode: Bool = true, autoTrackConnectionType: Bool = true, autoTrackRequestUrlStoreSize: Bool = true, autoTrackScreenOrientation: Bool = true, appVersionParameter: String = "", configFilePath: String = "", enableRemoteConfiguration: Bool = false, maxRequests: Int = 1000, optedOut: Bool = false, remoteConfigurationUrl: String = "", samplingRate: Int = 0, sendDelay: Int = 5 * 60, serverUrl: String, trackingId: String, version: Int = 0) {
+	public init(autoTrack: Bool = true, autoTrackAdvertiserId: Bool = true, autoTrackApiLevel: Bool = true, autoTrackAppUpdate: Bool = true, autoTrackAppVersionName: Bool = true, autoTrackAppVersionCode: Bool = true, autoTrackConnectionType: Bool = true, autoTrackRequestUrlStoreSize: Bool = true, autoTrackScreenOrientation: Bool = true, appVersion: String = "", configFilePath: String = "", enableRemoteConfiguration: Bool = false, maxRequests: Int = 1000, optedOut: Bool = false, remoteConfigurationUrl: String = "", samplingRate: Int = 0, sendDelay: Int = 5 * 60, serverUrl: String, trackingId: String, version: Int = 0) {
 		guard !serverUrl.isEmpty || !trackingId.isEmpty else {
 			fatalError("Need serverUrl and trackingId for minimal Configuration")
 		}
@@ -43,7 +43,7 @@ public struct TrackerConfiguration {
 			fatalError("serverUrl needs to be a valid url")
 		}
 
-		self.appVersionParameter = appVersionParameter
+		self.appVersion = appVersion
 		self.maxRequests = maxRequests
 		self.samplingRate = samplingRate
 		self.sendDelay = sendDelay

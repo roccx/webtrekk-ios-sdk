@@ -90,7 +90,7 @@ internal protocol Backupable {
 extension TrackerConfiguration: Backupable {
 	internal func toJson() -> [String : AnyObject] {
 		var items = [String: AnyObject]()
-		items["appVersionParameter"] = appVersionParameter
+		items["appVersion"] = appVersion
 		items["maxRequests"] = maxRequests
 		items["samplingRate"] = samplingRate
 		items["sendDelay"] = sendDelay
@@ -125,8 +125,8 @@ extension TrackerConfiguration: Backupable {
 			config = TrackerConfiguration(serverUrl: serverUrl, trackingId: trackingId)
 		}
 
-		if let appVersionParameter = json["appVersionParameter"] as? String {
-			config.appVersionParameter = appVersionParameter
+		if let appVersion = json["appVersion"] as? String {
+			config.appVersion = appVersion
 		}
 		if let maxRequests = json["maxRequests"] as? Int {
 			config.maxRequests = maxRequests

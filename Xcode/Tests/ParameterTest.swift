@@ -6,6 +6,14 @@ import XCTest
 
 class ParameterTest: XCTestCase {
 
+
+	var webtrekk: Webtrekk?
+
+	override func setUp() {
+		webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://usesecure.domain.plz", trackingId: "123456789012345", version: 0))
+	}
+
+
 	func testActionParameter() {
 		let actionName = "click"
 		let actionParameter = ActionParameter(name:actionName)
@@ -54,6 +62,18 @@ class ParameterTest: XCTestCase {
 		XCTAssert(customerParameter.urlParameter.stringByReplacingOccurrencesOfString("&", withString: "") == ParameterName.urlParameter(fromName: .CustomerBirthday, andValue: birthday))
 		customerParameter.birthday = ""
 		XCTAssert(customerParameter.urlParameter.stringByReplacingOccurrencesOfString("&", withString: "") == ParameterName.urlParameter(fromName: .CustomerBirthday, andValue: birthday))
+	}
+
+	func testPageParameter() {
+		guard let webtrekk = webtrekk else {
+			return
+		}
+		var pageTrackingParameter = PageTrackingParameter(pageName: "TestPage")
+
+		var url = pageTrackingParameter.urlWithAllParameter(webtrekk.config)
+		XCTAssertTrue(url.containsString("TestPage"))
+		webtrekk.track(<#T##trackingParameter: TrackingParameter##TrackingParameter#>)
+
 	}
 }
 

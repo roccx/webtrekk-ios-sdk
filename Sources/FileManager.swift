@@ -7,8 +7,14 @@ internal struct FileManager {
 
 	internal func getConfigurationDirectoryUrl(forTrackingId id: String) -> NSURL{
 		let directory = documentsDirectory.URLByAppendingPathComponent(id)
-		if let error = try? NSFileManager.defaultManager().createDirectoryAtPath("\(directory.absoluteString)/", withIntermediateDirectories: true, attributes: [:]) {
-			log("An error \(error) occured while creating a directory to store the config.")
+		if !NSFileManager.defaultManager().fileExistsAtPath(directory.path!) {
+			do {
+				try NSFileManager.defaultManager().createDirectoryAtURL(directory, withIntermediateDirectories: true, attributes: nil)
+			}
+			catch let error {
+				log("Cannot create directory '\(directory)': \(error)")
+				return documentsDirectory
+			}
 		}
 		return directory
 	}
@@ -43,9 +49,13 @@ internal struct FileManager {
 			log("\(fileUrl) is not a valid url to save data to.")
 			return
 		}
-		if !NSFileManager.defaultManager().fileExistsAtPath(url.absoluteString, isDirectory: nil) {
-			if let error = try? NSFileManager.defaultManager().createDirectoryAtURL(url, withIntermediateDirectories: false, attributes: [:]) {
-				log("An error \(error) occured while creating a directory to store the data.")
+
+		if !NSFileManager.defaultManager().fileExistsAtPath(url.path!) {
+			do {
+				try NSFileManager.defaultManager().createDirectoryAtURL(url, withIntermediateDirectories: false, attributes: nil)
+			}
+			catch let error {
+				log("Cannot create directory '\(url)': \(error)")
 				return
 			}
 		}
@@ -57,6 +67,9 @@ internal struct FileManager {
 
 
 	internal func restoreData(fromFileUrl fileUrl: NSURL) -> NSData? {
+		guard NSFileManager.defaultManager().fileExistsAtPath(fileUrl.path!) else {
+			return nil
+		}
 		guard let data: NSData = NSData(contentsOfURL: fileUrl) else {
 			log("Couldn't find a data at \(fileUrl) for restoring data.")
 			return nil
