@@ -1,7 +1,13 @@
 import Foundation
 
 
-internal struct FileManager {
+internal struct FileManager : Logable {
+
+	var loger: Loger
+
+	internal init(_ loger: Loger) {
+		self.loger = loger
+	}
 
 	private let documentsDirectory = try! NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: true)
 

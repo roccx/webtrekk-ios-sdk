@@ -22,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		}
 
 		webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://usesecure.domain.plz", trackingId: "123456789012345", version: 0))
+		webtrekk?.enableLoging = true
 
 		print("Startup complete!")
 		return true

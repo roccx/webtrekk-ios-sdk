@@ -1,6 +1,7 @@
 import Foundation
 
 public struct CustomerParameter {
+
 	public var categories:      [Int: String]
 	public var city:            String
 	public var country:         String
@@ -43,7 +44,7 @@ public struct CustomerParameter {
 			}
 
 			guard birthday.characters.count == 0 || birthday.characters.count == 8 else {
-				log("birthday needs to be formated as yyyymmdd")
+//				log("birthday needs to be formated as yyyymmdd")
 				birthday = oldValue
 				return
 			}
@@ -57,7 +58,7 @@ public struct CustomerParameter {
 			}
 
 			guard gender == "1" || gender == "2" else {
-				log("gender only can have 1 for male or 2 for female as value")
+//				log("gender only can have 1 for male or 2 for female as value")
 				gender = oldValue
 				return
 			}
@@ -72,7 +73,7 @@ public struct CustomerParameter {
 			}
 
 			guard newsletter == "1" || newsletter == "2" else {
-				log("newsletter only can have 1 for true|yes or 2 for false|no as value")
+//				log("newsletter only can have 1 for true|yes or 2 for false|no as value")
 				newsletter = oldValue
 				return
 			}

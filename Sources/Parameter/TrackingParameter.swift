@@ -13,6 +13,7 @@ extension TrackingParameter {
 
 	public var everId: String {
 		get {
+
 			let userDefaults = NSUserDefaults.standardUserDefaults()
 			if let eid = userDefaults.stringForKey(UserStoreKey.Eid) {
 				return eid

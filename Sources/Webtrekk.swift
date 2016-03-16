@@ -1,14 +1,32 @@
 import UIKit
 
 
-public final class Webtrekk {
+public final class Webtrekk : Logable {
 
-	var config: TrackerConfiguration
+	internal lazy var loger: Loger = Loger(trackingId: self.config.trackingId)
+	public var enableLoging: Bool = false {
+		didSet {
+			guard oldValue != enableLoging else {
+				return
+			}
+			loger.enabled = enableLoging
+		}
+	}
+
+	public var config: TrackerConfiguration {
+		didSet {
+			guard oldValue.optedOut != config.optedOut else {
+				return
+			}
+			queue?.shouldTrack = shouldTrack()
+
+		}
+	}
 	private var plugins = Set<Plugin>()
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
 	private var queue: WebtrekkQueue?
-	private lazy var fileManager = FileManager()
+	private lazy var fileManager: FileManager = FileManager(self.loger)
 
 	// MARK: Lifecycle
 
@@ -40,6 +58,7 @@ public final class Webtrekk {
 		setUpLifecycleObserver()
 	}
 
+
 	private func setUpConfig() {
 		// check if there is a local dump of the config saved
 		if let localConfig = fileManager.restoreConfiguration(config.trackingId) where localConfig.version > config.version{
@@ -56,21 +75,21 @@ public final class Webtrekk {
 		let httpClient = DefaultHttpClient()
 		httpClient.get(url) { (data, error) -> Void in
 			guard let xmlData = data else {
-				log("No data could be retrieved from \(self.config.remoteConfigurationUrl).")
+				self.log("No data could be retrieved from \(self.config.remoteConfigurationUrl).")
 				return
 			}
 			guard let xmlString = String(data: xmlData, encoding: NSUTF8StringEncoding) else {
-				log("Cannot retrieve data retreived from \(self.config.remoteConfigurationUrl)")
+				self.log("Cannot retrieve data retreived from \(self.config.remoteConfigurationUrl)")
 				return
 			}
 
 			let config = XmlConfigParser(xmlString: xmlString).trackerConfiguration
 
 			guard config.version > self.config.version else {
-				log("Remote configuration is not newer then the currently used.")
+				self.log("Remote configuration is not newer then the currently used.")
 				return
 			}
-			log("Updating tracker config from version \(self.config.version) to new version \(config.version)")
+			self.log("Updating tracker config from version \(self.config.version) to new version \(config.version)")
 			self.config = config
 			self.fileManager.saveConfiguration(config)
 		}
@@ -96,9 +115,23 @@ public final class Webtrekk {
 	private func setUpQueue() {
 		// TODO: generate backup File url
 		let backupFileUrl: NSURL = fileManager.getConfigurationDirectoryUrl(forTrackingId: config.trackingId).URLByAppendingPathComponent("queue.json")
-		queue = WebtrekkQueue(backupFileUrl: backupFileUrl, sendDelay: config.sendDelay, maximumUrlCount: config.maxRequests)
+		queue = WebtrekkQueue(backupFileUrl: backupFileUrl, sendDelay: config.sendDelay, maximumUrlCount: config.maxRequests, loger: loger)
+		queue?.shouldTrack = shouldTrack()
 	}
 
+
+	func shouldTrack() -> Bool {
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		let userShouldBeSampled: Bool
+		if let _ = userDefaults.objectForKey(UserStoreKey.Sampled.rawValue) {
+			userShouldBeSampled = userDefaults.boolForKey(UserStoreKey.Sampled)
+		}
+		else {
+			userShouldBeSampled = (config.samplingRate == 0) || (Int64(arc4random()) % Int64(config.samplingRate) == 0)
+			userDefaults.setBool(userShouldBeSampled, forKey: UserStoreKey.Sampled.rawValue)
+		}
+		return userShouldBeSampled && !config.optedOut
+	}
 
 	// MARK: Tracking
 

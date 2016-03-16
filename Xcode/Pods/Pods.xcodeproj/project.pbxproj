@@ -18,7 +18,7 @@
 		3599195732A378BF2CBD627243397BC9 /* Locks.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF29B5AC3BE63C56DF42F10D4FA03E4A /* Locks.swift */; };
 		3A9F78C0EB7344EC3A604962BDAD44FB /* DefaultHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D89FE56D9EA774376226F1B2B02D956 /* DefaultHttpClient.swift */; };
 		3B038E8491767CBFBE26E70B52E5D008 /* XmlConfigParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 366345C99FD14A01B69F92986A773C3C /* XmlConfigParser.swift */; };
-		3D9DCC5F66A95C0CF9476846AC4834AC /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68749F2193055B9DDE74A9B10F677433 /* Logging.swift */; };
+		3D9DCC5F66A95C0CF9476846AC4834AC /* Loger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68749F2193055B9DDE74A9B10F677433 /* Loger.swift */; };
 		571C4E50A742674C6CD248960DBAE6C8 /* SWXMLHash-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 82493ADE1A84BBF53AC900D62B82E930 /* SWXMLHash-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C6ACD267E44309FFC998EA67623951B /* Webtrekk-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 071A57E30083C7FB8FF9F690021CA822 /* Webtrekk-dummy.m */; };
 		78361359C1EBF4A8AA42EBFE0574D37E /* PixelParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A630733C0ACE80297D784E0BC0E9C9 /* PixelParameter.swift */; };
@@ -88,7 +88,7 @@
 		50378737E7D3C5D775813A9FA2768FC8 /* Plugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Plugin.swift; sourceTree = "<group>"; };
 		52714D13FA3F9FF701BFAC72F34E6CD3 /* EcommerceParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EcommerceParameter.swift; sourceTree = "<group>"; };
 		56FA47ABF14BA6A7337E9B716FC1C523 /* NSURLSessionExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NSURLSessionExtensions.swift; sourceTree = "<group>"; };
-		68749F2193055B9DDE74A9B10F677433 /* Logging.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		68749F2193055B9DDE74A9B10F677433 /* Loger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Loger.swift; sourceTree = "<group>"; };
 		69E746FB4C5AE944FD58FEAD5822D12A /* SWXMLHash-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SWXMLHash-prefix.pch"; sourceTree = "<group>"; };
 		7668E67E24D917C7D455AED1AA9CE99E /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		76E5BA5F39E8C80E943664D013B39B76 /* SWXMLHash.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SWXMLHash.swift; path = Source/SWXMLHash.swift; sourceTree = "<group>"; };
@@ -313,7 +313,7 @@
 				D158F69A5F72C2419B19C1E4B33501FA /* Extensions.swift */,
 				D2917A5F38E49FFAE44000D48A930062 /* FileManager.swift */,
 				DF29B5AC3BE63C56DF42F10D4FA03E4A /* Locks.swift */,
-				68749F2193055B9DDE74A9B10F677433 /* Logging.swift */,
+				68749F2193055B9DDE74A9B10F677433 /* Loger.swift */,
 				50378737E7D3C5D775813A9FA2768FC8 /* Plugin.swift */,
 				28BBA3CD5A6C3C91C06E1B319DF54975 /* Product.swift */,
 				270FF0AF1A41FF06DF1A7ED2885185B3 /* Queue.swift */,
@@ -473,7 +473,7 @@
 				993B893DA49B0658363BB5DED0EC81DC /* GeneralParameter.swift in Sources */,
 				2730926AEA5761179F48E89B8A6C1E92 /* HttpClient.swift in Sources */,
 				3599195732A378BF2CBD627243397BC9 /* Locks.swift in Sources */,
-				3D9DCC5F66A95C0CF9476846AC4834AC /* Logging.swift in Sources */,
+				3D9DCC5F66A95C0CF9476846AC4834AC /* Loger.swift in Sources */,
 				F9EED2C54EF90F8FADD415469664C841 /* NSURLSessionExtensions.swift in Sources */,
 				C7614101EFD779E66648205FB5CB2A46 /* PageParameter.swift in Sources */,
 				2C35F4F8F0719C3E1ECC0D8991277092 /* Parameter.swift in Sources */,
@@ -646,6 +646,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/Webtrekk/Webtrekk.modulemap";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DDEBUG";
 				PRODUCT_NAME = Webtrekk;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -674,6 +675,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/Webtrekk/Webtrekk.modulemap";
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -DDEBUG";
 				PRODUCT_NAME = Webtrekk;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

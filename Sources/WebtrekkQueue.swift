@@ -1,6 +1,8 @@
 import UIKit
 
-internal final class WebtrekkQueue {
+internal final class WebtrekkQueue: Logable {
+
+	var loger: Loger
 
 	internal typealias TrackingQueueItem = (config: TrackerConfiguration, parameter: TrackingParameter)
 
@@ -9,12 +11,13 @@ internal final class WebtrekkQueue {
 
 	private var _plugins = [Plugin] ()
 	private let httpClient = DefaultHttpClient()
-	private lazy var backupManager = BackupManager()
+	private lazy var backupManager: BackupManager = BackupManager(self.loger)
 
 	internal let networkConnectionTimeout = 60 // equals to one minute
 	internal let backgroundSessionName = "Webtrekk.BackgroundSession"
 	internal let maximumFailedSends = 5
 	internal var flush = false
+	internal var shouldTrack = true
 	internal private(set) var queue = Queue<TrackingQueueItem>()
 
 	internal private(set) var backupFileUrl: NSURL
@@ -50,11 +53,12 @@ internal final class WebtrekkQueue {
 	}
 
 
-	internal init(backupFileUrl: NSURL = NSURL(), initialSendDelay: Int = 5, sendDelay: Int = 180, maximumUrlCount: Int = 1000) {
+	internal init(backupFileUrl: NSURL = NSURL(), initialSendDelay: Int = 5, sendDelay: Int = 180, maximumUrlCount: Int = 1000, loger: Loger) {
 		self.backupFileUrl = backupFileUrl
 		self.initialSendDelay = min(initialSendDelay, sendDelay)
 		self.maximumUrlCount = maximumUrlCount
 		self.sendDelay = sendDelay
+		self.loger = loger
 		setUp()
 	}
 
@@ -64,7 +68,7 @@ internal final class WebtrekkQueue {
 			guard self.queue.itemCount > 0 else {
 				return
 			}
-			log("Dropping \(self.queue.itemCount) items")
+			self.log("Dropping \(self.queue.itemCount) items")
 			self.queue = Queue<TrackingQueueItem>()
 		}
 	}
@@ -72,16 +76,16 @@ internal final class WebtrekkQueue {
 	internal func add(trackingParameter: TrackingParameter, config: TrackerConfiguration) {
 		with(_queue) {
 			if self.queue.itemCount >= self.maximumUrlCount {
-				log("Max count for store is reached, removing oldest now.")
+				self.log("Max count for store is reached, removing oldest now.")
 				self.queue.dequeue()
 			}
 			self.queue.enqueue(TrackingQueueItem(config: config, parameter: trackingParameter))
 			if let pageTrackingParameter = trackingParameter as? PageTrackingParameter {
-				log("Adding \(NSURL(string:pageTrackingParameter.urlWithAllParameter(config))!) to the request queue")
+				self.log("Adding \(NSURL(string:pageTrackingParameter.urlWithAllParameter(config))!) to the request queue")
 			} else if let actionTrackingParameter = trackingParameter as? ActionTrackingParameter {
-				log("Adding \(NSURL(string:actionTrackingParameter.urlWithAllParameter(config))!) to the request queue")
+				self.log("Adding \(NSURL(string:actionTrackingParameter.urlWithAllParameter(config))!) to the request queue")
 			} else {
-				log("Only PageTrackingParameter and ActionTrackingParameter expected at this Point")
+				self.log("Only PageTrackingParameter and ActionTrackingParameter expected at this Point")
 			}
 		}
 		self.sendNextRequestLater()
@@ -146,7 +150,7 @@ extension WebtrekkQueue {
 			guard self.queue.itemCount > 0 else {
 				return
 			}
-			log("Trying to send out \(self.queue.itemCount) remaining requests.")
+			self.log("Trying to send out \(self.queue.itemCount) remaining requests.")
 			self.flush = true
 		}
 		if flush {
@@ -198,7 +202,7 @@ extension WebtrekkQueue { // Sending
 			}
 
 			guard self.queue.itemCount > 0 else { // if no item is present, there is nothing to be send
-				log("Nothing to do.")
+				self.log("Nothing to do.")
 				return
 			}
 
@@ -214,7 +218,7 @@ extension WebtrekkQueue { // Sending
 			} else {
 				delayInSeconds = self.sendDelay
 			}
-			log("Sending next request in \(delayInSeconds) sec.")
+			self.log("Sending next request in \(delayInSeconds) sec.")
 			delay(delayInSeconds) {
 				self.sendNextRequest()
 			}
@@ -242,27 +246,34 @@ extension WebtrekkQueue { // Sending
 
 			guard self.queue.itemCount > 0 else { // if no item is present, there is nothing to be send
 				self.flush = false
-				log("Nothing to do.")
+				self.log("Nothing to do.")
 				return
 			}
 			// TODO: check if there is not already an open connection
 
 			guard let trackingQueueItem = self.queue.peek() else {
-				log("This should never happen, but there is no item on the queue even after testing for that.")
+				self.log("This should never happen, but there is no item on the queue even after testing for that.")
 				return
 			}
 
 			self.handleBeforePluginCall(trackingQueueItem.parameter)
 			// TODO: generate NSURL from config and trackingParameter
-			let url: NSURL = NSURL(string:"https://widgetlabs.eu")!
-//			if let pageTrackingParameter = trackingQueueItem.parameter as? PageTrackingParameter {
-//				url = NSURL(string:pageTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
-//			} else if let actionTrackingParameter = trackingQueueItem.parameter as? ActionTrackingParameter {
-//				url = NSURL(string:actionTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
-//			} else {
-//				fatalError("Only PageTrackingParameter and ActionTrackingParameter expected at this Point")
-//			}
-			log("Request \(url) will be send now.")
+			let url: NSURL
+			if let pageTrackingParameter = trackingQueueItem.parameter as? PageTrackingParameter {
+				url = NSURL(string:pageTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
+			} else if let actionTrackingParameter = trackingQueueItem.parameter as? ActionTrackingParameter {
+				url = NSURL(string:actionTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
+			} else {
+				fatalError("Only PageTrackingParameter and ActionTrackingParameter expected at this Point")
+			}
+			guard self.shouldTrack else {
+				self.log("user is not tracked")
+				self.handleAfterPluginCall(trackingQueueItem.parameter)
+				return
+			}
+
+			self.log("Request \(url) will be send now.")
+
 			self.httpClient.get(url) { (theData, error) -> Void in
 				// TODO: handle error
 				defer {
@@ -274,18 +285,20 @@ extension WebtrekkQueue { // Sending
 						self.sendNextRequestLater()
 					}
 				}
-				guard let error = error else {
-					self.numberOfSuccessfulSends = 1
-					self.numberOfFailedSends = 0
-					if let item = self.queue.dequeue() {
-						self.handleAfterPluginCall(item.parameter)
+				with(self._queue) {
+					guard let error = error else {
+						self.numberOfSuccessfulSends = 1
+						self.numberOfFailedSends = 0
+						if let item = self.queue.dequeue() {
+							self.handleAfterPluginCall(item.parameter)
+						}
+						return
 					}
-					return
-				}
-				self.numberOfFailedSends += 1
-				if case .NetworkError(let recoverable) = error as! Error where !recoverable {
-					if let item = self.queue.dequeue() {
-						self.handleAfterPluginCall(item.parameter)
+					self.numberOfFailedSends += 1
+					if case .NetworkError(let recoverable) = error as! Error where !recoverable {
+						if let item = self.queue.dequeue() {
+							self.handleAfterPluginCall(item.parameter)
+						}
 					}
 				}
 			}

@@ -5,7 +5,7 @@ internal enum UserStoreKey: String {
 	// MARK: Bools
 
 	case OptedOut = "optedOut"
-
+	case Sampled = "sampled"
 
 	// MARK: Strings
 

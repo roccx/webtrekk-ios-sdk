@@ -444,10 +444,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2D2ADB3DFE865C1E82E55688 /* Pods.debug.xcconfig */;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"COCOAPODS=1",
-				);
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Project;
@@ -461,10 +457,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F0D7EE4AEE85078DB773D5F4 /* Pods.release.xcconfig */;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"COCOAPODS=1",
-				);
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Project;

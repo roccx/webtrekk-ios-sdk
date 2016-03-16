@@ -2,15 +2,15 @@ import Foundation
 
 public struct EcommerceParameter {
 	public var currency:     String
-	public var details:      [Int: String]
+	public var categories:   [Int: String]
 	public var orderNumber:  String
 	public var status:       EcommerceStatus
 	public var totalValue:   Double
 	public var voucherValue: Double?
 
-	public init(currency: String = "", details: [Int: String] = [Int:String](), orderNumber: String = "", status: EcommerceStatus = .VIEW, totalValue: Double, voucherValue: Double? = nil) {
+	public init(categories: [Int: String] = [Int:String](), currency: String = "", orderNumber: String = "", status: EcommerceStatus = .VIEW, totalValue: Double, voucherValue: Double? = nil) {
 		self.currency = currency
-		self.details = details
+		self.categories = categories
 		self.orderNumber = orderNumber
 		self.status = status
 		self.totalValue = totalValue
@@ -32,10 +32,10 @@ extension EcommerceParameter: Parameter {
 				urlParameter += ParameterName.urlParameter(fromName: .EcomCurrency, andValue: currency)
 			}
 
-			if !details.isEmpty {
-				for (index, value) in details {
+			if !categories.isEmpty {
+				for (index, value) in categories {
 
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCurrency, withIndex: index, andValue: value))"
+					urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCategory, withIndex: index, andValue: value))"
 				}
 			}
 			return urlParameter

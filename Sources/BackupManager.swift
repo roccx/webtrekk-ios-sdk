@@ -1,9 +1,18 @@
 import Foundation
 import UIKit
 
-internal struct BackupManager {
+internal struct BackupManager: Logable {
 
-	private let fileManager = FileManager()
+	var loger: Loger
+
+	private let fileManager: FileManager
+
+
+	internal init(_ loger: Loger) {
+		self.loger = loger
+		self.fileManager = FileManager(loger)
+	}
+
 
 	internal func saveToDisc(fileUrl: NSURL, queue: Queue<WebtrekkQueue.TrackingQueueItem>) {
 		var json = [AnyObject]()
@@ -81,6 +90,7 @@ internal struct BackupManager {
 		return queue
 	}
 }
+
 
 internal protocol Backupable {
 	func toJson() -> [String: AnyObject]
@@ -260,7 +270,7 @@ extension EcommerceParameter: Backupable {
 	internal func toJson() -> [String : AnyObject] {
 		var items = [String: AnyObject]()
 		items["currency"] = currency
-		items["details"] = details.map({["index":$0.0, "value": $0.1]})
+		items["categories"] = categories.map({["index":$0.0, "value": $0.1]})
 		items["orderNumber"] = currency
 		items["status"] = status.rawValue
 		items["totalValue"] = totalValue
@@ -282,9 +292,9 @@ extension EcommerceParameter: Backupable {
 			parameter.orderNumber = orderNumber
 
 		}
-		if let detailsDic = json["details"] as? [[String: AnyObject]] {
+		if let detailsDic = json["categories"] as? [[String: AnyObject]] {
 			for item in detailsDic {
-				parameter.details[item["index"] as! Int] =  item["value"] as? String
+				parameter.categories[item["index"] as! Int] =  item["value"] as? String
 			}
 		}
 		if let status = json["status"] as? String {

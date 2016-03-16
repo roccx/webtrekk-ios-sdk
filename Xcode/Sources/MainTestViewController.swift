@@ -4,6 +4,8 @@ import Webtrekk
 internal class MainTestViewController: UIViewController {
 
 	let button = Button()
+	let optOutButton = Button()
+	var optedOut = false
 
 	internal init() {
 		super.init(nibName: nil, bundle: nil)
@@ -19,6 +21,7 @@ internal class MainTestViewController: UIViewController {
 	private func layoutButton() {
 		let bounds = self.view.bounds
 		button.frame = CGRect(x: 10, y: (bounds.height - 25) / 2, width: bounds.width - 20, height: 50)
+		optOutButton.frame = CGRect(x: 10, y: button.frame.origin.y + button.bounds.size.height + 10 , width: bounds.width - 20, height: 50)
 	}
 
 
@@ -52,6 +55,17 @@ internal class MainTestViewController: UIViewController {
 			webtrekk.track(actionTrackingParameter)
 		}
 		self.view.addSubview(button)
+
+		optOutButton.setTitle("Toogle OptedOut", forState: .Normal)
+		optOutButton.setTitleColor(.blackColor(), forState: .Normal)
+		optOutButton.handle(.TouchUpInside) { (sender:Button) in
+			guard let webtrekk = webtrekk else {
+				return
+			}
+			self.optedOut = !self.optedOut
+			webtrekk.config.optedOut = self.optedOut
+		}
+		self.view.addSubview(optOutButton)
 	}
 
 

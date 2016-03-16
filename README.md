@@ -105,6 +105,8 @@ Option           |  Description
 `timeZoneOffset` | 
 `userAgent`      | 
 
+
+
 ## Pixel Parameter
 
 
@@ -119,7 +121,54 @@ Option         |  Description
 
 
 
+## Product Parameter
 
+### Mandatory settings
+
+Option        | Description
+--------------|------------
+`productName` | 
+
+
+### Optional settings
+
+Option        | Default             | Description
+--------------|---------------------|-------------
+`categories`  | `[Int: String]()`   |
+`currency`    | `""`                |
+`price`       | `""`                |
+`quantity`    | `""`                |
+
+
+## Ecommerce Parameter
+
+### Mandatory settings
+
+Option        | Description
+--------------|------------
+`totalValue`  |
+
+
+### Optional settings
+
+Option          | Default                | Description
+----------------|------------------------|-------------
+`categories`    | `[Int: String]()`      |
+`currency`      | `""`                   |
+`orderNumber`   | `""`                   |
+`voucherValue`  | `nil`                  |
+`status`        | `EcommerceStatus.VIEW` |
+
+
+## Ecommerce Status
+
+### Settings
+
+Option     |  Description
+-----------|--------------
+`ADD`      | 
+`CONF`     | 
+`VIEW`     | 
 
 
 # License
