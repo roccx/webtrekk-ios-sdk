@@ -10,6 +10,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+		webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://usesecure.domain.plz", trackingId: "123456789012345", version: 0))
+		webtrekk?.enableLoging = true
 
 		window = UIWindow(frame: UIScreen.mainScreen().bounds)
 		if let window = window {
@@ -20,9 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			window.rootViewController = tabBarController
 			window.makeKeyAndVisible()
 		}
-
-		webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://usesecure.domain.plz", trackingId: "123456789012345", version: 0))
-		webtrekk?.enableLoging = true
 
 		print("Startup complete!")
 		return true

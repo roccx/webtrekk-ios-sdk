@@ -53,6 +53,8 @@ internal class MainTestViewController: UIViewController {
 			let actionParameter = ActionParameter(categories: categories, name:actionName, session: session)
 			let actionTrackingParameter = ActionTrackingParameter(actionParameter: actionParameter, productParameters: products)
 			webtrekk.track(actionTrackingParameter)
+//			let vc = PrivateViewController()
+//			self.presentViewController(vc, animated: true, completion: nil)
 		}
 		self.view.addSubview(button)
 
@@ -79,5 +81,9 @@ internal class MainTestViewController: UIViewController {
 		super.viewDidLayoutSubviews()
 		layoutButton()
 	}
+
+}
+
+private class PrivateViewController: UIViewController {
 
 }
