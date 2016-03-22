@@ -7,11 +7,11 @@ public struct GeneralParameter {
 	public var ip:             String
 	public var nationalCode:   String
 	public var samplingRate:   Int
-	public var timeStamp:      Int64
+	public var timeStamp:      NSDate
 	public var timeZoneOffset: Double
 	public var userAgent:      String
 
-	public init(everId:String,  firstStart: Bool = false, ip: String = "", nationalCode: String = "", samplingRate: Int = 0, timeStamp: Int64, timeZoneOffset: Double, userAgent: String){
+	public init(everId:String,  firstStart: Bool = false, ip: String = "", nationalCode: String = "", samplingRate: Int = 0, timeStamp: NSDate, timeZoneOffset: Double, userAgent: String){
 		guard !everId.isEmpty else {
 			fatalError("Ever-Id is not optional")
 		}
@@ -40,7 +40,7 @@ extension GeneralParameter: Parameter {
 				urlParameter += "&\(ParameterName.urlParameter(fromName: .NationalCode, andValue: nationalCode))"
 			}
 			urlParameter += "&\(ParameterName.urlParameter(fromName: .SamplingRate, andValue: "\(samplingRate)"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .TimeStamp, andValue: "\(timeStamp)"))"
+			urlParameter += "&\(ParameterName.urlParameter(fromName: .TimeStamp, andValue: "\(Int64(timeStamp.timeIntervalSince1970 * 1000))"))"
 			urlParameter += "&\(ParameterName.urlParameter(fromName: .TimeZoneOffset, andValue: "\(timeZoneOffset)"))"
 			urlParameter += "&\(ParameterName.urlParameter(fromName: .UserAgent, andValue: userAgent))"
 
@@ -51,7 +51,7 @@ extension GeneralParameter: Parameter {
 
 
 extension GeneralParameter {
-	internal init(timeStamp: Int64, timeZoneOffset: Double){
+	internal init(timeStamp: NSDate, timeZoneOffset: Double){
 		self.everId = ""
 		self.firstStart = false
 		self.ip = ""

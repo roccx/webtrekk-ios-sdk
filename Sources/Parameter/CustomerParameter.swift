@@ -2,20 +2,23 @@ import Foundation
 
 public struct CustomerParameter {
 
+	public var birthday:        NSDate?
 	public var categories:      [Int: String]
 	public var city:            String
 	public var country:         String
 	public var eMail:           String
 	public var eMailReceiverId: String
+	public var gender:          CustomerGender?
 	public var firstName:       String
 	public var lastName:        String
+	public var newsletter:      Bool?
 	public var number:          String
 	public var phoneNumber:     String
 	public var street:          String
 	public var streetNumber:    String
 	public var zip:             String
 
-	public init(birthday: String = "", categories: [Int: String] = [Int: String](), city: String = "", country: String = "", eMail: String = "", eMailReceiverId: String = "", firstName: String = "", gender: String = "", lastName: String = "", newsletter: String = "", number: String = "", phoneNumber: String = "", street: String = "", streetNumber: String = "", zip: String = "") {
+	public init(birthday: NSDate? = nil, categories: [Int: String] = [Int: String](), city: String = "", country: String = "", eMail: String = "", eMailReceiverId: String = "", firstName: String = "", gender: CustomerGender? = nil, lastName: String = "", newsletter: Bool? = nil, number: String = "", phoneNumber: String = "", street: String = "", streetNumber: String = "", zip: String = "") {
 		self.birthday = birthday
 		self.categories = categories
 		self.city = city
@@ -34,54 +37,48 @@ public struct CustomerParameter {
 	}
 
 	// TODO: add to TrackingParameter and implement Backupable
-	// TODO: refactor dates to date obj and only extract string for url generation
 
 
-	public var birthday:        String {
-		didSet{
-			guard oldValue != birthday else {
-				return
-			}
 
-			guard birthday.characters.count == 0 || birthday.characters.count == 8 else {
-//				log("birthday needs to be formated as yyyymmdd")
-				birthday = oldValue
-				return
-			}
-		}
-	}
+}
 
-	public var gender:      String {
-		didSet{
-			guard oldValue != gender else {
-				return
-			}
+public enum CustomerGender {
+	case Male
+	case Female
+}
 
-			guard gender == "1" || gender == "2" else {
-//				log("gender only can have 1 for male or 2 for female as value")
-				gender = oldValue
-				return
-			}
+internal extension CustomerGender {
+	internal func toValue() -> Int {
+		switch self {
+		case .Male:
+			return 1
+		case .Female:
+			return 2
 		}
 	}
 
 
-	public var newsletter:      String {
-		didSet{
-			guard oldValue != newsletter else {
-				return
-			}
-
-			guard newsletter == "1" || newsletter == "2" else {
-//				log("newsletter only can have 1 for true|yes or 2 for false|no as value")
-				newsletter = oldValue
-				return
-			}
+	internal static func from(value: Int) -> CustomerGender? {
+		switch value {
+		case 1:
+			return .Male
+		case 2:
+			return .Female
+		default:
+			return nil
 		}
 	}
 }
 
 extension CustomerParameter: Parameter {
+	private var birthdayFormatter: NSDateFormatter {
+		get {
+			let formatter = NSDateFormatter()
+			formatter.dateFormat = "yyyyMMdd"
+			return formatter
+		}
+	}
+
 	internal var urlParameter: String {
 		get {
 			var urlParameter = ""
@@ -97,7 +94,9 @@ extension CustomerParameter: Parameter {
 			}
 			categories.removeValueForKey(701)
 
-			if let value = newsletter.isEmpty ? categories.keys.contains(702) ? categories[702] : nil : newsletter where !value.isEmpty {
+			if let value = newsletter {
+				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerNewsletter, andValue: value ? "1" : "2"))"
+			} else if let value = categories[702] where !value.isEmpty {
 				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerNewsletter, andValue: value))"
 			}
 			categories.removeValueForKey(702)
@@ -117,12 +116,16 @@ extension CustomerParameter: Parameter {
 			}
 			categories.removeValueForKey(705)
 
-			if let value = gender.isEmpty ? categories.keys.contains(706) ? categories[706] : nil : gender where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerGender, andValue: value))"
+			if let value = gender {
+				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerGender, andValue: "\(value.toValue())"))"
+			} else if let value = categories[706] where !value.isEmpty {
+
 			}
 			categories.removeValueForKey(706)
 
-			if let value = birthday.isEmpty ? categories.keys.contains(707) ? categories[707] : nil : birthday where !value.isEmpty {
+			if let value = birthday {
+				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerBirthday, andValue: birthdayFormatter.stringFromDate(value)))"
+			} else if let value = categories[707] where !value.isEmpty {
 				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerBirthday, andValue: value))"
 			}
 			categories.removeValueForKey(707)

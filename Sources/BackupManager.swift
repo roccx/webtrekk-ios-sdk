@@ -327,17 +327,17 @@ extension GeneralParameter: Backupable {
 		items["ip"] = ip
 		items["nationalCode"] = nationalCode
 		items["samplingRate"] = samplingRate
-		items["timeStamp"] = "\(timeStamp)"
+		items["timeStamp"] = "\(timeStamp.timeIntervalSince1970)"
 		items["timeZoneOffset"] = timeZoneOffset
 		items["userAgent"] = userAgent
 		return items
 	}
 
 	internal static func fromJson(json: [String: AnyObject]) -> GeneralParameter? {
-		guard let everId = json["everId"] as? String, let timeStampValue = json["timeStamp"] as? String, let timeStamp = Int64(timeStampValue), let timeZoneOffset = json["timeZoneOffset"] as? Double, let userAgent = json["userAgent"] as? String else {
+		guard let everId = json["everId"] as? String, let timeStampValue = json["timeStamp"] as? String, let timeStamp = Double(timeStampValue), let timeZoneOffset = json["timeZoneOffset"] as? Double, let userAgent = json["userAgent"] as? String else {
 			return nil
 		}
-		var parameter = GeneralParameter(everId: everId, timeStamp: timeStamp, timeZoneOffset: timeZoneOffset, userAgent: userAgent)
+		var parameter = GeneralParameter(everId: everId, timeStamp: NSDate(timeIntervalSince1970: timeStamp), timeZoneOffset: timeZoneOffset, userAgent: userAgent)
 		if let firstStart = json["firstStart"] as? Bool {
 			parameter.firstStart = firstStart
 		}
@@ -361,7 +361,7 @@ extension PixelParameter: Backupable {
 		items["version"] = version
 		items["pageName"] = pageName
 		items["displaySize"] = ["width": displaySize.width, "height": displaySize.height ]
-		items["timeStamp"] = "\(timeStamp)"
+		items["timeStamp"] = "\(timeStamp.timeIntervalSince1970)"
 		return items
 	}
 
@@ -373,8 +373,8 @@ extension PixelParameter: Backupable {
 		if let pageName = json["pageName"] as? String {
 			parameter.pageName = pageName
 		}
-		if let timeStampValue = json["timeStamp"] as? String, let timeStamp = Int64(timeStampValue) {
-			parameter.timeStamp = timeStamp
+		if let timeStampValue = json["timeStamp"] as? String, let timeStamp = Double(timeStampValue) {
+			parameter.timeStamp = NSDate(timeIntervalSince1970: timeStamp)
 		}
 		return parameter
 	}

@@ -109,7 +109,7 @@ public struct ActionTrackingParameter: TrackingParameter {
 
 	public init(actionParameter: ActionParameter, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
 
-		let timeStamp = Int64(NSDate().timeIntervalSince1970 * 1000)
+		let timeStamp = NSDate()
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
 		self.actionParameter = actionParameter
 		self.ecommerceParameter = ecommerceParameter
@@ -131,7 +131,7 @@ public struct PageTrackingParameter: TrackingParameter{
 
 	public init(pageName: String = "", pageParameter: PageParameter = PageParameter(), ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
 
-		let timeStamp = Int64(NSDate().timeIntervalSince1970 * 1000)
+		let timeStamp = NSDate()
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
 		self.pageParameter = pageParameter
 		self.ecommerceParameter = ecommerceParameter
