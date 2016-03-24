@@ -428,13 +428,8 @@ class PageParameterTest: XCTestCase {
 	}
 }
 
+
 class PixelParameterTest: XCTestCase {
-	/*
-	public let version:     Int
-	public var pageName:    String
-	public let displaySize: CGSize
-	public var timeStamp:   NSDate
-	*/
 
 	let displaySize: CGSize = CGSize(width: 1080, height: 1900)
 	lazy var pixel: PixelParameter = PixelParameter(displaySize: self.displaySize)
@@ -443,7 +438,7 @@ class PixelParameterTest: XCTestCase {
 		pixel = PixelParameter(displaySize: self.displaySize)
 	}
 
-	func testDisplaySize() {
+	func testDisplaySize() { // display size is transfered as Int but saved as CGSize with CGFloats
 		let urlPart = pixel.urlParameter
 		XCTAssertFalse(urlPart.containsString("\(displaySize.height)"))
 		XCTAssertTrue(urlPart.containsString("\(Int(displaySize.height))"))
@@ -454,4 +449,23 @@ class PixelParameterTest: XCTestCase {
 	}
 
 
+	func testPageName() {
+		let content = "Main Screen"
+		pixel.pageName = content
+		XCTAssertFalse(pixel.urlParameter.containsString(content))
+		XCTAssertTrue(pixel.urlParameter.containsString(content.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!))
+	}
+
+
+	func testTimeStamp() {
+		let date = NSDate(timeIntervalSince1970: 183084615) //19751021
+		pixel = PixelParameter(displaySize: displaySize, timeStamp: date)
+		XCTAssertTrue(pixel.urlParameter.containsString("\(Int64(date.timeIntervalSince1970 * 1000))"))
+		XCTAssertTrue(pixel.urlParameter.containsString("183084615000"))
+	}
+
+
+	func testVersion() {
+		XCTAssertTrue(pixel.urlParameter.containsString("400"))
+	}
 }
