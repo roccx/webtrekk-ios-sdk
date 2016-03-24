@@ -12,8 +12,8 @@ extension UIViewController {
 		}
 
 		dispatch_once(&Static.token) {
-			let originalSelector = Selector("viewDidLoad")
-			let swizzledSelector = Selector("wtk_viewDidLoad")
+			let originalSelector = #selector(viewDidLoad)
+			let swizzledSelector = #selector(wtk_viewDidLoad)
 
 			let originalMethod = class_getInstanceMethod(self, originalSelector)
 			let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
@@ -33,11 +33,10 @@ extension UIViewController {
 	func wtk_viewDidLoad() {
 		self.wtk_viewDidLoad()
 		if let webtrekk = webtrekk {
-			webtrekk.track("\(self.dynamicType)")
+			webtrekk.auto("\(self.dynamicType)")
 		}
 		else {
 			print("currently no webtrekk attached (\(self.dynamicType))")
 		}
-		
 	}
 }

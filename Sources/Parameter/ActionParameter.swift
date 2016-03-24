@@ -18,7 +18,7 @@ public struct ActionParameter {
 extension ActionParameter: Parameter {
 	internal var urlParameter: String {
 		get {
-			var urlParameter = ParameterName.urlParameter(fromName: .ActionName, andValue: name)
+			var urlParameter = "&\(ParameterName.urlParameter(fromName: .ActionName, andValue: name))"
 			
 			if !categories.isEmpty {
 				for (index, value) in categories {

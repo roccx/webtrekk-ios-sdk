@@ -128,9 +128,9 @@ internal final class WebtrekkQueue: Logable {
 
 	private func setUpObserver() {
 		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: Selector(stringLiteral: "applicationDidReceiveMemoryWarning"), name: UIApplicationDidReceiveMemoryWarningNotification, object: UIApplication.sharedApplication())
-		notificationCenter.addObserver(self, selector: Selector(stringLiteral: "applicationBecomesInactive"), name: UIApplicationWillResignActiveNotification, object: UIApplication.sharedApplication())
-		notificationCenter.addObserver(self, selector: Selector(stringLiteral: "applicationBecomesInactive"), name: UIApplicationWillTerminateNotification, object: UIApplication.sharedApplication())
+		notificationCenter.addObserver(self, selector: #selector(applicationDidReceiveMemoryWarning), name: UIApplicationDidReceiveMemoryWarningNotification, object: UIApplication.sharedApplication())
+		notificationCenter.addObserver(self, selector: #selector(applicationBecomesInactive), name: UIApplicationWillResignActiveNotification, object: UIApplication.sharedApplication())
+		notificationCenter.addObserver(self, selector: #selector(applicationBecomesInactive), name: UIApplicationWillTerminateNotification, object: UIApplication.sharedApplication())
 
 		}
 }
@@ -304,7 +304,6 @@ extension WebtrekkQueue { // Sending
 			}
 		}
 	}
-
 
 
 }

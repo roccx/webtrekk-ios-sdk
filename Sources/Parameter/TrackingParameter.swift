@@ -6,6 +6,7 @@ public protocol TrackingParameter {
 	var generalParameter:   GeneralParameter    { get }
 	var pixelParameter:     PixelParameter      { get }
 	var productParameters:  [ProductParameter]  { get set }
+	var customParameters:   [Int: String]       { get set }
 	//func urlWithAllParameter(config: TrackerConfiguration) -> String // TODO: this will render casting uneccessary but will promote the function to public
 }
 
@@ -80,7 +81,7 @@ extension TrackingParameter {
 
 			}
 		}
-		urlParameter += "\(ParameterName.urlParameter(fromName: .ProductName, andValue: name))"
+		urlParameter += "&\(ParameterName.urlParameter(fromName: .ProductName, andValue: name))"
 		if !currency.isEmpty {
 			urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCurrency, andValue: currency))"
 		}
@@ -101,17 +102,18 @@ extension TrackingParameter {
 
 public struct ActionTrackingParameter: TrackingParameter {
 	public var actionParameter:    ActionParameter
+	public var customParameters:   [Int: String]
 	public var ecommerceParameter: EcommerceParameter?
 	public var generalParameter:   GeneralParameter
 	public var pixelParameter:     PixelParameter
 	public var productParameters:  [ProductParameter]
 
-
-	public init(actionParameter: ActionParameter, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
+	public init(actionParameter: ActionParameter, customParameters: [Int: String] = [:], ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = []) {
 
 		let timeStamp = NSDate()
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
 		self.actionParameter = actionParameter
+		self.customParameters = customParameters
 		self.ecommerceParameter = ecommerceParameter
 		self.productParameters = productParameters
 		self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
@@ -123,16 +125,18 @@ public struct ActionTrackingParameter: TrackingParameter {
 }
 
 public struct PageTrackingParameter: TrackingParameter{
-	public var pageParameter:      PageParameter
+	public var customParameters:   [Int: String]
 	public var ecommerceParameter: EcommerceParameter?
 	public var generalParameter:   GeneralParameter
+	public var pageParameter:      PageParameter
 	public var pixelParameter:     PixelParameter
 	public var productParameters:  [ProductParameter]
 
-	public init(pageName: String = "", pageParameter: PageParameter = PageParameter(), ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = [ProductParameter]()) {
+	public init(pageName: String = "", pageParameter: PageParameter = PageParameter(), customParameters: [Int: String] = [:], ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = []) {
 
 		let timeStamp = NSDate()
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
+		self.customParameters = customParameters
 		self.pageParameter = pageParameter
 		self.ecommerceParameter = ecommerceParameter
 		self.productParameters = productParameters
@@ -152,13 +156,16 @@ public struct PageTrackingParameter: TrackingParameter{
 extension ActionTrackingParameter {
 	func urlWithAllParameter(config: TrackerConfiguration) -> String {
 		var url = config.baseUrl.absoluteString
-		url += "?\(pixelParameter.urlParameter)"
-		url += "&\(generalParameter.urlParameter)"
+		url += pixelParameter.urlParameter
+		url += generalParameter.urlParameter
 		if !actionParameter.urlParameter.isEmpty {
-			url += "&\(actionParameter.urlParameter)"
+			url += actionParameter.urlParameter
 		}
 		if !productParameters.isEmpty {
-			url += "&\(urlProductParameters())"
+			url += urlProductParameters()
+		}
+		if let ecommerceParameter = ecommerceParameter {
+			url += ecommerceParameter.urlParameter
 		}
 		return url
 	}
@@ -168,13 +175,16 @@ extension ActionTrackingParameter {
 extension PageTrackingParameter {
 	func urlWithAllParameter(config: TrackerConfiguration) -> String {
 		var url = config.baseUrl.absoluteString
-		url += "?\(pixelParameter.urlParameter)"
-		url += "&\(generalParameter.urlParameter)"
+		url += pixelParameter.urlParameter
+		url += generalParameter.urlParameter
 		if !pageParameter.urlParameter.isEmpty {
-			url += "\(pageParameter.urlParameter)"
+			url += pageParameter.urlParameter
 		}
 		if !productParameters.isEmpty {
-			url += "&\(urlProductParameters())"
+			url += urlProductParameters()
+		}
+		if let ecommerceParameter = ecommerceParameter {
+			url += ecommerceParameter.urlParameter
 		}
 		return url
 	}

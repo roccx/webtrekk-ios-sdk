@@ -12,7 +12,7 @@ class XmlParserTest: XCTestCase {
 		guard let url = NSBundle(forClass: XmlParserTest.self).URLForResource("DefaultConfig", withExtension: "xml"), let xmlString = try? String(contentsOfURL: url) else {
 			fatalError("config file url not possible")
 		}
-		parser = XmlConfigParser(xmlString: "")
+		parser = XmlConfigParser(xmlString: xmlString)
 	}
 
 	func testParserInit() {

@@ -67,14 +67,14 @@ class HttpClientTest_Integration: XCTestCase {
 		waitForExpectationsWithTimeout(15, handler: nil)
 		XCTAssertNotNil(data)
 		guard let xmlData = data else {
-			log("no data retrieved")
+			print("no data retrieved")
 			return
 		}
 		guard let xmlString = String(data: xmlData, encoding: NSUTF8StringEncoding) else {
-			log("cannot retrieve data as string")
+			print("cannot retrieve data as string")
 			return
 		}
 		let parser = XmlConfigParser(xmlString: xmlString)
-		log("")
+		print("")
 	}
 }

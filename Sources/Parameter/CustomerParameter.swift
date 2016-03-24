@@ -141,20 +141,23 @@ extension CustomerParameter: Parameter {
 			categories.removeValueForKey(709)
 
 			if let value = zip.isEmpty ? categories.keys.contains(710) ? categories[710] : nil : zip where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerCity, andValue: value))"
+				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerZip, andValue: value))"
 			}
 			categories.removeValueForKey(710)
 
 			if let value = street.isEmpty ? categories.keys.contains(711) ? categories[711] : nil : street where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerCity, andValue: value))"
+				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerStreet, andValue: value))"
 			}
 			categories.removeValueForKey(711)
 
 			if let value = streetNumber.isEmpty ? categories.keys.contains(712) ? categories[712] : nil : streetNumber where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerCity, andValue: value))"
+				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerStreetNumber, andValue: value))"
 			}
 			categories.removeValueForKey(712)
 
+			if !number.isEmpty {
+				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerNumber, andValue: number))"
+			}
 
 			if !categories.isEmpty {
 				for (index, value) in categories {

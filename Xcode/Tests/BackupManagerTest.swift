@@ -10,7 +10,7 @@ class BackupManagerTest: XCTestCase {
 
 	func testEcommerce() {
 		var parameter = EcommerceParameter(totalValue: 20.11)
-		parameter.details = [1: "help", 2: "not", 3: "me"]
+		parameter.categories = [1: "help", 2: "not", 3: "me"]
 		XCTAssertTrue(NSJSONSerialization.isValidJSONObject(parameter.toJson()))
 		if let data = try? ((NSJSONSerialization.dataWithJSONObject(parameter.toJson(), options: prettyPrinted))) {
 			let json = NSString(data: data, encoding: NSUTF8StringEncoding)

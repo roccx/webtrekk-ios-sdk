@@ -29,7 +29,7 @@ public struct GeneralParameter {
 extension GeneralParameter: Parameter {
 	internal var urlParameter: String {
 		get {
-			var urlParameter = ParameterName.urlParameter(fromName: .EverId, andValue: everId)
+			var urlParameter = "&\(ParameterName.urlParameter(fromName: .EverId, andValue: everId))"
 			if firstStart {
 				urlParameter += "&\(ParameterName.urlParameter(fromName: .FirstStart, andValue: "1"))"
 			}

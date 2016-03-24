@@ -22,6 +22,9 @@ public final class Webtrekk : Logable {
 
 		}
 	}
+	public var autoTrackedScreens = [String: AutoTrackedScreen]()
+
+
 	private var plugins = Set<Plugin>()
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
@@ -135,10 +138,18 @@ public final class Webtrekk : Logable {
 
 	// MARK: Tracking
 
+	public func auto(className: String) {
+		for (key, screen) in autoTrackedScreens {
+			guard className.containsString(key) else {
+				continue
+			}
+			track(screen)
+		}
+	}
+
+
 	public func track(pageName: String) {
-		var trackingParameter = PageTrackingParameter(pageParameter: PageParameter())
-		trackingParameter.pixelParameter.pageName = pageName
-		track(trackingParameter)
+		track(PageTrackingParameter(pageName: pageName))
 	}
 
 
@@ -146,11 +157,16 @@ public final class Webtrekk : Logable {
 		enqueue(trackingParameter, config: config)
 	}
 
+
+	private func track(screen: AutoTrackedScreen) {
+		track(screen.mappingName)
+	}
+
+
 	private func enqueue(trackingParameter: TrackingParameter, config: TrackerConfiguration) {
 		// TODO: add to queue
 		queue?.add(trackingParameter, config: config)
 	}
-
 
 	// MARK: Plugins
 

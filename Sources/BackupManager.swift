@@ -197,6 +197,7 @@ extension ActionTrackingParameter: Backupable {
 		if let ecommerceParameter = ecommerceParameter {
 			items["ecommerceParameter"] = ecommerceParameter.toJson()
 		}
+		items["customParameters"] = customParameters.map({["index":$0.0, "value": $0.1]})
 		items["generalParameter"] = generalParameter.toJson()
 		items["pixelParameter"] = pixelParameter.toJson()
 		items["productParameters"] = productParameters.map({$0.toJson()})
@@ -224,6 +225,12 @@ extension ActionTrackingParameter: Backupable {
 			parameter.productParameters = productParametersJson.map({ProductParameter.fromJson($0)!})
 		}
 
+		if let customDic = json["customParameters"] as? [[String: AnyObject]] {
+			for item in customDic {
+				parameter.customParameters[item["index"] as! Int] =  item["value"] as? String
+			}
+		}
+
 		return parameter
 	}
 }
@@ -234,6 +241,7 @@ extension PageTrackingParameter: Backupable {
 		if let ecommerceParameter = ecommerceParameter {
 			items["ecommerceParameter"] = ecommerceParameter.toJson()
 		}
+		items["customParameters"] = customParameters.map({["index":$0.0, "value": $0.1]})
 		items["generalParameter"] = generalParameter.toJson()
 		items["pixelParameter"] = pixelParameter.toJson()
 		items["productParameters"] = productParameters.map({$0.toJson()})
@@ -260,6 +268,12 @@ extension PageTrackingParameter: Backupable {
 
 		if let productParametersJson = json["productParameters"] as? [[String: AnyObject]] {
 			parameter.productParameters = productParametersJson.map({ProductParameter.fromJson($0)!})
+		}
+
+		if let customDic = json["customParameters"] as? [[String: AnyObject]] {
+			for item in customDic {
+				parameter.customParameters[item["index"] as! Int] =  item["value"] as? String
+			}
 		}
 
 		return parameter
@@ -292,8 +306,8 @@ extension EcommerceParameter: Backupable {
 			parameter.orderNumber = orderNumber
 
 		}
-		if let detailsDic = json["categories"] as? [[String: AnyObject]] {
-			for item in detailsDic {
+		if let categoriesDic = json["categories"] as? [[String: AnyObject]] {
+			for item in categoriesDic {
 				parameter.categories[item["index"] as! Int] =  item["value"] as? String
 			}
 		}

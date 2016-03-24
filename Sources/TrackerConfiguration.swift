@@ -1,12 +1,5 @@
 import Foundation
 
-internal extension TrackerConfiguration {
-
-	internal var baseUrl: NSURL {
-		get { return NSURL(string: serverUrl)!.URLByAppendingPathComponent(trackingId).URLByAppendingPathComponent("wt")}
-	}
-}
-
 public struct TrackerConfiguration {
 	public var appVersion: String
 	public var maxRequests:         Int
@@ -65,4 +58,44 @@ public struct TrackerConfiguration {
 		self.configFilePath = configFilePath
 	}
 
+}
+
+
+internal extension TrackerConfiguration {
+
+	internal var baseUrl: NSURL {
+		get { return NSURL(string: serverUrl)!.URLByAppendingPathComponent(trackingId).URLByAppendingPathComponent("wt")}
+	}
+}
+
+
+public struct AutoTrackedScreen: Equatable {
+	public var className:   String
+	public var mappingName: String
+
+	public init(className: String, mappingName: String) {
+		self.className = className
+		self.mappingName = mappingName
+	}
+}
+
+
+public func ==(lhs: AutoTrackedScreen, rhs: AutoTrackedScreen) -> Bool {
+	guard lhs.className == rhs.className else {
+		return false
+	}
+	guard lhs.mappingName == rhs.mappingName else {
+		return false
+	}
+
+	return true
+}
+
+
+extension AutoTrackedScreen: Hashable {
+	public var hashValue: Int {
+		get {
+			return "\(className):\(mappingName)".hash
+		}
+	}
 }
