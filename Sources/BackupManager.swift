@@ -198,6 +198,9 @@ extension ActionTrackingParameter: Backupable {
 			items["ecommerceParameter"] = ecommerceParameter.toJson()
 		}
 		items["customParameters"] = customParameters.map({["index":$0.0, "value": $0.1]})
+		if let customerParameter = customerParameter {
+			items["customerParameter"] = customerParameter.toJson()
+		}
 		items["generalParameter"] = generalParameter.toJson()
 		items["pixelParameter"] = pixelParameter.toJson()
 		items["productParameters"] = productParameters.map({$0.toJson()})
@@ -221,13 +224,21 @@ extension ActionTrackingParameter: Backupable {
 		}
 		parameter.generalParameter = generalParameter
 
+		if let customerParameterJson = json["customerParameter"] as? [String: AnyObject], let customerParameter = CustomerParameter.fromJson(customerParameterJson) {
+			parameter.customerParameter = customerParameter
+		}
+
+		if let ecommerceParameterJson = json["ecommerceParameter"] as? [String: AnyObject], let ecommerceParameter = EcommerceParameter.fromJson(ecommerceParameterJson) {
+			parameter.ecommerceParameter = ecommerceParameter
+		}
+
 		if let productParametersJson = json["productParameters"] as? [[String: AnyObject]] {
 			parameter.productParameters = productParametersJson.map({ProductParameter.fromJson($0)!})
 		}
 
 		if let customDic = json["customParameters"] as? [[String: AnyObject]] {
 			for item in customDic {
-				parameter.customParameters[item["index"] as! Int] =  item["value"] as? String
+				parameter.customParameters[item["index"] as! String] =  item["value"] as? String
 			}
 		}
 
@@ -242,6 +253,9 @@ extension PageTrackingParameter: Backupable {
 			items["ecommerceParameter"] = ecommerceParameter.toJson()
 		}
 		items["customParameters"] = customParameters.map({["index":$0.0, "value": $0.1]})
+		if let customerParameter = customerParameter {
+			items["customerParameter"] = customerParameter.toJson()
+		}
 		items["generalParameter"] = generalParameter.toJson()
 		items["pixelParameter"] = pixelParameter.toJson()
 		items["productParameters"] = productParameters.map({$0.toJson()})
@@ -266,13 +280,21 @@ extension PageTrackingParameter: Backupable {
 		}
 		parameter.generalParameter = generalParameter
 
+		if let customerParameterJson = json["customerParameter"] as? [String: AnyObject], let customerParameter = CustomerParameter.fromJson(customerParameterJson) {
+			parameter.customerParameter = customerParameter
+		}
+		
+		if let ecommerceParameterJson = json["ecommerceParameter"] as? [String: AnyObject], let ecommerceParameter = EcommerceParameter.fromJson(ecommerceParameterJson) {
+			parameter.ecommerceParameter = ecommerceParameter
+		}
+
 		if let productParametersJson = json["productParameters"] as? [[String: AnyObject]] {
 			parameter.productParameters = productParametersJson.map({ProductParameter.fromJson($0)!})
 		}
 
 		if let customDic = json["customParameters"] as? [[String: AnyObject]] {
 			for item in customDic {
-				parameter.customParameters[item["index"] as! Int] =  item["value"] as? String
+				parameter.customParameters[item["index"] as! String] =  item["value"] as? String
 			}
 		}
 
@@ -285,7 +307,7 @@ extension EcommerceParameter: Backupable {
 		var items = [String: AnyObject]()
 		items["currency"] = currency
 		items["categories"] = categories.map({["index":$0.0, "value": $0.1]})
-		items["orderNumber"] = currency
+		items["orderNumber"] = orderNumber
 		items["status"] = status.rawValue
 		items["totalValue"] = totalValue
 		if let voucherValue = voucherValue {
@@ -486,6 +508,87 @@ extension ActionParameter: Backupable {
 			for item in sessionDic {
 				parameter.session[item["index"] as! Int] =  item["value"] as? String
 			}
+		}
+		return parameter
+	}
+}
+
+extension CustomerParameter: Backupable {
+	internal func toJson() -> [String : AnyObject] {
+		var items = [String: AnyObject]()
+		items["categories"] = categories.map({["index":$0.0, "value": $0.1]})
+		if let birthday = birthday {
+			items["birthday"] = "\(birthday.timeIntervalSince1970)"
+		}
+		items["city"] = city
+		items["country"] = country
+		items["eMail"] = eMail
+		items["eMailReceiverId"] = eMailReceiverId
+		if let gender = gender {
+			items["gender"] = gender.toValue()
+		}
+		items["firstName"] = firstName
+		items["lastName"] = lastName
+		if let newsletter = newsletter {
+			items["newsletter"] = newsletter
+		}
+		items["number"] = number
+		items["phoneNumber"] = phoneNumber
+		items["street"] = street
+		items["streetNumber"] = streetNumber
+		items["zip"] = zip
+		return items
+	}
+
+
+	internal static func fromJson(json: [String: AnyObject]) -> CustomerParameter? {
+		var parameter = CustomerParameter()
+		if let timeStampValue = json["birthday"] as? String, let timeStamp = Double(timeStampValue) {
+			parameter.birthday = NSDate(timeIntervalSince1970: timeStamp)
+		}
+		if let categoriesDic = json["categories"] as? [[String: AnyObject]] {
+			for item in categoriesDic {
+				parameter.categories[item["index"] as! Int] =  item["value"] as? String
+			}
+		}
+		if let city = json["city"] as? String {
+			parameter.city = city
+		}
+		if let country = json["country"] as? String {
+			parameter.country = country
+		}
+		if let eMail = json["eMail"] as? String {
+			parameter.eMail = eMail
+		}
+		if let eMailReceiverId = json["eMailReceiverId"] as? String {
+			parameter.eMailReceiverId = eMailReceiverId
+		}
+		if let gender = json["gender"] as? Int {
+			parameter.gender = CustomerGender.from(gender)
+		}
+		if let firstName = json["firstName"] as? String {
+			parameter.firstName = firstName
+		}
+		if let lastName = json["lastName"] as? String {
+			parameter.lastName = lastName
+		}
+		if let newsletter = json["newsletter"] as? Bool {
+			parameter.newsletter = newsletter
+		}
+		if let number = json["number"] as? String {
+			parameter.number = number
+		}
+		if let phoneNumber = json["phoneNumber"] as? String {
+			parameter.phoneNumber = phoneNumber
+		}
+		if let street = json["street"] as? String {
+			parameter.street = street
+		}
+		if let streetNumber = json["streetNumber"] as? String {
+			parameter.streetNumber = streetNumber
+		}
+		if let zip = json["zip"] as? String {
+			parameter.zip = zip
 		}
 		return parameter
 	}

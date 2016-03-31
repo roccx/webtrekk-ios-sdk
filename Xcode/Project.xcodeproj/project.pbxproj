@@ -14,6 +14,7 @@
 		B708D30E1C9018F200FEFC37 /* HttpMockup.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708D30D1C9018F200FEFC37 /* HttpMockup.swift */; };
 		B708D3141C90731A00FEFC37 /* BackupManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */; };
 		B73DDC1A1C9AFACE00844599 /* AutoTrackExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DDC191C9AFACE00844599 /* AutoTrackExtension.swift */; };
+		B760847C1CABE74600338E88 /* wt.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = B760847B1CABE74600338E88 /* wt.mp4 */; };
 		B78DF2141C74C730002AADDF /* DefaultConfig.xml in Resources */ = {isa = PBXBuildFile; fileRef = B78DF2121C74C730002AADDF /* DefaultConfig.xml */; };
 		B78DF2151C74C730002AADDF /* DefaultConfigIncludingAndroid.xml in Resources */ = {isa = PBXBuildFile; fileRef = B78DF2131C74C730002AADDF /* DefaultConfigIncludingAndroid.xml */; };
 		B792C5DF1C7B53220093DF35 /* ParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B792C5DE1C7B53220093DF35 /* ParameterTest.swift */; };
@@ -37,6 +38,7 @@
 		B708D30D1C9018F200FEFC37 /* HttpMockup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpMockup.swift; sourceTree = "<group>"; };
 		B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackupManagerTest.swift; sourceTree = "<group>"; };
 		B73DDC191C9AFACE00844599 /* AutoTrackExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoTrackExtension.swift; sourceTree = "<group>"; };
+		B760847B1CABE74600338E88 /* wt.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = wt.mp4; sourceTree = "<group>"; };
 		B78DF2121C74C730002AADDF /* DefaultConfig.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DefaultConfig.xml; sourceTree = "<group>"; };
 		B78DF2131C74C730002AADDF /* DefaultConfigIncludingAndroid.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DefaultConfigIncludingAndroid.xml; sourceTree = "<group>"; };
 		B792C5DE1C7B53220093DF35 /* ParameterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterTest.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 		498683301BE405D6001DCBC7 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				B760847B1CABE74600338E88 /* wt.mp4 */,
 				498683311BE405D6001DCBC7 /* AppDelegate.swift */,
 				498683321BE405D6001DCBC7 /* Info.plist */,
 				498683331BE405D6001DCBC7 /* LaunchScreen.storyboard */,
@@ -224,6 +227,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B760847C1CABE74600338E88 /* wt.mp4 in Resources */,
 				498683381BE405D6001DCBC7 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

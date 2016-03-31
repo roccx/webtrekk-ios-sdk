@@ -2,11 +2,12 @@ import UIKit
 
 
 public protocol TrackingParameter {
+	var customParameters:   [String: String]    { get set }
+	var customerParameter:  CustomerParameter?  { get set }
 	var ecommerceParameter: EcommerceParameter? { get set }
 	var generalParameter:   GeneralParameter    { get }
 	var pixelParameter:     PixelParameter      { get }
 	var productParameters:  [ProductParameter]  { get set }
-	var customParameters:   [Int: String]       { get set }
 	//func urlWithAllParameter(config: TrackerConfiguration) -> String // TODO: this will render casting uneccessary but will promote the function to public
 }
 
@@ -102,18 +103,20 @@ extension TrackingParameter {
 
 public struct ActionTrackingParameter: TrackingParameter {
 	public var actionParameter:    ActionParameter
-	public var customParameters:   [Int: String]
+	public var customParameters:   [String: String]
+	public var customerParameter:  CustomerParameter?
 	public var ecommerceParameter: EcommerceParameter?
 	public var generalParameter:   GeneralParameter
 	public var pixelParameter:     PixelParameter
 	public var productParameters:  [ProductParameter]
 
-	public init(actionParameter: ActionParameter, customParameters: [Int: String] = [:], ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = []) {
+	public init(actionParameter: ActionParameter, customParameters: [String: String] = [:], customerParameter: CustomerParameter? = nil, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = []) {
 
 		let timeStamp = NSDate()
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
 		self.actionParameter = actionParameter
 		self.customParameters = customParameters
+		self.customerParameter = customerParameter
 		self.ecommerceParameter = ecommerceParameter
 		self.productParameters = productParameters
 		self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
@@ -125,18 +128,20 @@ public struct ActionTrackingParameter: TrackingParameter {
 }
 
 public struct PageTrackingParameter: TrackingParameter{
-	public var customParameters:   [Int: String]
+	public var customParameters:   [String: String]
+	public var customerParameter:  CustomerParameter?
 	public var ecommerceParameter: EcommerceParameter?
 	public var generalParameter:   GeneralParameter
 	public var pageParameter:      PageParameter
 	public var pixelParameter:     PixelParameter
 	public var productParameters:  [ProductParameter]
 
-	public init(pageName: String = "", pageParameter: PageParameter = PageParameter(), customParameters: [Int: String] = [:], ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = []) {
+	public init(pageName: String = "", pageParameter: PageParameter = PageParameter(), customParameters: [String: String] = [:], customerParameter: CustomerParameter? = nil, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = []) {
 
 		let timeStamp = NSDate()
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
 		self.customParameters = customParameters
+		self.customerParameter = customerParameter
 		self.pageParameter = pageParameter
 		self.ecommerceParameter = ecommerceParameter
 		self.productParameters = productParameters
