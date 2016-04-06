@@ -34,14 +34,6 @@ private extension XCTest {
 
 class ParameterTest: XCTestCase {
 
-
-	var webtrekk: Webtrekk?
-
-	override func setUp() {
-		webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://usesecure.domain.plz", trackingId: "123456789012345", version: 0))
-	}
-
-
 	func testActionParameter() {
 		let actionName = "click"
 		let actionParameter = ActionParameter(name:actionName)
@@ -103,6 +95,7 @@ class ParameterTest: XCTestCase {
 
 		var url = pageTrackingParameter.urlWithAllParameter(webtrekk.config)
 		XCTAssertTrue(url.containsString("TestPage"))
+		webtrekk.track(pageTrackingParameter)
 	}
 
 }

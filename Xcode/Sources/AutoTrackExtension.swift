@@ -12,8 +12,8 @@ extension UIViewController {
 		}
 
 		dispatch_once(&Static.token) {
-			let originalSelector = #selector(viewDidLoad)
-			let swizzledSelector = #selector(wtk_viewDidLoad)
+			let originalSelector = #selector(viewWillAppear)
+			let swizzledSelector = #selector(wtk_viewWillAppear)
 
 			let originalMethod = class_getInstanceMethod(self, originalSelector)
 			let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
@@ -30,8 +30,8 @@ extension UIViewController {
 
 	// MARK: - Method Swizzling
 
-	func wtk_viewDidLoad() {
-		self.wtk_viewDidLoad()
+	func wtk_viewWillAppear(animated: Bool) {
+		self.wtk_viewWillAppear(animated)
 		if let webtrekk = webtrekk {
 			webtrekk.auto("\(self.dynamicType)")
 		}

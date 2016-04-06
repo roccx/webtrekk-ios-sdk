@@ -66,8 +66,10 @@ internal class FirstTestViewController: UIViewController {
 		super.viewWillDisappear(animated)
 		player.pause()
 		player.removeObserver(self, forKeyPath: "status")
+		player.removeObserver(self, forKeyPath: "rate")
 		if let periodicObserver = periodicObserver {
 			player.removeTimeObserver(periodicObserver)
+			self.periodicObserver = nil
 		}
 	}
 
@@ -84,6 +86,7 @@ internal class FirstTestViewController: UIViewController {
 
 			print("playback has started")
 			self.player.removeTimeObserver(self.startObserver!)
+			self.startObserver = nil
 		}
 		periodicObserver = player.addPeriodicTimeObserverForInterval(CMTime(seconds: 5.0, preferredTimescale: 1), queue: dispatch_get_main_queue()) { (time: CMTime) in
 			if self.player.rate != 0 && self.player.error == nil {
