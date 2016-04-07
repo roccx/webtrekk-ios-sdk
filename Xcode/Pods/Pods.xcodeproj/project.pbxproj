@@ -31,6 +31,7 @@
 		ACD0C2AFD02D93DB8195D00727972ABF /* ParameterName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C4D8C490FD3A9AA4A5292597FCC440 /* ParameterName.swift */; };
 		AFB5F2FF9A190E2416EBB6F6E2612C95 /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1AFBF7F4D160D07CEF1ED77650BE5FB /* AVKit.framework */; };
 		B023BBA9525C3A3914BB6E20E06A4B73 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D158F69A5F72C2419B19C1E4B33501FA /* Extensions.swift */; };
+		B75587CA1CB69D060095E0DF /* MediaParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75587C91CB69D060095E0DF /* MediaParameter.swift */; };
 		B797E4331CB50267006AED47 /* WtAVPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B797E4321CB50267006AED47 /* WtAVPlayerViewController.swift */; };
 		BA25A40B177D173000900A19C20F9E90 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2917A5F38E49FFAE44000D48A930062 /* FileManager.swift */; };
 		BDB60B9C007DCBC83CE889A795A2801A /* BackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289A046497A485202A3EAB232A8A6B51 /* BackupManager.swift */; };
@@ -106,6 +107,7 @@
 		AB666EC0D969726C282280239478C1C5 /* Parameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
 		AC10559F9E420221E3C418F1A74D7942 /* ConfigParser.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigParser.swift; sourceTree = "<group>"; };
 		AD1C7E0F6D86C87FA37BCC3EAF03E7AF /* Webtrekk.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Webtrekk.swift; sourceTree = "<group>"; };
+		B75587C91CB69D060095E0DF /* MediaParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaParameter.swift; sourceTree = "<group>"; };
 		B797E4321CB50267006AED47 /* WtAVPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WtAVPlayerViewController.swift; sourceTree = "<group>"; };
 		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		BF55E2A793C4E5D17A827048E0549FE2 /* GeneralParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GeneralParameter.swift; sourceTree = "<group>"; };
@@ -276,6 +278,7 @@
 				98A630733C0ACE80297D784E0BC0E9C9 /* PixelParameter.swift */,
 				0601594E8D1921829BDA1C061AC78633 /* ProductParameter.swift */,
 				1CBA292626EE5FAD0D4D8DF580C76E6C /* TrackingParameter.swift */,
+				B75587C91CB69D060095E0DF /* MediaParameter.swift */,
 			);
 			path = Parameter;
 			sourceTree = "<group>";
@@ -493,6 +496,7 @@
 				5C6ACD267E44309FFC998EA67623951B /* Webtrekk-dummy.m in Sources */,
 				D28D79F5569623D3A99B1990DE6BF76C /* Webtrekk.swift in Sources */,
 				15C3F2EBC447FD0C9A3CA6E9D26D3968 /* WebtrekkQueue.swift in Sources */,
+				B75587CA1CB69D060095E0DF /* MediaParameter.swift in Sources */,
 				3B038E8491767CBFBE26E70B52E5D008 /* XmlConfigParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

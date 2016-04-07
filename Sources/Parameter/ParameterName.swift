@@ -53,15 +53,15 @@ internal enum ParameterName: String {
 	case CustomerZip           = "uc710"
 
 	// MARK: Media
-	case MediaBandwidth       = "bw"
-	case MediaCategory        = "mg"
-	case MediaCurrentPosition = "mt1"
-	case MediaDescription     = "mi"
-	case MediaEvent           = "mk"
-	case MediaMute            = "mut"
-	case MediaPosition        = "pos"
-	case MediaTotalDuration   = "mt2"
-	case MediaVolumn          = "vol"
+	case MediaAction     = "mk"
+	case MediaBandwidth  = "bw"
+	case MediaCategories = "mg"
+	case MediaDuration   = "mt2"
+	case MediaName       = "mi"
+	case MediaMute       = "mut"
+	case MediaPosition   = "mt1"
+	case MediaVolumn     = "vol"
+	case MediaTimeStamp  = "x"
 
 }
 
