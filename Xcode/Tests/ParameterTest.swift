@@ -3,6 +3,12 @@ import XCTest
 
 @testable import Webtrekk
 
+private var webtrekk: Webtrekk? = {
+	var webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://q3.webtrekk.net", trackingId: "189053685367929", version: 0))
+	webtrekk.enableLoging = true
+	return webtrekk
+}()
+
 private extension XCTest {
 	func fillDictonary(range: Range<Int>, contentString: String) -> [Int: String] {
 		var dictonary = [Int: String]()
@@ -91,9 +97,9 @@ class ParameterTest: XCTestCase {
 		guard let webtrekk = webtrekk else {
 			return
 		}
-		var pageTrackingParameter = PageTrackingParameter(pageName: "TestPage")
+		let pageTrackingParameter = PageTrackingParameter(pageName: "TestPage")
 
-		var url = pageTrackingParameter.urlWithAllParameter(webtrekk.config)
+		let url = pageTrackingParameter.urlWithAllParameter(webtrekk.config)
 		XCTAssertTrue(url.containsString("TestPage"))
 		webtrekk.track(pageTrackingParameter)
 	}

@@ -5,6 +5,7 @@ public /* final */ class WtAvPlayer: AVPlayer {
 	internal var periodicObserver: AnyObject?
 	internal var startObserver: AnyObject?
 	internal var webtrekk: Webtrekk?
+	internal var paused: Bool = false
 
 	private let assumeStartedTime: NSValue = NSValue(CMTime: CMTimeMake(1, 100))
 
@@ -46,10 +47,29 @@ public /* final */ class WtAvPlayer: AVPlayer {
 			self.startObserver = nil
 		}
 		periodicObserver = addPeriodicTimeObserverForInterval(CMTime(seconds: 5.0, preferredTimescale: 1), queue: dispatch_get_main_queue()) { (time: CMTime) in
-			if self.rate != 0 && self.error == nil {
-				print("\(CMTimeGetSeconds(time)) still playing")
+
+			guard self.error == nil else {
+				print("error occured: \(self.error)")
+				return
+			}
+
+			if self.rate != 0{
+				if self.paused {
+					self.paused = false
+					print("\(CMTimeGetSeconds(time)) playing after pause")
+				}
+				else {
+					print("\(CMTimeGetSeconds(time)) still playing")
+				}
 			} else {
-				print("\(CMTimeGetSeconds(time)) paused playing")
+				if self.paused {
+					print("\(CMTimeGetSeconds(time)) another paused playing")
+				}
+				else {
+					self.paused = true
+					print("\(CMTimeGetSeconds(time)) paused playing")
+				}
+
 			}
 		}
 	}

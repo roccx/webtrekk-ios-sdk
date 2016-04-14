@@ -31,8 +31,13 @@ internal struct BackupManager: Logable {
 			else if let page = item.parameter as? PageTrackingParameter {
 				items["parameters"] = page.toJson()
 				items["type"] = "page"
-			} else {
-				log("as of now only support action and page tracking parameters")
+			}
+			else if let media = item.parameter as? MediaTrackingParameter {
+				items["parameters"] = media.toJson()
+				items["type"] = "media"
+			}
+			else {
+				log("as of now only support action, page and media tracking parameters")
 			}
 			items["config"] = item.config.toJson()
 			json.append(items)
@@ -64,7 +69,7 @@ internal struct BackupManager: Logable {
 		}
 		for item in json {
 			let config: TrackerConfiguration
-			let parameter: TrackingParameter
+			let parameter: BasicTrackingParameter
 			if let type: String = item["type"] as? String where type == "page" {
 				guard let page = PageTrackingParameter.fromJson(item["parameters"] as! [String: AnyObject]) else {
 					continue
@@ -76,6 +81,12 @@ internal struct BackupManager: Logable {
 					continue
 				}
 				parameter = action
+			}
+			else if let type: String = item["type"] as? String where type == "media"{
+				guard let media = MediaTrackingParameter.fromJson(item["parameters"] as! [String: AnyObject]) else {
+					continue
+				}
+				parameter = media
 			}
 			else {
 				log("Item was of neither page or action type and cannot be restored at the moment.")
@@ -283,7 +294,7 @@ extension PageTrackingParameter: Backupable {
 		if let customerParameterJson = json["customerParameter"] as? [String: AnyObject], let customerParameter = CustomerParameter.fromJson(customerParameterJson) {
 			parameter.customerParameter = customerParameter
 		}
-		
+
 		if let ecommerceParameterJson = json["ecommerceParameter"] as? [String: AnyObject], let ecommerceParameter = EcommerceParameter.fromJson(ecommerceParameterJson) {
 			parameter.ecommerceParameter = ecommerceParameter
 		}
@@ -298,6 +309,114 @@ extension PageTrackingParameter: Backupable {
 			}
 		}
 
+		return parameter
+	}
+}
+
+
+extension MediaTrackingParameter: Backupable {
+	internal func toJson() -> [String : AnyObject] {
+		var items = [String: AnyObject]()
+		items["customParameters"] = customParameters.map({["index":$0.0, "value": $0.1]})
+		items["generalParameter"] = generalParameter.toJson()
+		items["pixelParameter"] = pixelParameter.toJson()
+		items["mediaParameter"] = mediaParameter.toJson()
+		return items
+	}
+
+
+	internal static func fromJson(json: [String: AnyObject]) -> MediaTrackingParameter? {
+		guard let mediaParameterJson = json["mediaParameter"] as? [String: AnyObject], let mediaParameter = MediaParameter.fromJson(mediaParameterJson) else {
+			return nil
+		}
+		var parameter = MediaTrackingParameter(mediaParameter: mediaParameter)
+
+		guard let pixelParameterJson = json["pixelParameter"] as? [String: AnyObject], let pixelParameter = PixelParameter.fromJson(pixelParameterJson) else {
+			return nil
+		}
+		parameter.pixelParameter = pixelParameter
+
+		guard let generalParameterJson = json["generalParameter"] as? [String: AnyObject], let generalParameter = GeneralParameter.fromJson(generalParameterJson) else {
+			return nil
+		}
+		parameter.generalParameter = generalParameter
+
+		if let customDic = json["customParameters"] as? [[String: AnyObject]] {
+			for item in customDic {
+				parameter.customParameters[item["index"] as! String] =  item["value"] as? String
+			}
+		}
+
+		return parameter
+	}
+}
+
+extension MediaParameter: Backupable {
+	internal func toJson() -> [String : AnyObject] {
+		var items = [String: AnyObject]()
+		items["action"] = action.rawValue
+		items["duration"] = duration
+		items["name"] = name
+		items["position"] = position
+		items["timeStamp"] = "\(timeStamp.timeIntervalSince1970)"
+
+		if let bandwidth = bandwidth {
+			items["bandwidth"] = bandwidth
+		}
+		if !categories.isEmpty {
+			items["categories"] = categories.map({["index":$0.0, "value": $0.1]})
+		}
+		if let mute = mute {
+			items["mute"] = mute
+		}
+		if let volume = volume {
+			items["volume"] = volume
+		}
+		return items
+	}
+
+
+	internal static func fromJson(json: [String: AnyObject]) -> MediaParameter? {
+		guard let actionString = json["action"] as? String, let duration = json["duration"] as? Int, let name = json["name"] as? String, let position = json["position"] as? Int, let timeStampValue = json["timeStamp"] as? String, let timeStamp = Double(timeStampValue) else {
+			return nil
+		}
+		let action: MediaAction
+		switch actionString {
+		case MediaAction.EndOfFile.rawValue:
+			action = .EndOfFile
+		case MediaAction.Pause.rawValue:
+			action = .Pause
+		case MediaAction.Play.rawValue:
+			action = .Play
+		case MediaAction.Position.rawValue:
+			action = .Position
+		case MediaAction.Seek.rawValue:
+			action = .Seek
+		case MediaAction.Stop.rawValue:
+			action = .Stop
+		default:
+			action = .Play
+		}
+		var parameter = MediaParameter(action: action, duration: duration, name: name, position: position, timeStamp: NSDate(timeIntervalSince1970: timeStamp))
+
+		if let bandwidth = json["bandwidth"] as? Int {
+			parameter.bandwidth = bandwidth
+
+		}
+		if let categoriesDic = json["categories"] as? [[String: AnyObject]] {
+			for item in categoriesDic {
+				parameter.categories[item["index"] as! Int] =  item["value"] as? String
+			}
+		}
+
+		if let mute = json["mute"] as? Bool {
+			parameter.mute = mute
+
+		}
+		if let volume = json["volume"] as? Int {
+			parameter.volume = volume
+
+		}
 		return parameter
 	}
 }

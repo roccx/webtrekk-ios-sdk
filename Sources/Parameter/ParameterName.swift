@@ -60,7 +60,7 @@ internal enum ParameterName: String {
 	case MediaName       = "mi"
 	case MediaMute       = "mut"
 	case MediaPosition   = "mt1"
-	case MediaVolumn     = "vol"
+	case MediaVolume     = "vol"
 	case MediaTimeStamp  = "x"
 
 }

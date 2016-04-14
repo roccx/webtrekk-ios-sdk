@@ -49,11 +49,13 @@ extension MediaParameter: Parameter {
 			if let bandwidth = bandwidth {
 				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaBandwidth, andValue: "\(bandwidth)"))"
 			}
+
 			if let mute = mute {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaBandwidth, andValue: mute ? "1" : "0"))"
+				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaMute, andValue: mute ? "1" : "0"))"
 			}
+
 			if let volume = volume {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaBandwidth, andValue: "\(volume)"))"
+				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaVolume, andValue: "\(volume)"))"
 			}
 			
 			if !categories.isEmpty {

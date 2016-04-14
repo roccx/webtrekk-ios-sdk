@@ -1,18 +1,17 @@
 import UIKit
 
 
-public protocol TrackingParameter {
-	var customParameters:   [String: String]    { get set }
-	var customerParameter:  CustomerParameter?  { get set }
-	var ecommerceParameter: EcommerceParameter? { get set }
+public protocol BasicTrackingParameter {
+
 	var generalParameter:   GeneralParameter    { get }
 	var pixelParameter:     PixelParameter      { get }
-	var productParameters:  [ProductParameter]  { get set }
-	//func urlWithAllParameter(config: TrackerConfiguration) -> String // TODO: this will render casting uneccessary but will promote the function to public
+
+	func urlWithAllParameter(config: TrackerConfiguration) -> String
+
+
 }
 
-extension TrackingParameter {
-
+extension BasicTrackingParameter {
 	public var everId: String {
 		get {
 
@@ -30,13 +29,25 @@ extension TrackingParameter {
 		}
 	}
 
-
+	
 	public var userAgent: String {
 		get {
 			let os = NSProcessInfo().operatingSystemVersion
 			return "Tracking Library \(Double(pixelParameter.version/100)) (iOS; \(os.majorVersion). \(os.minorVersion). \(os.patchVersion); \(UIDevice.currentDevice().modelName); \(NSLocale.currentLocale().localeIdentifier))"
 		}
 	}
+
+}
+
+public protocol TrackingParameter: BasicTrackingParameter {
+	var customParameters:   [String: String]    { get set }
+	var customerParameter:  CustomerParameter?  { get set }
+	var ecommerceParameter: EcommerceParameter? { get set }
+	var productParameters:  [ProductParameter]  { get set }
+
+}
+
+extension TrackingParameter {
 
 	func urlProductParameters() -> String {
 		guard !productParameters.isEmpty else {
@@ -97,100 +108,5 @@ extension TrackingParameter {
 			urlParameter += "&\(ParameterName.urlParameter(fromName: .ProductCategory, withIndex: index, andValue: value))"
 		}
 		return urlParameter
-	}
-}
-
-
-public struct ActionTrackingParameter: TrackingParameter {
-	public var actionParameter:    ActionParameter
-	public var customParameters:   [String: String]
-	public var customerParameter:  CustomerParameter?
-	public var ecommerceParameter: EcommerceParameter?
-	public var generalParameter:   GeneralParameter
-	public var pixelParameter:     PixelParameter
-	public var productParameters:  [ProductParameter]
-
-	public init(actionParameter: ActionParameter, customParameters: [String: String] = [:], customerParameter: CustomerParameter? = nil, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = []) {
-
-		let timeStamp = NSDate()
-		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
-		self.actionParameter = actionParameter
-		self.customParameters = customParameters
-		self.customerParameter = customerParameter
-		self.ecommerceParameter = ecommerceParameter
-		self.productParameters = productParameters
-		self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
-		self.generalParameter = GeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
-		generalParameter.everId = self.everId
-		generalParameter.userAgent = userAgent
-	}
-
-}
-
-public struct PageTrackingParameter: TrackingParameter{
-	public var customParameters:   [String: String]
-	public var customerParameter:  CustomerParameter?
-	public var ecommerceParameter: EcommerceParameter?
-	public var generalParameter:   GeneralParameter
-	public var pageParameter:      PageParameter
-	public var pixelParameter:     PixelParameter
-	public var productParameters:  [ProductParameter]
-
-	public init(pageName: String = "", pageParameter: PageParameter = PageParameter(), customParameters: [String: String] = [:], customerParameter: CustomerParameter? = nil, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = []) {
-
-		let timeStamp = NSDate()
-		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
-		self.customParameters = customParameters
-		self.customerParameter = customerParameter
-		self.pageParameter = pageParameter
-		self.ecommerceParameter = ecommerceParameter
-		self.productParameters = productParameters
-		if pageName.isEmpty {
-			self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
-		}
-		else {
-			self.pixelParameter = PixelParameter(pageName: pageName, displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
-		}
-		self.generalParameter = GeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
-		generalParameter.everId = self.everId
-		generalParameter.userAgent = userAgent
-	}
-}
-
-
-extension ActionTrackingParameter {
-	func urlWithAllParameter(config: TrackerConfiguration) -> String {
-		var url = config.baseUrl.absoluteString
-		url += pixelParameter.urlParameter
-		url += generalParameter.urlParameter
-		if !actionParameter.urlParameter.isEmpty {
-			url += actionParameter.urlParameter
-		}
-		if !productParameters.isEmpty {
-			url += urlProductParameters()
-		}
-		if let ecommerceParameter = ecommerceParameter {
-			url += ecommerceParameter.urlParameter
-		}
-		return url
-	}
-}
-
-
-extension PageTrackingParameter {
-	func urlWithAllParameter(config: TrackerConfiguration) -> String {
-		var url = config.baseUrl.absoluteString
-		url += pixelParameter.urlParameter
-		url += generalParameter.urlParameter
-		if !pageParameter.urlParameter.isEmpty {
-			url += pageParameter.urlParameter
-		}
-		if !productParameters.isEmpty {
-			url += urlProductParameters()
-		}
-		if let ecommerceParameter = ecommerceParameter {
-			url += ecommerceParameter.urlParameter
-		}
-		return url
 	}
 }

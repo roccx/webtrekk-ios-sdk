@@ -171,6 +171,60 @@ Option     |  Description
 `VIEW`     | 
 
 
+## Automatic Screen Tracking
+
+Assuming `webtrekk` as global variable for the Webtrekk Tracker
+
+```swift
+extension UIViewController {
+	public override class func initialize() {
+		struct Static {
+			static var token: dispatch_once_t = 0
+		}
+
+		if self !== UIViewController.self {
+			return
+		}
+
+		dispatch_once(&Static.token) {
+			let originalSelector = #selector(viewWillAppear)
+			let swizzledSelector = #selector(wtk_viewWillAppear)
+
+			let originalMethod = class_getInstanceMethod(self, originalSelector)
+			let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
+
+			let didAddMethod = class_addMethod(self, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
+
+			if didAddMethod {
+				class_replaceMethod(self, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
+			} else {
+				method_exchangeImplementations(originalMethod, swizzledMethod)
+			}
+		}
+	}
+
+	// MARK: - Method Swizzling
+
+	func wtk_viewWillAppear(animated: Bool) {
+		self.wtk_viewWillAppear(animated)
+		guard let webtrekk = webtrekk else {
+			// print("currently no webtrekk attached (\(self.dynamicType))")
+			return
+		}
+		webtrekk.auto("\(self.dynamicType)")
+	}
+}
+```
+
+After `webtrekk` init add the AutoTrackedScreens and lean back
+
+```swift
+let homeScreen = AutoTrackedScreen(className: "HomeController", mappingName: "Home")
+let detailScreen = AutoTrackedScreen(className: "DetailController", mappingName: "Detail")
+webtrekk.autoTrackedScreens = ["HomeScreen": homeScreen, "DetailScreen": detailScreen]
+```
+
+
 # License
 
 

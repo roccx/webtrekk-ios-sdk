@@ -1,11 +1,11 @@
 public struct Plugin: Equatable{
 	public var id: String
 
-	public func beforeTrackingSend (parameter: TrackingParameter) -> TrackingParameter {
+	public func beforeTrackingSend (parameter: BasicTrackingParameter) -> BasicTrackingParameter {
 		return parameter
 	}
 
-	public func afterTrackingSend (parameter: TrackingParameter) {
+	public func afterTrackingSend (parameter: BasicTrackingParameter) {
 	}
 }
 

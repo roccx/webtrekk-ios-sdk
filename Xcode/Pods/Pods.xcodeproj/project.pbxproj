@@ -31,8 +31,11 @@
 		ACD0C2AFD02D93DB8195D00727972ABF /* ParameterName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C4D8C490FD3A9AA4A5292597FCC440 /* ParameterName.swift */; };
 		AFB5F2FF9A190E2416EBB6F6E2612C95 /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1AFBF7F4D160D07CEF1ED77650BE5FB /* AVKit.framework */; };
 		B023BBA9525C3A3914BB6E20E06A4B73 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D158F69A5F72C2419B19C1E4B33501FA /* Extensions.swift */; };
+		B753822B1CBD19330013CD9A /* ActionTrackingParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B753822A1CBD19330013CD9A /* ActionTrackingParameter.swift */; };
+		B753822D1CBD19880013CD9A /* PageTrackingParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B753822C1CBD19880013CD9A /* PageTrackingParameter.swift */; };
+		B753822F1CBD1AB60013CD9A /* MediaTrackingParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B753822E1CBD1AB60013CD9A /* MediaTrackingParameter.swift */; };
 		B75587CA1CB69D060095E0DF /* MediaParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75587C91CB69D060095E0DF /* MediaParameter.swift */; };
-		B797E4331CB50267006AED47 /* WtAVPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B797E4321CB50267006AED47 /* WtAVPlayerViewController.swift */; };
+		B797E4331CB50267006AED47 /* WtAvPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B797E4321CB50267006AED47 /* WtAvPlayer.swift */; };
 		BA25A40B177D173000900A19C20F9E90 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2917A5F38E49FFAE44000D48A930062 /* FileManager.swift */; };
 		BDB60B9C007DCBC83CE889A795A2801A /* BackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289A046497A485202A3EAB232A8A6B51 /* BackupManager.swift */; };
 		BF1F95589778A91EA2BFF72A431BDA51 /* CustomerParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9925AA944DAC8D4EF175125C27CEC953 /* CustomerParameter.swift */; };
@@ -107,8 +110,11 @@
 		AB666EC0D969726C282280239478C1C5 /* Parameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
 		AC10559F9E420221E3C418F1A74D7942 /* ConfigParser.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConfigParser.swift; sourceTree = "<group>"; };
 		AD1C7E0F6D86C87FA37BCC3EAF03E7AF /* Webtrekk.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Webtrekk.swift; sourceTree = "<group>"; };
+		B753822A1CBD19330013CD9A /* ActionTrackingParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionTrackingParameter.swift; sourceTree = "<group>"; };
+		B753822C1CBD19880013CD9A /* PageTrackingParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageTrackingParameter.swift; sourceTree = "<group>"; };
+		B753822E1CBD1AB60013CD9A /* MediaTrackingParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaTrackingParameter.swift; sourceTree = "<group>"; };
 		B75587C91CB69D060095E0DF /* MediaParameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaParameter.swift; sourceTree = "<group>"; };
-		B797E4321CB50267006AED47 /* WtAVPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WtAVPlayerViewController.swift; sourceTree = "<group>"; };
+		B797E4321CB50267006AED47 /* WtAvPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WtAvPlayer.swift; sourceTree = "<group>"; };
 		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		BF55E2A793C4E5D17A827048E0549FE2 /* GeneralParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GeneralParameter.swift; sourceTree = "<group>"; };
 		C1951D01D49EF6CF33951CBC8809184C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -279,6 +285,9 @@
 				0601594E8D1921829BDA1C061AC78633 /* ProductParameter.swift */,
 				1CBA292626EE5FAD0D4D8DF580C76E6C /* TrackingParameter.swift */,
 				B75587C91CB69D060095E0DF /* MediaParameter.swift */,
+				B753822E1CBD1AB60013CD9A /* MediaTrackingParameter.swift */,
+				B753822A1CBD19330013CD9A /* ActionTrackingParameter.swift */,
+				B753822C1CBD19880013CD9A /* PageTrackingParameter.swift */,
 			);
 			path = Parameter;
 			sourceTree = "<group>";
@@ -317,8 +326,10 @@
 				AC10559F9E420221E3C418F1A74D7942 /* ConfigParser.swift */,
 				D158F69A5F72C2419B19C1E4B33501FA /* Extensions.swift */,
 				D2917A5F38E49FFAE44000D48A930062 /* FileManager.swift */,
+				B219EE7262A9D214FC75C2A3C42EBE52 /* Http */,
 				DF29B5AC3BE63C56DF42F10D4FA03E4A /* Locks.swift */,
 				68749F2193055B9DDE74A9B10F677433 /* Loger.swift */,
+				9DD349B5A85EDDB755EF468680BF4E84 /* Parameter */,
 				50378737E7D3C5D775813A9FA2768FC8 /* Plugin.swift */,
 				28BBA3CD5A6C3C91C06E1B319DF54975 /* Product.swift */,
 				270FF0AF1A41FF06DF1A7ED2885185B3 /* Queue.swift */,
@@ -326,10 +337,8 @@
 				E7BB32BFFA91D7A2E300F8906F14E1EE /* UserStoreKey.swift */,
 				AD1C7E0F6D86C87FA37BCC3EAF03E7AF /* Webtrekk.swift */,
 				104F0192243915A26FB5786DF198A203 /* WebtrekkQueue.swift */,
+				B797E4321CB50267006AED47 /* WtAvPlayer.swift */,
 				366345C99FD14A01B69F92986A773C3C /* XmlConfigParser.swift */,
-				B219EE7262A9D214FC75C2A3C42EBE52 /* Http */,
-				9DD349B5A85EDDB755EF468680BF4E84 /* Parameter */,
-				B797E4321CB50267006AED47 /* WtAVPlayerViewController.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -475,8 +484,10 @@
 				3A9F78C0EB7344EC3A604962BDAD44FB /* DefaultHttpClient.swift in Sources */,
 				A84E7CE80770023C97C57A5BED299D53 /* EcommerceParameter.swift in Sources */,
 				B023BBA9525C3A3914BB6E20E06A4B73 /* Extensions.swift in Sources */,
-				B797E4331CB50267006AED47 /* WtAVPlayerViewController.swift in Sources */,
+				B753822D1CBD19880013CD9A /* PageTrackingParameter.swift in Sources */,
+				B797E4331CB50267006AED47 /* WtAvPlayer.swift in Sources */,
 				BA25A40B177D173000900A19C20F9E90 /* FileManager.swift in Sources */,
+				B753822B1CBD19330013CD9A /* ActionTrackingParameter.swift in Sources */,
 				993B893DA49B0658363BB5DED0EC81DC /* GeneralParameter.swift in Sources */,
 				2730926AEA5761179F48E89B8A6C1E92 /* HttpClient.swift in Sources */,
 				3599195732A378BF2CBD627243397BC9 /* Locks.swift in Sources */,
@@ -493,6 +504,7 @@
 				DE594D004E0C3FE911B7B53DD1DBA6AA /* TrackerConfiguration.swift in Sources */,
 				DB9420C19D209A91E3180681E0DA3AD0 /* TrackingParameter.swift in Sources */,
 				02BAE49315872993258F7272F8692B1C /* UserStoreKey.swift in Sources */,
+				B753822F1CBD1AB60013CD9A /* MediaTrackingParameter.swift in Sources */,
 				5C6ACD267E44309FFC998EA67623951B /* Webtrekk-dummy.m in Sources */,
 				D28D79F5569623D3A99B1990DE6BF76C /* Webtrekk.swift in Sources */,
 				15C3F2EBC447FD0C9A3CA6E9D26D3968 /* WebtrekkQueue.swift in Sources */,
