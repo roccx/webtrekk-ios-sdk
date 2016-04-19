@@ -4,7 +4,7 @@ internal final class WebtrekkQueue: Logable {
 
 	var loger: Loger
 
-	internal typealias TrackingQueueItem = (config: TrackerConfiguration, parameter: BasicTrackingParameter)
+	internal typealias TrackingQueueItem = (config: TrackerConfiguration, parameter: TrackingParameter)
 
 	private let _queue = dispatch_queue_create("de.webtrekk.queue", nil)
 	private let _pluginsSaveGuard = dispatch_queue_create("de.webtrekk.pluginsSaveGuard", nil)
@@ -161,7 +161,7 @@ extension WebtrekkQueue {
 
 extension WebtrekkQueue { // Plugins
 
-	internal func handleAfterPluginCall(trackingParameter: BasicTrackingParameter) {
+	internal func handleAfterPluginCall(trackingParameter: TrackingParameter) {
 		guard !plugins.isEmpty else {
 			return
 		}
@@ -173,7 +173,7 @@ extension WebtrekkQueue { // Plugins
 
 	// TODO: Consider if plugins can change the trackingParameter, as to add more default parameters or change others. use inout if needed
 
-	internal func handleBeforePluginCall(trackingParameter: BasicTrackingParameter) {
+	internal func handleBeforePluginCall(trackingParameter: TrackingParameter) {
 		guard !plugins.isEmpty else {
 			return
 		}

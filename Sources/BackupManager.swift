@@ -69,7 +69,7 @@ internal struct BackupManager: Logable {
 		}
 		for item in json {
 			let config: TrackerConfiguration
-			let parameter: BasicTrackingParameter
+			let parameter: TrackingParameter
 			if let type: String = item["type"] as? String where type == "page" {
 				guard let page = PageTrackingParameter.fromJson(item["parameters"] as! [String: AnyObject]) else {
 					continue
@@ -215,7 +215,7 @@ extension ActionTrackingParameter: Backupable {
 		items["generalParameter"] = generalParameter.toJson()
 		items["pixelParameter"] = pixelParameter.toJson()
 		items["productParameters"] = productParameters.map({$0.toJson()})
-		items["actionParameter"] = actionParameter.toJson()
+		items["actionParameter"] = actionParameter!.toJson()
 		return items
 	}
 
@@ -270,7 +270,7 @@ extension PageTrackingParameter: Backupable {
 		items["generalParameter"] = generalParameter.toJson()
 		items["pixelParameter"] = pixelParameter.toJson()
 		items["productParameters"] = productParameters.map({$0.toJson()})
-		items["pageParameter"] = pageParameter.toJson()
+		items["pageParameter"] = pageParameter!.toJson()
 		return items
 	}
 
@@ -320,7 +320,7 @@ extension MediaTrackingParameter: Backupable {
 		items["customParameters"] = customParameters.map({["index":$0.0, "value": $0.1]})
 		items["generalParameter"] = generalParameter.toJson()
 		items["pixelParameter"] = pixelParameter.toJson()
-		items["mediaParameter"] = mediaParameter.toJson()
+		items["mediaParameter"] = mediaParameter!.toJson()
 		return items
 	}
 

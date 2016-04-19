@@ -1,17 +1,23 @@
 import UIKit
 
 
-public protocol BasicTrackingParameter {
-
+public protocol TrackingParameter {
 	var generalParameter:   GeneralParameter    { get }
 	var pixelParameter:     PixelParameter      { get }
 
+	var customParameters:   [String: String]    { get set }
+	var customerParameter:  CustomerParameter?  { get set }
+	var ecommerceParameter: EcommerceParameter? { get set }
+	var productParameters:  [ProductParameter]  { get set }
+
+	var actionParameter:    ActionParameter?    { get set }
+	var pageParameter:      PageParameter?      { get set }
+	var mediaParameter:     MediaParameter?     { get set }
+
 	func urlWithAllParameter(config: TrackerConfiguration) -> String
-
-
 }
 
-extension BasicTrackingParameter {
+public extension TrackingParameter {
 	public var everId: String {
 		get {
 
@@ -29,27 +35,17 @@ extension BasicTrackingParameter {
 		}
 	}
 
-	
+
 	public var userAgent: String {
 		get {
 			let os = NSProcessInfo().operatingSystemVersion
 			return "Tracking Library \(Double(pixelParameter.version/100)) (iOS; \(os.majorVersion). \(os.minorVersion). \(os.patchVersion); \(UIDevice.currentDevice().modelName); \(NSLocale.currentLocale().localeIdentifier))"
 		}
 	}
-
 }
 
-public protocol TrackingParameter: BasicTrackingParameter {
-	var customParameters:   [String: String]    { get set }
-	var customerParameter:  CustomerParameter?  { get set }
-	var ecommerceParameter: EcommerceParameter? { get set }
-	var productParameters:  [ProductParameter]  { get set }
-
-}
-
-extension TrackingParameter {
-
-	func urlProductParameters() -> String {
+internal extension TrackingParameter {
+	internal func urlProductParameters() -> String {
 		guard !productParameters.isEmpty else {
 			return ""
 		}

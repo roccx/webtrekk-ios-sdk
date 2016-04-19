@@ -1,13 +1,31 @@
 import UIKit
 
 public struct PageTrackingParameter: TrackingParameter{
+	public var generalParameter: GeneralParameter
+	public var pixelParameter:   PixelParameter
+
 	public var customParameters:   [String: String]
 	public var customerParameter:  CustomerParameter?
 	public var ecommerceParameter: EcommerceParameter?
-	public var generalParameter:   GeneralParameter
-	public var pageParameter:      PageParameter
-	public var pixelParameter:     PixelParameter
 	public var productParameters:  [ProductParameter]
+
+	private var _pageParameter:   PageParameter
+	public var pageParameter:     PageParameter? {
+		set { guard let pageParameter = newValue else {
+			return
+			}
+			self._pageParameter = pageParameter
+		}
+		get { return self._pageParameter }
+	}
+	public var mediaParameter:    MediaParameter? {
+		set {}
+		get { return nil }
+	}
+	public var actionParameter:      ActionParameter? {
+		set {}
+		get { return nil }
+	}
 
 	public init(pageName: String = "", pageParameter: PageParameter = PageParameter(), customParameters: [String: String] = [:], customerParameter: CustomerParameter? = nil, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = []) {
 
@@ -15,7 +33,7 @@ public struct PageTrackingParameter: TrackingParameter{
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60
 		self.customParameters = customParameters
 		self.customerParameter = customerParameter
-		self.pageParameter = pageParameter
+		self._pageParameter = pageParameter
 		self.ecommerceParameter = ecommerceParameter
 		self.productParameters = productParameters
 		if pageName.isEmpty {
@@ -34,8 +52,8 @@ public struct PageTrackingParameter: TrackingParameter{
 		var url = config.baseUrl.absoluteString
 		url += pixelParameter.urlParameter
 		url += generalParameter.urlParameter
-		if !pageParameter.urlParameter.isEmpty {
-			url += pageParameter.urlParameter
+		if !_pageParameter.urlParameter.isEmpty {
+			url += _pageParameter.urlParameter
 		}
 		if !productParameters.isEmpty {
 			url += urlProductParameters()

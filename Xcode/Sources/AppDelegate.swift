@@ -10,7 +10,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-		webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://q3.webtrekk.net", trackingId: "189053685367929", version: 0))
+		webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://q3.webtrekk.net", trackingId: "289053685367929", version: 0))
 		webtrekk?.enableLoging = true
 		webtrekk?.autoTrackedScreens["MainTestViewController"] = AutoTrackedScreen(className: "MainTestViewController", mappingName: "Home")
 		webtrekk?.autoTrackedScreens["FirstTestViewController"] = AutoTrackedScreen(className: "FirstTestViewController", mappingName: "VideoOverview")

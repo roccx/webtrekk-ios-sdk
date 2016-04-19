@@ -44,7 +44,7 @@ class ParameterTest: XCTestCase {
 		let actionName = "click"
 		let actionParameter = ActionParameter(name:actionName)
 		let actionTrackingParameter = ActionTrackingParameter(actionParameter: actionParameter)
-		XCTAssertEqual(actionTrackingParameter.actionParameter.name, actionName)
+		XCTAssertEqual(actionTrackingParameter.actionParameter!.name, actionName)
 		XCTAssertEqual(actionTrackingParameter.generalParameter.userAgent, "Tracking Library 4.0 (iOS; 9. 3. 0; Simulator; en_US)")
 		XCTAssertEqual(actionTrackingParameter.pixelParameter.timeStamp, actionTrackingParameter.generalParameter.timeStamp)
 	}
@@ -71,7 +71,7 @@ class ParameterTest: XCTestCase {
 		}
 		let actionParameter = ActionParameter(categories: categories, name:actionName, session: session)
 		let actionTrackingParameter = ActionTrackingParameter(actionParameter: actionParameter, productParameters: products)
-		XCTAssertEqual(actionTrackingParameter.actionParameter.name, actionName)
+		XCTAssertEqual(actionTrackingParameter.actionParameter!.name, actionName)
 		XCTAssertEqual(actionTrackingParameter.generalParameter.userAgent, "Tracking Library 4.0 (iOS; 9. 3. 0; Simulator; en_US)")
 		XCTAssertEqual(actionTrackingParameter.pixelParameter.timeStamp, actionTrackingParameter.generalParameter.timeStamp)
 		print(actionTrackingParameter.urlWithAllParameter(TrackerConfiguration(serverUrl: "http://webtrack.de/tracking", trackingId: "12341231234")))
