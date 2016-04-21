@@ -8,23 +8,23 @@ public /* final */ class WtAvPlayer: AVPlayer {
 	internal var paused: Bool = true
 	internal var startSeek: Float64 = 0
 	internal var endSeek: Float64 = 0
+	internal var mediaCategories: [Int: String] = [:]
 
-	private let assumeStartedTime: NSValue = NSValue(CMTime: CMTimeMake(1, 100))
+	let periodicInterval = 30.0
 
-	public convenience init(URL url: NSURL, webtrekk: Webtrekk) {
-		self.init(URL: url)
-		self.webtrekk = webtrekk
-		configureAVPlayer()
+	public convenience init(URL url: NSURL, webtrekk: Webtrekk, mediaCategories: [Int: String] = [:]) {
+		self.init(playerItem: AVPlayerItem(asset: AVURLAsset(URL: url)), webtrekk: webtrekk, mediaCategories: mediaCategories)
 	}
 
-	public convenience init(playerItem item: AVPlayerItem, webtrekk: Webtrekk) {
+
+	public convenience init(playerItem item: AVPlayerItem, webtrekk: Webtrekk, mediaCategories: [Int: String] = [:]) {
 		self.init(playerItem: item)
 		self.webtrekk = webtrekk
+		self.mediaCategories = mediaCategories
 		configureAVPlayer()
 	}
 
 	deinit{
-		removeObserver(self, forKeyPath: "status")
 		removeObserver(self, forKeyPath: "rate")
 		if let periodicObserver = periodicObserver {
 			removeTimeObserver(periodicObserver)
@@ -37,57 +37,92 @@ public /* final */ class WtAvPlayer: AVPlayer {
 	}
 
 	func configureAVPlayer() {
-		addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions(), context: nil)
 		addObserver(self, forKeyPath: "rate", options: [.New], context: nil)
-		periodicObserver = addPeriodicTimeObserverForInterval(CMTime(seconds: 30.0, preferredTimescale: 1), queue: dispatch_get_main_queue()) { (time: CMTime) in
-
+		periodicObserver = addPeriodicTimeObserverForInterval(CMTime(seconds: periodicInterval, preferredTimescale: 1), queue: dispatch_get_main_queue()) { (time: CMTime) in
 			guard self.error == nil else {
-				print("error occured: \(self.error)")
+				self.webtrekk?.log("error occured: \(self.error)")
 				return
 			}
 
 			if self.rate != 0{
-				if self.paused {
-					self.paused = false
-					print("\(CMTimeGetSeconds(time)) playing after pause")
-					if self.startSeek != self.endSeek {
-						print("was seeking from \(self.startSeek) to \(self.endSeek)")
-						self.startSeek = self.endSeek
+				guard self.paused else {
+					if	Int(CMTimeGetSeconds(time)) != 0 && Int(CMTimeGetSeconds(time)) % Int(self.periodicInterval) == 0, let mediaParameter = self.prepareMediaParameter(time, action: .Position) {
+						self.webtrekk?.track(MediaTrackingParameter(mediaParameter: mediaParameter))
 					}
+					return
 				}
-				else {
-					print("\(CMTimeGetSeconds(time)) still playing")
+				if self.startSeek != self.endSeek {
+					if let mediaParameter = self.prepareMediaParameter(time, action: .Seek) {
+						self.webtrekk?.track(MediaTrackingParameter(mediaParameter: mediaParameter))
+					}
+					self.startSeek = self.endSeek
 				}
-			} else {
+				self.paused = false
+				if let mediaParameter = self.prepareMediaParameter(time) {
+					self.webtrekk?.track(MediaTrackingParameter(mediaParameter: mediaParameter))
+				}
+			}
+			else {
 				if self.paused {
-					print("\(CMTimeGetSeconds(time)) another paused playing")
 					self.endSeek = CMTimeGetSeconds(time)
 				}
 				else {
 					self.paused = true
-					print("\(CMTimeGetSeconds(time)) paused playing")
 					self.startSeek = CMTimeGetSeconds(time)
 					self.endSeek = CMTimeGetSeconds(time)
+					if let mediaParameter = self.prepareMediaParameter(time, action: .Pause) {
+						self.webtrekk?.track(MediaTrackingParameter(mediaParameter: mediaParameter))
+					}
 				}
 
 			}
 		}
 	}
 
+	private func prepareMediaParameter(pos: CMTime, action: MediaAction = .Play) -> MediaParameter? {
+		guard let item = currentItem else {
+			return nil
+		}
+		let name: String
+		if let asset = item.asset as? AVURLAsset, let fileName = asset.URL.lastPathComponent {
+			name = fileName
+		}
+		else {
+			name = "generalMediaFile"
+		}
+
+		var mediaParameter = MediaParameter(action: action, duration: Int(CMTimeGetSeconds(item.duration)), name: name, position: Int(CMTimeGetSeconds(pos)))
+
+		// bandwidth
+		if item.tracks.count == 1 {
+			mediaParameter.bandwidth = Int(item.tracks[0].assetTrack.estimatedDataRate)
+		}
+		else if item.tracks.count > 1 {
+			var bandwith = -1
+			for track in item.tracks where track.assetTrack.mediaType == AVMediaTypeVideo {
+				bandwith = Int(track.assetTrack.estimatedDataRate) > bandwith ? Int(track.assetTrack.estimatedDataRate) : bandwith
+			}
+			mediaParameter.bandwidth = bandwith > 0 ? bandwith : nil
+		}
+		let volume = AVAudioSession.sharedInstance().outputVolume
+		mediaParameter.mute = volume == 0
+		mediaParameter.volume = Int(volume * 100)
+		mediaParameter.categories = mediaCategories
+		return mediaParameter
+	}
+
 
 	override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-		if keyPath == "rate" { // needs to register first value as start position, any further is change in play/pause
-//			if self.rate != 0 {
-//				print("started playing")
-//			}
-//			else if !self.paused {
-//				print("stopped playing")
-//			}
-			if let currentItem = self.currentItem {
-				if currentItem.currentTime() == currentItem.duration {
-					print("media file reached end")
-				}
-			}
+		guard keyPath == "rate" else {
+			return
+		}
+
+		guard let currentItem = self.currentItem where currentItem.currentTime() == currentItem.duration else {
+			return
+		}
+
+		if let mediaParameter = self.prepareMediaParameter(currentItem.currentTime(), action: .EndOfFile) {
+			self.webtrekk?.track(MediaTrackingParameter(mediaParameter: mediaParameter))
 		}
 	}
 }

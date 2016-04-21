@@ -1,4 +1,5 @@
 import UIKit
+import ReachabilitySwift
 
 
 public protocol TrackingParameter {
@@ -45,6 +46,11 @@ public extension TrackingParameter {
 }
 
 internal extension TrackingParameter {
+
+	internal func autoTrackUrlParameters() -> String {
+		return ""
+	}
+
 	internal func urlProductParameters() -> String {
 		guard !productParameters.isEmpty else {
 			return ""

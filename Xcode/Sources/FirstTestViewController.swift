@@ -3,6 +3,7 @@ import AVKit
 import UIKit
 import Webtrekk
 
+
 internal class FirstTestViewController: UIViewController {
 
 	let button = Button()
@@ -29,16 +30,18 @@ internal class FirstTestViewController: UIViewController {
 		button.setTitleColor(.blackColor(), forState: .Normal)
 		button.handle(.TouchUpInside) { (sender:Button) in
 			guard let url = NSBundle(forClass: FirstTestViewController.self).URLForResource("wt", withExtension: "mp4") else {
-				print("config file url not possible")
+				print("file url not possible")
 				return
 				}
 			let player = WtAvPlayer(URL: url, webtrekk: webtrekk!)
 			let avController = AVPlayerViewController()
 			avController.player = player
+			webtrekk!.track("VideoPlayer")
 			self.presentViewController(avController, animated: true, completion: nil)
 
 		}
 		self.view.addSubview(button)
+
 	}
 
 

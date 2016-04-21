@@ -80,13 +80,8 @@ internal final class WebtrekkQueue: Logable {
 				self.queue.dequeue()
 			}
 			self.queue.enqueue(TrackingQueueItem(config: config, parameter: trackingParameter))
-			if let pageTrackingParameter = trackingParameter as? PageTrackingParameter {
-				self.log("Adding \(NSURL(string:pageTrackingParameter.urlWithAllParameter(config))!) to the request queue")
-			} else if let actionTrackingParameter = trackingParameter as? ActionTrackingParameter {
-				self.log("Adding \(NSURL(string:actionTrackingParameter.urlWithAllParameter(config))!) to the request queue")
-			} else {
-				self.log("Only PageTrackingParameter and ActionTrackingParameter expected at this Point")
-			}
+			self.log("Adding \(NSURL(string:trackingParameter.urlWithAllParameter(config))!) to the request queue")
+
 		}
 		self.sendNextRequestLater()
 	}
@@ -257,15 +252,9 @@ extension WebtrekkQueue { // Sending
 			}
 
 			self.handleBeforePluginCall(trackingQueueItem.parameter)
-			// TODO: generate NSURL from config and trackingParameter
-			let url: NSURL
-			if let pageTrackingParameter = trackingQueueItem.parameter as? PageTrackingParameter {
-				url = NSURL(string:pageTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
-			} else if let actionTrackingParameter = trackingQueueItem.parameter as? ActionTrackingParameter {
-				url = NSURL(string:actionTrackingParameter.urlWithAllParameter(trackingQueueItem.config))!
-			} else {
-				fatalError("Only PageTrackingParameter and ActionTrackingParameter expected at this Point")
-			}
+
+			let url = NSURL(string:trackingQueueItem.parameter.urlWithAllParameter(trackingQueueItem.config))!
+
 			guard self.shouldTrack else {
 				self.log("user is not tracked")
 				self.handleAfterPluginCall(trackingQueueItem.parameter)

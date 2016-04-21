@@ -1,6 +1,5 @@
 import UIKit
 
-
 public final class Webtrekk : Logable {
 
 	internal lazy var loger: Loger = Loger(trackingId: self.config.trackingId)
@@ -22,9 +21,7 @@ public final class Webtrekk : Logable {
 
 		}
 	}
-	public var autoTrackedScreens = [String: AutoTrackedScreen]()
-
-
+	
 	private var plugins = Set<Plugin>()
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
@@ -139,7 +136,7 @@ public final class Webtrekk : Logable {
 	// MARK: Tracking
 
 	public func auto(className: String) {
-		for (key, screen) in autoTrackedScreens {
+		for (key, screen) in config.autoTrackScreens {
 			guard className.containsString(key) else {
 				continue
 			}

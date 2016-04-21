@@ -21,13 +21,15 @@ public struct TrackerConfiguration {
 	public var autoTrackConnectionType: Bool
 	public var autoTrackRequestUrlStoreSize: Bool
 	public var autoTrackScreenOrientation: Bool
+	public var autoTrackScreens: [String: AutoTrackedScreen]
 
 	public var enableRemoteConfiguration: Bool
 	public var remoteConfigurationUrl: String
 
 	public private(set) var configFilePath: String
 
-	public init(autoTrack: Bool = true, autoTrackAdvertiserId: Bool = true, autoTrackApiLevel: Bool = true, autoTrackAppUpdate: Bool = true, autoTrackAppVersionName: Bool = true, autoTrackAppVersionCode: Bool = true, autoTrackConnectionType: Bool = true, autoTrackRequestUrlStoreSize: Bool = true, autoTrackScreenOrientation: Bool = true, appVersion: String = "", configFilePath: String = "", enableRemoteConfiguration: Bool = false, maxRequests: Int = 1000, optedOut: Bool = false, remoteConfigurationUrl: String = "", samplingRate: Int = 0, sendDelay: Int = 5 * 60, serverUrl: String, trackingId: String, version: Int = 0) {
+	public init(autoTrack: Bool = true, autoTrackAdvertiserId: Bool = true, autoTrackApiLevel: Bool = true, autoTrackAppUpdate: Bool = true, autoTrackAppVersionName: Bool = true, autoTrackAppVersionCode: Bool = true, autoTrackConnectionType: Bool = true, autoTrackRequestUrlStoreSize: Bool = true, autoTrackScreenOrientation: Bool = true, autoTrackScreens: [String: AutoTrackedScreen] = [:], appVersion: String = "", configFilePath: String = "", enableRemoteConfiguration: Bool = false, maxRequests: Int = 1000, optedOut: Bool = false, remoteConfigurationUrl: String = "", samplingRate: Int = 0, sendDelay: Int = 5 * 60, serverUrl: String, trackingId: String, version: Int = 0) {
+
 		guard !serverUrl.isEmpty || !trackingId.isEmpty else {
 			fatalError("Need serverUrl and trackingId for minimal Configuration")
 		}
@@ -52,6 +54,7 @@ public struct TrackerConfiguration {
 		self.autoTrackAppVersionName = autoTrackAppVersionName
 		self.autoTrackConnectionType = autoTrackConnectionType
 		self.autoTrackScreenOrientation = autoTrackScreenOrientation
+		self.autoTrackScreens = autoTrackScreens
 		self.autoTrackRequestUrlStoreSize = autoTrackRequestUrlStoreSize
 		self.enableRemoteConfiguration = enableRemoteConfiguration
 		self.remoteConfigurationUrl = remoteConfigurationUrl

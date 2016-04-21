@@ -1,8 +1,10 @@
 PODS:
+  - ReachabilitySwift (2.3.3)
   - SWXMLHash (2.1.0)
   - Webtrekk (0.0.1)
 
 DEPENDENCIES:
+  - ReachabilitySwift (~> 2.3.3)
   - SWXMLHash (~> 2.1.0)
   - Webtrekk (from `..`)
 
@@ -11,7 +13,8 @@ EXTERNAL SOURCES:
     :path: ".."
 
 SPEC CHECKSUMS:
+  ReachabilitySwift: e0f6b6f280effb47731acfaaa2d5ffe223703793
   SWXMLHash: 7257a358b3ab2f7a209e0b4e4cf552e8b6df5f0f
-  Webtrekk: 3e4e7227ad97703a686ccd11d7a36dd4a864f057
+  Webtrekk: fbda1221e4738161c448660204bf4e16112332c4
 
 COCOAPODS: 0.39.0
