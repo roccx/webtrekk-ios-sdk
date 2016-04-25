@@ -224,6 +224,18 @@ let detailScreen = AutoTrackedScreen(className: "DetailController", mappingName:
 webtrekk.autoTrackedScreens = ["HomeScreen": homeScreen, "DetailScreen": detailScreen]
 ```
 
+## Advertising Identifier
+
+```swift
+let advertiser: () -> String? =  {
+	guard ASIdentifierManager.sharedManager().advertisingTrackingEnabled else {
+		return nil
+	}
+
+	return ASIdentifierManager.sharedManager().advertisingIdentifier.UUIDString
+}
+webtrekk?.advertisingIdentifier = advertiser
+```
 
 # License
 

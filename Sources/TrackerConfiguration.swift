@@ -75,10 +75,14 @@ internal extension TrackerConfiguration {
 public struct AutoTrackedScreen: Equatable {
 	public var className:   String
 	public var mappingName: String
+	public var enabled: Bool
+	public var trackingParameter: TrackingParameter?
 
-	public init(className: String, mappingName: String) {
+	public init(className: String, mappingName: String, enabled: Bool = true, trackingParameter: TrackingParameter? = nil) {
 		self.className = className
 		self.mappingName = mappingName
+		self.enabled = enabled
+		self.trackingParameter = trackingParameter
 	}
 }
 

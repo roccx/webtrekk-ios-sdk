@@ -18,6 +18,7 @@ internal final class WebtrekkQueue: Logable {
 	internal let maximumFailedSends = 5
 	internal var flush = false
 	internal var shouldTrack = true
+	internal var advertisingIdentifier: (() -> String?)?
 	internal private(set) var queue = Queue<TrackingQueueItem>()
 
 	internal private(set) var backupFileUrl: NSURL
@@ -253,7 +254,13 @@ extension WebtrekkQueue { // Sending
 
 			self.handleBeforePluginCall(trackingQueueItem.parameter)
 
-			let url = NSURL(string:trackingQueueItem.parameter.urlWithAllParameter(trackingQueueItem.config))!
+			// TODO: add auto params
+			var urlString = trackingQueueItem.parameter.urlWithAllParameter(trackingQueueItem.config)
+			if let advertisingIdentifier = self.advertisingIdentifier, let id = advertisingIdentifier() {
+				urlString += "&AD=\(id)"
+			}
+
+			let url = NSURL(string:urlString)!
 
 			guard self.shouldTrack else {
 				self.log("user is not tracked")

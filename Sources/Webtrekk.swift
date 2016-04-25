@@ -3,6 +3,12 @@ import UIKit
 public final class Webtrekk : Logable {
 
 	internal lazy var loger: Loger = Loger(trackingId: self.config.trackingId)
+	public var advertisingIdentifier: (() -> String?)? {
+		didSet {
+			queue?.advertisingIdentifier = advertisingIdentifier
+		}
+	}
+
 	public var enableLoging: Bool = false {
 		didSet {
 			guard oldValue != enableLoging else {
@@ -137,11 +143,13 @@ public final class Webtrekk : Logable {
 
 	public func auto(className: String) {
 		for (key, screen) in config.autoTrackScreens {
-			guard className.containsString(key) else {
+			guard className.containsString(key) && screen.enabled else {
 				continue
 			}
 			track(screen)
+			return
 		}
+		track(className)
 	}
 
 
@@ -156,7 +164,12 @@ public final class Webtrekk : Logable {
 
 
 	private func track(screen: AutoTrackedScreen) {
-		track(screen.mappingName)
+		if let trackingParameter = screen.trackingParameter {
+			track(trackingParameter)
+		}
+		else {
+			track(screen.mappingName)
+		}
 	}
 
 
