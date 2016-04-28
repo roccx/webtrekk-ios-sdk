@@ -1,4 +1,5 @@
 import UIKit
+import ReachabilitySwift
 
 internal final class WebtrekkQueue: Logable {
 
@@ -80,13 +81,53 @@ internal final class WebtrekkQueue: Logable {
 				self.log("Max count for store is reached, removing oldest now.")
 				self.queue.dequeue()
 			}
-			self.queue.enqueue(TrackingQueueItem(config: config, parameter: trackingParameter))
-			self.log("Adding \(NSURL(string:trackingParameter.urlWithAllParameter(config))!) to the request queue")
+			let preparedConfig = self.prepare(config)
+			self.queue.enqueue(TrackingQueueItem(config: preparedConfig, parameter: trackingParameter))
+			self.log("Adding \(NSURL(string:trackingParameter.urlWithAllParameter(preparedConfig))!) to the request queue")
 
 		}
 		self.sendNextRequestLater()
 	}
 
+	private func prepare(config: TrackerConfiguration) -> TrackerConfiguration{
+		// TODO: Rename parameter names to the correct ones
+		var urlString = ""
+		if config.autoTrack {
+			if config.autoTrackAdvertiserId, let advertisingIdentifier = advertisingIdentifier, let id = advertisingIdentifier() {
+				urlString += "&\(ParameterName.urlParameter(fromName: .AdvertiserId, andValue: id))"
+			}
+
+			if config.autoTrackConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
+				urlString += "&\(ParameterName.urlParameter(fromName: .ConnectionType, andValue: reachability.isReachableViaWiFi() ? "0" : "1"))"
+			}
+
+			if config.autoTrackRequestUrlStoreSize {
+				urlString += "&\(ParameterName.urlParameter(fromName: .RequestUrlStoreSize, andValue: "\(queue.itemCount)"))"
+			}
+
+			if config.autoTrackAppVersionName {
+				if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
+					urlString += "&\(ParameterName.urlParameter(fromName: .AppVersionName, andValue: version))"
+				}
+			}
+
+			if config.autoTrackAppVersionCode {
+				if let version = NSBundle.mainBundle().infoDictionary?[kCFBundleVersionKey as String] as? String {
+					urlString += "&\(ParameterName.urlParameter(fromName: .AppVersionCode, andValue: version))"
+				}
+			}
+
+			if config.autoTrackScreenOrientation {
+				urlString += "&\(ParameterName.urlParameter(fromName: .ScreenOrientation, andValue: UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) ? "1" : "0"))"
+			}
+			
+			//				public var autoTrackApiLevel: Bool
+			//				public var autoTrackAppUpdate: Bool
+		}
+		var confCopy = config
+		confCopy.onQueueAutoTrackParameters = urlString.isEmpty ? nil : urlString
+		return confCopy
+	}
 
 	private func loadBackups() {
 		let restoredQueue = backupManager.restoreFromDisc(backupFileUrl)
@@ -120,6 +161,13 @@ internal final class WebtrekkQueue: Logable {
 		if flush {
 			self.sendNextRequest()
 		}
+	}
+
+	internal func flushNow() {
+		with(_queue) {
+			self.flush = true
+		}
+		self.sendNextRequest()
 	}
 
 	private func setUpObserver() {
@@ -167,7 +215,6 @@ extension WebtrekkQueue { // Plugins
 		}
 	}
 
-	// TODO: Consider if plugins can change the trackingParameter, as to add more default parameters or change others. use inout if needed
 
 	internal func handleBeforePluginCall(trackingParameter: TrackingParameter) {
 		guard !plugins.isEmpty else {
@@ -186,13 +233,6 @@ extension WebtrekkQueue { // Sending
 	private func sendNextRequestLater() {
 		with(_queue) {
 
-//			TODO: check old lib ensured to run on main thread
-//			guard NSThread.isMainThread() else {
-//				dispatch_async(dispatch_get_main_queue()) {
-//					self.sendNextRequestLater()
-//				}
-//				return
-//			}
 			guard !self.shutdownRequested else { // nothing will be send if queue is shutting down
 				return
 			}
@@ -225,15 +265,6 @@ extension WebtrekkQueue { // Sending
 	private func sendNextRequest() {
 		with(_queue) {
 
-//			TODO: check old lib ensured to run on main thread
-//			guard NSThread.isMainThread() else {
-//				dispatch_async(dispatch_get_main_queue()) {
-//					self.sendNextRequestQueued = true
-//					self.sendNextRequest()
-//				}
-//				return
-//			}
-
 			self.sendNextRequestQueued = false
 
 			guard !self.shutdownRequested else { // nothing will be send if queue is shutting down
@@ -245,8 +276,7 @@ extension WebtrekkQueue { // Sending
 				self.log("Nothing to do.")
 				return
 			}
-			// TODO: check if there is not already an open connection
-
+			
 			guard let trackingQueueItem = self.queue.peek() else {
 				self.log("This should never happen, but there is no item on the queue even after testing for that.")
 				return
@@ -254,13 +284,11 @@ extension WebtrekkQueue { // Sending
 
 			self.handleBeforePluginCall(trackingQueueItem.parameter)
 
-			// TODO: add auto params
-			var urlString = trackingQueueItem.parameter.urlWithAllParameter(trackingQueueItem.config)
-			if let advertisingIdentifier = self.advertisingIdentifier, let id = advertisingIdentifier() {
-				urlString += "&AD=\(id)"
+			guard let url = NSURL(string:trackingQueueItem.parameter.urlWithAllParameter(trackingQueueItem.config)) else {
+				self.log("url is not valid")
+				self.queue.dequeue()
+				return
 			}
-
-			let url = NSURL(string:urlString)!
 
 			guard self.shouldTrack else {
 				self.log("user is not tracked")

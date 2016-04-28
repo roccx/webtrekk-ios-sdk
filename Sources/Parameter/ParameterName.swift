@@ -63,6 +63,26 @@ internal enum ParameterName: String {
 	case MediaVolume     = "vol"
 	case MediaTimeStamp  = "x"
 
+	// MARK: AutoTrack
+	case AdvertiserId        = "AD"
+	case ConnectionType      = "WIFI"
+	case RequestUrlStoreSize = "SIZE"
+	case AppVersionCode      = "CODE"
+	case AppVersionName      = "NAME"
+	case ScreenOrientation   = "ORIENTATION"
+
+
+	// MARK: CrossDeviceBridge
+	case CdbEmailMd5      = "cdb1"
+	case CdbEmailSha256   = "cdb2"
+	case CdbPhoneMd5      = "cdb3"
+	case CdbPhoneSha256   = "cdb4"
+	case CdbAddressMd5    = "cdb5"
+	case CdbAddressSha256 = "cdb6"
+	case CdbFacebook      = "cdb10"
+	case CdbTwitter       = "cdb11"
+	case CdbGooglePlus    = "cdb12"
+	case CdbLinkedIn      = "cdb13"
 }
 
 extension ParameterName {

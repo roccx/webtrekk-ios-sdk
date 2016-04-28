@@ -27,7 +27,16 @@ public final class Webtrekk : Logable {
 
 		}
 	}
-	
+
+	public var flush: Bool = false{
+		didSet {
+			if flush {
+				self.flush = false
+				queue?.flushNow()
+			}
+		}
+	}
+
 	private var plugins = Set<Plugin>()
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
@@ -119,7 +128,6 @@ public final class Webtrekk : Logable {
 
 
 	private func setUpQueue() {
-		// TODO: generate backup File url
 		let backupFileUrl: NSURL = fileManager.getConfigurationDirectoryUrl(forTrackingId: config.trackingId).URLByAppendingPathComponent("queue.json")
 		queue = WebtrekkQueue(backupFileUrl: backupFileUrl, sendDelay: config.sendDelay, maximumUrlCount: config.maxRequests, loger: loger)
 		queue?.shouldTrack = shouldTrack()
@@ -142,9 +150,16 @@ public final class Webtrekk : Logable {
 	// MARK: Tracking
 
 	public func auto(className: String) {
+		guard config.autoTrack else {
+			return
+		}
+
 		for (key, screen) in config.autoTrackScreens {
-			guard className.containsString(key) && screen.enabled else {
+			guard className.containsString(key) else {
 				continue
+			}
+			guard screen.enabled else {
+				return
 			}
 			track(screen)
 			return
@@ -164,8 +179,8 @@ public final class Webtrekk : Logable {
 
 
 	private func track(screen: AutoTrackedScreen) {
-		if let trackingParameter = screen.trackingParameter {
-			track(trackingParameter)
+		if let pageTrackingParameter = screen.pageTrackingParameter {
+			track(pageTrackingParameter)
 		}
 		else {
 			track(screen.mappingName)
@@ -174,7 +189,6 @@ public final class Webtrekk : Logable {
 
 
 	private func enqueue(trackingParameter: TrackingParameter, config: TrackerConfiguration) {
-		// TODO: add to queue
 		queue?.add(trackingParameter, config: config)
 	}
 
@@ -199,5 +213,5 @@ public final class Webtrekk : Logable {
 		plugins.removeAll()
 		return plugins.isEmpty
 	}
-
+	
 }

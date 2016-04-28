@@ -28,6 +28,8 @@ public struct TrackerConfiguration {
 
 	public private(set) var configFilePath: String
 
+	internal var onQueueAutoTrackParameters: String?
+	
 	public init(autoTrack: Bool = true, autoTrackAdvertiserId: Bool = true, autoTrackApiLevel: Bool = true, autoTrackAppUpdate: Bool = true, autoTrackAppVersionName: Bool = true, autoTrackAppVersionCode: Bool = true, autoTrackConnectionType: Bool = true, autoTrackRequestUrlStoreSize: Bool = true, autoTrackScreenOrientation: Bool = true, autoTrackScreens: [String: AutoTrackedScreen] = [:], appVersion: String = "", configFilePath: String = "", enableRemoteConfiguration: Bool = false, maxRequests: Int = 1000, optedOut: Bool = false, remoteConfigurationUrl: String = "", samplingRate: Int = 0, sendDelay: Int = 5 * 60, serverUrl: String, trackingId: String, version: Int = 0) {
 
 		guard !serverUrl.isEmpty || !trackingId.isEmpty else {
@@ -72,17 +74,18 @@ internal extension TrackerConfiguration {
 }
 
 
+
 public struct AutoTrackedScreen: Equatable {
 	public var className:   String
 	public var mappingName: String
 	public var enabled: Bool
-	public var trackingParameter: TrackingParameter?
+	public var pageTrackingParameter: PageTrackingParameter?
 
-	public init(className: String, mappingName: String, enabled: Bool = true, trackingParameter: TrackingParameter? = nil) {
+	public init(className: String, mappingName: String, enabled: Bool = true, pageTrackingParameter: PageTrackingParameter? = nil) {
 		self.className = className
 		self.mappingName = mappingName
 		self.enabled = enabled
-		self.trackingParameter = trackingParameter
+		self.pageTrackingParameter = pageTrackingParameter
 	}
 }
 

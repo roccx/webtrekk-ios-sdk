@@ -66,6 +66,55 @@ internal class XmlConfigParser: ConfigParser {
 				config.autoTrackAdvertiserId = Bool((xml[.Root][.AutoTrackAdvertiserId].element?.text)!.lowercaseString == "true")
 			}
 
+			if xml[.Root][.Screens].boolValue {
+				let screens = xml[.Root][.Screens].children
+				for screen in screens {
+					guard let className = screen[.ClassName].element?.text else {
+						continue
+					}
+					let mappingName: String
+					if screen[.MappingName].boolValue, let name = screen[.MappingName].element?.text {
+						mappingName = name
+					}
+					else {
+						mappingName = className
+					}
+					var autoScreen = AutoTrackedScreen(className: className, mappingName: mappingName)
+					if screen[.AutoTracked].boolValue {
+						autoScreen.enabled = Bool((screen[.AutoTracked].element?.text)!.lowercaseString == "true")
+					}
+					if screen[.AutoTracked].boolValue {
+						autoScreen.enabled = Bool((screen[.AutoTracked].element?.text)!.lowercaseString == "true")
+					}
+					guard screen[.TrackingParameter].boolValue else {
+						config.autoTrackScreens[className] = autoScreen
+						continue
+					}
+
+					let trackingParameter: XMLIndexer = screen[.TrackingParameter]
+					var pageTracking = PageTrackingParameter(pageName: mappingName)
+					if trackingParameter[.CustomParameters].boolValue {
+						let customParameters = trackingParameter[.CustomParameters]
+						for parameter in customParameters.children {
+							guard let index = parameter.element?.attributes["id"] else {
+								continue
+							}
+							guard let value = parameter.element?.text?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet()) else {
+								continue
+							}
+							pageTracking.customParameters[index] = value
+						}
+					}
+
+					if trackingParameter[.PageParameter].boolValue {
+						parse(&pageTracking.pageParameter!.categories, fromParameters: trackingParameter[.PageParameter][.Categories])
+						parse(&pageTracking.pageParameter!.page, fromParameters: trackingParameter[.PageParameter][.Page])
+						parse(&pageTracking.pageParameter!.session, fromParameters: trackingParameter[.PageParameter][.Session])
+					}
+					autoScreen.pageTrackingParameter = pageTracking
+					config.autoTrackScreens[className] = autoScreen
+				}
+			}
 
 			return config
 		}
@@ -78,6 +127,21 @@ internal class XmlConfigParser: ConfigParser {
 			fatalError("xml String cannot be empty")
 		}
 		self.xml = SWXMLHash.parse(xmlString)
+	}
+
+	private func parse(inout dictionary: [Int: String], fromParameters parameters: XMLIndexer) {
+		for parameter in parameters.children {
+			guard let indexString = parameter.element?.attributes["id"] else {
+				continue
+			}
+			guard let index = Int(indexString) else {
+				continue
+			}
+			guard let value = parameter.element?.text?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet()) else {
+				continue
+			}
+			dictionary[index] = value
+		}
 	}
 }
 
@@ -108,11 +172,21 @@ internal enum XmlConfigParameter: String {
 	case AutoTrackAdvertiserId = "autoTrackAdvertiserId"
 
 	// MARK: remote configuration parameter
-	case EnableRemoteConfiguration = "EnableRemoteConfiguration"
+	case EnableRemoteConfiguration = "enableRemoteConfiguration"
 	case TrackingConfigurationUrl = "trackingConfigurationUrl"
 
-	// MARK: event based parameter
-	case ResendOnStartEventTime = "resendOnStartEventTime"
+	// MARK: screen configuration
+	case ClassName = "className"
+	case MappingName = "mappingName"
+	case Screens = "screens"
+	case TrackingParameter = "trackingParameter"
+	case CustomParameters = "customParameters"
+	case PageParameter = "pageParameter"
+	case Categories = "categories"
+	case Page = "page"
+	case Session = "session"
+	case EcommerceParameter = "ecommerceParameter"
+
 }
 
 internal extension XMLIndexer {

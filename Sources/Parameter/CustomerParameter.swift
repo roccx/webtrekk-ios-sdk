@@ -35,11 +35,6 @@ public struct CustomerParameter {
 		self.streetNumber = streetNumber
 		self.zip = zip
 	}
-
-	// TODO: add to TrackingParameter and implement Backupable
-
-
-
 }
 
 public enum CustomerGender {

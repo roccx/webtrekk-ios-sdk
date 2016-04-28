@@ -34,6 +34,7 @@ public /* final */ class WtAvPlayer: AVPlayer {
 			removeTimeObserver(startObserver)
 			self.startObserver = nil
 		}
+		webtrekk?.log("deinit could be used for stop?")
 	}
 
 	func configureAVPlayer() {

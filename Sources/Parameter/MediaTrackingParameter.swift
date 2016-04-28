@@ -52,8 +52,11 @@ public struct MediaTrackingParameter: TrackingParameter {
 		url += _mediaParameter.urlParameter
 		if !customParameters.isEmpty {
 			for (key, value) in customParameters {
-				url += "&\(key)=\(value)"
+				url += "&\(key)=\(value.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
 			}
+		}
+		if let autoTrackingParameters = config.onQueueAutoTrackParameters {
+			url += autoTrackingParameters
 		}
 		return url
 	}

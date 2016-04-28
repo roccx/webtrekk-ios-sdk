@@ -33,9 +33,8 @@ internal class FirstTestViewController: UIViewController {
 				print("file url not possible")
 				return
 				}
-			let player = WtAvPlayer(URL: url, webtrekk: webtrekk!)
 			let avController = AVPlayerViewController()
-			avController.player = player
+			avController.player = WtAvPlayer(URL: url, webtrekk: webtrekk!)
 			webtrekk!.track("VideoPlayer")
 			self.presentViewController(avController, animated: true, completion: nil)
 

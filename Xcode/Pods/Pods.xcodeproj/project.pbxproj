@@ -46,7 +46,7 @@
 		AA0124C9E138389488FB0EAC6637A35A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 980025CB527A85CBC9D28D118920E79E /* Extensions.swift */; };
 		AE273847B223FABFF081EF4E9454BD88 /* ParameterName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB0A0D30D4EEE7B815C0332075D33 /* ParameterName.swift */; };
 		B7A5D95F289DFA9169965F4C2548F418 /* GeneralParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A93CF360AB0913F83AA327367264D6B /* GeneralParameter.swift */; };
-		B7FA637A1CCE19750051FD89 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FA63791CCE19750051FD89 /* File.swift */; };
+		B7FA637A1CCE19750051FD89 /* CrossDeviceBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FA63791CCE19750051FD89 /* CrossDeviceBridge.swift */; };
 		C4D574EF0B380DB3D7A94D288CEFCA3A /* PageParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B926F363959EF333F1FC4D1E02D9D9 /* PageParameter.swift */; };
 		CA774E917345447B46CFB93FD1669579 /* TrackerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF474BA8741864034CF8C331D9A9DD /* TrackerConfiguration.swift */; };
 		CB79ABD859BCDA147B2472D7B0F24031 /* ProductParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0C6899ACC7BF4EEAE2AF2BB1B5EB97 /* ProductParameter.swift */; };
@@ -141,7 +141,7 @@
 		AAA2E317156C7F24D1DC11E4D24A7C34 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ABCD20E5F86FD958B2BCC6217D626723 /* SWXMLHash-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SWXMLHash-dummy.m"; sourceTree = "<group>"; };
 		B48C11FCA9E876C922C62644FAD6F916 /* Webtrekk.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Webtrekk.xcconfig; sourceTree = "<group>"; };
-		B7FA63791CCE19750051FD89 /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		B7FA63791CCE19750051FD89 /* CrossDeviceBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrossDeviceBridge.swift; sourceTree = "<group>"; };
 		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		C074A15D9B81F0E6335087317C88739F /* WtAvPlayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WtAvPlayer.swift; sourceTree = "<group>"; };
 		C84EFEBB2EA8C39E2BC047BEF3D855FC /* SWXMLHash.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SWXMLHash.xcconfig; sourceTree = "<group>"; };
@@ -384,7 +384,7 @@
 				04B3EC7FD502A414C17058D863F82CDA /* PixelParameter.swift */,
 				9E0C6899ACC7BF4EEAE2AF2BB1B5EB97 /* ProductParameter.swift */,
 				AA4F02A915AD49A1A90476A9D38FE635 /* TrackingParameter.swift */,
-				B7FA63791CCE19750051FD89 /* File.swift */,
+				B7FA63791CCE19750051FD89 /* CrossDeviceBridge.swift */,
 			);
 			path = Parameter;
 			sourceTree = "<group>";
@@ -604,7 +604,7 @@
 				74A717B42F8590A274747EC46E2F1218 /* FileManager.swift in Sources */,
 				B7A5D95F289DFA9169965F4C2548F418 /* GeneralParameter.swift in Sources */,
 				F2A50515730A7BFC7B49DD7557818148 /* HttpClient.swift in Sources */,
-				B7FA637A1CCE19750051FD89 /* File.swift in Sources */,
+				B7FA637A1CCE19750051FD89 /* CrossDeviceBridge.swift in Sources */,
 				40B01956A570AAB40A5FA6E07C32B25D /* Locks.swift in Sources */,
 				5F1A5CC815C7F682D15CE822B6C8849F /* Loger.swift in Sources */,
 				24B1E3C158B2EC500CDE11714653B45C /* MediaParameter.swift in Sources */,

@@ -3,11 +3,7 @@ import XCTest
 
 @testable import Webtrekk
 
-private var webtrekk: Webtrekk? = {
-	var webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://q3.webtrekk.net", trackingId: "189053685367929", version: 0))
-	webtrekk.enableLoging = true
-	return webtrekk
-}()
+
 
 private extension XCTest {
 	func fillDictonary(range: Range<Int>, contentString: String) -> [Int: String] {
@@ -39,6 +35,14 @@ private extension XCTest {
 
 
 class ParameterTest: XCTestCase {
+
+
+	private var webtrekk: Webtrekk? = {
+		var webtrekk = Webtrekk(config: TrackerConfiguration(sendDelay: 7, serverUrl: "https://q3.webtrekk.net", trackingId: "189053685367929", version: 0))
+		webtrekk.enableLoging = true
+		return webtrekk
+	}()
+
 
 	func testActionParameter() {
 		let actionName = "click"

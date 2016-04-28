@@ -44,7 +44,38 @@
 	<!--url of the remote configuration -->
 	<trackingConfigurationUrl>http://remotetrackingconfiguration.info/configfile.xml</trackingConfigurationUrl>
 
-	<!--resend onStart time, this is the timeout for auto tracked sessions in case an activity was paused -->
-	<resendOnStartEventTime>30</resendOnStartEventTime>
+	<screens>
+		<screen>
+			<className>UITabBarController</className>
+			<autoTracked>false</autoTracked>
+		</screen>
+
+		<screen>
+			<className>MainTestViewController</className>
+			<mappingName>Home</mappingName>
+		</screen>
+
+		<screen>
+			<className>FirstTestViewController</className>
+			<mappingName>VideoOverview</mappingName>
+			<trackingParameter>
+				<customParameters>
+					<parameter id="1">Final Edition</parameter>
+					<parameter id="3">Racing Team</parameter>
+				</customParameters>
+				<pageParameter>
+					<page>
+						<parameter id="1">Blue Variant</parameter>
+					</page>
+					<categories>
+						<parameter id="2">Media</parameter>
+					</categories>
+					<session>
+						<parameter id="1">Viral</parameter>
+					</session>
+				</pageParameter>
+			</trackingParameter>
+		</screen>
+	</screens>
 
 </webtrekkConfiguration>

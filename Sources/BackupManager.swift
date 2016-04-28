@@ -46,7 +46,7 @@ internal struct BackupManager: Logable {
 		for item in array {
 			queue.enqueue(item)
 		}
-		
+
 		guard NSJSONSerialization.isValidJSONObject(json), let data = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions()) else {
 			log("something went wrong during backup")
 			return
@@ -108,6 +108,34 @@ internal protocol Backupable {
 	static func fromJson(json: [String: AnyObject]) -> Self?
 }
 
+extension AutoTrackedScreen: Backupable {
+	internal func toJson() -> [String : AnyObject] {
+		var items = [String: AnyObject]()
+		items["className"] = className
+		items["mappingName"] = mappingName
+		items["enabled"] = enabled
+		items["pageTrackingParameter"] = pageTrackingParameter?.toJson()
+		return items
+	}
+
+
+	static func fromJson(json: [String: AnyObject]) -> AutoTrackedScreen? {
+		var autoTrackedScreen: AutoTrackedScreen
+		guard let className = json["className"] as? String, let mappingName = json["mappingName"] as? String else {
+			return nil
+		}
+		autoTrackedScreen = AutoTrackedScreen(className: className, mappingName: mappingName)
+
+		if let enabled = json["enabled"] as? Bool {
+			autoTrackedScreen.enabled = enabled
+		}
+		if let pageJson = json["parameters"] as? [String: AnyObject], let pageTrackingParameter = PageTrackingParameter.fromJson(pageJson) {
+			autoTrackedScreen.pageTrackingParameter = pageTrackingParameter
+		}
+		return autoTrackedScreen
+	}
+}
+
 extension TrackerConfiguration: Backupable {
 	internal func toJson() -> [String : AnyObject] {
 		var items = [String: AnyObject]()
@@ -131,6 +159,12 @@ extension TrackerConfiguration: Backupable {
 		items["enableRemoteConfiguration"] = enableRemoteConfiguration
 		items["remoteConfigurationUrl"] = remoteConfigurationUrl
 		items["configFilePath"] = configFilePath
+		if let onQueueAutoTrackParameters = onQueueAutoTrackParameters {
+			items["onQueueAutoTrackParameters"] = onQueueAutoTrackParameters
+		}
+		if !autoTrackScreens.isEmpty {
+			items["autoTrackScreens"] = autoTrackScreens.map({["index":$0.0, "value": $0.1.toJson()]})
+		}
 		return items
 	}
 
@@ -197,6 +231,17 @@ extension TrackerConfiguration: Backupable {
 		}
 		if let remoteConfigurationUrl = json["remoteConfigurationUrl"] as? String {
 			config.remoteConfigurationUrl = remoteConfigurationUrl
+		}
+		if let onQueueAutoTrackParameters = json["onQueueAutoTrackParameters"] as? String {
+			config.onQueueAutoTrackParameters = onQueueAutoTrackParameters
+		}
+		if let autoScreenDic = json["autoTrackScreens"] as? [[String: AnyObject]] {
+			for item in autoScreenDic {
+				guard let index = item["index"] as? String, let value = item["value"] as? [String: AnyObject] else {
+					continue
+				}
+				config.autoTrackScreens[index] =  AutoTrackedScreen.fromJson(value)
+			}
 		}
 		return config
 	}
