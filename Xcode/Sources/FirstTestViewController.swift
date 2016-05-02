@@ -10,7 +10,7 @@ internal class FirstTestViewController: UIViewController {
 
 	internal init() {
 		super.init(nibName: nil, bundle: nil)
-		tabBarItem = UITabBarItem(tabBarSystemItem: .Bookmarks, tag: 2)
+		tabBarItem = UITabBarItem(title: "Media", image: UIImage(named: "movie"), tag: 2)
 	}
 
 

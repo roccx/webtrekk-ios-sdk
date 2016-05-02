@@ -1,33 +1,55 @@
-# Webtrekk
+# Webtrekk iOS SDK
 
 
-## Minimal Configuration
+## Installation
 
+### CococaPods
+
+Installation des SDKs mit Hilfe von [CocoaPods](http://cocoapods.org/):
+
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '8.0'
+use_frameworks!
+
+pod 'Webtrekk'
+```
+
+
+## Kurzanleitung
+
+Für die Konfiguration und Verwendung des Webtrekk SDKs wird auf die Kombination der Server URL und der Tracking ID gesetzt. Dies sind auch die minimalen Elemente welche konfiguriert werden müssen bevor das SDK verwendet werden kann.
 
 ```swift
 let config = TrackerConfiguration(serverUrl: "https://yourwebtrekk.domain.plz", trackingId: "123456789012345")
 let tracker = Webtrekk(config: config)
+```
+
+Ein Tracking Request kann mit einer zuvor initialisierten Instance eines Webtrekk Trackers ganz einfach abgesetzt werden.
+
+```swift
 tracker.track(pageName: "MyFirstTrackedPage")
 ```
 
+
+## Verwendung
+
+Für die Verwendung des Webtrekks SDKs wird zunächst eine grundlegende Konfiguration, basierend auf der Server URL und der Tracking ID, benötigt. 
+
+### Tracker Configuration
+
 ```swift
 let tracker = Webtrekk(config: TrackerConfiguration(serverUrl: "https://yourwebtrekk.domain.plz", trackingId: "123456789012345"))
-tracker.track(pageName: "TestPage")
 ```
 
-## Tracker Configuration
-
-```swift
-let tracker = Webtrekk(config: TrackerConfiguration(serverUrl: "https://yourwebtrekk.domain.plz", trackingId: "123456789012345"))
-```
-### Mandatory settings
+#### Benötigte Angaben
 
 Option      | Description
 ------------|------------
-`serverUrl` | 
-`trackingId`| 
+`serverUrl` | Server URL `https://domain.de
+`trackingId`| 15 stellige Tracking ID
 
-### Optional settings
+#### Zusätzliche Angaben
 
 Option                         | Default  | Description
 -------------------------------|----------|-------------
@@ -49,15 +71,28 @@ Option                         | Default  | Description
 `enableRemoteConfiguration`    | `false`  |
 `remoteConfigurationUrl`       | `""`     |
 
-## Page Tracking
+
+### Tracking Parameter
+
+Bei der Verwendung des Webtrekk SDKs unterteilt man beim Tracking die zu verwendenden Requests in die 3 Kategorien Inhalt, Aktion und Media. Dementsprechend werden beim Absetzen von Tracking Requests entsprechend der Kategorie ein `PageTrackingParameter`, `ActionTrackingParameter` oder ein `MediaTrackingParameter` übergeben.
+
+
+### Page Tracking
+
+Für das Tracken von Screens oder Pages wird ein `PageTrackingParameter` verwendet, dieser kann wie folgt abgesetzt werden
 
 ```swift
-let tracker = Webtrekk(config: TrackerConfiguration(serverUrl: "https://yourwebtrekk.domain.plz", trackingId: "123456789012345"))
 let pageTrackingParameter = PageTrackingParameter(pageName: "TestPage")
 tracker.track(pageTrackingParameter)
 ```
 
-### Optional settings
+oder über die kurze Variante.
+
+```swift
+tracker.track(pageName: "TestPage")
+```
+
+#### Optional settings
 
 Option                 | Default                | Description
 -----------------------|------------------------|-------------
@@ -66,12 +101,13 @@ Option                 | Default                | Description
 `ecommerceParameter`   | `nil`                  |
 `productParameters`    | `[ProductParameter]()` |
 
-### Computed settings
+#### Computed settings
 
 Option                 |  Description
 -----------------------|--------------
 `generalParameter`     | 
 `pixelParameter`       | 
+
 
 
 ## Page Parameter
@@ -171,11 +207,12 @@ Option     |  Description
 `VIEW`     | 
 
 
-## Automatic Screen Tracking
+## Automatisches Screen Tracking
 
-Assuming `webtrekk` as global variable for the Webtrekk Tracker
+Über die Tracker Konfiguration kann mit einer kleinen Erweiterung der UIViewController Klasse das Automatisches Screen Tracking aktiviert werden. Dadurch wird jeder ViewController getracked. 
 
 ```swift
+// global instance: var webtrekk: Webtrekk?
 extension UIViewController {
 	public override class func initialize() {
 		struct Static {
@@ -216,7 +253,7 @@ extension UIViewController {
 }
 ```
 
-After `webtrekk` init add the AutoTrackedScreens and lean back
+Zusätzlich zu einfachen Tracken der Klassennamen kann über die Tracker Konfiguration ein Mapping von Klassennamen auf Screennamen erstellt werden, Ausnahmen hinzugefügt werden und sogar zusätzliche Parameter definiert werden. Dies wird über die `AutoTrackedScreens` ermöglicht.
 
 ```swift
 let homeScreen = AutoTrackedScreen(className: "HomeController", mappingName: "Home")
@@ -226,7 +263,11 @@ webtrekk.autoTrackedScreens = ["HomeScreen": homeScreen, "DetailScreen": detailS
 
 ## Advertising Identifier
 
+Add the AdSupport Framework to the project
+
 ```swift
+import AdSupport
+
 let advertiser: () -> String? =  {
 	guard ASIdentifierManager.sharedManager().advertisingTrackingEnabled else {
 		return nil

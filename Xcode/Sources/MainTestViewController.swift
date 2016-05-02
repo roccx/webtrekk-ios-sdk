@@ -9,7 +9,8 @@ internal class MainTestViewController: UIViewController {
 
 	internal init() {
 		super.init(nibName: nil, bundle: nil)
-		tabBarItem = UITabBarItem(tabBarSystemItem:  .MostRecent, tag: 1)
+		tabBarItem = UITabBarItem(title: "Action", image: UIImage(named: "input"), tag: 1)
+
 	}
 
 

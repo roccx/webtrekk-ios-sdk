@@ -36,12 +36,7 @@ public struct PageTrackingParameter: TrackingParameter{
 		self._pageParameter = pageParameter
 		self.ecommerceParameter = ecommerceParameter
 		self.productParameters = productParameters
-		if pageName.isEmpty {
-			self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
-		}
-		else {
-			self.pixelParameter = PixelParameter(pageName: pageName, displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
-		}
+		self.pixelParameter = PixelParameter(pageName: pageName, displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
 		self.generalParameter = GeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
 		generalParameter.everId = self.everId
 		generalParameter.userAgent = userAgent

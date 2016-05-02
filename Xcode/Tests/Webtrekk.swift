@@ -7,7 +7,7 @@ import XCTest
 class WebtrekkTests: XCTestCase {
 
 	private var webtrekk: Webtrekk? = {
-		var webtrekk = Webtrekk(config: TrackerConfiguration(autoTrack: false, sendDelay: 7, serverUrl: "https://q3.webtrekk.net", trackingId: "289053685367929", version: 0))
+		var webtrekk = Webtrekk(config: TrackerConfiguration(autoTrack: true, sendDelay: 7, serverUrl: "https://q3.webtrekk.net/", trackingId: "289053685367929", version: 0))
 		webtrekk.enableLoging = true
 
 		return webtrekk
@@ -140,5 +140,22 @@ class PageTest: WebtrekkTests {
 			pageTrackingParameter.customParameters["cpi\(i)"] = "Custom Parameter \(i)"
 		}
 		webtrekk?.track(pageTrackingParameter)
+	}
+
+
+	func testPageWithEcommerce() {
+		webtrekk?.track(PageTrackingParameter(ecommerceParameter: EcommerceParameter(totalValue: 10) ,pageName: "page-test"))
+	}
+
+
+	func testPageWithEcommerceAdd() {
+		var ecommerceParameter = EcommerceParameter(status: .ADD, totalValue: 10)
+		for i in 1...10 {
+			ecommerceParameter.categories[i] = "Category Parameter \(i)"
+		}
+		ecommerceParameter.currency = "EUR"
+		ecommerceParameter.orderNumber = "10231230234 - 0001"
+		ecommerceParameter.voucherValue = 5.12
+		webtrekk?.track(PageTrackingParameter(ecommerceParameter: ecommerceParameter ,pageName: "page-test"))
 	}
 }
