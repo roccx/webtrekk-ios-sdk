@@ -34,7 +34,7 @@ tracker.track(pageName: "MyFirstTrackedPage")
 
 ## Verwendung
 
-Für die Verwendung des Webtrekks SDKs wird zunächst eine grundlegende Konfiguration, basierend auf der Server URL und der Tracking ID, benötigt. 
+Für die Verwendung des Webtrekks SDKs wird zunächst eine grundlegende Konfiguration, basierend auf der Server URL und der Tracking ID, benötigt.
 
 ### Tracker Configuration
 
@@ -44,14 +44,14 @@ let tracker = Webtrekk(config: TrackerConfiguration(serverUrl: "https://yourwebt
 
 #### Benötigte Angaben
 
-Option      | Description
+Option      | Beschreibung
 ------------|------------
-`serverUrl` | Server URL `https://domain.de
+`serverUrl` | Server URL `https://domain.de`
 `trackingId`| 15 stellige Tracking ID
 
 #### Zusätzliche Angaben
 
-Option                         | Default  | Description
+Option                         | Default  | Beschreibung
 -------------------------------|----------|-------------
 `appVersion`                   | `""`     |
 `maxRequests`                  | `1000`   |
@@ -92,7 +92,7 @@ oder über die kurze Variante.
 tracker.track(pageName: "TestPage")
 ```
 
-#### Optional settings
+#### Zusätzliche Angaben
 
 Option                 | Default                | Description
 -----------------------|------------------------|-------------
@@ -100,23 +100,88 @@ Option                 | Default                | Description
 `pageParameter`        | `PageParameter()`      |
 `ecommerceParameter`   | `nil`                  |
 `productParameters`    | `[ProductParameter]()` |
+`customParameter`      | `[String: String]()`   |
 
-#### Computed settings
+#### Automtisch erstellte Angaben
 
 Option                 |  Description
 -----------------------|--------------
-`generalParameter`     | 
-`pixelParameter`       | 
+`generalParameter`     |
+`pixelParameter`       |
+
+### Action Tracking
+
+Für das Tracken von Aktionen ein `ActionTrackingParameter` verwendet, dieser kann wie folgt abgesetzt werden
+
+```swift
+let actionParameter = ActionParameter(name: "click-test")
+let actionTrackingParameter = ActionTrackingParameter(actionParameter: self.actionParameter)
+tracker.track(actionTrackingParameter)
+```
+
+#### Benötigte Angaben
+
+Option                 | Description
+-----------------------|-------------
+`actionParameter`      |
 
 
+#### Zusätzliche Angaben
 
-## Page Parameter
+Option                 | Default                | Description
+-----------------------|------------------------|-------------
+`ecommerceParameter`   | `nil`                  |
+`productParameters`    | `[ProductParameter]()` |
+`customParameter`      | `[String: String]()`   |
+
+#### Automtisch erstellte Angaben
+
+Option                 |  Description
+-----------------------|--------------
+`generalParameter`     |
+`pixelParameter`       |
+
+### Media Tracking
+
+Für das Tracken von Videos wird ein `MediaTrackingParameter` verwendet, dieser kann wie folgt abgesetzt werden.
+
+```swift
+let mediaParameter = MediaParameter(action: .Play, duration: 120, name: "small-trailer.mov", position: 0)
+let mediaTrackingParameter = MediaTrackingParameter(mediaParameter: mediaParameter)
+tracker.track(mediaTrackingParameter)
+```
+
+Media Tracking kann auch komfortabel durch die Verwendung der `WtAvPlayer` Klasse umgesetzt werden.
+
+#### Benötigte Angaben
+
+Option                 | Description
+-----------------------|-------------
+`mediaParameter`      |
+
+#### Zusätzliche Angaben
+
+Option                 | Default                | Description
+-----------------------|------------------------|-------------
+`customParameter`      | `[String: String]()`   |
+
+#### Automtisch erstellte Angaben
+
+Option                 |  Description
+-----------------------|--------------
+`generalParameter`     |
+`pixelParameter`       |
+
+
+## Parameter Erklärung
+
+### Page Parameter
 
 ```swift
 let pageParameter = PageParameter()
 ```
 
-### Optional settings
+#### Optional settings
 
 Option        | Default             | Description
 --------------|---------------------|-------------
@@ -125,48 +190,48 @@ Option        | Default             | Description
 `session`     | `[Int: String]()`   |
 
 
-## General Parameter
+### General Parameter
 
 
-### Settings
+#### Settings
 
 Option           |  Description
 -----------------|--------------
-`everId`         | 
-`firstStart`     | 
-`ip`             | 
-`nationalCode'   | 
-`samplingRate`   | 
-`timeStamp`      | 
-`timeZoneOffset` | 
-`userAgent`      | 
+`everId`         |
+`firstStart`     |
+`ip`             |
+`nationalCode`   |
+`samplingRate`   |
+`timeStamp`      |
+`timeZoneOffset` |
+`userAgent`      |
 
 
 
-## Pixel Parameter
+### Pixel Parameter
 
 
-### Settings
+#### Settings
 
 Option         |  Description
 ---------------|--------------
-`version`      | 
-`pageName`     | 
-`displaySize`  | 
-`timeStamp'    |
+`version`      |
+`pageName`     |
+`displaySize`  |
+`timeStamp`    |
 
 
 
-## Product Parameter
+### Product Parameter
 
-### Mandatory settings
+#### Mandatory settings
 
 Option        | Description
 --------------|------------
-`productName` | 
+`productName` |
 
 
-### Optional settings
+#### Optional settings
 
 Option        | Default             | Description
 --------------|---------------------|-------------
@@ -176,16 +241,16 @@ Option        | Default             | Description
 `quantity`    | `""`                |
 
 
-## Ecommerce Parameter
+### Ecommerce Parameter
 
-### Mandatory settings
+#### Mandatory settings
 
 Option        | Description
 --------------|------------
 `totalValue`  |
 
 
-### Optional settings
+#### Optional settings
 
 Option          | Default                | Description
 ----------------|------------------------|-------------
@@ -196,20 +261,20 @@ Option          | Default                | Description
 `status`        | `EcommerceStatus.VIEW` |
 
 
-## Ecommerce Status
+### Ecommerce Status
 
-### Settings
+#### Settings
 
 Option     |  Description
 -----------|--------------
-`ADD`      | 
-`CONF`     | 
-`VIEW`     | 
+`ADD`      |
+`CONF`     |
+`VIEW`     |
 
 
 ## Automatisches Screen Tracking
 
-Über die Tracker Konfiguration kann mit einer kleinen Erweiterung der UIViewController Klasse das Automatisches Screen Tracking aktiviert werden. Dadurch wird jeder ViewController getracked. 
+Über die Tracker Konfiguration kann mit einer kleinen Erweiterung der UIViewController Klasse das Automatisches Screen Tracking aktiviert werden. Dadurch wird jeder ViewController getracked.
 
 ```swift
 // global instance: var webtrekk: Webtrekk?
@@ -282,5 +347,3 @@ webtrekk?.advertisingIdentifier = advertiser
 
 
 MIT
-
-	
