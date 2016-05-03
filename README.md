@@ -1,7 +1,8 @@
-# Webtrekk iOS SDK
+Webtrekk iOS SDK
+================
 
-
-## Installation
+Installation
+------------
 
 ### CococaPods
 
@@ -15,8 +16,8 @@ use_frameworks!
 pod 'Webtrekk'
 ```
 
-
-## Kurzanleitung
+Kurzanleitung
+-------------
 
 Für die Konfiguration und Verwendung des Webtrekk SDKs wird auf die Kombination der Server URL und der Tracking ID gesetzt. Dies sind auch die minimalen Elemente welche konfiguriert werden müssen bevor das SDK verwendet werden kann.
 
@@ -31,8 +32,8 @@ Ein Tracking Request kann mit einer zuvor initialisierten Instance eines Webtrek
 tracker.track(pageName: "MyFirstTrackedPage")
 ```
 
-
-## Verwendung
+Verwendung
+----------
 
 Für die Verwendung des Webtrekks SDKs wird zunächst eine grundlegende Konfiguration, basierend auf der Server URL und der Tracking ID, benötigt.
 
@@ -44,38 +45,36 @@ let tracker = Webtrekk(config: TrackerConfiguration(serverUrl: "https://yourwebt
 
 #### Benötigte Angaben
 
-Option      | Beschreibung
-------------|------------
-`serverUrl` | Server URL `https://domain.de`
-`trackingId`| 15 stellige Tracking ID
+| Option       | Beschreibung                   |
+|--------------|--------------------------------|
+| `serverUrl`  | Server URL `https://domain.de` |
+| `trackingId` | 15 stellige Tracking ID        |
 
 #### Zusätzliche Angaben
 
-Option                         | Default  | Beschreibung
--------------------------------|----------|-------------
-`appVersion`                   | `""`     |
-`maxRequests`                  | `1000`   |
-`samplingRate`                 | `0`      |
-`sendDelay`                    | `300`    |
-`version`                      | `0`      |
-`optedOut`                     | `false`  |
-`autoTrack`                    | `true`   |
-`autoTrackAdvertiserId`        | `true`   |
-`autoTrackApiLevel`            | `true`   |
-`autoTrackAppUpdate`           | `true`   |
-`autoTrackAppVersionName`      | `true`   |
-`autoTrackAppVersionCode`      | `true`   |
-`autoTrackConnectionType`      | `true`   |
-`autoTrackRequestUrlStoreSize` | `true`   |
-`autoTrackScreenOrientation`   | `true`   |
-`enableRemoteConfiguration`    | `false`  |
-`remoteConfigurationUrl`       | `""`     |
-
+| Option                         | Default | Beschreibung |
+|--------------------------------|---------|--------------|
+| `appVersion`                   | `""`    |              |
+| `maxRequests`                  | `1000`  |              |
+| `samplingRate`                 | `0`     |              |
+| `sendDelay`                    | `300`   |              |
+| `version`                      | `0`     |              |
+| `optedOut`                     | `false` |              |
+| `autoTrack`                    | `true`  |              |
+| `autoTrackAdvertiserId`        | `true`  |              |
+| `autoTrackApiLevel`            | `true`  |              |
+| `autoTrackAppUpdate`           | `true`  |              |
+| `autoTrackAppVersionName`      | `true`  |              |
+| `autoTrackAppVersionCode`      | `true`  |              |
+| `autoTrackConnectionType`      | `true`  |              |
+| `autoTrackRequestUrlStoreSize` | `true`  |              |
+| `autoTrackScreenOrientation`   | `true`  |              |
+| `enableRemoteConfiguration`    | `false` |              |
+| `remoteConfigurationUrl`       | `""`    |              |
 
 ### Tracking Parameter
 
 Bei der Verwendung des Webtrekk SDKs unterteilt man beim Tracking die zu verwendenden Requests in die 3 Kategorien Inhalt, Aktion und Media. Dementsprechend werden beim Absetzen von Tracking Requests entsprechend der Kategorie ein `PageTrackingParameter`, `ActionTrackingParameter` oder ein `MediaTrackingParameter` übergeben.
-
 
 ### Page Tracking
 
@@ -94,20 +93,20 @@ tracker.track(pageName: "TestPage")
 
 #### Zusätzliche Angaben
 
-Option                 | Default                | Description
------------------------|------------------------|-------------
-`pageName`             | `""`                   |
-`pageParameter`        | `PageParameter()`      |
-`ecommerceParameter`   | `nil`                  |
-`productParameters`    | `[ProductParameter]()` |
-`customParameter`      | `[String: String]()`   |
+| Option               | Default                | Description |
+|----------------------|------------------------|-------------|
+| `pageName`           | `""`                   |             |
+| `pageParameter`      | `PageParameter()`      |             |
+| `ecommerceParameter` | `nil`                  |             |
+| `productParameters`  | `[ProductParameter]()` |             |
+| `customParameter`    | `[String: String]()`   |             |
 
 #### Automtisch erstellte Angaben
 
-Option                 |  Description
------------------------|--------------
-`generalParameter`     |
-`pixelParameter`       |
+| Option             | Description |
+|--------------------|-------------|
+| `generalParameter` |             |
+| `pixelParameter`   |             |
 
 ### Action Tracking
 
@@ -121,25 +120,24 @@ tracker.track(actionTrackingParameter)
 
 #### Benötigte Angaben
 
-Option                 | Description
------------------------|-------------
-`actionParameter`      |
-
+| Option            | Description |
+|-------------------|-------------|
+| `actionParameter` |             |
 
 #### Zusätzliche Angaben
 
-Option                 | Default                | Description
------------------------|------------------------|-------------
-`ecommerceParameter`   | `nil`                  |
-`productParameters`    | `[ProductParameter]()` |
-`customParameter`      | `[String: String]()`   |
+| Option               | Default                | Description |
+|----------------------|------------------------|-------------|
+| `ecommerceParameter` | `nil`                  |             |
+| `productParameters`  | `[ProductParameter]()` |             |
+| `customParameter`    | `[String: String]()`   |             |
 
 #### Automtisch erstellte Angaben
 
-Option                 |  Description
------------------------|--------------
-`generalParameter`     |
-`pixelParameter`       |
+| Option             | Description |
+|--------------------|-------------|
+| `generalParameter` |             |
+| `pixelParameter`   |             |
 
 ### Media Tracking
 
@@ -155,25 +153,25 @@ Media Tracking kann auch komfortabel durch die Verwendung der `WtAvPlayer` Klass
 
 #### Benötigte Angaben
 
-Option                 | Description
------------------------|-------------
-`mediaParameter`      |
+| Option           | Description |
+|------------------|-------------|
+| `mediaParameter` |             |
 
 #### Zusätzliche Angaben
 
-Option                 | Default                | Description
------------------------|------------------------|-------------
-`customParameter`      | `[String: String]()`   |
+| Option            | Default              | Description |
+|-------------------|----------------------|-------------|
+| `customParameter` | `[String: String]()` |             |
 
 #### Automtisch erstellte Angaben
 
-Option                 |  Description
------------------------|--------------
-`generalParameter`     |
-`pixelParameter`       |
+| Option             | Description |
+|--------------------|-------------|
+| `generalParameter` |             |
+| `pixelParameter`   |             |
 
-
-## Parameter Erklärung
+Parameter Erklärung
+-------------------
 
 ### Page Parameter
 
@@ -183,96 +181,85 @@ let pageParameter = PageParameter()
 
 #### Optional settings
 
-Option        | Default             | Description
---------------|---------------------|-------------
-`page`        | `[Int: String]()`   |
-`categories`  | `[Int: String]()`   |
-`session`     | `[Int: String]()`   |
-
+| Option       | Default           | Description |
+|--------------|-------------------|-------------|
+| `page`       | `[Int: String]()` |             |
+| `categories` | `[Int: String]()` |             |
+| `session`    | `[Int: String]()` |             |
 
 ### General Parameter
 
-
 #### Settings
 
-Option           |  Description
------------------|--------------
-`everId`         |
-`firstStart`     |
-`ip`             |
-`nationalCode`   |
-`samplingRate`   |
-`timeStamp`      |
-`timeZoneOffset` |
-`userAgent`      |
-
-
+| Option           | Description |
+|------------------|-------------|
+| `everId`         |             |
+| `firstStart`     |             |
+| `ip`             |             |
+| `nationalCode`   |             |
+| `samplingRate`   |             |
+| `timeStamp`      |             |
+| `timeZoneOffset` |             |
+| `userAgent`      |             |
 
 ### Pixel Parameter
 
-
 #### Settings
 
-Option         |  Description
----------------|--------------
-`version`      |
-`pageName`     |
-`displaySize`  |
-`timeStamp`    |
-
-
+| Option        | Description |
+|---------------|-------------|
+| `version`     |             |
+| `pageName`    |             |
+| `displaySize` |             |
+| `timeStamp`   |             |
 
 ### Product Parameter
 
 #### Mandatory settings
 
-Option        | Description
---------------|------------
-`productName` |
-
+| Option        | Description |
+|---------------|-------------|
+| `productName` |             |
 
 #### Optional settings
 
-Option        | Default             | Description
---------------|---------------------|-------------
-`categories`  | `[Int: String]()`   |
-`currency`    | `""`                |
-`price`       | `""`                |
-`quantity`    | `""`                |
-
+| Option       | Default           | Description |
+|--------------|-------------------|-------------|
+| `categories` | `[Int: String]()` |             |
+| `currency`   | `""`              |             |
+| `price`      | `""`              |             |
+| `quantity`   | `""`              |             |
 
 ### Ecommerce Parameter
 
 #### Mandatory settings
 
-Option        | Description
---------------|------------
-`totalValue`  |
-
+| Option       | Description |
+|--------------|-------------|
+| `totalValue` |             |
 
 #### Optional settings
 
-Option          | Default                | Description
-----------------|------------------------|-------------
-`categories`    | `[Int: String]()`      |
-`currency`      | `""`                   |
-`orderNumber`   | `""`                   |
-`voucherValue`  | `nil`                  |
-`status`        | `EcommerceStatus.VIEW` |
-
+| Option         | Default                | Description |
+|----------------|------------------------|-------------|
+| `categories`   | `[Int: String]()`      |             |
+| `currency`     | `""`                   |             |
+| `orderNumber`  | `""`                   |             |
+| `voucherValue` | `nil`                  |             |
+| `status`       | `EcommerceStatus.VIEW` |             |
 
 ### Ecommerce Status
 
 #### Settings
 
-Option     |  Description
------------|--------------
-`ADD`      |
-`CONF`     |
-`VIEW`     |
+| Option | Description |
+|--------|-------------|
+| `ADD`  |             |
+| `CONF` |             |
+| `VIEW` |             |
 
-
-## Automatisches Screen Tracking
+Automatisches Screen Tracking
+-----------------------------
 
 Über die Tracker Konfiguration kann mit einer kleinen Erweiterung der UIViewController Klasse das Automatisches Screen Tracking aktiviert werden. Dadurch wird jeder ViewController getracked.
 
@@ -326,7 +313,8 @@ let detailScreen = AutoTrackedScreen(className: "DetailController", mappingName:
 webtrekk.autoTrackedScreens = ["HomeScreen": homeScreen, "DetailScreen": detailScreen]
 ```
 
-## Advertising Identifier
+Advertising Identifier
+----------------------
 
 Add the AdSupport Framework to the project
 
@@ -343,7 +331,7 @@ let advertiser: () -> String? =  {
 webtrekk?.advertisingIdentifier = advertiser
 ```
 
-# License
-
+License
+=======
 
 MIT

@@ -12,5 +12,5 @@ Pod::Spec.new do |s|
 
 	s.module_map    = 'Module/Webtrekk.modulemap'
 	s.source_files  = ['Sources/**/*.swift', 'Module/Webtrekk.h']
-	s.frameworks    = 'AVKit', 'Foundation', 'UIKit', 'SWXMLHash', 'ReachabilitySwift'
+	s.frameworks    = 'AVKit', 'Foundation', 'UIKit', 'SWXMLHash', 'ReachabilitySwift', 'CryptoSwift'
 end

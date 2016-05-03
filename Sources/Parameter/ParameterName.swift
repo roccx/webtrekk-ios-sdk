@@ -64,12 +64,13 @@ internal enum ParameterName: String {
 	case MediaTimeStamp  = "x"
 
 	// MARK: AutoTrack
-	case AdvertiserId        = "AD"
-	case ConnectionType      = "WIFI"
-	case RequestUrlStoreSize = "SIZE"
-	case AppVersionCode      = "CODE"
-	case AppVersionName      = "NAME"
-	case ScreenOrientation   = "ORIENTATION"
+	case AdvertiserId        = "geid"
+	case ConnectionType      = "connectionType"
+	case RequestUrlStoreSize = "requestUrlStoreSize"
+	case AppVersionCode      = "appVersionCode"
+	case AppVersionName      = "appVersion"
+	case ScreenOrientation   = "screenOrientation"
+	case AppUpdate           = "appUpdated"
 
 
 	// MARK: CrossDeviceBridge

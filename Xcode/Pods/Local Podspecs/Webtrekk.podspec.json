@@ -23,6 +23,7 @@
     "Foundation",
     "UIKit",
     "SWXMLHash",
-    "ReachabilitySwift"
+    "ReachabilitySwift",
+    "CryptoSwift"
   ]
 }

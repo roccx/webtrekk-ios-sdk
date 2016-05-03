@@ -1,4 +1,5 @@
 import Foundation
+import CryptoSwift
 
 public struct CrossDeviceBridgeParameter {
 	public var attributes:      [CrossDeviceBridgeAttributes]
@@ -60,24 +61,23 @@ public enum CrossDeviceBridgeAttributes{
 		return result
 	}
 
-	private func md5(string: String) -> [UInt8]{
-		return [UInt8](count: Int(1), repeatedValue: 0)
-		//	var digest = [UInt8](count: Int(CC_MD5_DIGEST_LENGTH), repeatedValue: 0)
-		//	if let data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
-		//		CC_MD5(data.bytes, UInt32(data.length), &digest)
-		//	}
-		//
-		//	return digest
+	private func md5(string: String) -> String{
+		return string.md5()
+		//		var digest = [UInt8](count: Int(CC_MD5_DIGEST_LENGTH), repeatedValue: 0)
+//		if let data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
+//			CC_MD5(data.bytes, UInt32(data.length), &digest)
+//		}
+//
+//		return digest
 	}
 
-	private func sha256(string: String) -> [UInt8]{
-		return [UInt8](count: Int(1), repeatedValue: 0)
-		//	var digest = [UInt8](count: Int(CC_SHA256_DIGEST_LENGTH), repeatedValue: 0)
-		//	if let data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
-		//		CC_SHA256(data.bytes, UInt32(data.length), &digest)
-		//	}
-		//
-		//	return digest
-
+	private func sha256(string: String) -> String{
+		return string.sha256()
+//		var digest = [UInt8](count: Int(CC_SHA256_DIGEST_LENGTH), repeatedValue: 0)
+//		if let data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
+//			CC_SHA256(data.bytes, UInt32(data.length), &digest)
+//		}
+//
+//		return digest
 	}
 }
