@@ -162,6 +162,10 @@ extension TrackerConfiguration: Backupable {
 		if let onQueueAutoTrackParameters = onQueueAutoTrackParameters {
 			items["onQueueAutoTrackParameters"] = onQueueAutoTrackParameters
 		}
+		if let crossDeviceParameters = crossDeviceParameters {
+			items["crossDeviceParameters"] = crossDeviceParameters
+		}
+
 		if !autoTrackScreens.isEmpty {
 			items["autoTrackScreens"] = autoTrackScreens.map({["index":$0.0, "value": $0.1.toJson()]})
 		}
@@ -234,6 +238,9 @@ extension TrackerConfiguration: Backupable {
 		}
 		if let onQueueAutoTrackParameters = json["onQueueAutoTrackParameters"] as? String {
 			config.onQueueAutoTrackParameters = onQueueAutoTrackParameters
+		}
+		if let crossDeviceParameters = json["crossDeviceParameters"] as? String {
+			config.crossDeviceParameters = crossDeviceParameters
 		}
 		if let autoScreenDic = json["autoTrackScreens"] as? [[String: AnyObject]] {
 			for item in autoScreenDic {

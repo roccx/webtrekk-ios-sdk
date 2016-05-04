@@ -63,6 +63,9 @@ public struct ActionTrackingParameter: TrackingParameter {
 		if let autoTrackingParameters = config.onQueueAutoTrackParameters {
 			url += autoTrackingParameters
 		}
+		if let crossDeviceParameters = config.crossDeviceParameters {
+			url += crossDeviceParameters
+		}
 		return url
 	}
 }

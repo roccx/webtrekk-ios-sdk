@@ -10,6 +10,7 @@ internal enum UserStoreKey: String {
 	// MARK: Strings
 
 	case Eid = "eid"
+	case VersionNumber = "versionNumber"
 
 }
 

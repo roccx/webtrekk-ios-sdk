@@ -37,6 +37,8 @@ public final class Webtrekk : Logable {
 		}
 	}
 
+	public var crossDeviceBridge: CrossDeviceBridgeParameter?
+
 	private var plugins = Set<Plugin>()
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
@@ -94,7 +96,7 @@ public final class Webtrekk : Logable {
 				return
 			}
 			guard let xmlString = String(data: xmlData, encoding: NSUTF8StringEncoding) else {
-				self.log("Cannot retrieve data retreived from \(self.config.remoteConfigurationUrl)")
+				self.log("Cannot parse data retreived from \(self.config.remoteConfigurationUrl)")
 				return
 			}
 
@@ -174,7 +176,11 @@ public final class Webtrekk : Logable {
 
 
 	public func track(trackingParameter: TrackingParameter) {
-		enqueue(trackingParameter, config: config)
+		var preparedConfig = config
+		if let crossDeviceBridge = crossDeviceBridge {
+			preparedConfig.crossDeviceParameters = crossDeviceBridge.toParameter()
+		}
+		enqueue(trackingParameter, config: preparedConfig)
 	}
 
 
