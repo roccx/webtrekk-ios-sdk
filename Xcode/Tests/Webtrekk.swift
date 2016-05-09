@@ -7,7 +7,7 @@ import XCTest
 class WebtrekkTests: XCTestCase {
 
 	private var webtrekk: Webtrekk? = {
-		var webtrekk = Webtrekk(config: TrackerConfiguration(autoTrack: true, sendDelay: 7, serverUrl: "https://q3.webtrekk.net/", trackingId: "289053685367929", version: 0))
+		var webtrekk = Webtrekk(config: TrackerConfiguration(autoTrack: true,appVersion: "1.1F", samplingRate: 1, sendDelay: 7, serverUrl: "https://q3.webtrekk.net/", trackingId: "289053685367929", version: 5))
 		webtrekk.enableLoging = true
 
 		return webtrekk

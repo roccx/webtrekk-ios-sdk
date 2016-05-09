@@ -27,9 +27,6 @@
 	<!--track the app versions code -->
 	<autoTrackAppVersionCode>true</autoTrackAppVersionCode>
 
-	<!--track the supported api level of the device, requires special permissions! -->
-	<autoTrackApiLevel>true</autoTrackApiLevel>
-
 	<!--track the devices screen orientation -->
 	<autoTrackScreenOrientation>true</autoTrackScreenOrientation>
 

@@ -9,7 +9,7 @@ extension NSURLSession: UrlSessionProtocol {
 
 extension NSURLSession {
 	static func defaultSession() -> NSURLSession {
-		return NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
+		return NSURLSession(configuration: NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier("WT"),
 		                    delegate: nil, delegateQueue: NSOperationQueue.mainQueue())
 	}
 }

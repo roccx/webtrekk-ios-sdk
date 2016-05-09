@@ -3,8 +3,8 @@ import ReachabilitySwift
 
 
 public protocol TrackingParameter {
-	var generalParameter:   GeneralParameter    { get }
-	var pixelParameter:     PixelParameter      { get }
+	var generalParameter:   GeneralParameter    { get set }
+	var pixelParameter:     PixelParameter      { get set }
 
 	var customParameters:   [String: String]    { get set }
 	var customerParameter:  CustomerParameter?  { get set }

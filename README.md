@@ -52,29 +52,37 @@ let tracker = Webtrekk(config: TrackerConfiguration(serverUrl: "https://yourwebt
 
 #### Zusätzliche Angaben
 
-| Option                         | Default | Beschreibung |
-|--------------------------------|---------|--------------|
-| `appVersion`                   | `""`    |              |
-| `maxRequests`                  | `1000`  |              |
-| `samplingRate`                 | `0`     |              |
-| `sendDelay`                    | `300`   |              |
-| `version`                      | `0`     |              |
-| `optedOut`                     | `false` |              |
-| `autoTrack`                    | `true`  |              |
-| `autoTrackAdvertiserId`        | `true`  |              |
-| `autoTrackApiLevel`            | `true`  |              |
-| `autoTrackAppUpdate`           | `true`  |              |
-| `autoTrackAppVersionName`      | `true`  |              |
-| `autoTrackAppVersionCode`      | `true`  |              |
-| `autoTrackConnectionType`      | `true`  |              |
-| `autoTrackRequestUrlStoreSize` | `true`  |              |
-| `autoTrackScreenOrientation`   | `true`  |              |
-| `enableRemoteConfiguration`    | `false` |              |
-| `remoteConfigurationUrl`       | `""`    |              |
+| Option                         | Default | Beschreibung                                                                         |
+|--------------------------------|---------|--------------------------------------------------------------------------------------|
+| `appVersion`                   | `""`    | Manuel gesetzte AppVersion überschreibt automatisch ermittelte.                      |
+| `maxRequests`                  | `1000`  | Maxmimale Anzahl an Request in der Warteschlange                                     |
+| `samplingRate`                 | `0`     | Jeder n-te Nutzer wird getracked. Deaktiert bei `0` oder `1`                         |
+| `sendDelay`                    | `300`   | Abstand zwischen dem Versand von 2 Requests                                          |
+| `version`                      | `0`     | Versionsnummer der Konfiguration                                                     |
+| `optedOut`                     | `false` | Verhindert das Tracken aufgrund einer Nutzer Entscheidung                            |
+| `autoTrack`                    | `true`  | Aktiviert/Deaktiviert alle `autoTrack` Optionen                                      |
+| `autoTrackAdvertiserId`        | `true`  | [Advertising Identifier](#advertising-identifier) wird getracked sofern eingerichtet |
+| `autoTrackAppUpdate`           | `true`  | Ermittelt ob sich der Versionsname geändert hat und dadurch eine Update passiert ist |
+| `autoTrackAppVersionName`      | `true`  | Der Versionsname der App wird getracked                                              |
+| `autoTrackAppVersionCode`      | `true`  | Der Versionscode der App wird getracked                                              |
+| `autoTrackConnectionType`      | `true`  | Aktuelle Verbindungsart (WLan/Handynetz) wird getracked                              |
+| `autoTrackRequestUrlStoreSize` | `true`  | Aktuelle Anzahl an Request in der Warteschlange wird getracked                       |
+| `autoTrackScreenOrientation`   | `true`  | Aktuelle Orientierung (Landscape/Portrait) wird getracked                            |
+| `enableRemoteConfiguration`    | `false` | Aktiviert die [Remote Config](#remote-config) Option                                 |
+| `remoteConfigurationUrl`       | `""`    | Die URL zu einer Konfigurationsdatei                                                 |
 
 ### Tracking Parameter
 
 Bei der Verwendung des Webtrekk SDKs unterteilt man beim Tracking die zu verwendenden Requests in die 3 Kategorien Inhalt, Aktion und Media. Dementsprechend werden beim Absetzen von Tracking Requests entsprechend der Kategorie ein `PageTrackingParameter`, `ActionTrackingParameter` oder ein `MediaTrackingParameter` übergeben.
+
+#### Automtisch erstellte Angaben
+
+Alle 3 Kategorien haben stets einen kleinen Anteil gleichbleibender Parameter, diese werden automatisch erzeugt und jedem Request beigefügt.
+
+| Option             | Beschreibung                            |
+|--------------------|-----------------------------------------|
+| `generalParameter` | [General Parameter](#general-parameter) |
+| `pixelParameter`   | [Pixel Parameter](#pixel-parameter)     |
 
 ### Page Tracking
 
@@ -93,20 +101,13 @@ tracker.track(pageName: "TestPage")
 
 #### Zusätzliche Angaben
 
-| Option               | Default                | Description |
-|----------------------|------------------------|-------------|
-| `pageName`           | `""`                   |             |
-| `pageParameter`      | `PageParameter()`      |             |
-| `ecommerceParameter` | `nil`                  |             |
-| `productParameters`  | `[ProductParameter]()` |             |
-| `customParameter`    | `[String: String]()`   |             |
-
-#### Automtisch erstellte Angaben
-
-| Option             | Description |
-|--------------------|-------------|
-| `generalParameter` |             |
-| `pixelParameter`   |             |
+| Option               | Default                | Beschreibung                                                       |
+|----------------------|------------------------|--------------------------------------------------------------------|
+| `pageName`           | `""`                   | `pageName` ermöglicht die Zuordnung von Tracking Request zu Screen |
+| `pageParameter`      | `PageParameter()`      | [Page Parameter](#page-parameter)                                  |
+| `ecommerceParameter` | `nil`                  | [Ecommerce Parameter](#ecommerce-parameter)                        |
+| `productParameters`  | `[ProductParameter]()` | [Product Parameter](#product-parameter)                            |
+| `customParameter`    | `[String: String]()`   | Selbstdefinierte Parametern [Custom Parameter](#custom-parameter)  |
 
 ### Action Tracking
 
@@ -120,24 +121,17 @@ tracker.track(actionTrackingParameter)
 
 #### Benötigte Angaben
 
-| Option            | Description |
-|-------------------|-------------|
-| `actionParameter` |             |
+| Option            | Beschreibung                          |
+|-------------------|---------------------------------------|
+| `actionParameter` | [Action Parameter](#action-parameter) |
 
 #### Zusätzliche Angaben
 
-| Option               | Default                | Description |
-|----------------------|------------------------|-------------|
-| `ecommerceParameter` | `nil`                  |             |
-| `productParameters`  | `[ProductParameter]()` |             |
-| `customParameter`    | `[String: String]()`   |             |
-
-#### Automtisch erstellte Angaben
-
-| Option             | Description |
-|--------------------|-------------|
-| `generalParameter` |             |
-| `pixelParameter`   |             |
+| Option               | Default                | Beschreibung                                                      |
+|----------------------|------------------------|-------------------------------------------------------------------|
+| `ecommerceParameter` | `nil`                  | [Ecommerce Parameter](#ecommerce-parameter)                       |
+| `productParameters`  | `[ProductParameter]()` | [Product Parameter](#product-parameter)                           |
+| `customParameter`    | `[String: String]()`   | Selbstdefinierte Parametern [Custom Parameter](#custom-parameter) |
 
 ### Media Tracking
 
@@ -153,22 +147,15 @@ Media Tracking kann auch komfortabel durch die Verwendung der `WtAvPlayer` Klass
 
 #### Benötigte Angaben
 
-| Option           | Description |
-|------------------|-------------|
-| `mediaParameter` |             |
+| Option           | Beschreibung                        |
+|------------------|-------------------------------------|
+| `mediaParameter` | [Media Parameter](#media-parameter) |
 
 #### Zusätzliche Angaben
 
-| Option            | Default              | Description |
-|-------------------|----------------------|-------------|
-| `customParameter` | `[String: String]()` |             |
-
-#### Automtisch erstellte Angaben
-
-| Option             | Description |
-|--------------------|-------------|
-| `generalParameter` |             |
-| `pixelParameter`   |             |
+| Option            | Default              | Beschreibung                                                      |
+|-------------------|----------------------|-------------------------------------------------------------------|
+| `customParameter` | `[String: String]()` | Selbstdefinierte Parametern [Custom Parameter](#custom-parameter) |
 
 Parameter Erklärung
 -------------------
@@ -181,26 +168,28 @@ let pageParameter = PageParameter()
 
 #### Optional settings
 
-| Option       | Default           | Description |
-|--------------|-------------------|-------------|
-| `page`       | `[Int: String]()` |             |
-| `categories` | `[Int: String]()` |             |
-| `session`    | `[Int: String]()` |             |
+| Option       | Default           | Beschreibung                         |
+|--------------|-------------------|--------------------------------------|
+| `page`       | `[Int: String]()` | Seiten Parameter `cp1=""`, `cp2=""`  |
+| `categories` | `[Int: String]()` | Seiten Kategorien `cg1=""`, `cg2=""` |
+| `session`    | `[Int: String]()` | Session Parameter `cs1=""`, `cs2=""` |
 
 ### General Parameter
 
+Der `General Parameter` ist ein automatisch generierter Parameter.
+
 #### Settings
 
-| Option           | Description |
-|------------------|-------------|
-| `everId`         |             |
-| `firstStart`     |             |
-| `ip`             |             |
-| `nationalCode`   |             |
-| `samplingRate`   |             |
-| `timeStamp`      |             |
-| `timeZoneOffset` |             |
-| `userAgent`      |             |
+| Option           | Beschreibung               |
+|------------------|----------------------------|
+| `everId`         |                            |
+| `firstStart`     | Erster Start der App       |
+| `ip`             |                            |
+| `nationalCode`   | Landeskennung z.B. `de_DE` |
+| `samplingRate`   |                            |
+| `timeStamp`      |                            |
+| `timeZoneOffset` |                            |
+| `userAgent`      |                            |
 
 ### Pixel Parameter
 

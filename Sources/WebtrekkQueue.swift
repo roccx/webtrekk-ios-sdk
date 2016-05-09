@@ -82,8 +82,10 @@ internal final class WebtrekkQueue: Logable {
 				self.queue.dequeue()
 			}
 			let preparedConfig = self.prepare(config)
-			self.queue.enqueue(TrackingQueueItem(config: preparedConfig, parameter: trackingParameter))
-			self.log("Adding \(NSURL(string:trackingParameter.urlWithAllParameter(preparedConfig))!) to the request queue")
+			var enhancedTrackingParameter = trackingParameter
+			enhancedTrackingParameter.generalParameter.samplingRate = config.samplingRate
+			self.queue.enqueue(TrackingQueueItem(config: preparedConfig, parameter: enhancedTrackingParameter))
+			self.log("Adding \(NSURL(string:enhancedTrackingParameter.urlWithAllParameter(preparedConfig))!) to the request queue")
 
 		}
 		self.sendNextRequestLater()
@@ -107,7 +109,7 @@ internal final class WebtrekkQueue: Logable {
 
 			if config.autoTrackAppVersionName {
 				if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
-					urlString += "&\(ParameterName.urlParameter(fromName: .AppVersionName, andValue: version))"
+					urlString += "&\(ParameterName.urlParameter(fromName: .AppVersionName, andValue: config.appVersion.isEmpty ? version : config.appVersion))"
 				}
 			}
 
@@ -120,8 +122,27 @@ internal final class WebtrekkQueue: Logable {
 			if config.autoTrackScreenOrientation {
 				urlString += "&\(ParameterName.urlParameter(fromName: .ScreenOrientation, andValue: UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) ? "1" : "0"))"
 			}
-			
-			//				public var autoTrackApiLevel: Bool
+
+			if config.autoTrackAppUpdate {
+				var appVersion: String
+				if !config.appVersion.isEmpty {
+					appVersion = config.appVersion
+				} else if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
+					appVersion = version
+				}else {
+					appVersion = ""
+				}
+
+				let userDefaults = NSUserDefaults.standardUserDefaults()
+				if let version = userDefaults.stringForKey(UserStoreKey.VersionNumber) {
+					if version != appVersion {
+						userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
+						urlString += "&\(ParameterName.urlParameter(fromName: .AppUpdate, andValue: "1"))"
+					}
+				} else {
+					userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
+				}
+			}
 			//				public var autoTrackAppUpdate: Bool
 		}
 		var confCopy = config
@@ -299,7 +320,6 @@ extension WebtrekkQueue { // Sending
 			self.log("Request \(url) will be send now.")
 
 			self.httpClient.get(url) { (theData, error) -> Void in
-				// TODO: handle error
 				defer {
 					if self.flush {
 						self.saveBackup()
