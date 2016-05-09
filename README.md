@@ -69,7 +69,7 @@ let tracker = Webtrekk(config: TrackerConfiguration(serverUrl: "https://yourwebt
 | `autoTrackRequestUrlStoreSize` | `true`  | Aktuelle Anzahl an Request in der Warteschlange wird getracked                       |
 | `autoTrackScreenOrientation`   | `true`  | Aktuelle Orientierung (Landscape/Portrait) wird getracked                            |
 | `enableRemoteConfiguration`    | `false` | Aktiviert die [Remote Config](#remote-config) Option                                 |
-| `remoteConfigurationUrl`       | `""`    | Die URL zu einer Konfigurationsdatei                                                 |
+| `remoteConfigurationUrl`       | `""`    | Die URL zu einer Konfigurationsdatei                                                    |
 
 ### Tracking Parameter
 
@@ -166,7 +166,7 @@ Parameter Erklärung
 let pageParameter = PageParameter()
 ```
 
-#### Optional settings
+#### Zusätzliche Angaben
 
 | Option       | Default           | Beschreibung                         |
 |--------------|-------------------|--------------------------------------|
@@ -178,74 +178,119 @@ let pageParameter = PageParameter()
 
 Der `General Parameter` ist ein automatisch generierter Parameter.
 
-#### Settings
+#### Angaben
 
 | Option           | Beschreibung               |
 |------------------|----------------------------|
-| `everId`         |                            |
+| `everId`         | Eindeutige ID welche bei der ersten Verwendung des SDKs erzeugt wird.                           |
 | `firstStart`     | Erster Start der App       |
 | `ip`             |                            |
 | `nationalCode`   | Landeskennung z.B. `de_DE` |
-| `samplingRate`   |                            |
-| `timeStamp`      |                            |
-| `timeZoneOffset` |                            |
-| `userAgent`      |                            |
+| `samplingRate`   | Wird aus der [Tracker Configuration](#tracker-configuration) übernommen                           |
+| `timeStamp`      | Erstellungszeitpunkt                           |
+| `timeZoneOffset` | Zeitzonen Unterschied zu UTC vom System ausgelesen                           |
+| `userAgent`      | Erstellt nach Vorgabe `Tracking Library 4.0 (iOS; 9.3.1; iPhone; de_DE)`                           |
 
 ### Pixel Parameter
 
-#### Settings
+Der `Pixel Parameter` ist ein automatisch generierter Parameter.
 
-| Option        | Description |
+#### Angaben
+
+| Option        | Beschreibung |
 |---------------|-------------|
-| `version`     |             |
-| `pageName`    |             |
-| `displaySize` |             |
-| `timeStamp`   |             |
+| `version`     | Aktuelle SDK Version in Hundert, `400`            |
+| `pageName`    | Aktueller Seitenname/Aktionsname            |
+| `displaySize` | Vom System bereitgestellte Information bezüglich der Displaygröße            |
+| `timeStamp`   | Erstellungszeitpunkt            |
 
 ### Product Parameter
 
-#### Mandatory settings
+#### Benötigte Angaben
 
-| Option        | Description |
+| Option        | Beschreibung |
 |---------------|-------------|
-| `productName` |             |
+| `productName` | Name des Produkts            |
 
-#### Optional settings
+#### Zusätzliche Angaben
 
-| Option       | Default           | Description |
+| Option       | Default           | Beschreibung |
 |--------------|-------------------|-------------|
-| `categories` | `[Int: String]()` |             |
-| `currency`   | `""`              |             |
-| `price`      | `""`              |             |
-| `quantity`   | `""`              |             |
+| `categories` | `[Int: String]()` | Produkt Kategorie `ca1=""`            |
+| `currency`   | `""`              | Währung z.B. `"EUR"`            |
+| `price`      | `""`              | Produktpreis            |
+| `quantity`   | `""`              | Produktanzahl            |
 
 ### Ecommerce Parameter
 
-#### Mandatory settings
+#### Benötigte Angaben
 
-| Option       | Description |
+| Option       | Beschreibung |
 |--------------|-------------|
-| `totalValue` |             |
+| `totalValue` | Gesamtwert des Warenkorbs/Bestellung            |
 
-#### Optional settings
+#### Zusätzliche Angaben
 
-| Option         | Default                | Description |
+| Option         | Default                | Beschreibung |
 |----------------|------------------------|-------------|
-| `categories`   | `[Int: String]()`      |             |
-| `currency`     | `""`                   |             |
-| `orderNumber`  | `""`                   |             |
-| `voucherValue` | `nil`                  |             |
-| `status`       | `EcommerceStatus.VIEW` |             |
+| `categories`   | `[Int: String]()`      | Ecommerce Kategorie `cb1=""`            |
+| `currency`     | `""`                   | Währung z.B. `"EUR"`            |
+| `orderNumber`  | `""`                   | Bestellnummer            |
+| `voucherValue` | `nil`                  | Gutscheinwert z.B. ``20.0`           |
+| `status`       | `EcommerceStatus.VIEW` | [Ecommerce Status](#ecommerce-status)            |
 
 ### Ecommerce Status
 
 #### Settings
 
-| Option | Description |
+| Option | Beschreibung |
 |--------|-------------|
-| `ADD`  |             |
-| `CONF` |             |
-| `VIEW` |             |
+| `ADD`  | Hinzufügen eines Produktes zum Warenkorb            |
+| `CONF` | Bestellen eines Produktes/Warenkorbes |
+| `VIEW` | Betrachten eines Produktes            |
+
+### Media Parameter
+
+#### Benötigte Angaben
+
+| Option       | Beschreibung |
+|--------------|-------------|
+| `action` | [Media Action](#media-action)            |
+| `duration` | Länge der Mediadatei            |
+| `name` | Name der Mediadatei            |
+| `position` | Aktuelle Position innerhalb der Mediadatei            |
+
+
+#### Zusätzliche Angaben
+
+| Option         | Default                | Beschreibung |
+|----------------|------------------------|-------------|
+| `bandwidth`     | `nil` | Bandbreite der Mediadatei in KB/Sekunde (ganzzahlig)            |
+| `categories`   | `[Int: String]()`      | Media Kategorie `mg1=""`            |
+| `mute`  | `nil`                   | Ton ausgeschaltet            |
+| `volume` | `nil`                  | Lautstärkewert 0-100           |
+
+### Media Action
+
+#### Settings
+
+| Option | Beschreibung |
+|--------|-------------|
+| `EndOfFile`  | Ende der Datei erreicht            |
+| `Pause`  | Wiedergabe pausiert             |
+| `Play`  | Wiedergabe gestartet            |
+| `Position`  | Aktuelle Position            |
+| `Seek`  | Position wurde durch den Nutzer geändert |
+| `Stop`  | Wiedergabe wurde gestopt |
+
+
+### Custom Parameter
+
+Custom Parameter können zu jeder Tracking Kategorie hinzugefügt werden. Hierbei handelt es sich um Parameter die im Webtrekk Account hinterlegt werden können. Die Verwendung sieht vor, dass der Parameter als `key` und der Wert als `value` an das Dictionary übergeben werden.
+
+```swift
+trackingParameter.customParameter["key"] = "value"
+```
 
 Automatisches Screen Tracking
 -----------------------------
@@ -305,7 +350,9 @@ webtrekk.autoTrackedScreens = ["HomeScreen": homeScreen, "DetailScreen": detailS
 Advertising Identifier
 ----------------------
 
-Add the AdSupport Framework to the project
+Fügen Sie dem App Projekt das `AdSupport` Framework hinzu, wenn Sie den von Apple bereitgestellten Advertising Identifier nutzen wollen. Zusätzlich sollten sie bei der Konfiguration des Webtrekk SDKs folgendes Closure übergeben um eine richtige Verwendung zu garantieren.
+
+Beachten Sie bitte die von Apple festgelegten Regeln zur Verwendung des [Advertising Identifiers](https://developer.apple.com/library/ios/documentation/LanguagesUtilities/Conceptual/iTunesConnect_Guide/Chapters/SubmittingTheApp.html#//apple_ref/doc/uid/TP40011225-CH33-SW8).
 
 ```swift
 import AdSupport
@@ -319,6 +366,9 @@ let advertiser: () -> String? =  {
 }
 webtrekk?.advertisingIdentifier = advertiser
 ```
+# Remote Config
+
+Das Webtrekk SDK bietet die Möglichkeit die Konfiguration über eine externe URL nachzuladen. Somit können eventuelle Änderungen zu einem späteren Zeitpunkt komfortabel nachgeladen werden. Hierfür reicht die Aktivierung der Remote Konfiguration und die Einrichtung einer gültigen Konfigurationsdatei. Wenn das Webtrekk SDK unter der Konfigurationsurl eine Konfiguration mit höherer Versionsnummer als bisher verwendet findet, wird diese versucht zu verwenden. Falls dies fehlschlägt wird mit der ursprünglichen Konfiguration weiter gearbeitet. Erfolgreich heruntergeladene Konfigurationen werden zwischen gespeichert womit nicht immer die vollständige Datei geparsed werden muss.
 
 License
 =======

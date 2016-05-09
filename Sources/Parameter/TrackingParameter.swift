@@ -96,6 +96,9 @@ internal extension TrackingParameter {
 			}
 		}
 		urlParameter += "&\(ParameterName.urlParameter(fromName: .ProductName, andValue: name))"
+		if let ecommerce = ecommerceParameter where !ecommerce.currency.isEmpty { // when ecommerce already has a currency then don't add here
+			currency = ""
+		}
 		if !currency.isEmpty {
 			urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCurrency, andValue: currency))"
 		}
