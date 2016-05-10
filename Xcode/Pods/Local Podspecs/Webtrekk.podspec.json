@@ -1,6 +1,6 @@
 {
   "name": "Webtrekk",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "authors": {
     "Benjamin Werker": "benjamin@widgetlabs.eu"
   },
@@ -21,9 +21,17 @@
   "frameworks": [
     "AVKit",
     "Foundation",
-    "UIKit",
-    "SWXMLHash",
-    "ReachabilitySwift",
-    "CryptoSwift"
-  ]
+    "UIKit"
+  ],
+  "dependencies": {
+    "SWXMLHash": [
+      "2.1.0"
+    ],
+    "ReachabilitySwift": [
+      "2.3.3"
+    ],
+    "CryptoSwift": [
+      "0.4.1"
+    ]
+  }
 }

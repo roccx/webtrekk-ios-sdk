@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
 	s.name    = 'Webtrekk'
-	s.version = '0.0.1'
+	s.version = '1.0.0'
 
 	s.author   = { 'Benjamin Werker' => 'benjamin@widgetlabs.eu' }
 	s.homepage = 'https://github.com/webtrekk/webtrekk-ios'
@@ -12,5 +12,8 @@ Pod::Spec.new do |s|
 
 	s.module_map    = 'Module/Webtrekk.modulemap'
 	s.source_files  = ['Sources/**/*.swift', 'Module/Webtrekk.h']
-	s.frameworks    = 'AVKit', 'Foundation', 'UIKit', 'SWXMLHash', 'ReachabilitySwift', 'CryptoSwift'
+	s.frameworks    = 'AVKit', 'Foundation', 'UIKit'
+	s.dependency    'SWXMLHash',         '2.1.0'
+	s.dependency    'ReachabilitySwift', '2.3.3'
+	s.dependency    'CryptoSwift',       '0.4.1'
 end
