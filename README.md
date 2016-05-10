@@ -69,7 +69,7 @@ let tracker = Webtrekk(config: TrackerConfiguration(serverUrl: "https://yourwebt
 | `autoTrackRequestUrlStoreSize` | `true`  | Aktuelle Anzahl an Request in der Warteschlange wird getracked                       |
 | `autoTrackScreenOrientation`   | `true`  | Aktuelle Orientierung (Landscape/Portrait) wird getracked                            |
 | `enableRemoteConfiguration`    | `false` | Aktiviert die [Remote Config](#remote-config) Option                                 |
-| `remoteConfigurationUrl`       | `""`    | Die URL zu einer Konfigurationsdatei                                                    |
+| `remoteConfigurationUrl`       | `""`    | Die URL zu einer Konfigurationsdatei                                                 |
 
 ### Tracking Parameter
 
@@ -180,16 +180,16 @@ Der `General Parameter` ist ein automatisch generierter Parameter.
 
 #### Angaben
 
-| Option           | Beschreibung               |
-|------------------|----------------------------|
-| `everId`         | Eindeutige ID welche bei der ersten Verwendung des SDKs erzeugt wird.                           |
-| `firstStart`     | Erster Start der App       |
-| `ip`             |                            |
-| `nationalCode`   | Landeskennung z.B. `de_DE` |
-| `samplingRate`   | Wird aus der [Tracker Configuration](#tracker-configuration) übernommen                           |
-| `timeStamp`      | Erstellungszeitpunkt                           |
-| `timeZoneOffset` | Zeitzonen Unterschied zu UTC vom System ausgelesen                           |
-| `userAgent`      | Erstellt nach Vorgabe `Tracking Library 4.0 (iOS; 9.3.1; iPhone; de_DE)`                           |
+| Option           | Beschreibung                                                             |
+|------------------|--------------------------------------------------------------------------|
+| `everId`         | Eindeutige ID welche bei der ersten Verwendung des SDKs erzeugt wird.    |
+| `firstStart`     | Erster Start der App                                                     |
+| `ip`             |                                                                          |
+| `nationalCode`   | Landeskennung z.B. `de_DE`                                               |
+| `samplingRate`   | Wird aus der [Tracker Configuration](#tracker-configuration) übernommen  |
+| `timeStamp`      | Erstellungszeitpunkt                                                     |
+| `timeZoneOffset` | Zeitzonen Unterschied zu UTC vom System ausgelesen                       |
+| `userAgent`      | Erstellt nach Vorgabe `Tracking Library 4.0 (iOS; 9.3.1; iPhone; de_DE)` |
 
 ### Pixel Parameter
 
@@ -197,92 +197,90 @@ Der `Pixel Parameter` ist ein automatisch generierter Parameter.
 
 #### Angaben
 
-| Option        | Beschreibung |
-|---------------|-------------|
-| `version`     | Aktuelle SDK Version in Hundert, `400`            |
-| `pageName`    | Aktueller Seitenname/Aktionsname            |
-| `displaySize` | Vom System bereitgestellte Information bezüglich der Displaygröße            |
-| `timeStamp`   | Erstellungszeitpunkt            |
+| Option        | Beschreibung                                                      |
+|---------------|-------------------------------------------------------------------|
+| `version`     | Aktuelle SDK Version in Hundert, `400`                            |
+| `pageName`    | Aktueller Seitenname/Aktionsname                                  |
+| `displaySize` | Vom System bereitgestellte Information bezüglich der Displaygröße |
+| `timeStamp`   | Erstellungszeitpunkt                                              |
 
 ### Product Parameter
 
 #### Benötigte Angaben
 
-| Option        | Beschreibung |
-|---------------|-------------|
-| `productName` | Name des Produkts            |
+| Option        | Beschreibung      |
+|---------------|-------------------|
+| `productName` | Name des Produkts |
 
 #### Zusätzliche Angaben
 
-| Option       | Default           | Beschreibung |
-|--------------|-------------------|-------------|
-| `categories` | `[Int: String]()` | Produkt Kategorie `ca1=""`            |
-| `currency`   | `""`              | Währung z.B. `"EUR"`            |
-| `price`      | `""`              | Produktpreis            |
-| `quantity`   | `""`              | Produktanzahl            |
+| Option       | Default           | Beschreibung               |
+|--------------|-------------------|----------------------------|
+| `categories` | `[Int: String]()` | Produkt Kategorie `ca1=""` |
+| `currency`   | `""`              | Währung z.B. `"EUR"`       |
+| `price`      | `""`              | Produktpreis               |
+| `quantity`   | `""`              | Produktanzahl              |
 
 ### Ecommerce Parameter
 
 #### Benötigte Angaben
 
-| Option       | Beschreibung |
-|--------------|-------------|
-| `totalValue` | Gesamtwert des Warenkorbs/Bestellung            |
+| Option       | Beschreibung                         |
+|--------------|--------------------------------------|
+| `totalValue` | Gesamtwert des Warenkorbs/Bestellung |
 
 #### Zusätzliche Angaben
 
-| Option         | Default                | Beschreibung |
-|----------------|------------------------|-------------|
-| `categories`   | `[Int: String]()`      | Ecommerce Kategorie `cb1=""`            |
-| `currency`     | `""`                   | Währung z.B. `"EUR"`            |
-| `orderNumber`  | `""`                   | Bestellnummer            |
-| `voucherValue` | `nil`                  | Gutscheinwert z.B. ``20.0`           |
-| `status`       | `EcommerceStatus.VIEW` | [Ecommerce Status](#ecommerce-status)            |
+| Option         | Default                | Beschreibung                          |
+|----------------|------------------------|---------------------------------------|
+| `categories`   | `[Int: String]()`      | Ecommerce Kategorie `cb1=""`          |
+| `currency`     | `""`                   | Währung z.B. `"EUR"`                  |
+| `orderNumber`  | `""`                   | Bestellnummer                         |
+| `voucherValue` | `nil`                  | Gutscheinwert z.B. \``20.0`           |
+| `status`       | `EcommerceStatus.VIEW` | [Ecommerce Status](#ecommerce-status) |
 
 ### Ecommerce Status
 
 #### Settings
 
-| Option | Beschreibung |
-|--------|-------------|
-| `ADD`  | Hinzufügen eines Produktes zum Warenkorb            |
-| `CONF` | Bestellen eines Produktes/Warenkorbes |
-| `VIEW` | Betrachten eines Produktes            |
+| Option | Beschreibung                             |
+|--------|------------------------------------------|
+| `ADD`  | Hinzufügen eines Produktes zum Warenkorb |
+| `CONF` | Bestellen eines Produktes/Warenkorbes    |
+| `VIEW` | Betrachten eines Produktes               |
 
 ### Media Parameter
 
 #### Benötigte Angaben
 
-| Option       | Beschreibung |
-|--------------|-------------|
-| `action` | [Media Action](#media-action)            |
-| `duration` | Länge der Mediadatei            |
-| `name` | Name der Mediadatei            |
-| `position` | Aktuelle Position innerhalb der Mediadatei            |
-
+| Option     | Beschreibung                               |
+|------------|--------------------------------------------|
+| `action`   | [Media Action](#media-action)              |
+| `duration` | Länge der Mediadatei                       |
+| `name`     | Name der Mediadatei                        |
+| `position` | Aktuelle Position innerhalb der Mediadatei |
 
 #### Zusätzliche Angaben
 
-| Option         | Default                | Beschreibung |
-|----------------|------------------------|-------------|
-| `bandwidth`     | `nil` | Bandbreite der Mediadatei in KB/Sekunde (ganzzahlig)            |
-| `categories`   | `[Int: String]()`      | Media Kategorie `mg1=""`            |
-| `mute`  | `nil`                   | Ton ausgeschaltet            |
-| `volume` | `nil`                  | Lautstärkewert 0-100           |
+| Option       | Default           | Beschreibung                                         |
+|--------------|-------------------|------------------------------------------------------|
+| `bandwidth`  | `nil`             | Bandbreite der Mediadatei in KB/Sekunde (ganzzahlig) |
+| `categories` | `[Int: String]()` | Media Kategorie `mg1=""`                             |
+| `mute`       | `nil`             | Ton ausgeschaltet                                    |
+| `volume`     | `nil`             | Lautstärkewert 0-100                                 |
 
 ### Media Action
 
 #### Settings
 
-| Option | Beschreibung |
-|--------|-------------|
-| `EndOfFile`  | Ende der Datei erreicht            |
-| `Pause`  | Wiedergabe pausiert             |
-| `Play`  | Wiedergabe gestartet            |
-| `Position`  | Aktuelle Position            |
-| `Seek`  | Position wurde durch den Nutzer geändert |
-| `Stop`  | Wiedergabe wurde gestopt |
-
+| Option      | Beschreibung                             |
+|-------------|------------------------------------------|
+| `EndOfFile` | Ende der Datei erreicht                  |
+| `Pause`     | Wiedergabe pausiert                      |
+| `Play`      | Wiedergabe gestartet                     |
+| `Position`  | Aktuelle Position                        |
+| `Seek`      | Position wurde durch den Nutzer geändert |
+| `Stop`      | Wiedergabe wurde gestopt                 |
 
 ### Custom Parameter
 
@@ -366,9 +364,16 @@ let advertiser: () -> String? =  {
 }
 webtrekk?.advertisingIdentifier = advertiser
 ```
-# Remote Config
+
+Remote Config
+=============
 
 Das Webtrekk SDK bietet die Möglichkeit die Konfiguration über eine externe URL nachzuladen. Somit können eventuelle Änderungen zu einem späteren Zeitpunkt komfortabel nachgeladen werden. Hierfür reicht die Aktivierung der Remote Konfiguration und die Einrichtung einer gültigen Konfigurationsdatei. Wenn das Webtrekk SDK unter der Konfigurationsurl eine Konfiguration mit höherer Versionsnummer als bisher verwendet findet, wird diese versucht zu verwenden. Falls dies fehlschlägt wird mit der ursprünglichen Konfiguration weiter gearbeitet. Erfolgreich heruntergeladene Konfigurationen werden zwischen gespeichert womit nicht immer die vollständige Datei geparsed werden muss.
+
+Test App
+========
+
+Um die Test App verwenden zu können muss im Verzeichnis 'Xcode' der Befehl 'pod install' einmalig erfolgreich aufgerufen werden.
 
 License
 =======
