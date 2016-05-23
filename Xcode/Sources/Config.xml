@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<webtrekkConfiguration>
+	<!--the version number for this configuration file -->
+	<version>1</version>
+	<!--the webtrekk trackDomain where the requests are send -->
+	<trackDomain>https://defaulttrackingdomain.info</trackDomain>
+	<!--customers trackid -->
+	<trackId>ABCDEFGH1234567890</trackId>
+	<!-- measure only a subset of the users -->
+	<sampling>0</sampling>
+	<!-- interval between the requests are send in seconds -->
+	<sendDelay>300</sendDelay>
+	<!--maximum amoount of requests to store when the user is offline -->
+	<maxRequests>5000</maxRequests>
+
+	<!--optional settings -->
+	<!--automaticly track activities onStart method -->
+	<autoTracked>true</autoTracked>
+
+	<!--track if there was an application update -->
+	<autoTrackAppUpdate>true</autoTrackAppUpdate>
+	<!--track the advertiser id -->
+	<autoTrackAdvertiserId>true</autoTrackAdvertiserId>
+
+	<!--track the app versions name -->
+	<autoTrackAppVersionName>true</autoTrackAppVersionName>
+	<!--track the app versions code -->
+	<autoTrackAppVersionCode>true</autoTrackAppVersionCode>
+
+	<!--track the devices screen orientation -->
+	<autoTrackScreenOrientation>true</autoTrackScreenOrientation>
+
+	<!--track the current connection type -->
+	<autoTrackConnectionType>true</autoTrackConnectionType>
+
+	<!--sends the size of the current locally stored urls in a custom parameter -->
+	<autoTrackRequestUrlStoreSize>true</autoTrackRequestUrlStoreSize>
+
+	<!--enables the remote xml configuration -->
+	<enableRemoteConfiguration>false</enableRemoteConfiguration>
+	<!--url of the remote configuration -->
+	<trackingConfigurationUrl>http://remotetrackingconfiguration.info/configfile.xml</trackingConfigurationUrl>
+
+	<screens>
+		<screen>
+			<className>UITabBarController</className>
+			<autoTracked>false</autoTracked>
+		</screen>
+
+		<screen>
+			<className>ActionViewController</className>
+			<mappingName>Home</mappingName>
+		</screen>
+
+		<screen>
+			<className>MediaViewController</className>
+			<mappingName>VideoOverview</mappingName>
+			<trackingParameter>
+				<customParameters>
+					<parameter id="1">Final Edition</parameter>
+					<parameter id="3">Racing Team</parameter>
+				</customParameters>
+				<pageParameter>
+					<page>
+						<parameter id="1">Blue Variant</parameter>
+					</page>
+					<categories>
+						<parameter id="2">Media</parameter>
+					</categories>
+					<session>
+						<parameter id="1">Viral</parameter>
+					</session>
+				</pageParameter>
+			</trackingParameter>
+		</screen>
+	</screens>
+
+</webtrekkConfiguration>

@@ -97,15 +97,15 @@ class ParameterTest: XCTestCase {
 		XCTAssertFalse(customerParameter.urlParameter.stringByReplacingOccurrencesOfString("&", withString: "") == ParameterName.urlParameter(fromName: .CustomerBirthday, andValue: formatter.stringFromDate(birthday)))
 	}
 
-	func testPageParameter() {
+	func testPageParameter() throws {
 		guard let webtrekk = webtrekk else {
 			return
 		}
 		let pageTrackingParameter = PageTrackingParameter(pageName: "TestPage")
 
-		let url = pageTrackingParameter.urlWithAllParameter(webtrekk.config)
+		let url = pageTrackingParameter.urlWithAllParameter(webtrekk.config!)
 		XCTAssertTrue(url.containsString("TestPage"))
-		webtrekk.track(pageTrackingParameter)
+		try webtrekk.track(pageTrackingParameter)
 	}
 
 }

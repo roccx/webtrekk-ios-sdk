@@ -1,3 +1,3 @@
 public protocol ConfigParser {
-	var trackerConfiguration: TrackerConfiguration { get }
+	var trackerConfiguration: TrackerConfiguration? { get }
 }

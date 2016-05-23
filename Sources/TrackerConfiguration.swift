@@ -1,12 +1,12 @@
 import Foundation
 
 public struct TrackerConfiguration {
-	public var appVersion:          String
-	public var maxRequests:         Int
-	public var samplingRate:        Int
-	public var sendDelay:           Int
-	public var version:             Int
-	public var optedOut:            Bool
+	public var appVersion: String
+	public var maxRequests: Int
+	public var samplingRate: Int
+	public var sendDelay = 5 * 60
+	public var version: Int
+	public var optedOut: Bool
 
 	public private(set) var serverUrl:  String
 	public private(set) var trackingId: String
@@ -30,7 +30,10 @@ public struct TrackerConfiguration {
 	internal var crossDeviceParameters:      String?
 	internal var onQueueAutoTrackParameters: String?
 
-	public init(autoTrack: Bool = true, autoTrackAdvertiserId: Bool = true, autoTrackApiLevel: Bool = true, autoTrackAppUpdate: Bool = true, autoTrackAppVersionName: Bool = true, autoTrackAppVersionCode: Bool = true, autoTrackConnectionType: Bool = true, autoTrackRequestUrlStoreSize: Bool = true, autoTrackScreenOrientation: Bool = true, autoTrackScreens: [String: AutoTrackedScreen] = [:], appVersion: String = "", configFilePath: String = "", enableRemoteConfiguration: Bool = false, maxRequests: Int = 1000, optedOut: Bool = false, remoteConfigurationUrl: String = "", samplingRate: Int = 0, sendDelay: Int = 5 * 60, serverUrl: String, trackingId: String, version: Int = 0) {
+	public init(
+		autoTrack: Bool = true,
+		autoTrackAdvertiserId: Bool = true,
+		autoTrackApiLevel: Bool = true, autoTrackAppUpdate: Bool = true, autoTrackAppVersionName: Bool = true, autoTrackAppVersionCode: Bool = true, autoTrackConnectionType: Bool = true, autoTrackRequestUrlStoreSize: Bool = true, autoTrackScreenOrientation: Bool = true, autoTrackScreens: [String: AutoTrackedScreen] = [:], appVersion: String = "", configFilePath: String = "", enableRemoteConfiguration: Bool = false, maxRequests: Int = 1000, optedOut: Bool = false, remoteConfigurationUrl: String = "", samplingRate: Int = 0, sendDelay: Int = 5 * 60, serverUrl: String, trackingId: String, version: Int = 0) {
 
 		guard !serverUrl.isEmpty || !trackingId.isEmpty else {
 			fatalError("Need serverUrl and trackingId for minimal Configuration")

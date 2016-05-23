@@ -29,12 +29,10 @@ import Foundation
 //}
 
 
-internal final class Loger {
-	private let trackingId: String
+public final class Loger {
 	internal var enabled = false
 
-	internal init(trackingId: String) {
-		self.trackingId = trackingId
+	internal init() {
 	}
 
 	internal func log(@autoclosure messageClosure: Void throws -> String) rethrows {
@@ -47,7 +45,7 @@ internal final class Loger {
 
 
 internal protocol Logable {
-	var loger: Loger { get set }
+	var loger: Loger { get }
 }
 
 extension Logable {

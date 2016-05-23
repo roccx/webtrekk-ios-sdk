@@ -2,47 +2,40 @@ import Foundation
 
 internal class Queue<T> {
 
+	internal var array: Array<T>
+
 	internal typealias Element = T
 
-	internal var front: QueueItem<Element>
-	internal var back: QueueItem<Element>
-
-	internal var itemCount = 0
+	internal var itemCount: Int {
+		return array.count
+	}
 
 	internal init () {
-		// Insert empty item. Will disappear when the first item is added.
-		back = QueueItem(nil)
-		front = back
+		self.array = Array<T>()
 	}
 
 	/// Add a item to the back of the queue.
 	internal func enqueue (value: Element) {
-		back.next = QueueItem(value)
-		back = back.next!
-		itemCount += 1
+		array.append(value)
 	}
 
 	/// Return and remove the item at the front of the queue.
 	internal func dequeue () -> Element? {
-		if let newhead = front.next {
-			front = newhead
-			itemCount -= 1
-			return newhead.value
-		} else {
+		guard !array.isEmpty else {
 			return nil
 		}
+		return array.removeFirst()
 	}
 
 	internal func peek() -> Element? {
-		if let newhead = front.next {
-			return newhead.value
-		} else {
+		guard !array.isEmpty, let firstItem = array.first else {
 			return nil
 		}
+		return firstItem
 	}
 
 	internal func isEmpty() -> Bool {
-		return front === back
+		return array.isEmpty
 	}
 }
 

@@ -2,7 +2,9 @@ import UIKit
 
 public final class Webtrekk : Logable {
 
-	internal lazy var loger: Loger = Loger(trackingId: self.config.trackingId)
+	public static let sharedInstance = Webtrekk()
+	internal lazy var loger: Loger = Loger()
+
 	public var advertisingIdentifier: (() -> String?)? {
 		didSet {
 			queue?.advertisingIdentifier = advertisingIdentifier
@@ -18,9 +20,16 @@ public final class Webtrekk : Logable {
 		}
 	}
 
-	public var config: TrackerConfiguration {
+	public var config: TrackerConfiguration? {
 		didSet {
-			guard oldValue.optedOut != config.optedOut else {
+			guard oldValue?.optedOut != config?.optedOut else {
+				return
+			}
+			if oldValue == nil {
+				setUp()
+			}
+
+			guard config != nil else {
 				return
 			}
 			queue?.shouldTrack = shouldTrack()
@@ -56,9 +65,15 @@ public final class Webtrekk : Logable {
 		}
 	}
 
+	private init() {
 
-	public convenience init(configParser: ConfigParser){
-		self.init(config: configParser.trackerConfiguration)
+	}
+
+	public convenience init(configParser: ConfigParser) throws {
+		guard let config = configParser.trackerConfiguration else {
+			throw WebtrekkError.InitParserError
+		}
+		self.init(config: config)
 	}
 
 
@@ -72,14 +87,16 @@ public final class Webtrekk : Logable {
 		setUpConfig()
 		setUpQueue()
 		setUpOptedOut()
-		setUpLifecycleObserver()
 	}
 
 
 	private func setUpConfig() {
+		guard let config = self.config else {
+			return
+		}
 		// check if there is a local dump of the config saved
 		if let localConfig = fileManager.restoreConfiguration(config.trackingId) where localConfig.version > config.version{
-			config = localConfig
+			self.config = localConfig
 		}
 		else {
 			fileManager.saveConfiguration(config)
@@ -92,44 +109,44 @@ public final class Webtrekk : Logable {
 		let httpClient = DefaultHttpClient()
 		httpClient.get(url) { (data, error) -> Void in
 			guard let xmlData = data else {
-				self.log("No data could be retrieved from \(self.config.remoteConfigurationUrl).")
+				self.log("No data could be retrieved from \(self.config?.remoteConfigurationUrl).")
 				return
 			}
 			guard let xmlString = String(data: xmlData, encoding: NSUTF8StringEncoding) else {
-				self.log("Cannot parse data retreived from \(self.config.remoteConfigurationUrl)")
+				self.log("Cannot parse data retreived from \(self.config?.remoteConfigurationUrl)")
 				return
 			}
 
-			let config = XmlConfigParser(xmlString: xmlString).trackerConfiguration
+			let config: TrackerConfiguration!
+			do {
+				let parser = try XmlConfigParser(xmlString: xmlString)
+				config = parser.trackerConfiguration
+			} catch {
+				self.log("\(WebtrekkError.RemoteParserError)")
+				return
+			}
 
-			guard config.version > self.config.version else {
+
+			guard config.version > self.config?.version else {
 				self.log("Remote configuration is not newer then the currently used.")
 				return
 			}
-			self.log("Updating tracker config from version \(self.config.version) to new version \(config.version)")
+			self.log("Updating tracker config from version \(self.config?.version) to new version \(config.version)")
 			self.config = config
 			self.fileManager.saveConfiguration(config)
 		}
 	}
 
 
-	private func setUpLifecycleObserver() {
-		hibernationObserver = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationDidEnterBackgroundNotification, object: nil, queue: NSOperationQueue.mainQueue()) {
-			_ in // TODO: notifiy that app will enter background
-		}
-
-		wakeUpObserver = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: NSOperationQueue.mainQueue()) {
-			_ in // TODO: notifiy that app will enter foreground
-		}
-	}
-
-
 	private func setUpOptedOut() {
-		config.optedOut =	NSUserDefaults.standardUserDefaults().boolForKey(UserStoreKey.OptedOut)
+		config?.optedOut =	NSUserDefaults.standardUserDefaults().boolForKey(UserStoreKey.OptedOut)
 	}
 
 
 	private func setUpQueue() {
+		guard let config = config else {
+			return
+		}
 		let backupFileUrl: NSURL = fileManager.getConfigurationDirectoryUrl(forTrackingId: config.trackingId).URLByAppendingPathComponent("queue.json")
 		queue = WebtrekkQueue(backupFileUrl: backupFileUrl, sendDelay: config.sendDelay, maximumUrlCount: config.maxRequests, loger: loger)
 		queue?.shouldTrack = shouldTrack()
@@ -137,6 +154,9 @@ public final class Webtrekk : Logable {
 
 
 	func shouldTrack() -> Bool {
+		guard let config = config else {
+			return false
+		}
 		let userDefaults = NSUserDefaults.standardUserDefaults()
 		let userShouldBeSampled: Bool
 		if let _ = userDefaults.objectForKey(UserStoreKey.Sampled.rawValue) {
@@ -151,8 +171,8 @@ public final class Webtrekk : Logable {
 
 	// MARK: Tracking
 
-	public func auto(className: String) {
-		guard config.autoTrack else {
+	public func auto(className: String) throws {
+		guard let config = config where config.autoTrack else {
 			return
 		}
 
@@ -163,33 +183,38 @@ public final class Webtrekk : Logable {
 			guard screen.enabled else {
 				return
 			}
-			track(screen)
+			try track(screen)
 			return
 		}
-		track(className)
+		try track(className)
 	}
 
 
-	public func track(pageName: String) {
-		track(PageTrackingParameter(pageName: pageName))
+	public func track(pageName: String) throws {
+		try track(PageTrackingParameter(pageName: pageName))
 	}
 
 
-	public func track(trackingParameter: TrackingParameter) {
+	public func track(trackingParameter: TrackingParameter) throws {
+		guard let config = config else {
+			throw WebtrekkError.NoTrackerConfiguration
+		}
 		var preparedConfig = config
 		if let crossDeviceBridge = crossDeviceBridge {
 			preparedConfig.crossDeviceParameters = crossDeviceBridge.toParameter()
 		}
-		enqueue(trackingParameter, config: preparedConfig)
+		var parameter = trackingParameter
+		parameter.generalParameter.firstStart = trackingParameter.firstStart()
+		enqueue(parameter, config: preparedConfig)
 	}
 
 
-	private func track(screen: AutoTrackedScreen) {
+	private func track(screen: AutoTrackedScreen) throws {
 		if let pageTrackingParameter = screen.pageTrackingParameter {
-			track(pageTrackingParameter)
+			try track(pageTrackingParameter)
 		}
 		else {
-			track(screen.mappingName)
+			try track(screen.mappingName)
 		}
 	}
 
@@ -220,4 +245,12 @@ public final class Webtrekk : Logable {
 		return plugins.isEmpty
 	}
 	
+}
+
+
+public enum WebtrekkError: ErrorType {
+	case InitError
+	case InitParserError
+	case NoTrackerConfiguration
+	case RemoteParserError
 }

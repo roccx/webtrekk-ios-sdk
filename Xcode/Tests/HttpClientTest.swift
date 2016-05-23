@@ -74,7 +74,7 @@ class HttpClientTest_Integration: XCTestCase {
 			print("cannot retrieve data as string")
 			return
 		}
-		let parser = XmlConfigParser(xmlString: xmlString)
+//		let parser = XmlConfigParser(xmlString: xmlString)
 		print("")
 	}
 }

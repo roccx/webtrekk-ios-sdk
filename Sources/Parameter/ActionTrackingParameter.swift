@@ -66,6 +66,7 @@ public struct ActionTrackingParameter: TrackingParameter {
 		if let crossDeviceParameters = config.crossDeviceParameters {
 			url += crossDeviceParameters
 		}
+		url += "&\(ParameterName.EndOfRequest.rawValue)"
 		return url
 	}
 }

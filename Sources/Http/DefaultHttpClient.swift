@@ -2,9 +2,10 @@ import Foundation
 
 internal final class DefaultHttpClient: HttpClient {
 	internal let session: UrlSessionProtocol
-
-	internal init(session: UrlSessionProtocol = NSURLSession.sharedSession()) {
+	internal var loger: Loger?
+	internal init(session: UrlSessionProtocol = NSURLSession.sharedSession(), loger: Loger? = nil) {
 		self.session = session
+		self.loger = loger
 	}
 
 	internal func get(url: NSURL, completion: HTTPResult) {
@@ -13,8 +14,10 @@ internal final class DefaultHttpClient: HttpClient {
 			if let error = error {
 				switch error.code {
 				case NSURLErrorBadServerResponse, NSURLErrorCallIsActive, NSURLErrorCancelled, NSURLErrorCannotConnectToHost, NSURLErrorCannotFindHost, NSURLErrorDataNotAllowed, NSURLErrorDNSLookupFailed, NSURLErrorInternationalRoamingOff, NSURLErrorNetworkConnectionLost, NSURLErrorNotConnectedToInternet, NSURLErrorTimedOut, NSURLErrorZeroByteResource:
+					self.loger?.log("Error \"\(error.localizedDescription)\" occured during request of \(url), will be retried.")
 					recoverable = true
 				default:
+					self.loger?.log("Error \"\(error.localizedDescription)\" occured during request of \(url), will not be retried.")
 					recoverable = false
 				}
 				completion(nil, Error.NetworkError(recoverable: recoverable))

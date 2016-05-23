@@ -1,7 +1,6 @@
 import UIKit
 import Webtrekk
 
-internal var webtrekk: Webtrekk?
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -10,17 +9,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-		webtrekk = Webtrekk(config: TrackerConfiguration(autoTrackScreens: ["MainTestViewController": AutoTrackedScreen(className: "MainTestViewController", mappingName: "Home"), "FirstTestViewController": AutoTrackedScreen(className: "FirstTestViewController", mappingName: "VideoOverview")], appVersion: "1.1F" , sendDelay: 7, serverUrl: "https://q3.webtrekk.net", trackingId: "1111111111111", version: 5))
-		webtrekk?.enableLoging = true
-		window = UIWindow(frame: UIScreen.mainScreen().bounds)
-		if let window = window {
-			window.backgroundColor = UIColor.whiteColor()
-			let tabBarController = UITabBarController()
-			tabBarController.viewControllers = [MainTestViewController(), FirstTestViewController()]
-			window.rootViewController = tabBarController
-			window.makeKeyAndVisible()
-		}
 
+		if let url = NSBundle(forClass: AppDelegate.self).URLForResource("Config", withExtension: "xml"), let xmlString = try? String(contentsOfURL: url) {
+			if let parser = try? XmlConfigParser(xmlString: xmlString) where parser.trackerConfiguration != nil{
+				Webtrekk.sharedInstance.config = parser.trackerConfiguration!
+				Webtrekk.sharedInstance.enableLoging = true
+			}
+		}
 		print("Startup complete!")
 		return true
 	}

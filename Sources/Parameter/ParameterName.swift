@@ -3,6 +3,7 @@ internal enum ParameterName: String {
 	case Pixel = "p"
 
 	// MARK: General
+	case EndOfRequest    = "eor"
 	case EverId          = "eid"
 	case FirstStart      = "one"
 	case IpAddress       = "X-WT-IP"

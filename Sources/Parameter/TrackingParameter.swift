@@ -37,10 +37,20 @@ public extension TrackingParameter {
 	}
 
 
+	public func firstStart() -> Bool {
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		guard let _ = userDefaults.objectForKey(UserStoreKey.FirstStart) else {
+			userDefaults.setBool(true, forKey: UserStoreKey.FirstStart)
+			return true
+		}
+		return false
+	}
+
+
 	public var userAgent: String {
 		get {
 			let os = NSProcessInfo().operatingSystemVersion
-			return "Tracking Library \(Double(pixelParameter.version/100)) (iOS; \(os.majorVersion). \(os.minorVersion). \(os.patchVersion); \(UIDevice.currentDevice().modelName); \(NSLocale.currentLocale().localeIdentifier))"
+			return "Tracking Library \(Double(pixelParameter.version/100))(iOS;\(os.majorVersion).\(os.minorVersion).\(os.patchVersion);\(UIDevice.currentDevice().modelName);\(NSLocale.currentLocale().localeIdentifier))"
 		}
 	}
 }

@@ -11,7 +11,7 @@ internal final class WebtrekkQueue: Logable {
 	private let _pluginsSaveGuard = dispatch_queue_create("de.webtrekk.pluginsSaveGuard", nil)
 
 	private var _plugins = [Plugin] ()
-	private let httpClient = DefaultHttpClient()
+	private lazy var httpClient: DefaultHttpClient = DefaultHttpClient(loger: self.loger)
 	private lazy var backupManager: BackupManager = BackupManager(self.loger)
 
 	internal let networkConnectionTimeout = 60 // equals to one minute
@@ -84,6 +84,12 @@ internal final class WebtrekkQueue: Logable {
 			let preparedConfig = self.prepare(config)
 			var enhancedTrackingParameter = trackingParameter
 			enhancedTrackingParameter.generalParameter.samplingRate = config.samplingRate
+			guard self.shouldTrack else{
+				self.log("User should not be tracked, only handling plugin calls.")
+				self.handleBeforePluginCall(enhancedTrackingParameter)
+				self.handleAfterPluginCall(enhancedTrackingParameter)
+				return
+			}
 			self.queue.enqueue(TrackingQueueItem(config: preparedConfig, parameter: enhancedTrackingParameter))
 			self.log("Adding \(NSURL(string:enhancedTrackingParameter.urlWithAllParameter(preparedConfig))!) to the request queue")
 
@@ -143,7 +149,6 @@ internal final class WebtrekkQueue: Logable {
 					userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
 				}
 			}
-			//				public var autoTrackAppUpdate: Bool
 		}
 		var confCopy = config
 		confCopy.onQueueAutoTrackParameters = urlString.isEmpty ? nil : urlString
@@ -311,12 +316,6 @@ extension WebtrekkQueue { // Sending
 				return
 			}
 
-			guard self.shouldTrack else {
-				self.log("user is not tracked")
-				self.handleAfterPluginCall(trackingQueueItem.parameter)
-				return
-			}
-
 			self.log("Request \(url) will be send now.")
 
 			self.httpClient.get(url) { (theData, error) -> Void in
@@ -340,6 +339,7 @@ extension WebtrekkQueue { // Sending
 					}
 					self.numberOfFailedSends += 1
 					if case .NetworkError(let recoverable) = error as! Error where !recoverable {
+						self.log("Request was not recoverable")
 						if let item = self.queue.dequeue() {
 							self.handleAfterPluginCall(item.parameter)
 						}
