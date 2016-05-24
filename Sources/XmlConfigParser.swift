@@ -44,10 +44,7 @@ public final class XmlConfigParser: ConfigParser {
 	}
 
 	public func parseTrackerConfig() throws -> TrackerConfiguration {
-		guard let root = xml[.Root] else {
-			throw XmlError.NoRoot
-		}
-		guard root.boolValue else {
+		guard xml[.Root].boolValue else {
 			throw XmlError.NoRoot
 		}
 		guard xml[.Root][.TrackingDomain].boolValue && xml[.Root][.TrackId].boolValue, let serverUrl = xml[.Root][.TrackingDomain].element?.text, let trackingId = xml[.Root][.TrackId].element?.text else {
