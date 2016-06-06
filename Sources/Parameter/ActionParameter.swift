@@ -14,24 +14,3 @@ public struct ActionParameter {
 		self.session = session
 	}
 }
-
-extension ActionParameter: Parameter {
-	internal var urlParameter: String {
-		get {
-			var urlParameter = "&\(ParameterName.urlParameter(fromName: .ActionName, andValue: name))"
-			
-			if !categories.isEmpty {
-				for (index, value) in categories {
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .ActionCategory, withIndex: index, andValue: value))"
-				}
-			}
-
-			if !session.isEmpty {
-				for (index, value) in session {
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .Session, withIndex: index, andValue: value))"
-				}
-			}
-			return urlParameter
-		}
-	}
-}

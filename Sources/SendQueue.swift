@@ -1,16 +1,13 @@
 import UIKit
-import ReachabilitySwift
 
-internal final class WebtrekkQueue: Logable {
+internal final class SendQueue: Logable {
 
 	var loger: Loger
 
 	internal typealias TrackingQueueItem = (config: TrackerConfiguration, parameter: TrackingParameter)
 
 	private let _queue = dispatch_queue_create("de.webtrekk.queue", nil)
-	private let _pluginsSaveGuard = dispatch_queue_create("de.webtrekk.pluginsSaveGuard", nil)
 
-	private var _plugins = [Plugin] ()
 	private lazy var httpClient: DefaultHttpClient = DefaultHttpClient(loger: self.loger)
 	private lazy var backupManager: BackupManager = BackupManager(self.loger)
 
@@ -31,21 +28,10 @@ internal final class WebtrekkQueue: Logable {
 	internal private(set) var shutdownRequested = false
 	internal private(set) var sendNextRequestQueued = false
 
-	internal var plugins: [Plugin] {
-		get {
-			var result: [Plugin]?
-			with(_pluginsSaveGuard) {
-				result = self._plugins
-			}
-			return result!
-		}
-		set {
-			with(_pluginsSaveGuard) {
-				self._plugins = newValue
-			}
-		}
-	}
 
+	internal var itemCount: Int {
+		get { return queue.itemCount }
+	}
 
 	deinit {
 		let notificationCenter = NSNotificationCenter.defaultCenter()
@@ -81,80 +67,14 @@ internal final class WebtrekkQueue: Logable {
 				self.log("Max count for store is reached, removing oldest now.")
 				self.queue.dequeue()
 			}
-			let preparedConfig = self.prepare(config)
-			var enhancedTrackingParameter = trackingParameter
-			enhancedTrackingParameter.generalParameter.samplingRate = config.samplingRate
-			guard self.shouldTrack else{
-				self.log("User should not be tracked, only handling plugin calls.")
-				self.handleBeforePluginCall(enhancedTrackingParameter)
-				self.handleAfterPluginCall(enhancedTrackingParameter)
-				return
-			}
-			self.queue.enqueue(TrackingQueueItem(config: preparedConfig, parameter: enhancedTrackingParameter))
-			self.log("Adding \(NSURL(string:enhancedTrackingParameter.urlWithAllParameter(preparedConfig))!) to the request queue")
+			self.queue.enqueue(TrackingQueueItem(config: config, parameter: trackingParameter))
+			self.log("Adding \(NSURL(string:trackingParameter.urlWithAllParameter(config))!) to the request queue")
 
 		}
 		self.sendNextRequestLater()
 	}
 
-	private func prepare(config: TrackerConfiguration) -> TrackerConfiguration{
-		// TODO: Rename parameter names to the correct ones
-		var urlString = ""
-		if config.autoTrack {
-			if config.autoTrackAdvertiserId, let advertisingIdentifier = advertisingIdentifier, let id = advertisingIdentifier() {
-				urlString += "&\(ParameterName.urlParameter(fromName: .AdvertiserId, andValue: id))"
-			}
-
-			if config.autoTrackConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
-				urlString += "&\(ParameterName.urlParameter(fromName: .ConnectionType, andValue: reachability.isReachableViaWiFi() ? "0" : "1"))"
-			}
-
-			if config.autoTrackRequestUrlStoreSize {
-				urlString += "&\(ParameterName.urlParameter(fromName: .RequestUrlStoreSize, andValue: "\(queue.itemCount)"))"
-			}
-
-			if config.autoTrackAppVersionName {
-				if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
-					urlString += "&\(ParameterName.urlParameter(fromName: .AppVersionName, andValue: config.appVersion.isEmpty ? version : config.appVersion))"
-				}
-			}
-
-			if config.autoTrackAppVersionCode {
-				if let version = NSBundle.mainBundle().infoDictionary?[kCFBundleVersionKey as String] as? String {
-					urlString += "&\(ParameterName.urlParameter(fromName: .AppVersionCode, andValue: version))"
-				}
-			}
-
-			if config.autoTrackScreenOrientation {
-				urlString += "&\(ParameterName.urlParameter(fromName: .ScreenOrientation, andValue: UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) ? "1" : "0"))"
-			}
-
-			if config.autoTrackAppUpdate {
-				var appVersion: String
-				if !config.appVersion.isEmpty {
-					appVersion = config.appVersion
-				} else if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
-					appVersion = version
-				}else {
-					appVersion = ""
-				}
-
-				let userDefaults = NSUserDefaults.standardUserDefaults()
-				if let version = userDefaults.stringForKey(UserStoreKey.VersionNumber) {
-					if version != appVersion {
-						userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
-						urlString += "&\(ParameterName.urlParameter(fromName: .AppUpdate, andValue: "1"))"
-					}
-				} else {
-					userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
-				}
-			}
-		}
-		var confCopy = config
-		confCopy.onQueueAutoTrackParameters = urlString.isEmpty ? nil : urlString
-		return confCopy
-	}
-
+	
 	private func loadBackups() {
 		let restoredQueue = backupManager.restoreFromDisc(backupFileUrl)
 		guard !restoredQueue.isEmpty() else {
@@ -205,7 +125,7 @@ internal final class WebtrekkQueue: Logable {
 		}
 }
 
-extension WebtrekkQueue {
+extension SendQueue {
 
 	@objc private func applicationDidReceiveMemoryWarning() {
 		log("Application may be killed soon")
@@ -229,32 +149,8 @@ extension WebtrekkQueue {
 	}
 }
 
-extension WebtrekkQueue { // Plugins
 
-	internal func handleAfterPluginCall(trackingParameter: TrackingParameter) {
-		guard !plugins.isEmpty else {
-			return
-		}
-
-		for plugin in plugins {
-			plugin.afterTrackingSend(trackingParameter)
-		}
-	}
-
-
-	internal func handleBeforePluginCall(trackingParameter: TrackingParameter) {
-		guard !plugins.isEmpty else {
-			return
-		}
-
-		for plugin in plugins {
-			plugin.beforeTrackingSend(trackingParameter)
-		}
-	}
-
-}
-
-extension WebtrekkQueue { // Sending
+extension SendQueue { // Sending
 
 	private func sendNextRequestLater() {
 		with(_queue) {
@@ -308,8 +204,6 @@ extension WebtrekkQueue { // Sending
 				return
 			}
 
-			self.handleBeforePluginCall(trackingQueueItem.parameter)
-
 			guard let url = NSURL(string:trackingQueueItem.parameter.urlWithAllParameter(trackingQueueItem.config)) else {
 				self.log("url is not valid")
 				self.queue.dequeue()
@@ -332,17 +226,13 @@ extension WebtrekkQueue { // Sending
 					guard let error = error else {
 						self.numberOfSuccessfulSends = 1
 						self.numberOfFailedSends = 0
-						if let item = self.queue.dequeue() {
-							self.handleAfterPluginCall(item.parameter)
-						}
+						self.queue.dequeue()
 						return
 					}
 					self.numberOfFailedSends += 1
 					if case .NetworkError(let recoverable) = error as! Error where !recoverable {
 						self.log("Request was not recoverable")
-						if let item = self.queue.dequeue() {
-							self.handleAfterPluginCall(item.parameter)
-						}
+						self.queue.dequeue()
 					}
 				}
 			}

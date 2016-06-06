@@ -23,34 +23,3 @@ public enum EcommerceStatus: String {
 	case CONF = "conf"
 	case VIEW = "view"
 }
-
-extension EcommerceParameter: Parameter {
-	internal var urlParameter: String {
-		get {
-			var urlParameter = ""
-			if !currency.isEmpty {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCurrency, andValue: currency))"
-			}
-			if !categories.isEmpty {
-				for (index, value) in categories {
-
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCategory, withIndex: index, andValue: value))"
-				}
-			}
-
-			if !orderNumber.isEmpty {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomOrderNumber, andValue: orderNumber))"
-			}
-
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomStatus, andValue: status.rawValue))"
-
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomTotalValue, andValue: "\(totalValue)"))"
-
-			if let voucherValue = voucherValue {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomVoucherValue, andValue: "\(voucherValue)"))"
-			}
-
-			return urlParameter
-		}
-	}
-}

@@ -37,7 +37,11 @@ extension NSURLQueryItem {
 
 
 	internal convenience init(name: ParameterName, value: String) {
-		self.init(name: name, value: "")
+		self.init(name: name.rawValue, value: value)
+	}
+
+	internal convenience init(name: ParameterName, withIndex index: Int, value: String) {
+		self.init(name: "\(name.rawValue)\(index)", value: value)
 	}
 
 }
@@ -93,8 +97,8 @@ extension UIViewController {
 		}
 
 		dispatch_once(&Static.token) {
-			let originalSelector = #selector(viewWillAppear)
-			let swizzledSelector = #selector(wtk_viewWillAppear)
+			let originalSelector = #selector(viewDidAppear)
+			let swizzledSelector = #selector(webtrekk_viewDidAppear)
 
 			let originalMethod = class_getInstanceMethod(self, originalSelector)
 			let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
@@ -111,10 +115,10 @@ extension UIViewController {
 
 	// MARK: - Method Swizzling
 
-	func wtk_viewWillAppear(animated: Bool) {
-		self.wtk_viewWillAppear(animated)
+	func webtrekk_viewDidAppear(animated: Bool) {
+		self.webtrekk_viewDidAppear(animated)
 		do {
-			try Webtrekk.sharedInstance.auto("\(self.dynamicType)")
+			try Webtrekk.sharedInstance.autoTrack("\(self.dynamicType)")
 		} catch {
 			print("error occured during track \(error)")
 		}

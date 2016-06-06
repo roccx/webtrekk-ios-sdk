@@ -26,28 +26,6 @@ public struct GeneralParameter {
 	}
 }
 
-extension GeneralParameter: Parameter {
-	internal var urlParameter: String {
-		get {
-			var urlParameter = "&\(ParameterName.urlParameter(fromName: .EverId, andValue: everId))"
-			if firstStart {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .FirstStart, andValue: "1"))"
-			}
-			if !ip.isEmpty {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .IpAddress, andValue: ip))"
-			}
-			if !nationalCode.isEmpty {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .NationalCode, andValue: nationalCode))"
-			}
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .SamplingRate, andValue: "\(samplingRate)"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .TimeStamp, andValue: "\(Int64(timeStamp.timeIntervalSince1970 * 1000))"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .TimeZoneOffset, andValue: "\(timeZoneOffset)"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .UserAgent, andValue: userAgent))"
-
-			return urlParameter
-		}
-	}
-}
 
 
 extension GeneralParameter {

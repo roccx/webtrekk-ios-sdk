@@ -36,35 +36,3 @@ public enum MediaAction: String {
 	case Seek      = "seek"
 	case Stop      = "stop"
 }
-
-extension MediaParameter: Parameter {
-	internal var urlParameter: String {
-		get {
-			var urlParameter = "&\(ParameterName.urlParameter(fromName: .MediaName, andValue: name))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaAction, andValue: action.rawValue))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaPosition, andValue: "\(position)"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaDuration, andValue: "\(duration)"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaTimeStamp, andValue: "\(Int64(timeStamp.timeIntervalSince1970 * 1000))"))"
-
-			if let bandwidth = bandwidth {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaBandwidth, andValue: "\(bandwidth)"))"
-			}
-
-			if let mute = mute {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaMute, andValue: mute ? "1" : "0"))"
-			}
-
-			if let volume = volume {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaVolume, andValue: "\(volume)"))"
-			}
-			
-			if !categories.isEmpty {
-				for (index, value) in categories {
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaCategories, withIndex: index, andValue: value))"
-				}
-			}
-
-			return urlParameter
-		}
-	}
-}

@@ -4,14 +4,14 @@ internal enum UserStoreKey: String {
 
 	// MARK: Bools
 
-	case FirstStart = "wtk_firstStart"
-	case OptedOut = "wtk_optedOut"
-	case Sampled = "wtk_sampled"
+	case FirstStart = "webtrekk_firstStart"
+	case OptedOut = "webtrekk_optedOut"
+	case Sampled = "webtrekk_sampled"
 
 	// MARK: Strings
 
-	case Eid = "wtk_eid"
-	case VersionNumber = "wtk_versionNumber"
+	case Eid = "webtrekk_eid"
+	case VersionNumber = "webtrekk_versionNumber"
 
 }
 
