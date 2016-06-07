@@ -42,25 +42,9 @@ public struct PageTrackingParameter: TrackingParameter{
 		generalParameter.userAgent = userAgent
 	}
 
-	
+
 	public func urlWithAllParameter(config: TrackerConfiguration) -> String {
-		var url = config.baseUrl.absoluteString
-		url += pixelParameter.urlParameter
-		url += generalParameter.urlParameter
-		if !_pageParameter.urlParameter.isEmpty {
-			url += _pageParameter.urlParameter
-		}
-		if !productParameters.isEmpty {
-			url += urlProductParameters()
-		}
-		if let ecommerceParameter = ecommerceParameter {
-			url += ecommerceParameter.urlParameter
-		}
-		if !customParameters.isEmpty {
-			for (key, value) in customParameters {
-				url += "&\(key)=\(value.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
-			}
-		}
+		var url = UrlCreator.createUrlFromTrackingParameter(self, andConfig: config).absoluteString
 		if let autoTrackingParameters = config.onQueueAutoTrackParameters {
 			url += autoTrackingParameters
 		}

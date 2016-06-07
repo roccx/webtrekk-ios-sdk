@@ -1,22 +1,117 @@
 import Foundation
 
+internal final class UrlCreator {
+
+	internal static func createUrlFromTrackingParameter(trackingParameter: TrackingParameter, andConfig config: TrackerConfiguration) -> NSURL {
+		var queryItems = [NSURLQueryItem]()
+
+		queryItems += trackingParameter.pixelParameter.urlParameter
+		queryItems += trackingParameter.generalParameter.urlParameter
+
+		if let page = trackingParameter.pageParameter {
+			queryItems += page.urlParameter
+		} else if let action = trackingParameter.actionParameter {
+			queryItems += action.urlParameter
+		} else if let media = trackingParameter.mediaParameter {
+			queryItems += media.urlParameter
+		}
+
+		queryItems += trackingParameter.urlProductParameters()
+
+		if let ecommerceParameter = trackingParameter.ecommerceParameter {
+			queryItems += ecommerceParameter.urlParameter
+		}
+
+		if let customerParameter = trackingParameter.customerParameter {
+			queryItems += customerParameter.urlParameter
+		}
+
+		queryItems += trackingParameter.customParametersAsQueryItem()
+
+		guard let url = config.baseUrl.URLByAppendingQueryItems(queryItems) else {
+			return config.baseUrl
+		}
+		
+		return url
+	}
+
+}
+
+internal extension TrackingParameter {
+	internal func customParametersAsQueryItem() -> [NSURLQueryItem] {
+		guard !customParameters.isEmpty else {
+			return [NSURLQueryItem]()
+		}
+		var queryItems = [NSURLQueryItem]()
+		for (key, value) in customParameters {
+			queryItems.append(NSURLQueryItem(name: key, value: value))
+		}
+		return queryItems
+	}
+}
+
+/* action
+public func urlWithAllParameter(config: TrackerConfiguration) -> String {
+if !productParameters.isEmpty {
+url += urlProductParameters()
+}
+if let autoTrackingParameters = config.onQueueAutoTrackParameters {
+url += autoTrackingParameters
+}
+if let crossDeviceParameters = config.crossDeviceParameters {
+url += crossDeviceParameters
+}
+url += "&\(ParameterName.EndOfRequest.rawValue)"
+return url
+}
+*/
+
+/* media 
+public func urlWithAllParameter(config: TrackerConfiguration) -> String {
+if let autoTrackingParameters = config.onQueueAutoTrackParameters {
+url += autoTrackingParameters
+}
+if let crossDeviceParameters = config.crossDeviceParameters {
+url += crossDeviceParameters
+}
+return url
+}
+*/
+
+/* page 
+public func urlWithAllParameter(config: TrackerConfiguration) -> String {
+if !productParameters.isEmpty {
+url += urlProductParameters()
+}
+if let autoTrackingParameters = config.onQueueAutoTrackParameters {
+url += autoTrackingParameters
+}
+if let crossDeviceParameters = config.crossDeviceParameters {
+url += crossDeviceParameters
+}
+url += "&\(ParameterName.EndOfRequest.rawValue)"
+return url
+}
+*/
+
 extension ActionParameter: Parameter {
-	internal var urlParameter: String {
+	internal var urlParameter: [NSURLQueryItem] {
 		get {
-			var urlParameter = "&\(ParameterName.urlParameter(fromName: .ActionName, andValue: name))"
+			var queryItems = [NSURLQueryItem]()
+			queryItems.append(NSURLQueryItem(name: .ActionName, value: name))
 
 			if !categories.isEmpty {
 				for (index, value) in categories {
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .ActionCategory, withIndex: index, andValue: value))"
+					queryItems.append(NSURLQueryItem(name: .ActionCategory, withIndex: index, value: value))
 				}
 			}
 
 			if !session.isEmpty {
 				for (index, value) in session {
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .Session, withIndex: index, andValue: value))"
+					queryItems.append(NSURLQueryItem(name: .Session, withIndex: index, value: value))
 				}
 			}
-			return urlParameter
+			return queryItems
 		}
 	}
 }
@@ -31,112 +126,112 @@ extension CustomerParameter: Parameter {
 		}
 	}
 
-	internal var urlParameter: String {
+	internal var urlParameter: [NSURLQueryItem] {
 		get {
-			var urlParameter = ""
+			var queryItems = [NSURLQueryItem]()
 			var categories = self.categories
 
 			if let value = eMail.isEmpty ? categories.keys.contains(700) ? categories[700] : nil : eMail where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerEmail, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerEmail, value: value))
 			}
 			categories.removeValueForKey(700)
 
 			if let value = eMailReceiverId.isEmpty ? categories.keys.contains(701) ? categories[701] : nil : eMailReceiverId  where !value.isEmpty{
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerEmailReceiver, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerEmailReceiver, value: value))
 			}
 			categories.removeValueForKey(701)
 
 			if let value = newsletter {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerNewsletter, andValue: value ? "1" : "2"))"
+				queryItems.append(NSURLQueryItem(name: .CustomerNewsletter, value: value ? "1" : "2"))
 			} else if let value = categories[702] where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerNewsletter, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerNewsletter, value: value))
 			}
 			categories.removeValueForKey(702)
 
 			if let value = firstName.isEmpty ? categories.keys.contains(703) ? categories[703] : nil : firstName where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerFirstName, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerFirstName, value: value))
 			}
 			categories.removeValueForKey(703)
 
 			if let value = lastName.isEmpty ? categories.keys.contains(704) ? categories[704] : nil : lastName where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerLastName, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerLastName, value: value))
 			}
 			categories.removeValueForKey(704)
 
 			if let value = phoneNumber.isEmpty ? categories.keys.contains(705) ? categories[705] : nil : phoneNumber where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerPhoneNumber, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerPhoneNumber, value: value))
 			}
 			categories.removeValueForKey(705)
 
 			if let value = gender {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerGender, andValue: "\(value.toValue())"))"
+				queryItems.append(NSURLQueryItem(name: .CustomerGender, value: value.toValue()))
 			} else if let value = categories[706] where !value.isEmpty {
-
+				queryItems.append(NSURLQueryItem(name: .CustomerGender, value: value))
 			}
 			categories.removeValueForKey(706)
 
 			if let value = birthday {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerBirthday, andValue: birthdayFormatter.stringFromDate(value)))"
+				queryItems.append(NSURLQueryItem(name: .CustomerBirthday, value: birthdayFormatter.stringFromDate(value)))
 			} else if let value = categories[707] where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerBirthday, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerBirthday, value: value))
 			}
 			categories.removeValueForKey(707)
 
 			if let value = city.isEmpty ? categories.keys.contains(708) ? categories[708] : nil : city where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerCity, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerCity, value: value))
 			}
 			categories.removeValueForKey(708)
 
 			if let value = country.isEmpty ? categories.keys.contains(709) ? categories[709] : nil : country where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerCountry, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerCountry, value: value))
 			}
 			categories.removeValueForKey(709)
 
 			if let value = zip.isEmpty ? categories.keys.contains(710) ? categories[710] : nil : zip where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerZip, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerZip, value: value))
 			}
 			categories.removeValueForKey(710)
 
 			if let value = street.isEmpty ? categories.keys.contains(711) ? categories[711] : nil : street where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerStreet, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerStreet, value: value))
 			}
 			categories.removeValueForKey(711)
 
 			if let value = streetNumber.isEmpty ? categories.keys.contains(712) ? categories[712] : nil : streetNumber where !value.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerStreetNumber, andValue: value))"
+				queryItems.append(NSURLQueryItem(name: .CustomerStreetNumber, value: value))
 			}
 			categories.removeValueForKey(712)
 
 			if !number.isEmpty {
-				urlParameter = "&\(ParameterName.urlParameter(fromName: .CustomerNumber, andValue: number))"
+				queryItems.append(NSURLQueryItem(name: .CustomerNumber, value: number))
 			}
 
 			if !categories.isEmpty {
 				for (index, value) in categories {
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .CustomerCategory, withIndex: index, andValue: value))"
+					queryItems.append(NSURLQueryItem(name: .CustomerCategory, withIndex: index, value: value))
 				}
 			}
-			return urlParameter
+			return queryItems
 		}
 	}
 }
 
 internal extension CustomerGender {
-	internal func toValue() -> Int {
+	internal func toValue() -> String {
 		switch self {
 		case .Male:
-			return 1
+			return "1"
 		case .Female:
-			return 2
+			return "2"
 		}
 	}
 
 
-	internal static func from(value: Int) -> CustomerGender? {
+	internal static func from(value: String) -> CustomerGender? {
 		switch value {
-		case 1:
+		case "1":
 			return .Male
-		case 2:
+		case "2":
 			return .Female
 		default:
 			return nil
@@ -146,129 +241,130 @@ internal extension CustomerGender {
 
 
 extension EcommerceParameter: Parameter {
-	internal var urlParameter: String {
+	internal var urlParameter: [NSURLQueryItem] {
 		get {
-			var urlParameter = ""
+			var queryItems = [NSURLQueryItem]()
 			if !currency.isEmpty {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCurrency, andValue: currency))"
+				queryItems.append(NSURLQueryItem(name: .EcomCurrency, value: currency))
 			}
+
 			if !categories.isEmpty {
 				for (index, value) in categories {
-
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCategory, withIndex: index, andValue: value))"
+					queryItems.append(NSURLQueryItem(name: .EcomCategory, withIndex: index, value: value))
 				}
 			}
 
 			if !orderNumber.isEmpty {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomOrderNumber, andValue: orderNumber))"
+				queryItems.append(NSURLQueryItem(name: .EcomOrderNumber, value: orderNumber))
 			}
 
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomStatus, andValue: status.rawValue))"
+			queryItems.append(NSURLQueryItem(name: .EcomStatus, value: status.rawValue))
 
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomTotalValue, andValue: "\(totalValue)"))"
+			queryItems.append(NSURLQueryItem(name: .EcomTotalValue, value: "\(totalValue)"))
 
 			if let voucherValue = voucherValue {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomVoucherValue, andValue: "\(voucherValue)"))"
+				queryItems.append(NSURLQueryItem(name: .EcomVoucherValue, value: "\(voucherValue)"))
 			}
 
-			return urlParameter
+			return queryItems
 		}
 	}
 }
 
 
 extension GeneralParameter: Parameter {
-	internal var urlParameter: String {
+	internal var urlParameter: [NSURLQueryItem] {
 		get {
-			var urlParameter = "&\(ParameterName.urlParameter(fromName: .EverId, andValue: everId))"
+			var queryItems = [NSURLQueryItem]()
+			queryItems.append(NSURLQueryItem(name: .EverId, value: everId))
 			if firstStart {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .FirstStart, andValue: "1"))"
+				queryItems.append(NSURLQueryItem(name: .FirstStart, value: "1"))
 			}
 			if !ip.isEmpty {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .IpAddress, andValue: ip))"
+				queryItems.append(NSURLQueryItem(name: .IpAddress, value: ip))
 			}
 			if !nationalCode.isEmpty {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .NationalCode, andValue: nationalCode))"
+				queryItems.append(NSURLQueryItem(name: .NationalCode, value: nationalCode))
 			}
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .SamplingRate, andValue: "\(samplingRate)"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .TimeStamp, andValue: "\(Int64(timeStamp.timeIntervalSince1970 * 1000))"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .TimeZoneOffset, andValue: "\(timeZoneOffset)"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .UserAgent, andValue: userAgent))"
+			queryItems.append(NSURLQueryItem(name: .SamplingRate, value: "\(samplingRate)"))
+			queryItems.append(NSURLQueryItem(name: .TimeStamp, value: "\(Int64(timeStamp.timeIntervalSince1970 * 1000))"))
+			queryItems.append(NSURLQueryItem(name: .TimeZoneOffset, value: "\(timeZoneOffset)"))
+			queryItems.append(NSURLQueryItem(name: .UserAgent, value: userAgent))
 
-			return urlParameter
+			return queryItems
 		}
 	}
 }
 
 
 extension MediaParameter: Parameter {
-	internal var urlParameter: String {
+	internal var urlParameter: [NSURLQueryItem] {
 		get {
-			var urlParameter = "&\(ParameterName.urlParameter(fromName: .MediaName, andValue: name))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaAction, andValue: action.rawValue))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaPosition, andValue: "\(position)"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaDuration, andValue: "\(duration)"))"
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaTimeStamp, andValue: "\(Int64(timeStamp.timeIntervalSince1970 * 1000))"))"
+			var queryItems = [NSURLQueryItem]()
+			queryItems.append(NSURLQueryItem(name: .MediaName, value: name))
+
+			queryItems.append(NSURLQueryItem(name: .MediaAction, value: action.rawValue))
+			queryItems.append(NSURLQueryItem(name: .MediaPosition, value: "\(position)"))
+			queryItems.append(NSURLQueryItem(name: .MediaDuration, value: "\(duration)"))
+			queryItems.append(NSURLQueryItem(name: .MediaTimeStamp, value: "\(Int64(timeStamp.timeIntervalSince1970 * 1000))"))
 
 			if let bandwidth = bandwidth {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaBandwidth, andValue: "\(bandwidth)"))"
+				queryItems.append(NSURLQueryItem(name: .MediaBandwidth, value: "\(bandwidth)"))
 			}
 
 			if let mute = mute {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaMute, andValue: mute ? "1" : "0"))"
+				queryItems.append(NSURLQueryItem(name: .MediaMute, value: mute ? "1" : "0"))
 			}
 
 			if let volume = volume {
-				urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaVolume, andValue: "\(volume)"))"
+				queryItems.append(NSURLQueryItem(name: .MediaVolume, value: "\(volume)"))
 			}
 
 			if !categories.isEmpty {
 				for (index, value) in categories {
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .MediaCategories, withIndex: index, andValue: value))"
+					queryItems.append(NSURLQueryItem(name: .MediaCategories, withIndex: index, value: value))
 				}
 			}
 
-			return urlParameter
+			return queryItems
 		}
 	}
 }
 
 
 extension PageParameter: Parameter {
-	internal var urlParameter: String {
+	internal var urlParameter: [NSURLQueryItem] {
 		get {
-			var urlParameter = ""
+			var queryItems = [NSURLQueryItem]()
 
 			if !page.isEmpty {
 				for (index, value) in page {
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .Page, withIndex: index, andValue: value))"
+					queryItems.append(NSURLQueryItem(name: .Page, withIndex: index, value: value))
 				}
-
-
 			}
 
 			if !categories.isEmpty {
 				for (index, value) in categories {
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .PageCategory, withIndex: index, andValue: value))"
+					queryItems.append(NSURLQueryItem(name: .PageCategory, withIndex: index, value: value))
 				}
 			}
 
 			if !session.isEmpty {
 				for (index, value) in session {
-					urlParameter += "&\(ParameterName.urlParameter(fromName: .Session, withIndex: index, andValue: value))"
+					queryItems.append(NSURLQueryItem(name: .Session, withIndex: index, value: value))
 				}
 			}
 
-			return urlParameter
+			return queryItems
 		}
 	}
 }
 
 
 extension PixelParameter: Parameter {
-	internal var urlParameter: String {
+	internal var urlParameter: [NSURLQueryItem] {
 		get {
-			return "?\(ParameterName.Pixel.rawValue)=\(version),\(pageName.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!),0,\(Int(displaySize.width))x\(Int(displaySize.height)),32,0,\(Int64(timeStamp.timeIntervalSince1970 * 1000)),0,0,0"
+			return [NSURLQueryItem(name: .Pixel, value: "\(version),\(pageName.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!),0,\(Int(displaySize.width))x\(Int(displaySize.height)),32,0,\(Int64(timeStamp.timeIntervalSince1970 * 1000)),0,0,0")]
 		}
 	}
 }
@@ -342,8 +438,8 @@ internal extension CrossDeviceBridgeAttributes {
 	private func md5(string: String) -> String{
 		return string.md5()
 	}
-
-
+	
+	
 	private func sha256(string: String) -> String{
 		return string.sha256()
 	}

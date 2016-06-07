@@ -1,5 +1,5 @@
 import Foundation
 
 internal protocol Parameter{
-	var urlParameter: String { get }
+	var urlParameter: [NSURLQueryItem] { get }
 }

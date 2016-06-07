@@ -14,10 +14,10 @@ internal struct BackupManager: Logable {
 	}
 
 
-	internal func saveToDisc(fileUrl: NSURL, queue: Queue<WebtrekkQueue.TrackingQueueItem>) {
+	internal func saveToDisc(fileUrl: NSURL, queue: Queue<SendQueue.TrackingQueueItem>) {
 		var json = [AnyObject]()
 		let itemCount = queue.itemCount
-		var array: [WebtrekkQueue.TrackingQueueItem] = []
+		var array: [SendQueue.TrackingQueueItem] = []
 		repeat {
 			guard let item = queue.dequeue() else {
 				break
@@ -57,8 +57,8 @@ internal struct BackupManager: Logable {
 	}
 
 
-	internal func restoreFromDisc(fileUrl: NSURL) -> Queue<WebtrekkQueue.TrackingQueueItem> {
-		let queue = Queue<WebtrekkQueue.TrackingQueueItem>()
+	internal func restoreFromDisc(fileUrl: NSURL) -> Queue<SendQueue.TrackingQueueItem> {
+		let queue = Queue<SendQueue.TrackingQueueItem>()
 		// get file storage location based on tracker config
 		guard let data = fileManager.restoreData(fromFileUrl: fileUrl) else {
 			return queue
@@ -96,7 +96,7 @@ internal struct BackupManager: Logable {
 				continue
 			}
 			config = trackerConfig
-			queue.enqueue(WebtrekkQueue.TrackingQueueItem(config:config, parameter: parameter))
+			queue.enqueue(SendQueue.TrackingQueueItem(config:config, parameter: parameter))
 		}
 		return queue
 	}
@@ -734,7 +734,7 @@ extension CustomerParameter: Backupable {
 		if let eMailReceiverId = json["eMailReceiverId"] as? String {
 			parameter.eMailReceiverId = eMailReceiverId
 		}
-		if let gender = json["gender"] as? Int {
+		if let gender = json["gender"] as? String {
 			parameter.gender = CustomerGender.from(gender)
 		}
 		if let firstName = json["firstName"] as? String {

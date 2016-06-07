@@ -46,21 +46,14 @@ public struct MediaTrackingParameter: TrackingParameter {
 	}
 
 	public func urlWithAllParameter(config: TrackerConfiguration) -> String {
-		var url = config.baseUrl.absoluteString
-		url += pixelParameter.urlParameter
-		url += generalParameter.urlParameter
-		url += _mediaParameter.urlParameter
-		if !customParameters.isEmpty {
-			for (key, value) in customParameters {
-				url += "&\(key)=\(value.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!)"
-			}
-		}
+		var url = UrlCreator.createUrlFromTrackingParameter(self, andConfig: config).absoluteString
 		if let autoTrackingParameters = config.onQueueAutoTrackParameters {
 			url += autoTrackingParameters
 		}
 		if let crossDeviceParameters = config.crossDeviceParameters {
 			url += crossDeviceParameters
 		}
+		url += "&\(ParameterName.EndOfRequest.rawValue)"
 		return url
 	}
 }

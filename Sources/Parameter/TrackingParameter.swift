@@ -61,11 +61,11 @@ internal extension TrackingParameter {
 		return ""
 	}
 
-	internal func urlProductParameters() -> String {
+	internal func urlProductParameters() -> [NSURLQueryItem] {
 		guard !productParameters.isEmpty else {
-			return ""
+			return [NSURLQueryItem]()
 		}
-		var urlParameter = ""
+		var queryItems = [NSURLQueryItem]()
 		var currency = ""
 		var name = ""
 		var price = ""
@@ -105,23 +105,23 @@ internal extension TrackingParameter {
 
 			}
 		}
-		urlParameter += "&\(ParameterName.urlParameter(fromName: .ProductName, andValue: name))"
+		queryItems.append(NSURLQueryItem(name: .ProductName, value:  name))
 		if let ecommerce = ecommerceParameter where !ecommerce.currency.isEmpty { // when ecommerce already has a currency then don't add here
 			currency = ""
 		}
 		if !currency.isEmpty {
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .EcomCurrency, andValue: currency))"
+			queryItems.append(NSURLQueryItem(name: .EcomCurrency, value:  currency))
 		}
 		if !price.isEmpty {
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .ProductPrice, andValue: price))"
+			queryItems.append(NSURLQueryItem(name: .ProductPrice, value:  price))
 		}
 		if !quantity.isEmpty {
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .ProductQuantity, andValue: quantity))"
+			queryItems.append(NSURLQueryItem(name: .ProductQuantity, value:  quantity))
 		}
 
 		for (index, value) in categories {
-			urlParameter += "&\(ParameterName.urlParameter(fromName: .ProductCategory, withIndex: index, andValue: value))"
+			queryItems.append(NSURLQueryItem(name: .ProductCategory, withIndex: index, value:  value))
 		}
-		return urlParameter
+		return queryItems
 	}
 }
