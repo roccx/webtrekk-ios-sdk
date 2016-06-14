@@ -2,42 +2,127 @@ import Foundation
 
 internal final class UrlCreator {
 
-	internal static func createUrlFromTrackingParameter(trackingParameter: TrackingParameter, andConfig config: TrackerConfiguration) -> NSURL {
+
+	internal static func createUrlFromEvent(event: Event) -> NSURL? {
 		var queryItems = [NSURLQueryItem]()
+		queryItems += event.pixel.urlParameter
+		queryItems += event.general.urlParameter
 
-		queryItems += trackingParameter.pixelParameter.urlParameter
-		queryItems += trackingParameter.generalParameter.urlParameter
-
-		if let page = trackingParameter.pageParameter {
+		if let page = event.page {
 			queryItems += page.urlParameter
-		} else if let action = trackingParameter.actionParameter {
+		} else if let action = event.action {
 			queryItems += action.urlParameter
-		} else if let media = trackingParameter.mediaParameter {
+		} else if let media = event.media {
 			queryItems += media.urlParameter
 		}
 
-		queryItems += trackingParameter.urlProductParameters()
+		queryItems += event.urlProductParameters()
 
-		if let ecommerceParameter = trackingParameter.ecommerceParameter {
+		if let ecommerceParameter = event.ecommerce {
 			queryItems += ecommerceParameter.urlParameter
 		}
 
-		if let customerParameter = trackingParameter.customerParameter {
+		if let customerParameter = event.customer {
 			queryItems += customerParameter.urlParameter
 		}
 
-		queryItems += trackingParameter.customParametersAsQueryItem()
+		queryItems += event.dictionaryAsQueryItem(event.custom)
+		queryItems += event.dictionaryAsQueryItem(event.autoTracking)
+		queryItems += event.dictionaryAsQueryItem(event.crossDevice)
+		queryItems.append(NSURLQueryItem(name: .EndOfRequest, value: nil))
 
-		guard let url = config.baseUrl.URLByAppendingQueryItems(queryItems) else {
-			return config.baseUrl
+		guard let baseUrl = event.baseUrl, url = baseUrl.URLByAppendingQueryItems(queryItems) else {
+			return event.baseUrl
 		}
-		
+
 		return url
+
 	}
 
 }
 
+
+internal extension Event {
+	internal func dictionaryAsQueryItem(dictionary: [String: String]) -> [NSURLQueryItem] {
+		guard !dictionary.isEmpty else {
+			return [NSURLQueryItem]()
+		}
+		var queryItems = [NSURLQueryItem]()
+		for (key, value) in dictionary {
+			queryItems.append(NSURLQueryItem(name: key, value: value))
+		}
+		return queryItems
+	}
+
+
+	internal func urlProductParameters() -> [NSURLQueryItem] {
+		guard !products.isEmpty else {
+			return [NSURLQueryItem]()
+		}
+		var queryItems = [NSURLQueryItem]()
+		var currency = ""
+		var name = ""
+		var price = ""
+		var quantity = ""
+		var categorieKeys = Set<Int>()
+
+		for productParameter in products {
+			let appendix = productParameter == products.last! ? "" : ";"
+			name += "\(productParameter.name)\(appendix)"
+			currency = productParameter.currency.isEmpty ? currency : productParameter.currency
+			price += "\(productParameter.price)\(appendix)"
+			quantity += "\(productParameter.quantity)\(appendix)"
+
+			for key in productParameter.categories.keys {
+				categorieKeys.insert(key)
+			}
+
+		}
+		var categories = [Int: String] ()
+		for productParameter in products {
+			let appendix = productParameter == products.last! ? "" : ";"
+
+			for key in categorieKeys {
+				var category: String
+
+				if let cat = productParameter.categories[key] {
+					category = cat
+				} else {
+					category = ""
+				}
+
+				if let cat = categories[key] {
+					categories[key] = "\(cat)\(category)\(appendix)"
+				} else {
+					categories[key] = "\(category)\(appendix)"
+				}
+
+			}
+		}
+		queryItems.append(NSURLQueryItem(name: .ProductName, value:  name))
+		if let ecommerce = ecommerce where !ecommerce.currency.isEmpty { // when ecommerce already has a currency then don't add here
+			currency = ""
+		}
+		if !currency.isEmpty {
+			queryItems.append(NSURLQueryItem(name: .EcomCurrency, value:  currency))
+		}
+		if !price.isEmpty {
+			queryItems.append(NSURLQueryItem(name: .ProductPrice, value:  price))
+		}
+		if !quantity.isEmpty {
+			queryItems.append(NSURLQueryItem(name: .ProductQuantity, value:  quantity))
+		}
+
+		for (index, value) in categories {
+			queryItems.append(NSURLQueryItem(name: .ProductCategory, withIndex: index, value:  value))
+		}
+		return queryItems
+	}
+}
+
+
 internal extension TrackingParameter {
+
 	internal func customParametersAsQueryItem() -> [NSURLQueryItem] {
 		guard !customParameters.isEmpty else {
 			return [NSURLQueryItem]()
@@ -50,49 +135,6 @@ internal extension TrackingParameter {
 	}
 }
 
-/* action
-public func urlWithAllParameter(config: TrackerConfiguration) -> String {
-if !productParameters.isEmpty {
-url += urlProductParameters()
-}
-if let autoTrackingParameters = config.onQueueAutoTrackParameters {
-url += autoTrackingParameters
-}
-if let crossDeviceParameters = config.crossDeviceParameters {
-url += crossDeviceParameters
-}
-url += "&\(ParameterName.EndOfRequest.rawValue)"
-return url
-}
-*/
-
-/* media 
-public func urlWithAllParameter(config: TrackerConfiguration) -> String {
-if let autoTrackingParameters = config.onQueueAutoTrackParameters {
-url += autoTrackingParameters
-}
-if let crossDeviceParameters = config.crossDeviceParameters {
-url += crossDeviceParameters
-}
-return url
-}
-*/
-
-/* page 
-public func urlWithAllParameter(config: TrackerConfiguration) -> String {
-if !productParameters.isEmpty {
-url += urlProductParameters()
-}
-if let autoTrackingParameters = config.onQueueAutoTrackParameters {
-url += autoTrackingParameters
-}
-if let crossDeviceParameters = config.crossDeviceParameters {
-url += crossDeviceParameters
-}
-url += "&\(ParameterName.EndOfRequest.rawValue)"
-return url
-}
-*/
 
 extension ActionParameter: Parameter {
 	internal var urlParameter: [NSURLQueryItem] {

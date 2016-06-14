@@ -4,7 +4,7 @@ internal final class SendQueue: Logable {
 
 	var loger: Loger
 
-	internal typealias TrackingQueueItem = (config: TrackerConfiguration, parameter: TrackingParameter)
+	internal typealias TrackingQueueItem = Event
 
 	private let _queue = dispatch_queue_create("de.webtrekk.queue", nil)
 
@@ -17,7 +17,7 @@ internal final class SendQueue: Logable {
 	internal var flush = false
 	internal var shouldTrack = true
 	internal var advertisingIdentifier: (() -> String?)?
-	internal private(set) var queue = Queue<TrackingQueueItem>()
+	internal private(set) var queue = Array<TrackingQueueItem>()
 
 	internal private(set) var backupFileUrl: NSURL
 	internal private(set) var initialSendDelay: Int
@@ -30,7 +30,7 @@ internal final class SendQueue: Logable {
 
 
 	internal var itemCount: Int {
-		get { return queue.itemCount }
+		get { return queue.count }
 	}
 
 	deinit {
@@ -53,22 +53,22 @@ internal final class SendQueue: Logable {
 
 	internal func clear() {
 		with(_queue) {
-			guard self.queue.itemCount > 0 else {
+			guard !self.queue.isEmpty else {
 				return
 			}
-			self.log("Dropping \(self.queue.itemCount) items")
-			self.queue = Queue<TrackingQueueItem>()
+			self.log("Dropping \(self.queue.count) items")
+			self.queue = Array<TrackingQueueItem>()
 		}
 	}
 
-	internal func add(trackingParameter: TrackingParameter, config: TrackerConfiguration) {
+	internal func add(event: Event) {
 		with(_queue) {
-			if self.queue.itemCount >= self.maximumUrlCount {
+			if self.queue.count >= self.maximumUrlCount {
 				self.log("Max count for store is reached, removing oldest now.")
 				self.queue.dequeue()
 			}
-			self.queue.enqueue(TrackingQueueItem(config: config, parameter: trackingParameter))
-			self.log("Adding \(NSURL(string:trackingParameter.urlWithAllParameter(config))!) to the request queue")
+			self.queue.enqueue(event)
+			self.log("Adding \(UrlCreator.createUrlFromEvent(event)) to the request queue")
 
 		}
 		self.sendNextRequestLater()
@@ -77,7 +77,7 @@ internal final class SendQueue: Logable {
 	
 	private func loadBackups() {
 		let restoredQueue = backupManager.restoreFromDisc(backupFileUrl)
-		guard !restoredQueue.isEmpty() else {
+		guard !restoredQueue.isEmpty else {
 			return
 		}
 		
@@ -99,7 +99,7 @@ internal final class SendQueue: Logable {
 		setUpObserver()
 
 		with(_queue) {
-			guard self.queue.itemCount > 0 else {
+			guard !self.queue.isEmpty else {
 				return
 			}
 			self.flush = true
@@ -137,10 +137,10 @@ extension SendQueue {
 		log("Application no longer in foreground")
 		saveBackup()
 		with(_queue) {
-			guard self.queue.itemCount > 0 else {
+			guard !self.queue.isEmpty else {
 				return
 			}
-			self.log("Trying to send out \(self.queue.itemCount) remaining requests.")
+			self.log("Trying to send out \(self.queue.count) remaining requests.")
 			self.flush = true
 		}
 		if flush {
@@ -159,7 +159,7 @@ extension SendQueue { // Sending
 				return
 			}
 
-			guard self.queue.itemCount > 0 else { // if no item is present, there is nothing to be send
+			guard !self.queue.isEmpty else { // if no item is present, there is nothing to be send
 				self.log("Nothing to do.")
 				return
 			}
@@ -193,7 +193,7 @@ extension SendQueue { // Sending
 				return
 			}
 
-			guard self.queue.itemCount > 0 else { // if no item is present, there is nothing to be send
+			guard !self.queue.isEmpty else { // if no item is present, there is nothing to be send
 				self.flush = false
 				self.log("Nothing to do.")
 				return
@@ -204,7 +204,7 @@ extension SendQueue { // Sending
 				return
 			}
 
-			guard let url = NSURL(string:trackingQueueItem.parameter.urlWithAllParameter(trackingQueueItem.config)) else {
+			guard let url = UrlCreator.createUrlFromEvent(trackingQueueItem) else {
 				self.log("url is not valid")
 				self.queue.dequeue()
 				return

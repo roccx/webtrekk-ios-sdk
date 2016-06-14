@@ -14,8 +14,6 @@ public protocol TrackingParameter {
 	var actionParameter:    ActionParameter?    { get set }
 	var pageParameter:      PageParameter?      { get set }
 	var mediaParameter:     MediaParameter?     { get set }
-
-	func urlWithAllParameter(config: TrackerConfiguration) -> String
 }
 
 public extension TrackingParameter {
@@ -50,7 +48,7 @@ public extension TrackingParameter {
 	public var userAgent: String {
 		get {
 			let os = NSProcessInfo().operatingSystemVersion
-			return "Tracking Library \(Double(pixelParameter.version/100))(iOS;\(os.majorVersion).\(os.minorVersion).\(os.patchVersion);\(UIDevice.currentDevice().modelName);\(NSLocale.currentLocale().localeIdentifier))"
+			return "Tracking Library \(Double(pixelParameter.version/100))(iOS;\(os.majorVersion).\(os.minorVersion).\(os.patchVersion);\(UIDevice.currentDevice().model);\(NSLocale.currentLocale().localeIdentifier))"
 		}
 	}
 }

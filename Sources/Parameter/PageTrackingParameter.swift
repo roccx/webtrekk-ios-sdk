@@ -41,17 +41,4 @@ public struct PageTrackingParameter: TrackingParameter{
 		generalParameter.everId = self.everId
 		generalParameter.userAgent = userAgent
 	}
-
-
-	public func urlWithAllParameter(config: TrackerConfiguration) -> String {
-		var url = UrlCreator.createUrlFromTrackingParameter(self, andConfig: config).absoluteString
-		if let autoTrackingParameters = config.onQueueAutoTrackParameters {
-			url += autoTrackingParameters
-		}
-		if let crossDeviceParameters = config.crossDeviceParameters {
-			url += crossDeviceParameters
-		}
-		url += "&\(ParameterName.EndOfRequest.rawValue)"
-		return url
-	}
 }

@@ -14,37 +14,11 @@ internal struct BackupManager: Logable {
 	}
 
 
-	internal func saveToDisc(fileUrl: NSURL, queue: Queue<SendQueue.TrackingQueueItem>) {
+	internal func saveToDisc(fileUrl: NSURL, queue: Array<SendQueue.TrackingQueueItem>) {
 		var json = [AnyObject]()
-		let itemCount = queue.itemCount
-		var array: [SendQueue.TrackingQueueItem] = []
-		repeat {
-			guard let item = queue.dequeue() else {
-				break
-			}
-			array.append(item)
-			var items = [String: AnyObject]()
-			if let action = item.parameter as? ActionTrackingParameter{
-				items["parameters"] = action.toJson()
-				items["type"] = "action"
-			}
-			else if let page = item.parameter as? PageTrackingParameter {
-				items["parameters"] = page.toJson()
-				items["type"] = "page"
-			}
-			else if let media = item.parameter as? MediaTrackingParameter {
-				items["parameters"] = media.toJson()
-				items["type"] = "media"
-			}
-			else {
-				log("as of now only support action, page and media tracking parameters")
-			}
-			items["config"] = item.config.toJson()
-			json.append(items)
-		} while queue.itemCount > 0
-
-		for item in array {
-			queue.enqueue(item)
+		let itemCount = queue.count
+		for item in queue {
+			json.append(item.toJson())
 		}
 
 		guard NSJSONSerialization.isValidJSONObject(json), let data = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions()) else {
@@ -57,8 +31,8 @@ internal struct BackupManager: Logable {
 	}
 
 
-	internal func restoreFromDisc(fileUrl: NSURL) -> Queue<SendQueue.TrackingQueueItem> {
-		let queue = Queue<SendQueue.TrackingQueueItem>()
+	internal func restoreFromDisc(fileUrl: NSURL) -> Array<SendQueue.TrackingQueueItem> {
+		var queue = Array<SendQueue.TrackingQueueItem>()
 		// get file storage location based on tracker config
 		guard let data = fileManager.restoreData(fromFileUrl: fileUrl) else {
 			return queue
@@ -68,35 +42,10 @@ internal struct BackupManager: Logable {
 			return queue
 		}
 		for item in json {
-			let config: TrackerConfiguration
-			let parameter: TrackingParameter
-			if let type: String = item["type"] as? String where type == "page" {
-				guard let page = PageTrackingParameter.fromJson(item["parameters"] as! [String: AnyObject]) else {
-					continue
-				}
-				parameter = page
-			}
-			else if let type: String = item["type"] as? String where type == "action"{
-				guard let action = ActionTrackingParameter.fromJson(item["parameters"] as! [String: AnyObject]) else {
-					continue
-				}
-				parameter = action
-			}
-			else if let type: String = item["type"] as? String where type == "media"{
-				guard let media = MediaTrackingParameter.fromJson(item["parameters"] as! [String: AnyObject]) else {
-					continue
-				}
-				parameter = media
-			}
-			else {
-				log("Item was of neither page or action type and cannot be restored at the moment.")
+			guard let dic = item as? [String: AnyObject], event = Event.fromJson(dic) else {
 				continue
 			}
-			guard let trackerConfig = TrackerConfiguration.fromJson(item["config"] as! [String: AnyObject]) else {
-				continue
-			}
-			config = trackerConfig
-			queue.enqueue(SendQueue.TrackingQueueItem(config:config, parameter: parameter))
+			queue.enqueue(event)
 		}
 		return queue
 	}
@@ -159,12 +108,6 @@ extension TrackerConfiguration: Backupable {
 		items["enableRemoteConfiguration"] = enableRemoteConfiguration
 		items["remoteConfigurationUrl"] = remoteConfigurationUrl
 		items["configFilePath"] = configFilePath
-		if let onQueueAutoTrackParameters = onQueueAutoTrackParameters {
-			items["onQueueAutoTrackParameters"] = onQueueAutoTrackParameters
-		}
-		if let crossDeviceParameters = crossDeviceParameters {
-			items["crossDeviceParameters"] = crossDeviceParameters
-		}
 
 		if !autoTrackScreens.isEmpty {
 			items["autoTrackScreens"] = autoTrackScreens.map({["index":$0.0, "value": $0.1.toJson()]})
@@ -236,12 +179,6 @@ extension TrackerConfiguration: Backupable {
 		if let remoteConfigurationUrl = json["remoteConfigurationUrl"] as? String {
 			config.remoteConfigurationUrl = remoteConfigurationUrl
 		}
-		if let onQueueAutoTrackParameters = json["onQueueAutoTrackParameters"] as? String {
-			config.onQueueAutoTrackParameters = onQueueAutoTrackParameters
-		}
-		if let crossDeviceParameters = json["crossDeviceParameters"] as? String {
-			config.crossDeviceParameters = crossDeviceParameters
-		}
 		if let autoScreenDic = json["autoTrackScreens"] as? [[String: AnyObject]] {
 			for item in autoScreenDic {
 				guard let index = item["index"] as? String, let value = item["value"] as? [String: AnyObject] else {
@@ -251,6 +188,124 @@ extension TrackerConfiguration: Backupable {
 			}
 		}
 		return config
+	}
+}
+
+extension Event: Backupable {
+	internal func toJson() -> [String : AnyObject] {
+		var items = [String: AnyObject]()
+		items["general"] = general.toJson()
+		items["pixel"] = pixel.toJson()
+
+		if let action = action {
+			items["action"] = action.toJson()
+		}
+		else if let media = media {
+			items["media"] = media.toJson()
+		}
+		else if let page = page {
+			items["page"] = page.toJson()
+		}
+
+
+		items["custom"] = custom.map({["index":$0.0, "value": $0.1]})
+		if let customer = customer {
+			items["customer"] = customer.toJson()
+		}
+		if let ecommerce = ecommerce {
+			items["ecommerce"] = ecommerce.toJson()
+		}
+		items["products"] = products.map({$0.toJson()})
+
+		items["autoTracking"] = autoTracking.map({["index":$0.0, "value": $0.1]})
+		items["crossDevice"] = crossDevice.map({["index":$0.0, "value": $0.1]})
+
+		if let baseUrl = baseUrl {
+			items["baseUrl"] = baseUrl.absoluteString
+		}
+
+		return items
+	}
+
+	internal static func fromJson(json: [String : AnyObject]) -> Event? {
+		return Event(json: json)
+	}
+}
+
+internal extension Event {
+	internal init?(json: [String: AnyObject]) {
+		guard let pixelJson = json["pixel"] as? [String: AnyObject], pixel = PixelParameter.fromJson(pixelJson),
+			generalJson = json["general"] as? [String: AnyObject], general = GeneralParameter.fromJson(generalJson)
+			else {
+				return nil
+		}
+
+		var action: ActionParameter? = nil
+		var media: MediaParameter? = nil
+		var page: PageParameter? = nil
+		var baseUrl: NSURL? = nil
+		var ecommerce: EcommerceParameter? = nil
+		var customer: CustomerParameter? = nil
+
+		if let actionJson = json["action"] as? [String: AnyObject], let value = ActionParameter.fromJson(actionJson) {
+			action = value
+		}
+		else if let mediaJson = json["media"] as? [String: AnyObject], let value = MediaParameter.fromJson(mediaJson) {
+			media = value
+		}
+		else if let pageJson = json["page"] as? [String: AnyObject], let value = PageParameter.fromJson(pageJson) {
+			page = value
+		}
+		else {
+			return nil
+		}
+
+		if let customDic = json["custom"] as? [[String: AnyObject]] {
+			for item in customDic {
+				if let key = item["index"] as? String {
+					custom[key] =  item["value"] as? String
+				}
+			}
+		}
+		if let customerJson = json["customer"] as? [String: AnyObject], let value = CustomerParameter.fromJson(customerJson) {
+			customer = value
+		}
+		if let ecommerceJson = json["ecommerce"] as? [String: AnyObject], let value = EcommerceParameter.fromJson(ecommerceJson) {
+			ecommerce = value
+		}
+		if let productJson = json["products"] as? [[String: AnyObject]] {
+			self.products = productJson.map({ProductParameter.fromJson($0)}).filterNonNil()
+		}
+
+		if let autotrackingDic = json["autoTracking"] as? [[String: AnyObject]] {
+			for item in autotrackingDic {
+				if let key = item["index"] as? String {
+					autoTracking[key] =  item["value"] as? String
+				}
+			}
+		}
+		if let crossDeviceDic = json["crossDevice"] as? [[String: AnyObject]] {
+			for item in crossDeviceDic {
+				if let key = item["index"] as? String {
+					crossDevice[key] =  item["value"] as? String
+				}
+			}
+		}
+
+		if let baseUrlString = json["baseUrl"] as? String, value = NSURL(string: baseUrlString) {
+			baseUrl = value
+		}
+
+		self.pixel = pixel
+		self.general = general
+
+		self.action = action
+		self.media = media
+		self.page = page
+
+		self.ecommerce = ecommerce
+		self.customer = customer
+		self.baseUrl = baseUrl
 	}
 }
 

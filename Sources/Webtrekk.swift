@@ -200,13 +200,9 @@ public final class Webtrekk : Logable {
 		guard let config = config else {
 			throw WebtrekkError.NoTrackerConfiguration
 		}
-		var preparedConfig = config
-		if let crossDeviceBridge = crossDeviceBridge {
-			preparedConfig.crossDeviceParameters = crossDeviceBridge.toParameter()
-		}
 		var parameter = trackingParameter
 		parameter.generalParameter.firstStart = trackingParameter.firstStart()
-		enqueue(parameter, config: preparedConfig)
+		enqueue(parameter, config: config)
 	}
 
 
@@ -221,73 +217,15 @@ public final class Webtrekk : Logable {
 
 
 	private func enqueue(trackingParameter: TrackingParameter, config: TrackerConfiguration) {
-		let preparedConfig = self.prepare(config)
 		var enhancedTrackingParameter = trackingParameter
-		enhancedTrackingParameter.generalParameter.samplingRate = preparedConfig.samplingRate
+		enhancedTrackingParameter.generalParameter.samplingRate = config.samplingRate
 		let parameter = handleBeforePluginCall(enhancedTrackingParameter)
 		if shouldTrack() {
-			queue?.add(parameter, config: preparedConfig)
+			var event = Event(trackingParameter: trackingParameter)
+			event.parse(config, advertisingIdentifier: advertisingIdentifier != nil ? advertisingIdentifier!() : nil, itemCount: queue != nil ? queue!.itemCount : 0)
+			queue?.add(event)
 		}
 		handleAfterPluginCall(parameter)
-	}
-
-
-	private func prepare(config: TrackerConfiguration) -> TrackerConfiguration{
-		// TODO: Rename parameter names to the correct ones
-		var urlString = ""
-		if config.autoTrack {
-			if config.autoTrackAdvertiserId, let advertisingIdentifier = advertisingIdentifier, let id = advertisingIdentifier() {
-				urlString += "&\(ParameterName.urlParameter(fromName: .AdvertiserId, andValue: id))"
-			}
-
-			if config.autoTrackConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
-				urlString += "&\(ParameterName.urlParameter(fromName: .ConnectionType, andValue: reachability.isReachableViaWiFi() ? "0" : "1"))"
-			}
-
-			if config.autoTrackRequestUrlStoreSize, let queue = queue {
-				urlString += "&\(ParameterName.urlParameter(fromName: .RequestUrlStoreSize, andValue: "\(queue.itemCount)"))"
-			}
-
-			if config.autoTrackAppVersionName {
-				if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
-					urlString += "&\(ParameterName.urlParameter(fromName: .AppVersionName, andValue: config.appVersion.isEmpty ? version : config.appVersion))"
-				}
-			}
-
-			if config.autoTrackAppVersionCode {
-				if let version = NSBundle.mainBundle().infoDictionary?[kCFBundleVersionKey as String] as? String {
-					urlString += "&\(ParameterName.urlParameter(fromName: .AppVersionCode, andValue: version))"
-				}
-			}
-
-			if config.autoTrackScreenOrientation {
-				urlString += "&\(ParameterName.urlParameter(fromName: .ScreenOrientation, andValue: UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) ? "1" : "0"))"
-			}
-
-			if config.autoTrackAppUpdate {
-				var appVersion: String
-				if !config.appVersion.isEmpty {
-					appVersion = config.appVersion
-				} else if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
-					appVersion = version
-				}else {
-					appVersion = ""
-				}
-
-				let userDefaults = NSUserDefaults.standardUserDefaults()
-				if let version = userDefaults.stringForKey(UserStoreKey.VersionNumber) {
-					if version != appVersion {
-						userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
-						urlString += "&\(ParameterName.urlParameter(fromName: .AppUpdate, andValue: "1"))"
-					}
-				} else {
-					userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
-				}
-			}
-		}
-		var confCopy = config
-		confCopy.onQueueAutoTrackParameters = urlString.isEmpty ? nil : urlString
-		return confCopy
 	}
 }
 
