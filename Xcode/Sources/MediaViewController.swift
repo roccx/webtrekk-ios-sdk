@@ -10,9 +10,12 @@ public final class MediaViewController: UIViewController {
 			return
 		}
 		let avController = AVPlayerViewController()
-		avController.player = WtAvPlayer(URL: url, webtrekk: Webtrekk.sharedInstance)
+		guard let webtrekk = webtrekk else {
+			return
+		}
+		avController.player = WtAvPlayer(URL: url, webtrekk: webtrekk)
 		do {
-			try Webtrekk.sharedInstance.track("VideoPlayer")
+			try webtrekk.track("VideoPlayer")
 		} catch {
 			print("error occured during track \(error)")
 		}

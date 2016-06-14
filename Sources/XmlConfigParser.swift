@@ -131,7 +131,7 @@ public final class XmlConfigParser: ConfigParser {
 				}
 
 				let trackingParameter: XMLIndexer = screen[.TrackingParameter]
-				var pageTracking = PageTrackingParameter(pageName: mappingName)
+				var pageTracking = PageTracking(pageName: mappingName)
 				if trackingParameter[.CustomParameters].boolValue {
 					let customParameters = trackingParameter[.CustomParameters]
 					for parameter in customParameters.children {
@@ -150,7 +150,7 @@ public final class XmlConfigParser: ConfigParser {
 					parse(&pageTracking.pageParameter!.page, fromParameters: trackingParameter[.PageParameter][.Page])
 					parse(&pageTracking.pageParameter!.session, fromParameters: trackingParameter[.PageParameter][.Session])
 				}
-				autoScreen.pageTrackingParameter = pageTracking
+				autoScreen.pageTracking = pageTracking
 				config.autoTrackScreens[className] = autoScreen
 			}
 		}
