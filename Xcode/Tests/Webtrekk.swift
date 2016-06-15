@@ -7,7 +7,7 @@ import XCTest
 class WebtrekkTests: XCTestCase {
 
 	private var webtrekk: Webtrekk? = {
-		var webtrekk = Webtrekk(config: TrackerConfiguration(autoTrack: true,appVersion: "1.1F", samplingRate: 1, sendDelay: 7, serverUrl: "https://q3.webtrekk.net/", trackingId: "1111111111111", version: 5))
+		var webtrekk = Webtrekk(config: TrackerConfiguration(autoTrack: true, appVersion: "1.1F", samplingRate: 1, sendDelay: 7, serverUrl: "https://q3.webtrekk.net/", trackingId: "1111111111111", version: 5))
 		webtrekk.enableLoging = true
 
 		return webtrekk
@@ -16,21 +16,18 @@ class WebtrekkTests: XCTestCase {
 
 class WebtrekkTest: XCTestCase {
 
-	func testAction() throws {
-		try Webtrekk.sharedInstance.track("test")
-	}
 
 }
 
 class ActionTest: WebtrekkTests {
 
 	lazy var actionParameter: ActionParameter = ActionParameter(name: "click")
-	lazy var actionTrackingParameter: ActionTrackingParameter = ActionTrackingParameter(actionParameter: self.actionParameter)
-
+	lazy var actionTracking: ActionTracking = ActionTracking(actionParameter: self.actionParameter)
+	let pageName = "click-test"
 
 	override func setUp() {
 		actionParameter = ActionParameter(name: "click-test")
-		try? webtrekk?.track(PageTrackingParameter(pageName: "prepare-click-test"))
+		webtrekk?.track(pageName)
 	}
 
 	override func tearDown() {
@@ -45,8 +42,8 @@ class ActionTest: WebtrekkTests {
 
 
 	func testAction() throws {
-		actionTrackingParameter = ActionTrackingParameter(actionParameter: self.actionParameter)
-		try webtrekk?.track(actionTrackingParameter)
+		actionTracking = ActionTracking(actionParameter: self.actionParameter)
+		webtrekk?.track(pageName, trackingParameter: actionTracking)
 	}
 
 
@@ -54,8 +51,8 @@ class ActionTest: WebtrekkTests {
 		for i in 1...10 {
 			actionParameter.categories[i] = "Category Parameter \(i)"
 		}
-		actionTrackingParameter = ActionTrackingParameter(actionParameter: self.actionParameter)
-		try webtrekk?.track(actionTrackingParameter)
+		actionTracking = ActionTracking(actionParameter: self.actionParameter)
+		webtrekk?.track(pageName, trackingParameter: actionTracking)
 	}
 
 
@@ -63,31 +60,32 @@ class ActionTest: WebtrekkTests {
 		for i in 1...10 {
 			actionParameter.session[i] = "Session Parameter \(i)"
 		}
-		actionTrackingParameter = ActionTrackingParameter(actionParameter: self.actionParameter)
-		try webtrekk?.track(actionTrackingParameter)
+		actionTracking = ActionTracking(actionParameter: self.actionParameter)
+		webtrekk?.track(pageName, trackingParameter: actionTracking)
 	}
 
 
 	func testActionWithProduct() throws {
-		actionTrackingParameter = ActionTrackingParameter(actionParameter: self.actionParameter)
+		actionTracking = ActionTracking(actionParameter: self.actionParameter)
 		for i in 1...10 {
-			actionTrackingParameter.productParameters.append(ProductParameter(name: "Product \(i)"))
+			actionTracking.productParameters.append(ProductParameter(name: "Product \(i)"))
 		}
-		try webtrekk?.track(actionTrackingParameter)
+		webtrekk?.track(pageName, trackingParameter: actionTracking)
 	}
 
 
 	func testActionWithCustom() throws {
-		actionTrackingParameter = ActionTrackingParameter(actionParameter: self.actionParameter)
+		actionTracking = ActionTracking(actionParameter: self.actionParameter)
 		for i in 1...10 {
-			actionTrackingParameter.customParameters["cpi\(i)"] = "Custom Parameter \(i)"
+			actionTracking.customParameters["cpi\(i)"] = "Custom Parameter \(i)"
 		}
-		try webtrekk?.track(actionTrackingParameter)
+		webtrekk?.track(pageName, trackingParameter: actionTracking)
 	}
 }
 
 class PageTest: WebtrekkTests {
 
+	let pageName = "page-test"
 
 	override func tearDown() {
 		webtrekk?.flush = true
@@ -100,11 +98,11 @@ class PageTest: WebtrekkTests {
 	}
 
 	func testPage() throws {
-		try webtrekk?.track(PageTrackingParameter())
+		webtrekk?.track(pageName)
 	}
 
 	func testPageByName() throws {
-		try webtrekk?.track(PageTrackingParameter(pageName: "page-test"))
+		webtrekk?.track(pageName, trackingParameter: PageTracking(pageName: pageName))
 	}
 
 	func testPageWithPage() throws {
@@ -112,7 +110,7 @@ class PageTest: WebtrekkTests {
 		for i in 1...10 {
 			pageParameter.page[i] = "Page Parameter \(i)"
 		}
-		try webtrekk?.track(PageTrackingParameter(pageName: "page-test", pageParameter: pageParameter))
+		webtrekk?.track(pageName, trackingParameter: PageTracking(pageName: pageName, pageParameter: pageParameter))
 	}
 
 	func testPageWithPageCategories() throws {
@@ -120,7 +118,7 @@ class PageTest: WebtrekkTests {
 		for i in 1...10 {
 			pageParameter.categories[i] = "Category Parameter \(i)"
 		}
-		try webtrekk?.track(PageTrackingParameter(pageName: "page-test", pageParameter: pageParameter))
+		webtrekk?.track(pageName, trackingParameter: PageTracking(pageName: pageName, pageParameter: pageParameter))
 	}
 
 
@@ -129,30 +127,30 @@ class PageTest: WebtrekkTests {
 		for i in 1...10 {
 			pageParameter.session[i] = "Session Parameter \(i)"
 		}
-		try webtrekk?.track(PageTrackingParameter(pageName: "page-test", pageParameter: pageParameter))
+		webtrekk?.track(pageName, trackingParameter: PageTracking(pageName: pageName, pageParameter: pageParameter))
 	}
 
 
 	func testPageWithProduct() throws {
-		var pageTrackingParameter = PageTrackingParameter(pageName: "page-test")
+		var pageTracking = PageTracking(pageName: pageName)
 		for i in 1...10 {
-			pageTrackingParameter.productParameters.append(ProductParameter(name: "Product \(i)"))
+			pageTracking.productParameters.append(ProductParameter(name: "Product \(i)"))
 		}
-		try webtrekk?.track(pageTrackingParameter)
+		webtrekk?.track(pageName, trackingParameter: pageTracking)
 	}
 
 
 	func testPageWithCustom() throws {
-		var pageTrackingParameter = PageTrackingParameter(pageName: "page-test")
+		var pageTracking = PageTracking(pageName: "page-test")
 		for i in 1...10 {
-			pageTrackingParameter.customParameters["cpi\(i)"] = "Custom Parameter \(i)"
+			pageTracking.customParameters["cpi\(i)"] = "Custom Parameter \(i)"
 		}
-		try webtrekk?.track(pageTrackingParameter)
+		webtrekk?.track(pageName, trackingParameter: pageTracking)
 	}
 
 
 	func testPageWithEcommerce() throws {
-		try webtrekk?.track(PageTrackingParameter(ecommerceParameter: EcommerceParameter(totalValue: 10) ,pageName: "page-test"))
+		webtrekk?.track(pageName, trackingParameter: PageTracking(pageName: pageName, ecommerceParameter: EcommerceParameter(totalValue: 10)))
 	}
 
 
@@ -164,6 +162,6 @@ class PageTest: WebtrekkTests {
 		ecommerceParameter.currency = "EUR"
 		ecommerceParameter.orderNumber = "10231230234 - 0001"
 		ecommerceParameter.voucherValue = 5.12
-		try webtrekk?.track(PageTrackingParameter(ecommerceParameter: ecommerceParameter ,pageName: "page-test"))
+		webtrekk?.track(pageName, trackingParameter: PageTracking(pageName: pageName, ecommerceParameter: ecommerceParameter))
 	}
 }

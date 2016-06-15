@@ -156,7 +156,7 @@ internal extension _Optional {
 
 internal extension NSURLSession {
 	static func defaultSession() -> NSURLSession {
-		return NSURLSession(configuration: NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier("WT"),
+		return NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
 		                    delegate: nil, delegateQueue: NSOperationQueue.mainQueue())
 	}
 

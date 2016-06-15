@@ -6,7 +6,7 @@ internal final class SendQueue: Logable {
 
 	internal typealias TrackingQueueItem = Event
 
-	private let _queue = dispatch_queue_create("de.webtrekk.queue", nil)
+	private let queueLock = EmptyObject()
 
 	private lazy var session: NSURLSession = NSURLSession.defaultSession()
 	private lazy var backupManager: BackupManager = BackupManager(self.loger)
@@ -52,7 +52,7 @@ internal final class SendQueue: Logable {
 
 
 	internal func clear() {
-		with(_queue) {
+		synchronized(queueLock) {
 			guard !self.queue.isEmpty else {
 				return
 			}
@@ -62,7 +62,7 @@ internal final class SendQueue: Logable {
 	}
 
 	internal func add(event: Event) {
-		with(_queue) {
+		synchronized(queueLock) {
 			if self.queue.count >= self.maximumUrlCount {
 				self.log("Max count for store is reached, removing oldest now.")
 				self.queue.dequeue()
@@ -81,14 +81,14 @@ internal final class SendQueue: Logable {
 			return
 		}
 		
-		with(_queue) {
+		synchronized(queueLock) {
 			self.queue = restoredQueue
 		}
 	}
 
 
 	private func saveBackup() {
-		with(_queue) {
+		synchronized(queueLock) {
 			self.backupManager.saveToDisc(self.backupFileUrl, queue: self.queue)
 		}
 	}
@@ -98,7 +98,7 @@ internal final class SendQueue: Logable {
 		loadBackups()
 		setUpObserver()
 
-		with(_queue) {
+		synchronized(queueLock) {
 			guard !self.queue.isEmpty else {
 				return
 			}
@@ -110,7 +110,7 @@ internal final class SendQueue: Logable {
 	}
 
 	internal func flushNow() {
-		with(_queue) {
+		synchronized(queueLock) {
 			self.flush = true
 		}
 		self.sendNextRequest()
@@ -136,7 +136,7 @@ extension SendQueue {
 	@objc private func applicationBecomesInactive() {
 		log("Application no longer in foreground")
 		saveBackup()
-		with(_queue) {
+		synchronized(queueLock) {
 			guard !self.queue.isEmpty else {
 				return
 			}
@@ -153,7 +153,7 @@ extension SendQueue {
 extension SendQueue { // Sending
 
 	private func sendNextRequestLater() {
-		with(_queue) {
+		synchronized(queueLock) {
 
 			guard !self.shutdownRequested else { // nothing will be send if queue is shutting down
 				return
@@ -185,7 +185,7 @@ extension SendQueue { // Sending
 	}
 
 	private func sendNextRequest() {
-		with(_queue) {
+		synchronized(queueLock) {
 
 			self.sendNextRequestQueued = false
 
@@ -223,7 +223,7 @@ extension SendQueue { // Sending
 						self.sendNextRequestLater()
 					}
 				}
-				with(self._queue) {
+				synchronized(self.queueLock) {
 					guard let error = error else {
 						self.numberOfSuccessfulSends = 1
 						self.numberOfFailedSends = 0
@@ -232,10 +232,14 @@ extension SendQueue { // Sending
 					}
 					self.numberOfFailedSends += 1
 					if case .NetworkError(let recoverable) = error as! Error where !recoverable {
-						let item = self.queue.dequeue()
-						self.log("Request \(item) was not recoverable.")
+						guard let item = self.queue.dequeue() else {
+							return
+						}
+						self.log("Request \(UrlCreator.createUrlFromEvent(item)) was not recoverable.")
 					}
 					if self.numberOfFailedSends > 10 {
+						self.numberOfSuccessfulSends = 1
+						self.numberOfFailedSends = 0
 						let item = self.queue.dequeue()
 						self.log("Request \(item) failed too often and will be removed.")
 					}
@@ -244,3 +248,4 @@ extension SendQueue { // Sending
 		}
 	}
 }
+

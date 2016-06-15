@@ -386,16 +386,17 @@ extension PageTracking: Backupable {
 		guard let pageParameterJson = json["pageParameter"] as? [String: AnyObject], let pageParameter = PageParameter.fromJson(pageParameterJson) else {
 			return nil
 		}
-		var tracking = PageTracking(pageParameter: pageParameter)
 
 		guard let pixelParameterJson = json["pixelParameter"] as? [String: AnyObject], let pixelParameter = PixelParameter.fromJson(pixelParameterJson) else {
 			return nil
 		}
-		tracking.pixelParameter = pixelParameter
 
 		guard let generalParameterJson = json["generalParameter"] as? [String: AnyObject], let generalParameter = GeneralParameter.fromJson(generalParameterJson) else {
 			return nil
 		}
+
+		var tracking = PageTracking(pageName: pixelParameter.pageName, pageParameter: pageParameter)
+		tracking.pixelParameter = pixelParameter
 		tracking.generalParameter = generalParameter
 
 		if let customerParameterJson = json["customerParameter"] as? [String: AnyObject], let customerParameter = CustomerParameter.fromJson(customerParameterJson) {

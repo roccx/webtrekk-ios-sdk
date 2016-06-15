@@ -66,11 +66,10 @@ internal enum ParameterName: String {
 
 	// MARK: AutoTrack
 	case AdvertiserId        = "geid"
-	case ConnectionType      = "connectionType"
-	case RequestUrlStoreSize = "requestUrlStoreSize"
-	case AppVersionCode      = "appVersionCode"
-	case AppVersionName      = "appVersion"
-	case ScreenOrientation   = "screenOrientation"
+	case ConnectionType      = "cs807"
+	case RequestUrlStoreSize = "cp784"
+	case AppVersionName      = "cs804"
+	case ScreenOrientation   = "cp783"
 	case AppUpdate           = "appUpdated"
 
 

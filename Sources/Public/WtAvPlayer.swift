@@ -50,31 +50,19 @@ public /* final */ class WtAvPlayer: AVPlayer {
 			if self.rate != 0{
 				guard self.paused else {
 					if	Int(CMTimeGetSeconds(time)) != 0 && Int(CMTimeGetSeconds(time)) % Int(self.periodicInterval) == 0, let mediaParameter = self.prepareMediaParameter(time, action: .Position) {
-						do {
-							try self.webtrekk?.track(MediaTracking(mediaParameter: mediaParameter))
-						} catch {
-							self.loger?.log("Error \(error) occured during periodic observer")
-						}
+						self.webtrekk?.track(mediaParameter.name, trackingParameter: MediaTracking(mediaParameter: mediaParameter))
 					}
 					return
 				}
 				if self.startSeek != self.endSeek {
 					if let mediaParameter = self.prepareMediaParameter(time, action: .Seek) {
-						do {
-							try self.webtrekk?.track(MediaTracking(mediaParameter: mediaParameter))
-						} catch {
-							self.loger?.log("Error \(error) occured during periodic observer")
-						}
+						self.webtrekk?.track(mediaParameter.name, trackingParameter: MediaTracking(mediaParameter: mediaParameter))
 					}
 					self.startSeek = self.endSeek
 				}
 				self.paused = false
 				if let mediaParameter = self.prepareMediaParameter(time) {
-					do {
-						try self.webtrekk?.track(MediaTracking(mediaParameter: mediaParameter))
-					} catch {
-						self.loger?.log("Error \(error) occured during periodic observer")
-					}
+					self.webtrekk?.track(mediaParameter.name, trackingParameter: MediaTracking(mediaParameter: mediaParameter))
 				}
 			}
 			else {
@@ -86,11 +74,7 @@ public /* final */ class WtAvPlayer: AVPlayer {
 					self.startSeek = CMTimeGetSeconds(time)
 					self.endSeek = CMTimeGetSeconds(time)
 					if let mediaParameter = self.prepareMediaParameter(time, action: .Pause) {
-						do {
-							try self.webtrekk?.track(MediaTracking(mediaParameter: mediaParameter))
-						} catch {
-							self.loger?.log("Error \(error) occured during periodic observer")
-						}
+						self.webtrekk?.track(mediaParameter.name, trackingParameter: MediaTracking(mediaParameter: mediaParameter))
 					}
 				}
 
@@ -141,11 +125,7 @@ public /* final */ class WtAvPlayer: AVPlayer {
 		}
 
 		if let mediaParameter = self.prepareMediaParameter(currentItem.currentTime(), action: .EndOfFile) {
-			do {
-				try self.webtrekk?.track(MediaTracking(mediaParameter: mediaParameter))
-			} catch {
-				self.loger?.log("Error \(error) occured during periodic observer")
-			}
+			self.webtrekk?.track(mediaParameter.name, trackingParameter: MediaTracking(mediaParameter: mediaParameter))
 		}
 	}
 }

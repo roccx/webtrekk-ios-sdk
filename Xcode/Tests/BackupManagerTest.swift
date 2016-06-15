@@ -51,13 +51,13 @@ class BackupManagerTest: XCTestCase {
 			products.append(ProductParameter(categories: categories, currency: i % 2 == 0 ? "" : "EUR", name: "Prodcut\(i)", price: "\(Double(i) * 2.5)", quantity: "\(i)"))
 		}
 		let actionParameter = ActionParameter(categories: categories, name:actionName, session: session)
-		var parameter = ActionTrackingParameter(actionParameter: actionParameter, productParameters: products)
+		var parameter = ActionTracking(actionParameter: actionParameter, productParameters: products)
 		XCTAssertTrue(NSJSONSerialization.isValidJSONObject(parameter.toJson()))
 		if let data = try? NSJSONSerialization.dataWithJSONObject(parameter.toJson(), options: prettyPrinted) {
 			let json = NSString(data: data, encoding: NSUTF8StringEncoding)
 			print(json)
 			if let para = try? NSJSONSerialization.JSONObjectWithData(data, options: .MutableContainers) {
-				parameter = ActionTrackingParameter.fromJson(para as! [String : AnyObject])!
+				parameter = ActionTracking.fromJson(para as! [String : AnyObject])!
 				if let data = try? ((NSJSONSerialization.dataWithJSONObject(parameter.toJson(), options: prettyPrinted))) {
 					let json = NSString(data: data, encoding: NSUTF8StringEncoding)
 					print(json)

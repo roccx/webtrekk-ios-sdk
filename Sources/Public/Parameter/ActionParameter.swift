@@ -1,7 +1,7 @@
 import Foundation
 
 public struct ActionParameter {
-	public let name:       String
+	public var name:       String
 	public var categories: [Int: String]
 	public var session:    [Int: String]
 

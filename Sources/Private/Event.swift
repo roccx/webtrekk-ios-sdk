@@ -41,27 +41,21 @@ internal struct Event {
 			}
 
 			if config.autoTrackConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
-				autoTracking["\(ParameterName.ConnectionType)"] = reachability.isReachableViaWiFi() ? "0" : "1"
+				autoTracking["\(ParameterName.ConnectionType.rawValue)"] = reachability.isReachableViaWiFi() ? "0" : "1"
 			}
 
 			if config.autoTrackRequestUrlStoreSize {
-				autoTracking["\(ParameterName.RequestUrlStoreSize)"] = "\(itemCount)"
+				autoTracking["\(ParameterName.RequestUrlStoreSize.rawValue)"] = "\(itemCount)"
 			}
 
 			if config.autoTrackAppVersionName {
 				if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
-					autoTracking["\(ParameterName.AppVersionName)"] = config.appVersion.isEmpty ? version : config.appVersion
-				}
-			}
-
-			if config.autoTrackAppVersionCode {
-				if let version = NSBundle.mainBundle().infoDictionary?[kCFBundleVersionKey as String] as? String {
-					autoTracking["\(ParameterName.AppVersionCode)"] = version
+					autoTracking["\(ParameterName.AppVersionName.rawValue)"] = config.appVersion.isEmpty ? version : config.appVersion
 				}
 			}
 
 			if config.autoTrackScreenOrientation {
-				autoTracking["\(ParameterName.ScreenOrientation)"] = UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) ? "1" : "0"
+				autoTracking["\(ParameterName.ScreenOrientation.rawValue)"] = UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) ? "1" : "0"
 			}
 
 			if config.autoTrackAppUpdate {
@@ -78,7 +72,7 @@ internal struct Event {
 				if let version = userDefaults.stringForKey(UserStoreKey.VersionNumber) {
 					if version != appVersion {
 						userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
-						autoTracking["\(ParameterName.AppUpdate)"] = "1"
+						autoTracking["\(ParameterName.AppUpdate.rawValue)"] = "1"
 					}
 				} else {
 					userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)

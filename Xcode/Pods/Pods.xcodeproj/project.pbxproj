@@ -84,6 +84,7 @@
 		AF6D510782C0E26296D850006AFBE110 /* String+LinuxFoundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA61DE55497D3B48B20C2DA042339EC /* String+LinuxFoundation.swift */; };
 		B4DC5CDFA6AAF0CDBEADF417B694647E /* ProductParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F01387C43715989B512FC7D2FB8B5E /* ProductParameter.swift */; };
 		B65773B0448A713786714269C30BB67C /* String+FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F1F597AC6A78B73E70D960A9EB394D /* String+FoundationExtension.swift */; };
+		B72ED0CF1D115CFE00BF8F25 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B72ED0CE1D115CFE00BF8F25 /* Tracker.swift */; };
 		BA1271638BB0BE96B8EF058CA3ECAD5D /* Pods-Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EA445B855BA93D428A5FC80F627BB11 /* Pods-Tests-dummy.m */; };
 		BB03098DC05AD5E4C6A858978F1297F6 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EDD5978B733929F0747E494878679A3 /* CryptoSwift.framework */; };
 		BE4D68C8C5B2736CAA7C58FEA6FF5BBE /* CFB.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C2643F36F8B2FB8F032CB447D29BA7 /* CFB.swift */; };
@@ -200,7 +201,7 @@
 		00D6578414F90AF93B45A8CFFEE4C763 /* HashProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HashProtocol.swift; path = Sources/CryptoSwift/HashProtocol.swift; sourceTree = "<group>"; };
 		01555D9130FB3305173622122FE2F1AB /* Rabbit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Rabbit.swift; path = Sources/CryptoSwift/Rabbit.swift; sourceTree = "<group>"; };
 		03BE6217874DADB18C08176CF8F3E140 /* Pods-Project-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Project-dummy.m"; sourceTree = "<group>"; };
-		0440C50A7CA78DCD789C212FA01EE3A2 /* ParameterName.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ParameterName.swift; sourceTree = "<group>"; };
+		0440C50A7CA78DCD789C212FA01EE3A2 /* ParameterName.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ParameterName.swift; path = ../Public/Parameter/ParameterName.swift; sourceTree = "<group>"; };
 		0814B04F6A963569C8F3115BD1E07E4B /* SendQueue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SendQueue.swift; sourceTree = "<group>"; };
 		08932C12B4ED573C6EA3F9FD97B4EC8C /* GeneralParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GeneralParameter.swift; sourceTree = "<group>"; };
 		09F939F8277F1C7550492975CD5534E6 /* Pods-Project.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Project.modulemap"; sourceTree = "<group>"; };
@@ -304,6 +305,7 @@
 		B337A4D5C3D704F3174E5E2021866708 /* Pods_Project.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B60918974FBE49F27FD9D96E8572034A /* BlockModeOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockModeOptions.swift; path = Sources/CryptoSwift/BlockMode/BlockModeOptions.swift; sourceTree = "<group>"; };
 		B60FAD9C5F62C369A71C9AA1C1862F9E /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/AVKit.framework; sourceTree = DEVELOPER_DIR; };
+		B72ED0CE1D115CFE00BF8F25 /* Tracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		B80B16592FB94F030B457BB3A407AAA0 /* WtAvPlayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WtAvPlayer.swift; sourceTree = "<group>"; };
 		B930985AE6CFF75DFE9E31015DBE3CA8 /* Pods-Project-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Project-frameworks.sh"; sourceTree = "<group>"; };
 		BCA61DE55497D3B48B20C2DA042339EC /* String+LinuxFoundation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "String+LinuxFoundation.swift"; path = "Sources/CryptoSwift/Foundation/String+LinuxFoundation.swift"; sourceTree = "<group>"; };
@@ -512,7 +514,6 @@
 		34835AD0F22A07DE9CA09D64FB71774E /* Parameter */ = {
 			isa = PBXGroup;
 			children = (
-				72914F8319C9D5C4E6691FE364201FF1 /* Product.swift */,
 				AFE1691E7EBD4204919E25B163ED2BAA /* ActionParameter.swift */,
 				547A50141989D2CB4279D981E7904989 /* CrossDeviceBridge.swift */,
 				7F9D6131BFA8B4201B51526C690828AE /* CustomerParameter.swift */,
@@ -520,8 +521,8 @@
 				08932C12B4ED573C6EA3F9FD97B4EC8C /* GeneralParameter.swift */,
 				503EBF6F747C78F59F15BF993D6564C3 /* MediaParameter.swift */,
 				572A11793D5181609C6E8DECB2A48EB5 /* PageParameter.swift */,
-				0440C50A7CA78DCD789C212FA01EE3A2 /* ParameterName.swift */,
 				F241714FD7EF508C41A388E0F515A19B /* PixelParameter.swift */,
+				72914F8319C9D5C4E6691FE364201FF1 /* Product.swift */,
 				F9F01387C43715989B512FC7D2FB8B5E /* ProductParameter.swift */,
 			);
 			path = Parameter;
@@ -535,6 +536,7 @@
 				9D58FEA4AECE98EF7E8A51887DD99B25 /* Extensions.swift */,
 				EDD66B7F5C9B28A32664B7F95C147161 /* FileManager.swift */,
 				337EE2326492E74FAC5F88E1FDDAC035 /* Locks.swift */,
+				0440C50A7CA78DCD789C212FA01EE3A2 /* ParameterName.swift */,
 				0814B04F6A963569C8F3115BD1E07E4B /* SendQueue.swift */,
 				C9CD3C7F08ABF4BD9006B16ADF443D72 /* UrlCreator.swift */,
 				2AB0734EE60112425409A370100BFA0B /* UserStoreKey.swift */,
@@ -713,6 +715,7 @@
 				6C10D5F9A441B5B4516D9F22119FD04A /* MediaTracking.swift */,
 				62AD769C0D709E5427CE359ACA4BB270 /* PageTracking.swift */,
 				88E65448E58A4A0121A5B0061A7A61F7 /* TrackingParameter.swift */,
+				B72ED0CE1D115CFE00BF8F25 /* Tracker.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -1004,6 +1007,7 @@
 				4E9A4E892C61D5CA5D96B2010066B61C /* ActionTracking.swift in Sources */,
 				7682831BF4482EE53291128E9D25B69D /* BackupManager.swift in Sources */,
 				2D4B34FF4B6071E74D576F7AB68F6B4D /* ConfigParser.swift in Sources */,
+				B72ED0CF1D115CFE00BF8F25 /* Tracker.swift in Sources */,
 				9FF13981B47F9739E307E45D6A45A08E /* CrossDeviceBridge.swift in Sources */,
 				9AB01571FE2BEF1F9D8B79CEA897740A /* CustomerParameter.swift in Sources */,
 				459CA62CB54AC487746C4A05DD171014 /* EcommerceParameter.swift in Sources */,

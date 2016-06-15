@@ -169,31 +169,41 @@ public final class Webtrekk : Logable {
 			guard screen.enabled else {
 				return
 			}
-			try track(screen)
+			track(screen)
 			return
 		}
-		try track(className)
+		track(className)
 	}
 
 
-	public func track(pageName: String) throws {
-		try track(PageTracking(pageName: pageName))
+	public func track(pageName: String) {
+		track(PageTracking(pageName: pageName))
 	}
 
 
-	public func track(trackingParameter: TrackingParameter) throws {
-		var parameter = trackingParameter
-		parameter.generalParameter.firstStart = trackingParameter.firstStart()
+	private func track(pageTracking: PageTracking) {
+		var parameter = pageTracking
+		parameter.generalParameter.firstStart = pageTracking.firstStart()
 		enqueue(parameter, config: config)
 	}
 
 
-	private func track(screen: AutoTrackedScreen) throws {
+	public func track(pageName: String, trackingParameter: TrackingParameter) {
+		var parameter = trackingParameter
+		parameter.generalParameter.firstStart = trackingParameter.firstStart()
+		if parameter.pixelParameter.pageName.isEmpty {
+			parameter.pixelParameter.pageName = pageName
+		}
+		enqueue(parameter, config: config)
+	}
+
+
+	private func track(screen: AutoTrackedScreen) {
 		if let pageTracking = screen.pageTracking {
-			try track(pageTracking)
+			track(pageTracking)
 		}
 		else {
-			try track(screen.mappingName)
+			track(screen.mappingName)
 		}
 	}
 
@@ -204,10 +214,28 @@ public final class Webtrekk : Logable {
 		let parameter = handleBeforePluginCall(enhancedTrackingParameter)
 		if shouldTrack() {
 			var event = Event(trackingParameter: trackingParameter)
-			event.parse(config, advertisingIdentifier: advertisingIdentifier != nil ? advertisingIdentifier!() : nil, itemCount: queue != nil ? queue!.itemCount : 0)
+			var id: String? = nil
+			if let advertisingIdentifier = advertisingIdentifier {
+				id = advertisingIdentifier()
+			}
+			var count: Int = 0
+			if let queue = queue {
+				count = queue.itemCount
+			}
+			event.parse(config, advertisingIdentifier: id, itemCount: count)
+			if let crossDeviceBridge = crossDeviceBridge {
+				event.parse(crossDeviceBridge)
+			}
 			queue?.add(event)
 		}
 		handleAfterPluginCall(parameter)
+	}
+
+	
+	public func trackerForScreen(screenName: String) -> ScreenTracker {
+		let tracker = DefaultScreenTracker(webtrekk: self, loger: loger)
+		tracker.updateWithName(screenName)
+		return tracker
 	}
 }
 
