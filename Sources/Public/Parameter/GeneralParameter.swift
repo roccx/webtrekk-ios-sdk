@@ -11,7 +11,14 @@ public struct GeneralParameter {
 	public var timeZoneOffset: Double
 	public var userAgent:      String
 
-	public init(everId:String,  firstStart: Bool = false, ip: String = "", nationalCode: String = "", samplingRate: Int = 0, timeStamp: NSDate, timeZoneOffset: Double, userAgent: String){
+	public init(everId:String,
+	            firstStart: Bool = false,
+	            ip: String = "",
+	            nationalCode: String = "",
+	            samplingRate: Int = 0,
+	            timeStamp: NSDate,
+	            timeZoneOffset: Double,
+	            userAgent: String){
 		guard !everId.isEmpty else {
 			fatalError("Ever-Id is not optional")
 		}

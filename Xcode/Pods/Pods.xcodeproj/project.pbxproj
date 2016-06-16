@@ -15,7 +15,6 @@
 		0D4362129DDF3D5E046EA4944EF95E65 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA338002E9C4375E6080B1ECC0737D7E /* Operators.swift */; };
 		0E83BEE9C1EB34C009B1B2B1454EA31C /* EcommerceParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C76AC2BE0DCB24FEBD32485F6BDFAB7 /* EcommerceParameter.swift */; };
 		15B3A2C9EDE0FA61E0E3DDADC4AD108D /* Webtrekk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547622344823C964225DEBCDB4A17AAC /* Webtrekk.swift */; };
-		1B49FF5ADD934603D2A47FA554E6A0CF /* Product.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33EC62E7307E7A17F8017BC6A317B0D9 /* Product.swift */; };
 		1DCC299F1DB74B1D602947C6E35EBED9 /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFDA433890EBE04537ABBDFE89E6D0D /* IntExtension.swift */; };
 		1F28486405CF668C282C1AFD1B06F94E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9E0C40D45BCD97AD4C61BDD5CE3A3B /* Foundation.framework */; };
 		1F7DAF8CD6DBFA6CCB30254A0A60B307 /* ConfigParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E51FD1AAB5B047EADE750E3AE93DC3 /* ConfigParser.swift */; };
@@ -233,7 +232,6 @@
 		317F00A2F34B9699766B47922891A1E3 /* CryptoSwift.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = CryptoSwift.modulemap; sourceTree = "<group>"; };
 		3233EFFAC5DE5584F53A71BF6A467EF8 /* UInt8Extension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UInt8Extension.swift; path = Sources/CryptoSwift/UInt8Extension.swift; sourceTree = "<group>"; };
 		337EE2326492E74FAC5F88E1FDDAC035 /* Locks.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Locks.swift; sourceTree = "<group>"; };
-		33EC62E7307E7A17F8017BC6A317B0D9 /* Product.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
 		34405BE75F47A52AE3B7BA4860DDEDD7 /* Webtrekk.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Webtrekk.modulemap; sourceTree = "<group>"; };
 		34D873447C2CFCFFB37271250BE6919B /* CSArrayType+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "CSArrayType+Extensions.swift"; path = "Sources/CryptoSwift/CSArrayType+Extensions.swift"; sourceTree = "<group>"; };
 		34EEB11EDCBC0D24D1E37FC2583CC644 /* PageParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PageParameter.swift; sourceTree = "<group>"; };
@@ -628,7 +626,6 @@
 			isa = PBXGroup;
 			children = (
 				68C602AC68CEE4588C41C0798F7B41C0 /* Loger.swift */,
-				33EC62E7307E7A17F8017BC6A317B0D9 /* Product.swift */,
 				4113E687FF416A31460CCB84CD7FE27A /* TrackerConfiguration.swift */,
 				547622344823C964225DEBCDB4A17AAC /* Webtrekk.swift */,
 				91B46AD9A6D8F19B0F5A06D698172FD2 /* WtAvPlayer.swift */,
@@ -1047,7 +1044,6 @@
 				387DD6256990BDEE3E1F084C21DAA1E7 /* PageTracking.swift in Sources */,
 				5ACF15E0BEB60DDB185FB87FF487AE4E /* ParameterName.swift in Sources */,
 				85AE5DF726473362C19B442A6CB5EE8D /* PixelParameter.swift in Sources */,
-				1B49FF5ADD934603D2A47FA554E6A0CF /* Product.swift in Sources */,
 				82DF9042FE5BEACE21952845B2506959 /* ProductParameter.swift in Sources */,
 				7B57392B96819B6F9E98CC8BF9DF4432 /* SendQueue.swift in Sources */,
 				8C085D336A15DA42877D6B57864770AD /* Tracker.swift in Sources */,

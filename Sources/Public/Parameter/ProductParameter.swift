@@ -7,7 +7,11 @@ public struct ProductParameter: Equatable {
 	internal var price:      String
 	internal var quantity:   String
 
-	public init(categories: [Int: String] = [Int: String](), currency: String = "", name: String, price: String = "", quantity: String = "") {
+	public init(categories: [Int: String] = [:],
+	            currency: String = "",
+	            name: String,
+	            price: String = "",
+	            quantity: String = "") {
 		self.categories = categories
 		self.currency = currency
 		self.name = name

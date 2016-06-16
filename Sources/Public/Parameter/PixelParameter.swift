@@ -6,7 +6,10 @@ public struct PixelParameter {
 	public let displaySize: CGSize
 	public var timeStamp:   NSDate
 
-	public init(version: Int = 400, pageName: String = "", displaySize: CGSize, timeStamp: NSDate = NSDate()) {
+	public init(version: Int = 400,
+	            pageName: String = "",
+	            displaySize: CGSize,
+	            timeStamp: NSDate = NSDate()) {
 		self.version = version
 		self.pageName = pageName
 		self.displaySize = displaySize

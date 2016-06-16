@@ -48,7 +48,7 @@ public extension TrackingParameter {
 	public var userAgent: String {
 		get {
 			let os = NSProcessInfo().operatingSystemVersion
-			return "Tracking Library \(Double(pixelParameter.version/100))(iOS;\(os.majorVersion).\(os.minorVersion).\(os.patchVersion);\(UIDevice.currentDevice().model);\(NSLocale.currentLocale().localeIdentifier))"
+			return "Tracking Library \(Double(pixelParameter.version/100))(iOS;\(os.majorVersion).\(os.minorVersion).\(os.patchVersion);\(UIDevice.currentDevice().modelIdentifier);\(NSLocale.currentLocale().localeIdentifier))"
 		}
 	}
 }

@@ -18,7 +18,21 @@ public struct CustomerParameter {
 	public var streetNumber:    String
 	public var zip:             String
 
-	public init(birthday: NSDate? = nil, categories: [Int: String] = [Int: String](), city: String = "", country: String = "", eMail: String = "", eMailReceiverId: String = "", firstName: String = "", gender: CustomerGender? = nil, lastName: String = "", newsletter: Bool? = nil, number: String = "", phoneNumber: String = "", street: String = "", streetNumber: String = "", zip: String = "") {
+	public init(birthday: NSDate? = nil,
+	            categories: [Int: String] = [:],
+	            city: String = "",
+	            country: String = "",
+	            eMail: String = "",
+	            eMailReceiverId: String = "",
+	            firstName: String = "",
+	            gender: CustomerGender? = nil,
+	            lastName: String = "",
+	            newsletter: Bool? = nil,
+	            number: String = "",
+	            phoneNumber: String = "",
+	            street: String = "",
+	            streetNumber: String = "",
+	            zip: String = "") {
 		self.birthday = birthday
 		self.categories = categories
 		self.city = city

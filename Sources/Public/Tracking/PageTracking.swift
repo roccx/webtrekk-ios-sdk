@@ -27,7 +27,12 @@ public struct PageTracking: TrackingParameter{
 		get { return nil }
 	}
 
-	public init(pageName: String, pageParameter: PageParameter = PageParameter(), customParameters: [String: String] = [:], customerParameter: CustomerParameter? = nil, ecommerceParameter: EcommerceParameter? = nil, productParameters: [ProductParameter] = []) {
+	public init(pageName: String,
+	            pageParameter: PageParameter = PageParameter(),
+	            customParameters: [String: String] = [:],
+	            customerParameter: CustomerParameter? = nil,
+	            ecommerceParameter: EcommerceParameter? = nil,
+	            productParameters: [ProductParameter] = []) {
 
 		let timeStamp = NSDate()
 		let timeZoneOffset = Double(NSTimeZone.localTimeZone().secondsFromGMT * -1) / 60 / 60

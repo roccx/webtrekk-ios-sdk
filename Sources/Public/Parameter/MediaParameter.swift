@@ -12,7 +12,15 @@ public struct MediaParameter {
 	public var mute:       Bool?
 	public var volume:     Int?
 
-	public init(action: MediaAction, bandwidth: Int? = nil, categories: [Int: String] = [:], duration: Int, mute: Bool? = nil, name: String, position: Int, volume: Int? = nil, timeStamp: NSDate = NSDate()) {
+	public init(action: MediaAction,
+	            bandwidth: Int? = nil,
+	            categories: [Int: String] = [:],
+	            duration: Int,
+	            mute: Bool? = nil,
+	            name: String,
+	            position: Int,
+	            volume: Int? = nil,
+	            timeStamp: NSDate = NSDate()) {
 		guard !name.isEmpty else {
 			fatalError("name cannot be empty")
 		}

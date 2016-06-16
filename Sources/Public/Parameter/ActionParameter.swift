@@ -5,7 +5,9 @@ public struct ActionParameter {
 	public var categories: [Int: String]
 	public var session:    [Int: String]
 
-	public init(categories: [Int: String] = [Int: String](), name: String, session:   [Int: String] = [Int: String]()) {
+	public init(categories: [Int: String] = [:],
+	            name: String,
+	            session: [Int: String] = [:]) {
 		guard !name.isEmpty else {
 			fatalError("name cannot be empty")
 		}
