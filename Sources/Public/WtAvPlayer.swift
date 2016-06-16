@@ -9,20 +9,20 @@ public /* final */ class WtAvPlayer: AVPlayer {
 	internal var startSeek: Float64 = 0
 	internal var endSeek: Float64 = 0
 	internal var mediaCategories: [Int: String] = [:]
-	internal var loger: Loger?
+	internal var logger: Logger?
 
 	let periodicInterval = 30.0
 
-	public convenience init(URL url: NSURL, webtrekk: Webtrekk, mediaCategories: [Int: String] = [:], loger: Loger? = nil) {
-		self.init(playerItem: AVPlayerItem(asset: AVURLAsset(URL: url)), webtrekk: webtrekk, mediaCategories: mediaCategories, loger: loger)
+	public convenience init(URL url: NSURL, webtrekk: Webtrekk, mediaCategories: [Int: String] = [:], logger: Logger? = nil) {
+		self.init(playerItem: AVPlayerItem(asset: AVURLAsset(URL: url)), webtrekk: webtrekk, mediaCategories: mediaCategories, logger: logger)
 	}
 
 
-	public convenience init(playerItem item: AVPlayerItem, webtrekk: Webtrekk, mediaCategories: [Int: String] = [:], loger: Loger? = nil) {
+	public convenience init(playerItem item: AVPlayerItem, webtrekk: Webtrekk, mediaCategories: [Int: String] = [:], logger: Logger? = nil) {
 		self.init(playerItem: item)
 		self.webtrekk = webtrekk
 		self.mediaCategories = mediaCategories
-		self.loger = loger
+		self.logger = logger
 		configureAVPlayer()
 	}
 
@@ -36,14 +36,13 @@ public /* final */ class WtAvPlayer: AVPlayer {
 			removeTimeObserver(startObserver)
 			self.startObserver = nil
 		}
-		webtrekk?.log("deinit could be used for stop?")
 	}
 
 	func configureAVPlayer() {
 		addObserver(self, forKeyPath: "rate", options: [.New], context: nil)
 		periodicObserver = addPeriodicTimeObserverForInterval(CMTime(seconds: periodicInterval, preferredTimescale: 1), queue: dispatch_get_main_queue()) { (time: CMTime) in
 			guard self.error == nil else {
-				self.webtrekk?.log("error occured: \(self.error)")
+				self.logger?.log("error occured: \(self.error)", logLevel: .Error)
 				return
 			}
 

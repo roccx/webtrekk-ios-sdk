@@ -2,14 +2,14 @@ import UIKit
 
 internal final class SendQueue: Logable {
 
-	var loger: Loger
+	var logger: Logger
 
 	internal typealias TrackingQueueItem = Event
 
 	private let queueLock = EmptyObject()
 
 	private lazy var session: NSURLSession = NSURLSession.defaultSession()
-	private lazy var backupManager: BackupManager = BackupManager(self.loger)
+	private lazy var backupManager: BackupManager = BackupManager(self.logger)
 
 	internal let networkConnectionTimeout = 60 // equals to one minute
 	internal let backgroundSessionName = "Webtrekk.BackgroundSession"
@@ -41,12 +41,12 @@ internal final class SendQueue: Logable {
 	}
 
 
-	internal init(backupFileUrl: NSURL = NSURL(), initialSendDelay: Int = 5, sendDelay: Int = 180, maximumUrlCount: Int = 1000, loger: Loger) {
+	internal init(backupFileUrl: NSURL = NSURL(), initialSendDelay: Int = 5, sendDelay: Int = 180, maximumUrlCount: Int = 1000, logger: Logger) {
 		self.backupFileUrl = backupFileUrl
 		self.initialSendDelay = min(initialSendDelay, sendDelay)
 		self.maximumUrlCount = maximumUrlCount
 		self.sendDelay = sendDelay
-		self.loger = loger
+		self.logger = logger
 		setUp()
 	}
 
@@ -213,7 +213,7 @@ extension SendQueue { // Sending
 			self.log("Request \(url) will be send now.")
 
 
-			NSURLSession.get(url, session: self.session, loger: self.loger) { (theData, error) -> Void in
+			NSURLSession.get(url, session: self.session, logger: self.logger) { (theData, error) -> Void in
 				defer {
 					if self.flush {
 						self.saveBackup()

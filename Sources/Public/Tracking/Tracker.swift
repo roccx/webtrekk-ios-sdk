@@ -23,18 +23,18 @@ public final class DefaultScreenTracker: ScreenTracker {
 	private(set) public var pageTracking: PageTracking?
 
 	private var isVisible = false
-	private let loger: Loger
+	private let logger: Logger
 	private let webtrekk: Webtrekk
 
-	public init(webtrekk: Webtrekk, loger: Loger = Loger()) {
-		self.loger = loger
+	public init(webtrekk: Webtrekk, logger: Logger = DefaultLogger()) {
+		self.logger = logger
 		self.webtrekk = webtrekk
 	}
 
 
 	public func didShow() {
 		if isVisible {
-			loger.log("Can't track view of screen \(name) which is already visible.")
+			logger.log("Can't track view of screen \(name) which is already visible.")
 			return
 		}
 		isVisible = true
@@ -57,11 +57,11 @@ public final class DefaultScreenTracker: ScreenTracker {
 		precondition(!action.isEmpty)
 
 		if name.isEmpty {
-			loger.log("Screen name not set when tracking action \(action)")
+			logger.log("Screen name not set when tracking action \(action)")
 			return
 		}
 		if !isVisible {
-			loger.log("Can't track action \(action) for screen \(name) which isn't visible.")
+			logger.log("Can't track action \(action) for screen \(name) which isn't visible.")
 			return
 		}
 

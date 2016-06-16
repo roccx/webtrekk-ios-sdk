@@ -3,14 +3,14 @@ import UIKit
 
 internal struct BackupManager: Logable {
 
-	var loger: Loger
+	var logger: Logger
 
 	private let fileManager: FileManager
 
 
-	internal init(_ loger: Loger) {
-		self.loger = loger
-		self.fileManager = FileManager(loger)
+	internal init(_ logger: Logger) {
+		self.logger = logger
+		self.fileManager = FileManager(logger)
 	}
 
 

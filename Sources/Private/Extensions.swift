@@ -160,16 +160,16 @@ internal extension NSURLSession {
 		                    delegate: nil, delegateQueue: NSOperationQueue.mainQueue())
 	}
 
-	internal static func get(url: NSURL, session: NSURLSession = NSURLSession.defaultSession(), loger: Loger? = nil, completion: (NSData?, ErrorType?) -> Void) {
+	internal static func get(url: NSURL, session: NSURLSession = NSURLSession.defaultSession(), logger: Logger? = nil, completion: (NSData?, ErrorType?) -> Void) {
 		let task = session.dataTaskWithURL(url) { (data, response, error) -> Void in
 			let recoverable: Bool
 			if let error = error {
 				switch error.code {
 				case NSURLErrorBadServerResponse, NSURLErrorCallIsActive, NSURLErrorCancelled, NSURLErrorCannotConnectToHost, NSURLErrorCannotFindHost, NSURLErrorDataNotAllowed, NSURLErrorDNSLookupFailed, NSURLErrorInternationalRoamingOff, NSURLErrorNetworkConnectionLost, NSURLErrorNotConnectedToInternet, NSURLErrorTimedOut, NSURLErrorZeroByteResource:
-					loger?.log("Error \"\(error.localizedDescription)\" occured during request of \(url), will be retried.")
+					logger?.log("Error \"\(error.localizedDescription)\" occured during request of \(url), will be retried.", logLevel: .Error)
 					recoverable = true
 				default:
-					loger?.log("Error \"\(error.localizedDescription)\" occured during request of \(url), will not be retried.")
+					logger?.log("Error \"\(error.localizedDescription)\" occured during request of \(url), will not be retried.", logLevel: .Error)
 					recoverable = false
 				}
 				completion(nil, Error.NetworkError(recoverable: recoverable))

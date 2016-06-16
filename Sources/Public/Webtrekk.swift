@@ -3,7 +3,7 @@ import ReachabilitySwift
 
 public final class Webtrekk : Logable {
 
-	internal lazy var loger: Loger = Loger()
+	public lazy var logger: Logger = DefaultLogger()
 
 	public var advertisingIdentifier: (() -> String?)? {
 		didSet {
@@ -16,7 +16,7 @@ public final class Webtrekk : Logable {
 			guard oldValue != enableLoging else {
 				return
 			}
-			loger.enabled = enableLoging
+			logger.enabled = enableLoging
 		}
 	}
 
@@ -45,7 +45,7 @@ public final class Webtrekk : Logable {
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
 	private var queue: SendQueue?
-	private lazy var fileManager: FileManager = FileManager(self.loger)
+	private lazy var fileManager: FileManager = FileManager(self.logger)
 
 	// MARK: Lifecycle
 
@@ -99,7 +99,7 @@ public final class Webtrekk : Logable {
 			return
 		}
 
-		NSURLSession.get(url, loger: loger) { (data, error) -> Void in
+		NSURLSession.get(url, logger: logger) { (data, error) -> Void in
 			guard let xmlData = data else {
 				self.log("No data could be retrieved from \(self.config.remoteConfigurationUrl).")
 				return
@@ -137,7 +137,7 @@ public final class Webtrekk : Logable {
 
 	private func setUpQueue() {
 		let backupFileUrl: NSURL = fileManager.getConfigurationDirectoryUrl(forTrackingId: config.trackingId).URLByAppendingPathComponent("queue.json")
-		queue = SendQueue(backupFileUrl: backupFileUrl, sendDelay: config.sendDelay, maximumUrlCount: config.maxRequests, loger: loger)
+		queue = SendQueue(backupFileUrl: backupFileUrl, sendDelay: config.sendDelay, maximumUrlCount: config.maxRequests, logger: logger)
 		queue?.shouldTrack = shouldTrack()
 	}
 
@@ -233,7 +233,7 @@ public final class Webtrekk : Logable {
 
 	
 	public func trackerForScreen(screenName: String) -> ScreenTracker {
-		let tracker = DefaultScreenTracker(webtrekk: self, loger: loger)
+		let tracker = DefaultScreenTracker(webtrekk: self, logger: logger)
 		tracker.updateWithName(screenName)
 		return tracker
 	}
