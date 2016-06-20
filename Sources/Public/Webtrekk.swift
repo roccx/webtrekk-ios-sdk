@@ -1,53 +1,39 @@
-import UIKit
+import AVFoundation
 import ReachabilitySwift
+import UIKit
 
-public final class Webtrekk : Logable {
 
-	public lazy var logger: Logger = DefaultLogger()
+public final class Webtrekk {
 
-	public var advertisingIdentifier: (() -> String?)? {
-		didSet {
-			queue?.advertisingIdentifier = advertisingIdentifier
-		}
-	}
+	public static let version = "4.0"
 
-	public var enableLoging: Bool = false {
-		didSet {
-			guard oldValue != enableLoging else {
-				return
-			}
-			logger.enabled = enableLoging
-		}
-	}
+	public static let defaultLogger = DefaultLogger()
 
-	public var config: TrackerConfiguration {
-		didSet {
-			guard oldValue.optedOut != config.optedOut else {
-				return
-			}
-			queue?.shouldTrack = shouldTrack()
+	private lazy var backupManager: BackupManager = BackupManager(fileManager: self.fileManager, logger: self.logger)
+	private lazy var fileManager: FileManager = FileManager(logger: self.logger)
+	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger)
 
-		}
-	}
-
-	public var flush: Bool = false{
-		didSet {
-			if flush {
-				self.flush = false
-				queue?.flushNow()
-			}
-		}
-	}
-
-	public var crossDeviceBridge: CrossDeviceBridgeParameter?
-
-	private var plugins = [String: WebtrekkPlugin]()
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
-	private var queue: SendQueue?
-	private lazy var fileManager: FileManager = FileManager(self.logger)
 
-	// MARK: Lifecycle
+	public var config: TrackerConfiguration
+	public var crossDeviceBridge: CrossDeviceBridgeParameter?
+	public var plugins = [TrackingPlugin]()
+
+
+	public init(config: TrackerConfiguration) {
+		self.config = config
+		setUp()
+	}
+
+
+	public convenience init(configParser: ConfigParser) throws {
+		guard let config = configParser.trackerConfiguration else {
+			throw WebtrekkError.InitParserError
+		}
+		self.init(config: config)
+	}
+
 
 	deinit {
 		if let hibernationObserver = hibernationObserver {
@@ -58,23 +44,137 @@ public final class Webtrekk : Logable {
 		}
 	}
 
-	public convenience init(configParser: ConfigParser) throws {
-		guard let config = configParser.trackerConfiguration else {
-			throw WebtrekkError.InitParserError
+
+	private var advertisingIdentifier: NSUUID? {
+		guard
+			let identifierManagerClass = unsafeBitCast(NSClassFromString("ASIdentifierManager"), Optional<ASIdentifierManager.Type>.self),
+			let manager = identifierManagerClass.sharedManager() where manager.advertisingTrackingEnabled,
+			let advertisingIdentifier = manager.advertisingIdentifier
+		else {
+			return nil
 		}
-		self.init(config: config)
+
+		return advertisingIdentifier
 	}
 
 
-	public init(config: TrackerConfiguration) {
-		self.config = config
-		setUp()
+	private func appUpdate() -> Bool {
+		var appVersion: String
+		if !config.appVersion.isEmpty {
+			appVersion = config.appVersion
+		} else if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
+			appVersion = version
+		}else {
+			appVersion = ""
+		}
+
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		if let version = userDefaults.stringForKey(UserStoreKey.VersionNumber) {
+			if version != appVersion {
+				userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
+				return true
+			}
+		} else {
+			userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
+		}
+
+		return false
+	}
+
+
+	private static let appVersion: String? = {
+		return NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
+	}()
+
+
+	private static func deviceModelString() -> String {
+		let device = UIDevice.currentDevice()
+		if device.isSimulator {
+			return "\(operatingSystemName()) Simulator"
+		}
+		else {
+			return device.modelIdentifier
+		}
+	}
+
+
+	private static func operatingSystemName() -> String {
+		#if os(iOS)
+			return "iOS"
+		#elseif os(watchOS)
+			return "watchOS"
+		#elseif os(tvOS)
+			return "tvOS"
+		#elseif os(OSX)
+			return "macOS"
+		#endif
+	}
+
+
+	private static func operatingSystemVersionString() -> String {
+		let version = NSProcessInfo().operatingSystemVersion
+		if version.patchVersion == 0 {
+			return "\(version.majorVersion).\(version.minorVersion)"
+		}
+		else {
+			return "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+		}
+	}
+
+
+	private func defaultUserAgent() -> String {
+		return "Tracking Library \(Webtrekk.version) (\(Webtrekk.operatingSystemName()); \(Webtrekk.operatingSystemVersionString()); \(Webtrekk.deviceModelString()); \(NSLocale.currentLocale().localeIdentifier))"
+	}
+
+
+	private var everId: String {
+		get {
+
+			let userDefaults = NSUserDefaults.standardUserDefaults()
+			if let eid = userDefaults.stringForKey(UserStoreKey.Eid) {
+				return eid
+			}
+			let eid = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
+			userDefaults.setValue(eid, forKey:"eid")
+			return eid
+		}
+		set {
+			let userDefaults = NSUserDefaults.standardUserDefaults()
+			userDefaults.setValue(newValue, forKey:"eid")
+		}
+	}
+
+
+	private func firstStart() -> Bool {
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		guard let _ = userDefaults.objectForKey(UserStoreKey.FirstStart) else {
+			userDefaults.setBool(true, forKey: UserStoreKey.FirstStart)
+			return true
+		}
+		return false
+	}
+
+
+	public var logger: Logger = Webtrekk.defaultLogger {
+		didSet {
+			guard logger !== oldValue else {
+				return
+			}
+
+			fileManager.logger = logger
+			requestManager.logger = logger
+		}
+	}
+
+
+	public func sendPendingEvents() {
+		requestManager.sendAllEvents()
 	}
 
 	
 	private func setUp() {
 		setUpConfig()
-		setUpQueue()
+		setUpRequestManager()
 		setUpOptedOut()
 	}
 
@@ -99,13 +199,13 @@ public final class Webtrekk : Logable {
 			return
 		}
 
-		NSURLSession.get(url, logger: logger) { (data, error) -> Void in
+		requestManager.fetch(url: url) { data, error in
 			guard let xmlData = data else {
-				self.log("No data could be retrieved from \(self.config.remoteConfigurationUrl).")
+				self.logger.logInfo("No data could be retrieved from \(self.config.remoteConfigurationUrl).")
 				return
 			}
 			guard let xmlString = String(data: xmlData, encoding: NSUTF8StringEncoding) else {
-				self.log("Cannot parse data retreived from \(self.config.remoteConfigurationUrl)")
+				self.logger.logInfo("Cannot parse data retreived from \(self.config.remoteConfigurationUrl)")
 				return
 			}
 
@@ -114,16 +214,16 @@ public final class Webtrekk : Logable {
 				let parser = try XmlConfigParser(xmlString: xmlString)
 				config = parser.trackerConfiguration
 			} catch {
-				self.log("\(WebtrekkError.RemoteParserError)")
+				self.logger.logInfo("\(WebtrekkError.RemoteParserError)")
 				return
 			}
 
 
 			guard config.version > self.config.version else {
-				self.log("Remote configuration is not newer then the currently used.")
+				self.logger.logInfo("Remote configuration is not newer then the currently used.")
 				return
 			}
-			self.log("Updating tracker config from version \(self.config.version) to new version \(config.version)")
+			self.logger.logInfo("Updating tracker config from version \(self.config.version) to new version \(config.version)")
 			self.config = config
 			self.fileManager.saveConfiguration(config)
 		}
@@ -135,10 +235,12 @@ public final class Webtrekk : Logable {
 	}
 
 
-	private func setUpQueue() {
-		let backupFileUrl: NSURL = fileManager.getConfigurationDirectoryUrl(forTrackingId: config.trackingId).URLByAppendingPathComponent("queue.json")
-		queue = SendQueue(backupFileUrl: backupFileUrl, sendDelay: config.sendDelay, maximumUrlCount: config.maxRequests, logger: logger)
-		queue?.shouldTrack = shouldTrack()
+	private func setUpRequestManager() {
+		// let backupFileUrl: NSURL = fileManager.getConfigurationDirectoryUrl(forTrackingId: config.trackingId).URLByAppendingPathComponent("queue.json")
+
+		NSTimer.scheduledTimerWithTimeInterval(5) {
+			self.requestManager.sendAllEvents()
+		}
 	}
 
 
@@ -154,6 +256,68 @@ public final class Webtrekk : Logable {
 		}
 		return userShouldBeSampled && !config.optedOut
 	}
+
+
+	internal func track(eventKind: TrackingEvent.Kind) {
+		var eventProperties = TrackingEvent.Properties(
+			everId:       everId,
+			samplingRate: config.samplingRate,
+			timeZone:     NSTimeZone.defaultTimeZone(),
+			timestamp:    NSDate(),
+			userAgent:    defaultUserAgent()
+		)
+
+		eventProperties.isFirstAppStart = firstStart()
+
+		if config.autoTrack {
+			if config.autoTrackAdvertiserId {
+				eventProperties.advertisingId = advertisingIdentifier
+			}
+			if config.autoTrackAppVersionName {
+				eventProperties.appVersion = Webtrekk.appVersion
+			}
+			if config.autoTrackConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
+				eventProperties.connectionType = reachability.isReachableViaWiFi() ? .wifi : .other
+			}
+			if config.autoTrackRequestUrlStoreSize {
+				eventProperties.eventQueueSize = requestManager.eventCount
+			}
+			if config.autoTrackScreenOrientation {
+				eventProperties.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
+			}
+			if config.autoTrackAppUpdate {
+				eventProperties.isAppUpdate = appUpdate()
+			}
+		}
+		// FIXME cross-device
+
+		var event = TrackingEvent(kind: eventKind, properties: eventProperties)
+
+		NSLog("%@", "EVENT: \(event)")
+
+		for plugin in plugins {
+			event = plugin.tracker(self, eventForTrackingEvent: event)
+		}
+
+		if shouldTrack() {
+			requestManager.enqueueEvent(event, maximumDelay: config.sendDelay)
+		}
+
+		for plugin in plugins {
+			plugin.tracker(self, didTrackEvent: event)
+		}
+	}
+
+
+	internal func track(event: MediaTrackingEvent) {
+		track(.media(event))
+	}
+
+
+	public func trackMedia(player player: AVPlayer, id: String, categories: Set<MediaCategory> = []) {
+		AVPlayerTracker.track(player: player, with: MediaTracker(parent: self, mediaId: id, mediaCategories: categories))
+	}
+
 
 	// MARK: Tracking
 
@@ -182,19 +346,20 @@ public final class Webtrekk : Logable {
 
 
 	private func track(pageTracking: PageTracking) {
-		var parameter = pageTracking
+	/*	var parameter = pageTracking
 		parameter.generalParameter.firstStart = pageTracking.firstStart()
-		enqueue(parameter, config: config)
+		enqueue(parameter, config: config)*/
 	}
 
 
 	public func track(pageName: String, trackingParameter: TrackingParameter) {
+		/*
 		var parameter = trackingParameter
 		parameter.generalParameter.firstStart = trackingParameter.firstStart()
 		if parameter.pixelParameter.pageName.isEmpty {
 			parameter.pixelParameter.pageName = pageName
 		}
-		enqueue(parameter, config: config)
+		enqueue(parameter, config: config)*/
 	}
 
 
@@ -207,44 +372,29 @@ public final class Webtrekk : Logable {
 		}
 	}
 
-
-	private func enqueue(trackingParameter: TrackingParameter, config: TrackerConfiguration) {
-		var enhancedTrackingParameter = trackingParameter
-		enhancedTrackingParameter.generalParameter.samplingRate = config.samplingRate
-		let parameter = handleBeforePluginCall(enhancedTrackingParameter)
-		if shouldTrack() {
-			var event = Event(trackingParameter: trackingParameter)
-			var id: String? = nil
-			if let advertisingIdentifier = advertisingIdentifier {
-				id = advertisingIdentifier()
-			}
-			var count: Int = 0
-			if let queue = queue {
-				count = queue.itemCount
-			}
-			event.parse(config, advertisingIdentifier: id, itemCount: count)
-			if let crossDeviceBridge = crossDeviceBridge {
-				event.parse(crossDeviceBridge)
-			}
-			queue?.add(event)
-		}
-		handleAfterPluginCall(parameter)
-	}
-
 	
 	public func trackerForScreen(screenName: String) -> ScreenTracker {
-		let tracker = DefaultScreenTracker(webtrekk: self, logger: logger)
+		let tracker = DefaultScreenTracker(tracker: self)
 		tracker.updateWithName(screenName)
 		return tracker
 	}
-}
 
 
-public protocol WebtrekkPlugin: class {
-	var id: String { get set }
 
-	func beforeTrackingSend (parameter: TrackingParameter) -> TrackingParameter
-	func afterTrackingSend  (parameter: TrackingParameter)
+	public final class DefaultLogger: Logger {
+
+		public var enabled = true
+		public var minimumLevel = LogLevel.Warning
+
+
+		public func log(@autoclosure message message: () -> String, level: LogLevel) {
+			guard enabled && level.rawValue >= minimumLevel.rawValue else {
+				return
+			}
+
+			NSLog("%@", "[Webtrekk] \(message())")
+		}
+	}
 }
 
 
@@ -253,55 +403,4 @@ public enum WebtrekkError: ErrorType {
 	case InitParserError
 	case NoTrackerConfiguration
 	case RemoteParserError
-}
-
-
-extension Webtrekk {
-
-	// MARK: Plugins
-
-	public func addPlugin(plugin: WebtrekkPlugin){
-		guard let found = plugins[plugin.id] where found === plugin else {
-			plugins[plugin.id] = plugin
-			return
-		}
-		fatalError("The Plugin with the id:\"\(plugin.id)\" was already added.")
-	}
-
-
-	public func removePlugin(plugin: WebtrekkPlugin) -> Bool {
-		guard let found = plugins.removeValueForKey(plugin.id) else {
-			return false
-		}
-		return found === plugin
-	}
-
-
-	public func removeAllPlugins() -> Bool {
-		plugins.removeAll()
-		return plugins.isEmpty
-	}
-
-
-	internal func handleAfterPluginCall(trackingParameter: TrackingParameter) {
-		guard !plugins.isEmpty else {
-			return
-		}
-
-		for (_, plugin) in plugins {
-			plugin.afterTrackingSend(trackingParameter)
-		}
-	}
-
-
-	internal func handleBeforePluginCall(trackingParameter: TrackingParameter) -> TrackingParameter {
-		guard !plugins.isEmpty else {
-			return trackingParameter
-		}
-		var parameter = trackingParameter
-		for (_, plugin) in plugins {
-			parameter = plugin.beforeTrackingSend(parameter)
-		}
-		return parameter
-	}
 }

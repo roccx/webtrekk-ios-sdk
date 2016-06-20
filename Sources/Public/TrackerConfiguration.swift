@@ -4,7 +4,7 @@ public struct TrackerConfiguration {
 	public var appVersion: String
 	public var maxRequests: Int
 	public var samplingRate: Int
-	public var sendDelay = 5 * 60
+	public var sendDelay = NSTimeInterval(5 * 60)
 	public var version: Int
 	public var optedOut: Bool
 

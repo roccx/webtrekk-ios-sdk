@@ -16,42 +16,6 @@ public protocol TrackingParameter {
 	var mediaParameter:     MediaParameter?     { get set }
 }
 
-public extension TrackingParameter {
-	public var everId: String {
-		get {
-
-			let userDefaults = NSUserDefaults.standardUserDefaults()
-			if let eid = userDefaults.stringForKey(UserStoreKey.Eid) {
-				return eid
-			}
-			let eid = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
-			userDefaults.setValue(eid, forKey:"eid")
-			return eid
-		}
-		set {
-			let userDefaults = NSUserDefaults.standardUserDefaults()
-			userDefaults.setValue(newValue, forKey:"eid")
-		}
-	}
-
-
-	public func firstStart() -> Bool {
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-		guard let _ = userDefaults.objectForKey(UserStoreKey.FirstStart) else {
-			userDefaults.setBool(true, forKey: UserStoreKey.FirstStart)
-			return true
-		}
-		return false
-	}
-
-
-	public var userAgent: String {
-		get {
-			let os = NSProcessInfo().operatingSystemVersion
-			return "Tracking Library \(Double(pixelParameter.version/100))(iOS;\(os.majorVersion).\(os.minorVersion).\(os.patchVersion);\(UIDevice.currentDevice().modelIdentifier);\(NSLocale.currentLocale().localeIdentifier))"
-		}
-	}
-}
 
 internal extension TrackingParameter {
 

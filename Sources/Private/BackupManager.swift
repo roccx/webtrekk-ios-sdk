@@ -1,55 +1,79 @@
+import CoreGraphics
 import Foundation
-import UIKit
 
-internal struct BackupManager: Logable {
 
-	var logger: Logger
+internal final class BackupManager {
 
 	private let fileManager: FileManager
 
+	internal var logger: Webtrekk.Logger
 
-	internal init(_ logger: Logger) {
+
+	internal init(fileManager: FileManager, logger: Webtrekk.Logger) {
+		self.fileManager = fileManager
 		self.logger = logger
-		self.fileManager = FileManager(logger)
 	}
 
 
-	internal func saveToDisc(fileUrl: NSURL, queue: Array<SendQueue.TrackingQueueItem>) {
-		var json = [AnyObject]()
-		let itemCount = queue.count
-		for item in queue {
-			json.append(item.toJson())
+	internal func saveEvents(events: [TrackingEvent], to file: NSURL) {
+		let jsonEvents = events.map { $0.toJson() }
+
+		do {
+			let data = try NSJSONSerialization.dataWithJSONObject(jsonEvents, options: [])
+			fileManager.saveData(toFileUrl: file, data: data)
+		}
+		catch let error {
+			logger.logError("Cannot save pending events to disk: \(error)")
 		}
 
-		guard NSJSONSerialization.isValidJSONObject(json), let data = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions()) else {
-			log("something went wrong during backup")
-			return
-		}
-
-		fileManager.saveData(toFileUrl: fileUrl, data: data)
-		log("Stored \(itemCount) to disc.")
+		logger.logInfo("Stored \(jsonEvents.count) to disc.")
 	}
 
 
-	internal func restoreFromDisc(fileUrl: NSURL) -> Array<SendQueue.TrackingQueueItem> {
-		var queue = Array<SendQueue.TrackingQueueItem>()
-		// get file storage location based on tracker config
-		guard let data = fileManager.restoreData(fromFileUrl: fileUrl) else {
-			return queue
+	internal func loadEvents(from file: NSURL) -> [TrackingEvent] {
+		guard let data = fileManager.restoreData(fromFileUrl: file) else {
+			return []
 		}
-		guard let json: [AnyObject] = (try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions())) as? [AnyObject] else {
-			log("Data was not a valid json to be restored.")
-			return queue
+		guard let jsonEvents: [[String: AnyObject]] = (try? NSJSONSerialization.JSONObjectWithData(data, options: [])) as? [[String: AnyObject]] else {
+			logger.logInfo("Data was not a valid json to be restored.")
+
+			return []
 		}
-		for item in json {
-			guard let dic = item as? [String: AnyObject], event = Event.fromJson(dic) else {
+
+		var events = [TrackingEvent]()
+		events.reserveCapacity(jsonEvents.count)
+
+		for jsonEvent in jsonEvents {
+			guard let event = TrackingEvent(json: jsonEvent) else {
+				logger.logError("Cannot load pending event from disk: \(jsonEvent)")
 				continue
 			}
-			queue.enqueue(event)
+
+			events.append(event)
 		}
-		return queue
+
+		return events
 	}
 }
+
+
+
+private extension TrackingEvent {
+
+	private init?(json: [String : AnyObject]) {
+
+	}
+
+
+	private func toJson() -> [String : AnyObject] {
+
+	}
+}
+
+
+
+
+
 
 
 internal protocol Backupable {

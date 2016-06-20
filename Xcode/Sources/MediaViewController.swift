@@ -1,3 +1,4 @@
+import AVFoundation
 import AVKit
 import UIKit
 import Webtrekk
@@ -8,22 +9,29 @@ public final class MediaViewController: UIViewController {
 	private lazy var screenTracker = webtrekk?.trackerForScreen("VideoScreen")
 
 	// the play button was tapped
-	@IBAction func playTapped(sender: UIButton) {
+	@IBAction
+	func playTapped(sender: UIButton) {
 		screenTracker?.trackAction("video-button-tapped")
-		// check that the resource file is still available
-		guard let url = NSBundle(forClass: MediaViewController.self).URLForResource("wt", withExtension: "mp4") else {
-			print("file url not possible")
-			return
-		}
-		let avController = AVPlayerViewController()
 
-		// check that we have a valid instance of webtrekk
 		guard let webtrekk = webtrekk else {
 			return
 		}
+
+		// check that the resource file is still available
+		guard let mediaUrl = NSBundle(forClass: MediaViewController.self).URLForResource("wt", withExtension: "mp4") else {
+			NSLog("file url not possible")
+			return
+		}
+
+		let player = AVPlayer(URL: mediaUrl)
+		webtrekk.trackMedia(player: player, id: "abc")
+
+		let controller = AVPlayerViewController()
+		controller.player = player
+
+		// check that we have a valid instance of webtrekk
 		// add the webtrekk videoplayer to the av controller
-		avController.player = WtAvPlayer(URL: url, webtrekk: webtrekk)
-		self.presentViewController(avController, animated: true, completion: nil)
+		presentViewController(controller, animated: true, completion: nil)
 	}
 
 	// to track the screen attach to the appear and disappear calls of the controller

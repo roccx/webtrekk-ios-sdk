@@ -29,7 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			defaultConfig.remoteConfigurationUrl = url.absoluteString
 		}
 		webtrekk = Webtrekk(config: defaultConfig)
-		webtrekk?.enableLoging = true
+
+		Webtrekk.defaultLogger.minimumLevel = .Info
 
 		print("Startup complete!")
 		return true

@@ -23,18 +23,17 @@ public final class DefaultScreenTracker: ScreenTracker {
 	private(set) public var pageTracking: PageTracking?
 
 	private var isVisible = false
-	private let logger: Logger
-	private let webtrekk: Webtrekk
+	private let tracker: Webtrekk
 
-	public init(webtrekk: Webtrekk, logger: Logger = DefaultLogger()) {
-		self.logger = logger
-		self.webtrekk = webtrekk
+
+	public init(tracker: Webtrekk) {
+		self.tracker = tracker
 	}
 
 
 	public func didShow() {
 		if isVisible {
-			logger.log("Can't track view of screen \(name) which is already visible.", logLevel: .Warn)
+			tracker.logWarning("Can't track view of screen \(name) which is already visible.")
 			return
 		}
 		isVisible = true
@@ -57,21 +56,21 @@ public final class DefaultScreenTracker: ScreenTracker {
 		precondition(!action.isEmpty)
 
 		if name.isEmpty {
-			logger.log("Screen name not set when tracking action \(action)", logLevel: .Warn)
+			tracker.logWarning("Screen name not set when tracking action \(action)")
 			return
 		}
 		if !isVisible {
-			logger.log("Can't track action \(action) for screen \(name) which isn't visible.", logLevel: .Warn)
+			tracker.logWarning("Can't track action \(action) for screen \(name) which isn't visible.")
 			return
 		}
 
 		guard let tracking = tracking else {
-			webtrekk.track(name, trackingParameter: ActionTracking(actionParameter: ActionParameter(name: action)))
+			tracker.track(name, trackingParameter: ActionTracking(actionParameter: ActionParameter(name: action)))
 			return
 		}
 		var actionTracking = tracking
 		actionTracking.actionParameter?.name = action
-		webtrekk.track(name, trackingParameter: actionTracking)
+		tracker.track(name, trackingParameter: actionTracking)
 	}
 
 
@@ -103,10 +102,10 @@ public final class DefaultScreenTracker: ScreenTracker {
 		}
 
 		guard let pageTracking = pageTracking else {
-			webtrekk.track(name)
+			tracker.track(name)
 			return
 		}
 
-		webtrekk.track(name, trackingParameter: pageTracking)
+		tracker.track(name, trackingParameter: pageTracking)
 	}
 }

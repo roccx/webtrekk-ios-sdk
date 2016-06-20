@@ -1,22 +1,22 @@
 import Foundation
 
 
-internal struct FileManager : Logable {
+internal final class FileManager {
 
-	internal var logger: Logger
 	private let fileDirectoryUrl: NSURL
 
-	internal init(_ logger: Logger) {
+	internal var logger: Webtrekk.Logger
+
+
+	internal init(logger: Webtrekk.Logger) {
 		self.logger = logger
+
 		#if os(iOS)
 			fileDirectoryUrl = try! NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: .AllDomainsMask, appropriateForURL: nil, create: true)
-		#else
+		#elseif os(watchOS)
 			fileDirectoryUrl = try! NSFileManager.defaultManager().URLForDirectory(.CachesDirectory, inDomain: .AllDomainsMask, appropriateForURL: nil, create: true)
 		#endif
 	}
-
-
-
 
 
 	internal func getConfigurationDirectoryUrl(forTrackingId id: String) -> NSURL{
@@ -26,7 +26,7 @@ internal struct FileManager : Logable {
 				try NSFileManager.defaultManager().createDirectoryAtURL(directory, withIntermediateDirectories: true, attributes: nil)
 			}
 			catch let error {
-				logE("Cannot create directory '\(directory)': \(error)")
+				logger.logError("Cannot create directory '\(directory)': \(error)")
 				return fileDirectoryUrl
 			}
 		}
@@ -36,11 +36,11 @@ internal struct FileManager : Logable {
 
 	internal func saveConfiguration(config: TrackerConfiguration) {
 		guard let data = try? NSJSONSerialization.dataWithJSONObject(config.toJson(), options: NSJSONWritingOptions()) else {
-			logE("Could not prepare config for saving to file.")
+			logger.logError("Could not prepare config for saving to file.")
 			return
 		}
 		guard let _ = try? data.writeToURL(getConfigurationDirectoryUrl(forTrackingId: config.trackingId).URLByAppendingPathComponent("config.json"), options: .DataWritingAtomic) else {
-			logE("Writing config to file failed.")
+			logger.logError("Writing config to file failed.")
 			return
 		}
 	}
@@ -48,11 +48,11 @@ internal struct FileManager : Logable {
 
 	internal func restoreConfiguration(trackingId: String) -> TrackerConfiguration? {
 		guard let data = NSData(contentsOfURL: getConfigurationDirectoryUrl(forTrackingId: trackingId).URLByAppendingPathComponent("config.json")) else {
-			logE("Couldn't find a config for this trackingId.")
+			logger.logError("Couldn't find a config for this trackingId.")
 			return nil
 		}
 		guard let conf = (try? NSJSONSerialization.JSONObjectWithData(data, options: .MutableContainers) as? [String : AnyObject])!, let config = TrackerConfiguration.fromJson(conf) else {
-			logE("Couldn't read stored config for this trackingId.")
+			logger.logError("Couldn't read stored config for this trackingId.")
 			return nil
 		}
 		return config
@@ -61,7 +61,7 @@ internal struct FileManager : Logable {
 
 	internal func saveData(toFileUrl fileUrl: NSURL, data: NSData) {
 		guard let url: NSURL = fileUrl.URLByDeletingLastPathComponent! else {
-			logE("\(fileUrl) is not a valid url to save data to.")
+			logger.logError("\(fileUrl) is not a valid url to save data to.")
 			return
 		}
 
@@ -70,12 +70,12 @@ internal struct FileManager : Logable {
 				try NSFileManager.defaultManager().createDirectoryAtURL(url, withIntermediateDirectories: false, attributes: nil)
 			}
 			catch let error {
-				logE("Cannot create directory '\(url)': \(error)")
+				logger.logError("Cannot create directory '\(url)': \(error)")
 				return
 			}
 		}
 		guard let _ = try? data.writeToURL(fileUrl, options: .DataWritingAtomic) else {
-			logE("Writing data to file at \(fileUrl) failed.")
+			logger.logError("Writing data to file at \(fileUrl) failed.")
 			return
 		}
 	}
@@ -86,7 +86,7 @@ internal struct FileManager : Logable {
 			return nil
 		}
 		guard let data: NSData = NSData(contentsOfURL: fileUrl) else {
-			logE("Couldn't find a data at \(fileUrl) for restoring data.")
+			logger.logError("Couldn't find a data at \(fileUrl) for restoring data.")
 			return nil
 		}
 		return data

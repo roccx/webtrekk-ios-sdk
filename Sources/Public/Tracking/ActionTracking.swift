@@ -42,7 +42,7 @@ public struct ActionTracking: TrackingParameter {
 		self.productParameters = productParameters
 		self.pixelParameter = PixelParameter(displaySize: UIScreen.mainScreen().bounds.size, timeStamp: timeStamp)
 		self.generalParameter = GeneralParameter(timeStamp: timeStamp, timeZoneOffset: timeZoneOffset)
-		generalParameter.everId = self.everId
-		generalParameter.userAgent = userAgent
+		generalParameter.everId = "" // FIXME self.everId
+		generalParameter.userAgent = "" // FIXME userAgent
 	}
 }
