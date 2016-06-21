@@ -3,51 +3,50 @@ import Foundation
 
 internal final class FileManager {
 
-	private let fileDirectoryUrl: NSURL
+	private let _directoryUrl: NSURL
+	private let identifier: String
 
 	internal var logger: Webtrekk.Logger
 
 
-	internal init(logger: Webtrekk.Logger) {
+	internal init(logger: Webtrekk.Logger, identifier: String) {
 		self.logger = logger
-
+		self.identifier = identifier
 		#if os(iOS)
-			fileDirectoryUrl = try! NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: .AllDomainsMask, appropriateForURL: nil, create: true)
+			_directoryUrl = try! NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: .AllDomainsMask, appropriateForURL: nil, create: true)
 		#elseif os(watchOS)
-			fileDirectoryUrl = try! NSFileManager.defaultManager().URLForDirectory(.CachesDirectory, inDomain: .AllDomainsMask, appropriateForURL: nil, create: true)
+			_directoryUrl = try! NSFileManager.defaultManager().URLForDirectory(.CachesDirectory, inDomain: .AllDomainsMask, appropriateForURL: nil, create: true)
 		#endif
 	}
 
 
-	internal func getConfigurationDirectoryUrl(forTrackingId id: String) -> NSURL{
-		let directory = fileDirectoryUrl.URLByAppendingPathComponent(id)
+	internal var configurationFileUrl: NSURL {
+		return directoryUrl.URLByAppendingPathComponent("config.json")
+	}
+
+
+	private var directoryUrl: NSURL {
+		let directory = _directoryUrl.URLByAppendingPathComponent(identifier)
 		if !NSFileManager.defaultManager().fileExistsAtPath(directory.path!) {
 			do {
 				try NSFileManager.defaultManager().createDirectoryAtURL(directory, withIntermediateDirectories: true, attributes: nil)
 			}
 			catch let error {
 				logger.logError("Cannot create directory '\(directory)': \(error)")
-				return fileDirectoryUrl
+				return _directoryUrl
 			}
 		}
 		return directory
 	}
 
 
-	internal func saveConfiguration(config: TrackerConfiguration) {
-		guard let data = try? NSJSONSerialization.dataWithJSONObject(config.toJson(), options: NSJSONWritingOptions()) else {
-			logger.logError("Could not prepare config for saving to file.")
-			return
-		}
-		guard let _ = try? data.writeToURL(getConfigurationDirectoryUrl(forTrackingId: config.trackingId).URLByAppendingPathComponent("config.json"), options: .DataWritingAtomic) else {
-			logger.logError("Writing config to file failed.")
-			return
-		}
+	internal var eventFileUrl: NSURL {
+		return directoryUrl.URLByAppendingPathComponent("events.json")
 	}
 
 
 	internal func restoreConfiguration(trackingId: String) -> TrackerConfiguration? {
-		guard let data = NSData(contentsOfURL: getConfigurationDirectoryUrl(forTrackingId: trackingId).URLByAppendingPathComponent("config.json")) else {
+		guard let data = NSData(contentsOfURL: configurationFileUrl) else {
 			logger.logError("Couldn't find a config for this trackingId.")
 			return nil
 		}
@@ -59,8 +58,32 @@ internal final class FileManager {
 	}
 
 
+	internal func restoreData(fromFileUrl fileUrl: NSURL) -> NSData? {
+		guard NSFileManager.defaultManager().fileExistsAtPath(fileUrl.path!) else {
+			return nil
+		}
+		guard let data: NSData = NSData(contentsOfURL: fileUrl) else {
+			logger.logError("Couldn't find a data at \(fileUrl) for restoring data.")
+			return nil
+		}
+		return data
+	}
+
+
+	internal func saveConfiguration(config: TrackerConfiguration) {
+		guard let data = try? NSJSONSerialization.dataWithJSONObject(config.toJson(), options: NSJSONWritingOptions()) else {
+			logger.logError("Could not prepare config for saving to file.")
+			return
+		}
+		guard let _ = try? data.writeToURL(configurationFileUrl, options: .DataWritingAtomic) else {
+			logger.logError("Writing config to file failed.")
+			return
+		}
+	}
+
+
 	internal func saveData(toFileUrl fileUrl: NSURL, data: NSData) {
-		guard let url: NSURL = fileUrl.URLByDeletingLastPathComponent! else {
+		guard let url: NSURL = fileUrl.URLByDeletingLastPathComponent else {
 			logger.logError("\(fileUrl) is not a valid url to save data to.")
 			return
 		}
@@ -78,17 +101,5 @@ internal final class FileManager {
 			logger.logError("Writing data to file at \(fileUrl) failed.")
 			return
 		}
-	}
-
-
-	internal func restoreData(fromFileUrl fileUrl: NSURL) -> NSData? {
-		guard NSFileManager.defaultManager().fileExistsAtPath(fileUrl.path!) else {
-			return nil
-		}
-		guard let data: NSData = NSData(contentsOfURL: fileUrl) else {
-			logger.logError("Couldn't find a data at \(fileUrl) for restoring data.")
-			return nil
-		}
-		return data
 	}
 }

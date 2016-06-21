@@ -123,14 +123,14 @@ public struct AutoTrackedScreen: Equatable {
 	public var className:             String
 	public var mappingName:           String
 	public var enabled:               Bool
-	public var pageTracking: PageTracking?
+//	public var pageTracking: PageTracking?
 
-	public init(className: String, mappingName: String, enabled: Bool = true, pageTracking: PageTracking? = nil) {
-		self.className = className
-		self.mappingName = mappingName
-		self.enabled = enabled
-		self.pageTracking = pageTracking
-	}
+//	public init(className: String, mappingName: String, enabled: Bool = true, pageTracking: PageTracking? = nil) {
+//		self.className = className
+//		self.mappingName = mappingName
+//		self.enabled = enabled
+//		self.pageTracking = pageTracking
+//	}
 }
 
 

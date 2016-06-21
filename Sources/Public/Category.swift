@@ -1,4 +1,4 @@
-public struct MediaCategory {
+public struct Category {
 
 	public var index: Int
 	public var name: String
@@ -10,15 +10,14 @@ public struct MediaCategory {
 	}
 }
 
-
-extension MediaCategory: Hashable {
+extension Category: Hashable {
 
 	public var hashValue: Int {
 		return index.hashValue
 	}
 }
 
-
-public func == (a: MediaCategory, b: MediaCategory) -> Bool {
+public func == (a: Category, b: Category) -> Bool {
 	return a.index == b.index
 }
+

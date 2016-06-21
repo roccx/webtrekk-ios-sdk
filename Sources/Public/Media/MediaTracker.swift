@@ -7,7 +7,7 @@ public final class MediaTracker {
 	public let parent: Webtrekk
 
 
-	public init(parent: Webtrekk, mediaId: String, mediaCategories: Set<MediaCategory> = []) {
+	public init(parent: Webtrekk, mediaId: String, mediaCategories: Set<Category> = []) {
 		self.mediaProperties = MediaProperties(id: mediaId, categories: mediaCategories)
 		self.parent = parent
 	}

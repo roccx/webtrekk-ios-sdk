@@ -7,11 +7,12 @@ import UIKit
 public final class Webtrekk {
 
 	public static let version = "4.0"
+	public static let pixelVersion = "400"
 
 	public static let defaultLogger = DefaultLogger()
 
 	private lazy var backupManager: BackupManager = BackupManager(fileManager: self.fileManager, logger: self.logger)
-	private lazy var fileManager: FileManager = FileManager(logger: self.logger)
+	private lazy var fileManager: FileManager = FileManager(logger: self.logger, identifier: self.config.trackingId)
 	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, maximumNumberOfEvents: self.config.maxRequests)
 
 	private var hibernationObserver: NSObjectProtocol?
@@ -20,7 +21,7 @@ public final class Webtrekk {
 	public var config: TrackerConfiguration
 	public var crossDeviceBridge: CrossDeviceBridgeParameter?
 	public var plugins = [TrackingPlugin]()
-
+	public var forceNewSession = true
 
 	public init(config: TrackerConfiguration) {
 		self.config = config
@@ -48,6 +49,15 @@ public final class Webtrekk {
 		}
 
 		return advertisingIdentifier
+	}
+
+
+	private func appDidEnterBackground() {
+		// store a date to reference how long the app was in background
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		userDefaults.setValue(NSDate(), forKey: .ForceNewSession)
+
+		// TODO: shutdown queue
 	}
 
 
@@ -88,6 +98,18 @@ public final class Webtrekk {
 		else {
 			return device.modelIdentifier
 		}
+	}
+
+	
+	private func appWillEnterForeground() {
+		// TODO: load wating request, check if FNS needs to be set
+
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		if let fns = userDefaults.objectForKey(.ForceNewSession) as? NSDate {
+			// TODO: if fns is older then eventOnStartDelay interval then set to next event 
+			userDefaults.removeObjectForKey(.ForceNewSession)
+		}
+
 	}
 
 
@@ -148,6 +170,7 @@ public final class Webtrekk {
 	}
 
 
+
 	public var logger: Logger = Webtrekk.defaultLogger {
 		didSet {
 			guard logger !== oldValue else {
@@ -169,6 +192,7 @@ public final class Webtrekk {
 		setUpConfig()
 		setUpRequestManager()
 		setUpOptedOut()
+		setUpLifecycleObserver()
 	}
 
 
@@ -223,14 +247,23 @@ public final class Webtrekk {
 	}
 
 
+	private func setUpLifecycleObserver() {
+		hibernationObserver = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationDidEnterBackgroundNotification, object: nil, queue: NSOperationQueue.mainQueue()) {
+			_ in self.appDidEnterBackground()
+		}
+
+		wakeUpObserver = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: NSOperationQueue.mainQueue()) {
+			_ in self.appWillEnterForeground()
+		}
+	}
+
+
 	private func setUpOptedOut() {
 		config.optedOut =	NSUserDefaults.standardUserDefaults().boolForKey(UserStoreKey.OptedOut)
 	}
 
 
 	private func setUpRequestManager() {
-		// let backupFileUrl: NSURL = fileManager.getConfigurationDirectoryUrl(forTrackingId: config.trackingId).URLByAppendingPathComponent("queue.json")
-
 		NSTimer.scheduledTimerWithTimeInterval(5) {
 			self.requestManager.sendAllEvents()
 		}
@@ -310,7 +343,8 @@ public final class Webtrekk {
 			}
 		}
 		// FIXME cross-device
-
+		// FIXME read forceNewSession value and set to event
+		
 		var event = TrackingEvent(kind: eventKind, properties: eventProperties)
 
 		NSLog("%@", "EVENT: \(event)")
@@ -329,12 +363,22 @@ public final class Webtrekk {
 	}
 
 
+	internal func track(event: ActionTrackingEvent) {
+		track(.action(event))
+	}
+
+
 	internal func track(event: MediaTrackingEvent) {
 		track(.media(event))
 	}
 
 
-	public func trackMedia(player player: AVPlayer, id: String, categories: Set<MediaCategory> = []) {
+	internal func track(event: PageTrackingEvent) {
+		track(.page(event))
+	}
+
+
+	public func trackMedia(player player: AVPlayer, id: String, categories: Set<Category> = []) {
 		AVPlayerTracker.track(player: player, with: MediaTracker(parent: self, mediaId: id, mediaCategories: categories))
 	}
 
@@ -361,15 +405,15 @@ public final class Webtrekk {
 
 
 	public func track(pageName: String) {
-		track(PageTracking(pageName: pageName))
+//		track(PageTracking(pageName: pageName))
 	}
 
 
-	private func track(pageTracking: PageTracking) {
-	/*	var parameter = pageTracking
-		parameter.generalParameter.firstStart = pageTracking.firstStart()
-		enqueue(parameter, config: config)*/
-	}
+//	private func track(pageTracking: PageTracking) {
+//	/*	var parameter = pageTracking
+//		parameter.generalParameter.firstStart = pageTracking.firstStart()
+//		enqueue(parameter, config: config)*/
+//	}
 
 
 	public func track(pageName: String, trackingParameter: TrackingParameter) {
@@ -384,18 +428,17 @@ public final class Webtrekk {
 
 
 	private func track(screen: AutoTrackedScreen) {
-		if let pageTracking = screen.pageTracking {
-			track(pageTracking)
-		}
-		else {
-			track(screen.mappingName)
-		}
+//		if let pageTracking = screen.pageTracking {
+//			track(pageTracking)
+//		}
+//		else {
+//			track(screen.mappingName)
+//		}
 	}
 
 	
-	public func trackerForScreen(screenName: String) -> ScreenTracker {
-		let tracker = DefaultScreenTracker(tracker: self)
-		tracker.updateWithName(screenName)
+	public func trackerForScreen(screenName: String) -> PageTracker {
+		let tracker = DefaultPageTracker(parent: self, properties: PageProperties(pageName: screenName))
 		return tracker
 	}
 

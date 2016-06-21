@@ -11,8 +11,9 @@ public final class MediaViewController: UIViewController {
 	// the play button was tapped
 	@IBAction
 	func playTapped(sender: UIButton) {
-		screenTracker?.trackAction("video-button-tapped")
+		screenTracker?.trackAction(ActionTrackingEvent(actionProperties: ActionProperties(name: "video-button-tapped")))
 
+		// check that we have a valid instance of webtrekk
 		guard let webtrekk = webtrekk else {
 			return
 		}
@@ -29,8 +30,6 @@ public final class MediaViewController: UIViewController {
 		let controller = AVPlayerViewController()
 		controller.player = player
 
-		// check that we have a valid instance of webtrekk
-		// add the webtrekk videoplayer to the av controller
 		presentViewController(controller, animated: true, completion: nil)
 	}
 

@@ -1,8 +1,9 @@
 import Foundation
-import UIKit // FIXME
 
 
 internal final class RequestManager {
+
+	internal typealias Delegate = _BackupDelegate
 
 	private var events = [TrackingEvent]()
 	private var numberOfFailuresForCurrentEvent = 0
@@ -11,7 +12,7 @@ internal final class RequestManager {
 	private var sendNextEventTimer: NSTimer?
 
 	internal var logger: Webtrekk.Logger
-
+	internal weak var delegate: Delegate?
 
 	internal init(logger: Webtrekk.Logger, maximumNumberOfEvents: Int) {
 		self.logger = logger
@@ -111,22 +112,14 @@ internal final class RequestManager {
 
 	
 	private func loadBackups() {
-	/*	let restoredQueue = backupManager.restoreFromDisc(backupFileUrl)
-		guard !restoredQueue.isEmpty else {
-			return
+		if let events = delegate?.loadEvents() {
+			self.events = events
 		}
-		
-		synchronized(queueLock) {
-			self.queue = restoredQueue
-		}*/
 	}
 
 
 	private func saveBackup() {
-		/*
-		synchronized(queueLock) {
-			self.backupManager.saveToDisc(self.backupFileUrl, queue: self.queue)
-		}*/
+		delegate?.saveEvents(self.events)
 	}
 
 
@@ -232,4 +225,10 @@ internal final class RequestManager {
 			self.underlyingError = underlyingError
 		}
 	}
+}
+
+internal protocol _BackupDelegate: class {
+
+	func loadEvents() -> [TrackingEvent]
+	func saveEvents(events: [TrackingEvent])
 }

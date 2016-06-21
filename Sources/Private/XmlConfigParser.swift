@@ -123,37 +123,37 @@ internal final class XmlConfigParser {
 				else {
 					mappingName = className
 				}
-				var autoScreen = AutoTrackedScreen(className: className, mappingName: mappingName)
-				if screen[.AutoTracked].boolValue, let text = screen[.AutoTracked].element?.text {
-					autoScreen.enabled = Bool(text.lowercaseString == "true")
-				}
-				guard screen[.TrackingParameter].boolValue else {
-					config.autoTrackScreens[className] = autoScreen
-					continue
-				}
+//				var autoScreen = AutoTrackedScreen(className: className, mappingName: mappingName)
+//				if screen[.AutoTracked].boolValue, let text = screen[.AutoTracked].element?.text {
+//					autoScreen.enabled = Bool(text.lowercaseString == "true")
+//				}
+//				guard screen[.TrackingParameter].boolValue else {
+//					config.autoTrackScreens[className] = autoScreen
+//					continue
+//				}
 
 				let trackingParameter: XMLIndexer = screen[.TrackingParameter]
-				var pageTracking = PageTracking(pageName: mappingName)
-				if trackingParameter[.CustomParameters].boolValue {
-					let customParameters = trackingParameter[.CustomParameters]
-					for parameter in customParameters.children {
-						guard let index = parameter.element?.attributes["id"] else {
-							continue
-						}
-						guard let value = parameter.element?.text?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet()) else {
-							continue
-						}
-						pageTracking.customParameters[index] = value
-					}
-				}
+//				var pageTracking = PageTracking(pageName: mappingName)
+//				if trackingParameter[.CustomParameters].boolValue {
+//					let customParameters = trackingParameter[.CustomParameters]
+//					for parameter in customParameters.children {
+//						guard let index = parameter.element?.attributes["id"] else {
+//							continue
+//						}
+//						guard let value = parameter.element?.text?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet()) else {
+//							continue
+//						}
+//						pageTracking.customParameters[index] = value
+//					}
+//				}
 
-				if trackingParameter[.PageParameter].boolValue, let _ = pageTracking.pageParameter {
-					pageTracking.pageParameter?.categories = parse(pageTracking.pageParameter?.categories, fromParameters: trackingParameter[.PageParameter][.Categories])
-					pageTracking.pageParameter?.page = parse(pageTracking.pageParameter?.page, fromParameters: trackingParameter[.PageParameter][.Page])
-					pageTracking.pageParameter?.session = parse(pageTracking.pageParameter?.session, fromParameters: trackingParameter[.PageParameter][.Session])
-				}
-				autoScreen.pageTracking = pageTracking
-				config.autoTrackScreens[className] = autoScreen
+//				if trackingParameter[.PageParameter].boolValue, let _ = pageTracking.pageParameter {
+//					pageTracking.pageParameter?.categories = parse(pageTracking.pageParameter?.categories, fromParameters: trackingParameter[.PageParameter][.Categories])
+//					pageTracking.pageParameter?.page = parse(pageTracking.pageParameter?.page, fromParameters: trackingParameter[.PageParameter][.Page])
+//					pageTracking.pageParameter?.session = parse(pageTracking.pageParameter?.session, fromParameters: trackingParameter[.PageParameter][.Session])
+//				}
+//				autoScreen.pageTracking = pageTracking
+//				config.autoTrackScreens[className] = autoScreen
 			}
 		}
 

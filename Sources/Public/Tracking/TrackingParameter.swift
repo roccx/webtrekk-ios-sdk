@@ -7,13 +7,10 @@ public protocol TrackingParameter {
 	var pixelParameter:     PixelParameter      { get set }
 
 	var customParameters:   [String: String]    { get set }
-	var customerParameter:  CustomerParameter?  { get set }
-	var ecommerceParameter: EcommerceParameter? { get set }
 	var productParameters:  [ProductParameter]  { get set }
 
-	var actionParameter:    ActionParameter?    { get set }
-	var pageParameter:      PageParameter?      { get set }
-	var mediaParameter:     MediaParameter?     { get set }
+//	var pageParameter:      PageParameter?      { get set }
+//	var mediaParameter:     MediaParameter?     { get set }
 }
 
 
@@ -68,9 +65,9 @@ internal extension TrackingParameter {
 			}
 		}
 		queryItems.append(NSURLQueryItem(name: .ProductName, value:  name))
-		if let ecommerce = ecommerceParameter where !ecommerce.currency.isEmpty { // when ecommerce already has a currency then don't add here
-			currency = ""
-		}
+//		if let ecommerce = ecommerceParameter where !ecommerce.currency.isEmpty { // when ecommerce already has a currency then don't add here
+//			currency = ""
+//		}
 		if !currency.isEmpty {
 			queryItems.append(NSURLQueryItem(name: .EcomCurrency, value:  currency))
 		}

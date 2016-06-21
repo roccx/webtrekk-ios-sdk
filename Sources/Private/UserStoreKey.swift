@@ -13,6 +13,9 @@ internal enum UserStoreKey: String {
 	case Eid = "webtrekk_eid"
 	case VersionNumber = "webtrekk_versionNumber"
 
+	// MARK: Objects
+	case ForceNewSession = "webtrekk_force_new_session"
+
 }
 
 extension NSUserDefaults {
@@ -27,8 +30,18 @@ extension NSUserDefaults {
 	}
 
 
+	internal func removeObjectForKey(defaultName: UserStoreKey) {
+		self.removeObjectForKey(defaultName.rawValue)
+	}
+
+
 	internal func setBool(value: Bool, forKey key: UserStoreKey) {
 		self.setBool(value, forKey: key.rawValue)
+	}
+
+
+	internal func setValue(value: AnyObject?, forKey key: UserStoreKey) {
+		self.setValue(value, forKey: key.rawValue)
 	}
 
 

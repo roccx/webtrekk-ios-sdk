@@ -17,7 +17,9 @@ public struct TrackingEvent {
 
 	public enum Kind {
 
+		case action(ActionTrackingEvent)
 		case media(MediaTrackingEvent)
+		case page(PageTrackingEvent)
 	}
 
 
