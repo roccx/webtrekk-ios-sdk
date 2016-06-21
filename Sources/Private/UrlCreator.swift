@@ -39,6 +39,11 @@ internal final class UrlCreator {
 
 	}
 
+	internal static func createUrlFromEvent(event: TrackingEvent) -> NSURL? {
+		// FIXME
+		return NSURL(string: "https://widgetlabs.eu")
+	}
+
 }
 
 

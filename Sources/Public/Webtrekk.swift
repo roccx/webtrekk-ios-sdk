@@ -1,4 +1,5 @@
 import AVFoundation
+import CoreTelephony
 import ReachabilitySwift
 import UIKit
 
@@ -11,7 +12,7 @@ public final class Webtrekk {
 
 	private lazy var backupManager: BackupManager = BackupManager(fileManager: self.fileManager, logger: self.logger)
 	private lazy var fileManager: FileManager = FileManager(logger: self.logger)
-	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger)
+	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, maximumNumberOfEvents: self.config.maxRequests)
 
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
@@ -24,14 +25,6 @@ public final class Webtrekk {
 	public init(config: TrackerConfiguration) {
 		self.config = config
 		setUp()
-	}
-
-
-	public convenience init(configParser: ConfigParser) throws {
-		guard let config = configParser.trackerConfiguration else {
-			throw WebtrekkError.InitParserError
-		}
-		self.init(config: config)
 	}
 
 
@@ -277,7 +270,34 @@ public final class Webtrekk {
 				eventProperties.appVersion = Webtrekk.appVersion
 			}
 			if config.autoTrackConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
-				eventProperties.connectionType = reachability.isReachableViaWiFi() ? .wifi : .other
+				if reachability.isReachableViaWiFi() {
+					eventProperties.connectionType = .wifi
+				}
+				else if reachability.isReachableViaWWAN() {
+					if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
+						switch  carrierType {
+						case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
+							eventProperties.connectionType = .mobile(generation: 1)
+						case CTRadioAccessTechnologyWCDMA,CTRadioAccessTechnologyHSDPA,CTRadioAccessTechnologyHSUPA,CTRadioAccessTechnologyCDMAEVDORev0,CTRadioAccessTechnologyCDMAEVDORevA,CTRadioAccessTechnologyCDMAEVDORevB,CTRadioAccessTechnologyeHRPD:
+							eventProperties.connectionType = .mobile(generation: 2)
+						case CTRadioAccessTechnologyLTE:
+							eventProperties.connectionType = .mobile(generation: 3)
+						default:
+							eventProperties.connectionType = .other
+						}
+					}
+					else {
+						eventProperties.connectionType = .other
+					}
+
+				}
+				else if reachability.isReachable() {
+					eventProperties.connectionType = .other
+				}
+				else {
+					eventProperties.connectionType = .offline
+				}
+
 			}
 			if config.autoTrackRequestUrlStoreSize {
 				eventProperties.eventQueueSize = requestManager.eventCount

@@ -24,7 +24,7 @@ public struct TrackingEvent {
 
 	public struct Properties {
 
-		public var advertisingId: String?
+		public var advertisingId: NSUUID?
 		public var appVersion: String?
 		public var connectionType: ConnectionType?
 		public var eventQueueSize: Int?
@@ -57,6 +57,8 @@ public struct TrackingEvent {
 
 		public enum ConnectionType {
 
+			case mobile(generation: Int)
+			case offline
 			case other
 			case wifi
 		}

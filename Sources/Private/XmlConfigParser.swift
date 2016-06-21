@@ -1,9 +1,9 @@
 import Foundation
 import SWXMLHash
 
-public final class XmlConfigParser: ConfigParser {
+internal final class XmlConfigParser {
 
-	public var trackerConfiguration: TrackerConfiguration? {
+	internal var trackerConfiguration: TrackerConfiguration? {
 		get {
 			do {
 				let config = try parseTrackerConfig()
@@ -21,14 +21,15 @@ public final class XmlConfigParser: ConfigParser {
 
 	let xml: XMLIndexer
 
-	public init(xmlString: String) throws {
+	internal init(xmlString: String) throws {
 		guard !xmlString.isEmpty else {
 			throw XmlError.CanNotBeEmpty
 		}
 		self.xml = SWXMLHash.parse(xmlString)
 	}
 
-	private func parse(inout dictionary: [Int: String], fromParameters parameters: XMLIndexer) {
+	private func parse(dictionary: [Int: String]?, fromParameters parameters: XMLIndexer) -> [Int: String]{
+		var dic = dictionary ?? [Int: String]()
 		for parameter in parameters.children {
 			guard let indexString = parameter.element?.attributes["id"] else {
 				continue
@@ -39,74 +40,78 @@ public final class XmlConfigParser: ConfigParser {
 			guard let value = parameter.element?.text?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet()) else {
 				continue
 			}
-			dictionary[index] = value
+			dic[index] = value
 		}
+		return dic
 	}
 
-	public func parseTrackerConfig() throws -> TrackerConfiguration {
+	internal func parseTrackerConfig() throws -> TrackerConfiguration {
 		guard xml[.Root].boolValue else {
 			throw XmlError.NoRoot
 		}
-		guard xml[.Root][.TrackingDomain].boolValue && xml[.Root][.TrackId].boolValue, let serverUrl = xml[.Root][.TrackingDomain].element?.text, let trackingId = xml[.Root][.TrackId].element?.text else {
+
+		let root = xml[.Root]
+
+		guard root[.TrackingDomain].boolValue && root[.TrackId].boolValue, let serverUrl = root[.TrackingDomain].element?.text, trackingId = root[.TrackId].element?.text else {
 			throw XmlError.MissingDomainOrId
 		}
 		var config = TrackerConfiguration(serverUrl: serverUrl, trackingId: trackingId)
 
-		if xml[.Root][.MaxRequests].boolValue, let maxRequests = Int((xml[.Root][.MaxRequests].element?.text)!) {
+		if root[.MaxRequests].boolValue, let text = root[.MaxRequests].element?.text, maxRequests = Int(text) {
 			config.maxRequests = maxRequests
 		}
-		if xml[.Root][.Sampling].boolValue, let Sampling = Int((xml[.Root][.Sampling].element?.text)!) {
-			config.samplingRate = Sampling
+		if root[.Sampling].boolValue, let text = root[.Sampling].element?.text,  sampling = Int(text) {
+			config.samplingRate = sampling
 		}
-		if xml[.Root][.SendDelay].boolValue, let sendDelay = Int((xml[.Root][.SendDelay].element?.text)!) {
-			config.sendDelay = sendDelay
+		if root[.SendDelay].boolValue, let text = root[.SendDelay].element?.text, sendDelay = Int(text) {
+			config.sendDelay = NSTimeInterval(sendDelay)
 		}
-		if xml[.Root][.Version].boolValue, let version = Int((xml[.Root][.Version].element?.text)!) {
+		if root[.Version].boolValue, let text = root[.Version].element?.text, version = Int(text) {
 			config.version = version
 		}
 
-		if xml[.Root][.EnableRemoteConfiguration].boolValue {
-			config.enableRemoteConfiguration = Bool((xml[.Root][.EnableRemoteConfiguration].element?.text)!.lowercaseString == "true")
+		if root[.EnableRemoteConfiguration].boolValue, let text = root[.EnableRemoteConfiguration].element?.text {
+			config.enableRemoteConfiguration = Bool(text.lowercaseString == "true")
 		}
-		if xml[.Root][.TrackingConfigurationUrl].boolValue, let remoteConfigurationUrl = xml[.Root][.TrackingConfigurationUrl].element?.text {
+		if root[.TrackingConfigurationUrl].boolValue, let remoteConfigurationUrl = root[.TrackingConfigurationUrl].element?.text {
 			config.remoteConfigurationUrl = remoteConfigurationUrl
 		}
 
-		if xml[.Root][.AutoTracked].boolValue {
-			config.autoTrack = Bool((xml[.Root][.AutoTracked].element?.text)!.lowercaseString == "true")
+		if root[.AutoTracked].boolValue, let text = root[.AutoTracked].element?.text {
+			config.autoTrack = Bool(text.lowercaseString == "true")
 		}
 
 		guard config.autoTrack else {
 			return config
 		}
 
-		if xml[.Root][.AutoTrackAppUpdate].boolValue {
-			config.autoTrackAppUpdate = Bool((xml[.Root][.AutoTrackAppUpdate].element?.text)!.lowercaseString == "true")
+		if root[.AutoTrackAppUpdate].boolValue, let text = root[.AutoTrackAppUpdate].element?.text {
+			config.autoTrackAppUpdate = Bool(text.lowercaseString == "true")
 		}
-		if xml[.Root][.AutoTrackAppVersionName].boolValue {
-			config.autoTrackAppVersionName = Bool((xml[.Root][.AutoTrackAppVersionName].element?.text)!.lowercaseString == "true")
+		if root[.AutoTrackAppVersionName].boolValue, let text = root[.AutoTrackAppVersionName].element?.text {
+			config.autoTrackAppVersionName = Bool(text.lowercaseString == "true")
 		}
-		if xml[.Root][.AutoTrackAppVersionCode].boolValue {
-			config.autoTrackAppVersionCode = Bool((xml[.Root][.AutoTrackAppVersionCode].element?.text)!.lowercaseString == "true")
+		if root[.AutoTrackAppVersionCode].boolValue, let text = root[.AutoTrackAppVersionCode].element?.text {
+			config.autoTrackAppVersionCode = Bool(text.lowercaseString == "true")
 		}
-		if xml[.Root][.AutoTrackApiLevel].boolValue {
-			config.autoTrackApiLevel = Bool((xml[.Root][.AutoTrackApiLevel].element?.text)!.lowercaseString == "true")
+		if root[.AutoTrackApiLevel].boolValue, let text = root[.AutoTrackApiLevel].element?.text {
+			config.autoTrackApiLevel = Bool(text.lowercaseString == "true")
 		}
-		if xml[.Root][.AutoTrackScreenOrientation].boolValue {
-			config.autoTrackScreenOrientation = Bool((xml[.Root][.AutoTrackScreenOrientation].element?.text)!.lowercaseString == "true")
+		if root[.AutoTrackScreenOrientation].boolValue, let text = root[.AutoTrackScreenOrientation].element?.text {
+			config.autoTrackScreenOrientation = Bool(text.lowercaseString == "true")
 		}
-		if xml[.Root][.AutoTrackConnectionType].boolValue {
-			config.autoTrackConnectionType = Bool((xml[.Root][.AutoTrackConnectionType].element?.text)!.lowercaseString == "true")
+		if root[.AutoTrackConnectionType].boolValue, let text = root[.AutoTrackConnectionType].element?.text {
+			config.autoTrackConnectionType = Bool(text.lowercaseString == "true")
 		}
-		if xml[.Root][.AutoTrackRequestUrlStoreSize].boolValue {
-			config.autoTrackRequestUrlStoreSize = Bool((xml[.Root][.AutoTrackRequestUrlStoreSize].element?.text)!.lowercaseString == "true")
+		if root[.AutoTrackRequestUrlStoreSize].boolValue, let text = root[.AutoTrackRequestUrlStoreSize].element?.text {
+			config.autoTrackRequestUrlStoreSize = Bool(text.lowercaseString == "true")
 		}
-		if xml[.Root][.AutoTrackAdvertiserId].boolValue {
-			config.autoTrackAdvertiserId = Bool((xml[.Root][.AutoTrackAdvertiserId].element?.text)!.lowercaseString == "true")
+		if root[.AutoTrackAdvertiserId].boolValue, let text = root[.AutoTrackAdvertiserId].element?.text {
+			config.autoTrackAdvertiserId = Bool(text.lowercaseString == "true")
 		}
 
-		if xml[.Root][.Screens].boolValue {
-			let screens = xml[.Root][.Screens].children
+		if root[.Screens].boolValue {
+			let screens = root[.Screens].children
 			for screen in screens {
 				guard let className = screen[.ClassName].element?.text else {
 					continue
@@ -119,11 +124,8 @@ public final class XmlConfigParser: ConfigParser {
 					mappingName = className
 				}
 				var autoScreen = AutoTrackedScreen(className: className, mappingName: mappingName)
-				if screen[.AutoTracked].boolValue {
-					autoScreen.enabled = Bool((screen[.AutoTracked].element?.text)!.lowercaseString == "true")
-				}
-				if screen[.AutoTracked].boolValue {
-					autoScreen.enabled = Bool((screen[.AutoTracked].element?.text)!.lowercaseString == "true")
+				if screen[.AutoTracked].boolValue, let text = screen[.AutoTracked].element?.text {
+					autoScreen.enabled = Bool(text.lowercaseString == "true")
 				}
 				guard screen[.TrackingParameter].boolValue else {
 					config.autoTrackScreens[className] = autoScreen
@@ -145,10 +147,10 @@ public final class XmlConfigParser: ConfigParser {
 					}
 				}
 
-				if trackingParameter[.PageParameter].boolValue {
-					parse(&pageTracking.pageParameter!.categories, fromParameters: trackingParameter[.PageParameter][.Categories])
-					parse(&pageTracking.pageParameter!.page, fromParameters: trackingParameter[.PageParameter][.Page])
-					parse(&pageTracking.pageParameter!.session, fromParameters: trackingParameter[.PageParameter][.Session])
+				if trackingParameter[.PageParameter].boolValue, let _ = pageTracking.pageParameter {
+					pageTracking.pageParameter?.categories = parse(pageTracking.pageParameter?.categories, fromParameters: trackingParameter[.PageParameter][.Categories])
+					pageTracking.pageParameter?.page = parse(pageTracking.pageParameter?.page, fromParameters: trackingParameter[.PageParameter][.Page])
+					pageTracking.pageParameter?.session = parse(pageTracking.pageParameter?.session, fromParameters: trackingParameter[.PageParameter][.Session])
 				}
 				autoScreen.pageTracking = pageTracking
 				config.autoTrackScreens[className] = autoScreen
@@ -216,7 +218,7 @@ internal extension XMLIndexer {
 	}
 }
 
-public enum XmlError: ErrorType {
+internal enum XmlError: ErrorType {
 	case CanNotBeEmpty
 	case MissingDomainOrId
 	case NoRoot

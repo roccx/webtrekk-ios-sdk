@@ -13,8 +13,9 @@ internal final class RequestManager {
 	internal var logger: Webtrekk.Logger
 
 
-	internal init(logger: Webtrekk.Logger) {
+	internal init(logger: Webtrekk.Logger, maximumNumberOfEvents: Int) {
 		self.logger = logger
+		self.maximumNumberOfEvents = maximumNumberOfEvents
 	}
 
 
@@ -157,7 +158,7 @@ internal final class RequestManager {
 			self.pendingTask = nil
 
 			if let error = error {
-				guard let requestError = error as? Error where requestError.retryable else {
+				guard error.retryable else {
 					self.logger.logError("Request \(url) failed and will not be retried: \(error)")
 
 					self.numberOfFailuresForCurrentEvent = 0
@@ -165,7 +166,7 @@ internal final class RequestManager {
 					// TODO save backup?
 					return
 				}
-				guard numberOfRetries < 10 else { // TODO use config
+				guard self.numberOfFailuresForCurrentEvent < 10 else { // TODO use config
 					self.logger.logError("Request \(url) failed and will no longer be retried: \(error)")
 
 					self.numberOfFailuresForCurrentEvent = 0
@@ -175,7 +176,7 @@ internal final class RequestManager {
 				}
 
 				self.numberOfFailuresForCurrentEvent += 1
-				self.sendNextEvent(maximumDelay: self.numberOfFailuresForCurrentEvent * 5)
+				self.sendNextEvent(maximumDelay: Double(self.numberOfFailuresForCurrentEvent * 5))
 				return
 			}
 

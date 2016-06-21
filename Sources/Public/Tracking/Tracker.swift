@@ -33,7 +33,7 @@ public final class DefaultScreenTracker: ScreenTracker {
 
 	public func didShow() {
 		if isVisible {
-			tracker.logWarning("Can't track view of screen \(name) which is already visible.")
+			tracker.logger.logWarning("Can't track view of screen \(name) which is already visible.")
 			return
 		}
 		isVisible = true
@@ -56,11 +56,11 @@ public final class DefaultScreenTracker: ScreenTracker {
 		precondition(!action.isEmpty)
 
 		if name.isEmpty {
-			tracker.logWarning("Screen name not set when tracking action \(action)")
+			tracker.logger.logWarning("Screen name not set when tracking action \(action)")
 			return
 		}
 		if !isVisible {
-			tracker.logWarning("Can't track action \(action) for screen \(name) which isn't visible.")
+			tracker.logger.logWarning("Can't track action \(action) for screen \(name) which isn't visible.")
 			return
 		}
 

@@ -61,12 +61,14 @@ internal final class BackupManager {
 private extension TrackingEvent {
 
 	private init?(json: [String : AnyObject]) {
-
+		return nil // FIXME
 	}
 
 
 	private func toJson() -> [String : AnyObject] {
-
+		var result = [String : AnyObject]()
+		
+		return result // FIXME
 	}
 }
 
@@ -161,7 +163,7 @@ extension TrackerConfiguration: Backupable {
 			config.samplingRate = samplingRate
 		}
 		if let sendDelay = json["sendDelay"] as? Int {
-			config.sendDelay = sendDelay
+			config.sendDelay = NSTimeInterval(sendDelay)
 		}
 		if let version = json["version"] as? Int {
 			config.version = version

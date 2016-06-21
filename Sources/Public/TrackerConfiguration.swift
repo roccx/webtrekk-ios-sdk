@@ -71,7 +71,7 @@ public struct TrackerConfiguration {
 	            optedOut: Bool = false,
 	            remoteConfigurationUrl: String = "",
 	            samplingRate: Int = 0,
-	            sendDelay: Int = 5 * 60,
+	            sendDelay: NSTimeInterval = NSTimeInterval(5 * 60),
 	            serverUrl: String,
 	            trackingId: String,
 	            version: Int = 0) {
