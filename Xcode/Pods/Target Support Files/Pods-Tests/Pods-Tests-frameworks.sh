@@ -82,16 +82,3 @@ strip_invalid_archs() {
   fi
 }
 
-
-if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "$BUILT_PRODUCTS_DIR/CryptoSwift/CryptoSwift.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/ReachabilitySwift/ReachabilitySwift.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/SWXMLHash/SWXMLHash.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/Webtrekk/Webtrekk.framework"
-fi
-if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "$BUILT_PRODUCTS_DIR/CryptoSwift/CryptoSwift.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/ReachabilitySwift/ReachabilitySwift.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/SWXMLHash/SWXMLHash.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/Webtrekk/Webtrekk.framework"
-fi

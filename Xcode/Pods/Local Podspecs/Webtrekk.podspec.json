@@ -24,14 +24,14 @@
     "UIKit"
   ],
   "dependencies": {
-    "SWXMLHash": [
-      "2.1.0"
+    "CryptoSwift": [
+      "~> 0.4.1"
     ],
     "ReachabilitySwift": [
-      "2.3.3"
+      "~> 2.3.3"
     ],
-    "CryptoSwift": [
-      "0.4.1"
+    "SWXMLHash": [
+      "~> 2.1.0"
     ]
   }
 }

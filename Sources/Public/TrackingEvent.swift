@@ -6,6 +6,7 @@ public struct TrackingEvent {
 
 	public let kind: Kind
 	public let properties: Properties
+	public var userProperties: UserProperties?
 
 
 	internal init(kind: Kind, properties: Properties) {

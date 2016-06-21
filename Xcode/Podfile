@@ -1,16 +1,15 @@
 platform :ios, '8.0'
 use_frameworks!
 
-target 'Project' do
-	pod 'Webtrekk',          :path => '..'
-end
+install! 'cocoapods', :share_schemes_for_development_pods => false
+
+target 'AutoTracking Example'
+target 'ChildTracking Example'
+target 'ManualTracking Example'
 
 target 'Tests' do
-	pod 'Webtrekk',          :path => '..'
+	inherit! :search_paths
 end
 
-post_install do |installer|
-	installer.pods_project.targets.each do |target|
-		target.build_configuration_list.set_setting('ENABLE_TESTABILITY', 'YES')
-	end
-end
+
+pod 'Webtrekk', :path => '..'

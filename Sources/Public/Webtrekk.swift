@@ -363,23 +363,21 @@ public final class Webtrekk {
 	}
 
 
-	internal func track(event: ActionTrackingEvent) {
-		track(.action(event))
+	public func trackAction(action: String, inPage page: String) {
+		// TODO
 	}
 
 
-	internal func track(event: MediaTrackingEvent) {
-		track(.media(event))
+	public func trackMedia(mediaName: String, mediaCategories: Set<Category> = [], player: AVPlayer) {
+		AVPlayerTracker.track(
+			player: player,
+			with:   DefaultMediaTracker(handler: self, mediaName: mediaName, mediaCategories: mediaCategories)
+		)
 	}
 
 
-	internal func track(event: PageTrackingEvent) {
-		track(.page(event))
-	}
-
-
-	public func trackMedia(player player: AVPlayer, id: String, categories: Set<Category> = []) {
-		AVPlayerTracker.track(player: player, with: MediaTracker(parent: self, mediaId: id, mediaCategories: categories))
+	public func trackViewOfPage(pageName: String) {
+		// TODO
 	}
 
 
@@ -404,7 +402,7 @@ public final class Webtrekk {
 	}
 
 
-	public func track(pageName: String) {
+	private func track(pageName: String) {
 //		track(PageTracking(pageName: pageName))
 	}
 
@@ -416,7 +414,7 @@ public final class Webtrekk {
 //	}
 
 
-	public func track(pageName: String, trackingParameter: TrackingParameter) {
+	private func track(pageName: String, trackingParameter: TrackingParameter) {
 		/*
 		var parameter = trackingParameter
 		parameter.generalParameter.firstStart = trackingParameter.firstStart()
@@ -436,10 +434,14 @@ public final class Webtrekk {
 //		}
 	}
 
+
+	public func trackerForMedia(mediaName: String, mediaCategories: Set<Category> = []) -> MediaTracker {
+		return DefaultMediaTracker(handler: self, mediaName: mediaName, mediaCategories: mediaCategories)
+	}
+
 	
-	public func trackerForScreen(screenName: String) -> PageTracker {
-		let tracker = DefaultPageTracker(parent: self, properties: PageProperties(pageName: screenName))
-		return tracker
+	public func trackerForPage(pageName: String) -> PageTracker {
+		return DefaultPageTracker(handler: self, pageName: pageName)
 	}
 
 
@@ -459,6 +461,33 @@ public final class Webtrekk {
 		}
 	}
 }
+
+
+extension Webtrekk: ActionTrackingEventHandler {
+
+	internal func handleEvent(event: ActionTrackingEvent) {
+		track(.action(event))
+	}
+
+}
+
+
+extension Webtrekk: MediaTrackingEventHandler {
+
+	internal func handleEvent(event: MediaTrackingEvent) {
+		track(.media(event))
+	}
+
+}
+
+
+extension Webtrekk: PageTrackingEventHandler {
+
+	internal func handleEvent(event: PageTrackingEvent) {
+		track(.page(event))
+	}
+}
+
 
 
 public enum WebtrekkError: ErrorType {

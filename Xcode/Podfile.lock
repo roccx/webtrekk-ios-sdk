@@ -3,9 +3,9 @@ PODS:
   - ReachabilitySwift (2.3.3)
   - SWXMLHash (2.1.0)
   - Webtrekk (1.0.0):
-    - CryptoSwift (= 0.4.1)
-    - ReachabilitySwift (= 2.3.3)
-    - SWXMLHash (= 2.1.0)
+    - CryptoSwift (~> 0.4.1)
+    - ReachabilitySwift (~> 2.3.3)
+    - SWXMLHash (~> 2.1.0)
 
 DEPENDENCIES:
   - Webtrekk (from `..`)
@@ -18,8 +18,8 @@ SPEC CHECKSUMS:
   CryptoSwift: 25b5aff3f260967391f8fff2e9abe4254d2c6fd5
   ReachabilitySwift: e0f6b6f280effb47731acfaaa2d5ffe223703793
   SWXMLHash: 7257a358b3ab2f7a209e0b4e4cf552e8b6df5f0f
-  Webtrekk: bfa9b0010611aa503943c40ad33067d2a1d05984
+  Webtrekk: c63f37f58ac6e9df38bfd27b2056b4ec8a466948
 
-PODFILE CHECKSUM: 31501378b98f1d6063c265e1332cbfcc65697cd4
+PODFILE CHECKSUM: 509ee090e13fa6e7e88584db0de3c9650cb52558
 
 COCOAPODS: 1.0.1

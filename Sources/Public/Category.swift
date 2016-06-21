@@ -10,6 +10,7 @@ public struct Category {
 	}
 }
 
+
 extension Category: Hashable {
 
 	public var hashValue: Int {
@@ -17,7 +18,7 @@ extension Category: Hashable {
 	}
 }
 
+
 public func == (a: Category, b: Category) -> Bool {
 	return a.index == b.index
 }
-
