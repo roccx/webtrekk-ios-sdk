@@ -58,6 +58,12 @@ public final class Webtrekk {
 		userDefaults.setValue(NSDate(), forKey: .ForceNewSession)
 
 		// TODO: shutdown queue
+		requestManager.sendAllEvents()
+	}
+
+
+	public static func appendAutoTracker(tracker: Webtrekk) {
+		autoTracker.append(tracker)
 	}
 
 
@@ -380,6 +386,16 @@ public final class Webtrekk {
 		// TODO
 	}
 
+
+	internal static func trackViewOfPage(pageName: String) {
+		guard !autoTracker.isEmpty else {
+			return
+		}
+
+		for tracker in autoTracker {
+			tracker.trackViewOfPage(pageName)
+		}
+	}
 
 	// MARK: Tracking
 

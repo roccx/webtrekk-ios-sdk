@@ -2,55 +2,227 @@ import Foundation
 
 internal final class UrlCreator {
 
-
-//	internal static func createUrlFromEvent(event: Event) -> NSURL? {
-//		var queryItems = [NSURLQueryItem]()
-//		queryItems += event.pixel.urlParameter
-//		queryItems += event.general.urlParameter
-//
-//		if let page = event.page {
-//			queryItems += page.urlParameter
-//		} else if let action = event.action {
-//			queryItems += action.urlParameter
-//		} else if let media = event.media {
-//			queryItems += media.urlParameter
-//		}
-//
-//		queryItems += event.urlProductParameters()
-//
-//		if let ecommerceParameter = event.ecommerce {
-//			queryItems += ecommerceParameter.urlParameter
-//		}
-//
-//		if let customerParameter = event.customer {
-//			queryItems += customerParameter.urlParameter
-//		}
-//
-//		queryItems += event.dictionaryAsQueryItem(event.custom)
-//		queryItems += event.dictionaryAsQueryItem(event.autoTracking)
-//		queryItems += event.dictionaryAsQueryItem(event.crossDevice)
-//		queryItems.append(NSURLQueryItem(name: .EndOfRequest, value: nil))
-//
-//		guard let baseUrl = event.baseUrl, url = baseUrl.URLByAppendingQueryItems(queryItems) else {
-//			return event.baseUrl
-//		}
-//
-//		return url
-//
-//	}
-
 	internal static func createUrlFromEvent(event: TrackingEvent) -> NSURL? {
-		// FIXME
-		return NSURL(string: "https://widgetlabs.eu")
+		// FIXME: Dummy Objects
+		let pixel = Pixel(width: 1111, height: 777, timestamp: NSDate())
+
+		let baseUrl = NSURLComponents(string: "https://widgetlabs.eu/") // NSURLComponents(string: "\(serverUrl)/\(trackingId)/wt")
+		var items = [NSURLQueryItem]()
+
+		// FIXME: Every Event needs a pageName
+		let p = "\(Webtrekk.pixelVersion),\("PAGE NAME"),0,\(pixel.width)x\(pixel.height),32,0,\(Int64(pixel.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
+		items.append(NSURLQueryItem(name: "p", value: p))
+
+		items.append(NSURLQueryItem(name: "eid", value: event.properties.everId))
+		items.append(NSURLQueryItem(name: "ps", value: "\(event.properties.samplingRate)"))
+		items.append(NSURLQueryItem(name: "mts", value: "\(Int64(event.properties.timestamp.timeIntervalSince1970 * 1000))"))
+		items.append(NSURLQueryItem(name: "tz", value: "\(event.properties.timeZone.daylightSavingTimeOffset / 60 / 60)"))
+		items.append(NSURLQueryItem(name: "X-WT-UA", value: event.properties.userAgent))
+
+		if let firstStart = event.properties.isFirstAppStart where firstStart {
+			items.append(NSURLQueryItem(name: "one", value: "1"))
+		}
+
+		if let ipAddress = event.properties.ipAddress {
+			items.append(NSURLQueryItem(name: "X-WT-IP", value: ipAddress))
+		}
+
+		// FIXME: missing "la" NSLocal?
+
+
+		switch event.kind {
+		case .action(let actionEvent): break
+		case .media(let mediaEvent):
+			items += mediaEvent.mediaProperties.asQueryItems(pixel.timestamp)
+
+			switch mediaEvent.kind {
+			case .finish: items.append(NSURLQueryItem(name: "mk", value: "eof"))
+			case .pause: items.append(NSURLQueryItem(name: "mk", value: "pause"))
+			case .play: items.append(NSURLQueryItem(name: "mk", value: "play"))
+			case .position: items.append(NSURLQueryItem(name: "mk", value: "pos"))
+			case .seek: items.append(NSURLQueryItem(name: "mk", value: "seek"))
+			case .stop: items.append(NSURLQueryItem(name: "mk", value: "stop"))
+			}
+
+			if let ecommerceProperties = mediaEvent.ecommerceProperties {
+				items += ecommerceProperties.asQueryItems()
+			}
+
+			if let pageProperties = mediaEvent.pageProperties {
+				items += pageProperties.asQueryItems()
+			}
+
+		case .page(let pageEvent):
+			items += pageEvent.pageProperties.asQueryItems()
+
+
+			if let advertisementProperties = pageEvent.advertisementProperties {
+				items.append(NSURLQueryItem(name: "mc", value: advertisementProperties.advertisement))
+				items += advertisementProperties.campaign.map({NSURLQueryItem(name: "cc\($0.index)", value: $0.name)})
+			}
+
+			if let ecommerceProperties = pageEvent.ecommerceProperties {
+				items += ecommerceProperties.asQueryItems()
+			}
+
+			if let userProperties = pageEvent.userProperties {
+				items += userProperties.asQueryItems()
+			}
+		}
+
+		items += [NSURLQueryItem(name: "eor", value: nil)]
+		baseUrl?.queryItems = items
+		return baseUrl?.URL
 	}
 
 }
 
-private extension TrackingEvent {
+internal struct Pixel {
+	var width: Int
+	var height: Int
+	var timestamp: NSDate
+}
 
-	private func pixel() -> String {
-		//[NSURLQueryItem(name: .Pixel, value: "\(version),\(pageName.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!),0,\(Int(displaySize.width))x\(Int(displaySize.height)),32,0,\(Int64(timeStamp.timeIntervalSince1970 * 1000)),0,0,0")]
-		return "VERSION,PAGENAME(safelyEncoded),0,WidthxHeight,32,0,TIMESTAMP,0,0,0"
+private extension EcommerceProperties {
+
+	private func asQueryItems() ->  [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		items += categories.map({NSURLQueryItem(name: "cb\($0.index)", value: $0.name)})
+		if let currency = currency {
+			items.append(NSURLQueryItem(name: "cr", value: currency))
+		}
+		if let orderNumber = orderNumber {
+			items.append(NSURLQueryItem(name: "oi", value: orderNumber))
+		}
+		items.append(NSURLQueryItem(name: "st", value: status.rawValue))
+		items.append(NSURLQueryItem(name: "ov", value: "\(totalValue)"))
+		if let voucherValue = voucherValue {
+			items.append(NSURLQueryItem(name: "cb563", value: "\(voucherValue)"))
+		}
+		return items
+	}
+}
+
+
+private extension MediaProperties {
+
+	private func asQueryItems(timestamp: NSDate) -> [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		if let bandwidth = bandwidth {
+			items.append(NSURLQueryItem(name: "bw", value: "\(Int64(bandwidth))"))
+		}
+		if !categories.isEmpty {
+			items += categories.map({NSURLQueryItem(name: "mg\($0.index)", value: $0.name)})
+		}
+		if let duration = duration {
+			items.append(NSURLQueryItem(name: "mt2", value: "\(Int64(duration))"))
+		}
+		else {
+			items.append(NSURLQueryItem(name: "mt2", value: "\(0)"))
+		}
+		items.append(NSURLQueryItem(name: "mi", value: name))
+
+		if let position = position {
+			items.append(NSURLQueryItem(name: "mt1", value: "\(Int64(position))"))
+		}
+		else {
+			items.append(NSURLQueryItem(name: "mt1", value: "\(0)"))
+		}
+		if let soundIsMuted = soundIsMuted {
+			items.append(NSURLQueryItem(name: "mut", value: soundIsMuted ? "1" : "0"))
+		}
+		if let soundVolume = soundVolume {
+			items.append(NSURLQueryItem(name: "mut", value: "\(Int64(soundVolume * 100))"))
+		}
+		items.append(NSURLQueryItem(name: "x", value: "\(Int64(timestamp.timeIntervalSince1970 * 1000))"))
+		return items
+	}
+}
+
+
+private extension PageProperties {
+
+	private func asQueryItems() -> [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		items += categories.map({NSURLQueryItem(name: "cg\($0.index)", value: $0.name)})
+		items += page.map({NSURLQueryItem(name: "cp\($0.index)", value: $0.name)})
+		items += session.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.name)})
+		return items
+	}
+}
+
+
+private extension UserProperties {
+
+	private func asQueryItems() -> [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		items += categories.map({NSURLQueryItem(name: "uc\($0.index)", value: $0.name)})
+		if let birthday = birthday {
+			items = items.filter({$0.name != "uc707"})
+			items.append(NSURLQueryItem(name: "uc707", value: birthdayFormatter.stringFromDate(birthday)))
+		}
+		if let city = city {
+			items = items.filter({$0.name != "uc708"})
+			items.append(NSURLQueryItem(name: "uc708", value: city))
+		}
+		if let country = country {
+			items = items.filter({$0.name != "uc709"})
+			items.append(NSURLQueryItem(name: "uc709", value: country))
+		}
+		if let eMail = eMail {
+			items = items.filter({$0.name != "uc700"})
+			items.append(NSURLQueryItem(name: "uc700", value: eMail))
+		}
+		if let eMailReceiverId = eMailReceiverId {
+			items = items.filter({$0.name != "uc701"})
+			items.append(NSURLQueryItem(name: "uc701", value: eMailReceiverId))
+		}
+		if let firstName = firstName {
+			items = items.filter({$0.name != "uc703"})
+			items.append(NSURLQueryItem(name: "uc703", value: firstName))
+		}
+		if let gender = gender {
+			items = items.filter({$0.name != "uc706"})
+			items.append(NSURLQueryItem(name: "uc706", value: gender == UserProperties.Gender.male ? "1" :  "2"))
+		}
+		if let lastName = lastName {
+			items = items.filter({$0.name != "uc704"})
+			items.append(NSURLQueryItem(name: "uc704", value: lastName))
+		}
+		if let newsletter = newsletter {
+			items = items.filter({$0.name != "uc702"})
+			items.append(NSURLQueryItem(name: "uc702", value: newsletter ? "1" : "2"))
+		}
+		if let number = number {
+			items.append(NSURLQueryItem(name: "cd", value: number))
+		}
+		if let phoneNumber = phoneNumber {
+			items = items.filter({$0.name != "uc705"})
+			items.append(NSURLQueryItem(name: "uc705", value: phoneNumber))
+		}
+		if let street = street {
+			items = items.filter({$0.name != "uc711"})
+			items.append(NSURLQueryItem(name: "uc711", value: street))
+		}
+		if let streetNumber = streetNumber {
+			items = items.filter({$0.name != "uc712"})
+			items.append(NSURLQueryItem(name: "uc712", value: streetNumber))
+		}
+		if let zip = zip {
+			items = items.filter({$0.name != "uc710"})
+			items.append(NSURLQueryItem(name: "uc710", value: zip))
+		}
+
+		return items
+	}
+
+
+	private var birthdayFormatter: NSDateFormatter {
+		get {
+			let formatter = NSDateFormatter()
+			formatter.dateFormat = "yyyyMMdd"
+			return formatter
+		}
 	}
 }
 

@@ -1,10 +1,15 @@
 public struct PageTrackingEvent {
 
-	public var ecommerceProperties: EcommerceProperties?
-	public var pageProperties: PageProperties
+	internal var advertisementProperties: AdvertisementProperties?
+	internal var ecommerceProperties: EcommerceProperties?
+	internal var pageProperties: PageProperties
+	internal var userProperties: UserProperties?
 
 
-	public init(pageProperties: PageProperties) {
+	public init(advertisementProperties: AdvertisementProperties? = nil,
+	            ecommerceProperties: EcommerceProperties? = nil,
+	            pageProperties: PageProperties,
+	            userProperties: UserProperties? = nil) {
 		self.pageProperties = pageProperties
 	}
 }

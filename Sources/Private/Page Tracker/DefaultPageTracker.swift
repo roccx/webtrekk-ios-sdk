@@ -7,8 +7,10 @@ internal final class DefaultPageTracker: PageTracker {
 
 	private let handler: Handler
 	
+	internal var advertisementProperties: AdvertisementProperties?
+	internal var ecommerceProperties: EcommerceProperties?
 	internal var pageProperties: PageProperties
-
+	internal var userProperties: UserProperties?
 
 	internal init(handler: Handler, pageName: String) {
 		self.handler = handler
@@ -18,7 +20,12 @@ internal final class DefaultPageTracker: PageTracker {
 
 
 	internal func trackAction(actionName: String) {
-		handler.handleEvent(ActionTrackingEvent(actionProperties: ActionProperties(name: actionName)))
+		trackAction(ActionProperties(name: actionName))
+	}
+
+
+	internal func trackAction(actionProperties: ActionProperties) {
+		handler.handleEvent(ActionTrackingEvent(actionProperties: actionProperties))
 	}
 
 
@@ -36,7 +43,7 @@ internal final class DefaultPageTracker: PageTracker {
 
 
 	internal func trackView() {
-		handler.handleEvent(PageTrackingEvent(pageProperties: pageProperties))
+		handler.handleEvent(PageTrackingEvent(advertisementProperties: advertisementProperties, ecommerceProperties: ecommerceProperties, pageProperties: pageProperties, userProperties: userProperties))
 	}
 }
 
@@ -45,7 +52,9 @@ extension DefaultPageTracker: MediaTrackingEventHandler {
 
 	internal func handleEvent(event: MediaTrackingEvent) {
 		var event = event
-		event.pageProperties = pageProperties
+		if event.pageProperties == nil {
+			event.pageProperties = pageProperties
+		}
 		handler.handleEvent(event)
 	}
 }

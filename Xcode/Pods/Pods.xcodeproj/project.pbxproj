@@ -107,6 +107,7 @@
 		B2149F1040FB8BCDC2FDA6E58EE8DD07 /* TrackingEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577D844D61E2F5B8C797AE6BB795916E /* TrackingEvent.swift */; };
 		B51E8A01409B1067D3BE8535E7734B08 /* Webtrekk.h in Headers */ = {isa = PBXBuildFile; fileRef = F9337181F50B8E5E3431BEAF94CBDB2B /* Webtrekk.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B65773B0448A713786714269C30BB67C /* String+FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F1F597AC6A78B73E70D960A9EB394D /* String+FoundationExtension.swift */; };
+		B7FA0FF91D1A99A800E6BE31 /* UIViewControllerTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FA0FF71D1A999F00E6BE31 /* UIViewControllerTracker.swift */; };
 		B9EF447788E47A39AD75372881C39899 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B785643055E6404BF0EFECBE8DEC1E17 /* Extensions.swift */; };
 		BE4D68C8C5B2736CAA7C58FEA6FF5BBE /* CFB.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C2643F36F8B2FB8F032CB447D29BA7 /* CFB.swift */; };
 		BF05E420ABE5BC7CE455FEF0326FC17B /* Bit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26214CB8E73F62CF55F3B6F87696FBF5 /* Bit.swift */; };
@@ -388,6 +389,7 @@
 		B60918974FBE49F27FD9D96E8572034A /* BlockModeOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockModeOptions.swift; path = Sources/CryptoSwift/BlockMode/BlockModeOptions.swift; sourceTree = "<group>"; };
 		B60FAD9C5F62C369A71C9AA1C1862F9E /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/AVKit.framework; sourceTree = DEVELOPER_DIR; };
 		B785643055E6404BF0EFECBE8DEC1E17 /* Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		B7FA0FF71D1A999F00E6BE31 /* UIViewControllerTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewControllerTracker.swift; sourceTree = "<group>"; };
 		B939594238140876F3A00FD991709253 /* TrackerConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackerConfiguration.swift; sourceTree = "<group>"; };
 		B989BB617BBD4A9FED909EC257D0AE89 /* Pods_AutoTracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AutoTracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB1DD65FD10FF0043D2403169BC9DDA7 /* MediaTracker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaTracker.swift; sourceTree = "<group>"; };
@@ -927,6 +929,7 @@
 			children = (
 				8CEF583047A1B3382E3194D60582896F /* DefaultPageTracker.swift */,
 				A2C4C8A4C68A34D77D91CE7751673B17 /* PageTrackingEventHandler.swift */,
+				B7FA0FF71D1A999F00E6BE31 /* UIViewControllerTracker.swift */,
 			);
 			path = "Page Tracker";
 			sourceTree = "<group>";
@@ -1347,6 +1350,7 @@
 				4E43D7BB4AA2E748A17EB0BC9AA52D50 /* RequestManager.swift in Sources */,
 				155203E799F863C2E0E4918AABA36434 /* SequenceType.swift in Sources */,
 				05BCEC590F5CB77FF3EC9801D22D18D9 /* StrongReference.swift in Sources */,
+				B7FA0FF91D1A99A800E6BE31 /* UIViewControllerTracker.swift in Sources */,
 				D66E079451F4D1C43EDC3CA30BD53AAB /* TrackerConfiguration.swift in Sources */,
 				B2149F1040FB8BCDC2FDA6E58EE8DD07 /* TrackingEvent.swift in Sources */,
 				6BA7A1FAC3982C31CFB38AC1BBCF4054 /* TrackingParameter.swift in Sources */,
