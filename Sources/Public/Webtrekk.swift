@@ -15,7 +15,7 @@ public final class Webtrekk {
 
 	private lazy var backupManager: BackupManager = BackupManager(fileManager: self.fileManager, logger: self.logger)
 	private lazy var fileManager: FileManager = FileManager(logger: self.logger, identifier: self.config.trackingId)
-	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, maximumNumberOfEvents: self.config.maxRequests)
+	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, backupDelegate: self.backupManager, maximumNumberOfEvents: self.config.maxRequests)
 
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
@@ -60,7 +60,7 @@ public final class Webtrekk {
 		userDefaults.setValue(NSDate(), forKey: .ForceNewSession)
 
 		// TODO: shutdown queue
-		requestManager.sendAllEvents()
+		requestManager.shutDown()
 	}
 
 
@@ -336,7 +336,6 @@ public final class Webtrekk {
 					else {
 						eventProperties.connectionType = .other
 					}
-
 				}
 				else if reachability.isReachable() {
 					eventProperties.connectionType = .other
@@ -344,7 +343,6 @@ public final class Webtrekk {
 				else {
 					eventProperties.connectionType = .offline
 				}
-
 			}
 			if config.autoTrackRequestUrlStoreSize {
 				eventProperties.eventQueueSize = requestManager.eventCount
@@ -361,14 +359,12 @@ public final class Webtrekk {
 		
 		var event = TrackingEvent(kind: eventKind, properties: eventProperties)
 
-		NSLog("%@", "EVENT: \(event)")
-
 		for plugin in plugins {
 			event = plugin.tracker(self, eventForTrackingEvent: event)
 		}
 
-		if shouldTrack() {
-			requestManager.enqueueEvent(event, maximumDelay: config.sendDelay)
+		if shouldTrack(), let url = UrlCreator.createUrlFromEvent(event, serverUrl: config.serverUrl, trackingId: config.trackingId) {
+			requestManager.enqueueEvent(url, maximumDelay: config.sendDelay)
 		}
 
 		for plugin in plugins {
