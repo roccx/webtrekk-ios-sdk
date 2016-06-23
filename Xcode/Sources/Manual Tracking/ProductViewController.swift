@@ -18,10 +18,10 @@ class ProductViewController: UIViewController {
 				return
 			}
 
-			tracker.trackAction("Play Video tapped")
+			tracker.trackAction(name: "Play Video tapped")
 
 			let player = AVPlayer(URL: videoUrl)
-			tracker.trackMedia("product-video-\(productId)", player: player)
+			tracker.trackerForMedia(name: "product-video-\(productId)", player: player)
 
 			playerViewController.player = player
 
@@ -40,6 +40,6 @@ class ProductViewController: UIViewController {
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
 
-		tracker.trackView()
+		tracker.trackPageView()
 	}
 }

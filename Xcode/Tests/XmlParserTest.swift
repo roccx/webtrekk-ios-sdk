@@ -1,7 +1,6 @@
 import XCTest
 
 import Foundation
-import SWXMLHash
 @testable import Webtrekk
 
 class XmlParserTest: XCTestCase {

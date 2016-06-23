@@ -4,6 +4,7 @@ internal final class UrlCreator {
 
 	internal static func createUrlFromEvent(request: TrackingRequest, serverUrl: NSURL, trackingId: String) -> NSURLComponents? {
 		guard let baseUrl = NSURLComponents(string: "\(serverUrl)/\(trackingId)/wt") else {
+			NSLog("Url could not be created from ServerUrl '\(serverUrl)' and TrackingId '\(trackingId)'.")
 			return nil
 		}
 
@@ -111,6 +112,7 @@ internal final class UrlCreator {
 
 		}
 		guard !pageName.isEmpty else {
+			NSLog("Url creation could not finish because page name was not set in event '\(request)'.")
 			return nil
 		}
 		let screenDimension = Webtrekk.screenDimensions()

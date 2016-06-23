@@ -15,67 +15,39 @@ internal final class BackupManager {
 	}
 
 
-	internal func saveEvents(events: [NSURLComponents], to file: NSURL) {
-		var jsonEvents = [[String: AnyObject]]()
-		for event in events {
-			guard let url = event.string as? AnyObject else {
-				continue
-			}
-			jsonEvents.append(["url": url])
-		}
-
-
-		do {
-			let data = try NSJSONSerialization.dataWithJSONObject(jsonEvents, options: [])
-			fileManager.saveData(toFileUrl: file, data: data)
-		}
-		catch let error {
-			logger.logError("Cannot save pending events to disk: \(error)")
-		}
-
-		guard !jsonEvents.isEmpty else{
-			logger.logInfo("All events could be sent.")
+	internal func saveEvents(events: [NSURL], to file: NSURL) {
+		guard let path = file.path else {
+			logger.logError("Could not save requests to location \(file)")
 			return
 		}
-		logger.logInfo("Stored \(jsonEvents.count) to disc.")
+		NSKeyedArchiver.archiveRootObject(events, toFile: path)
+		logger.logInfo("Archived \(events.count) requests.")
 	}
 
 
-	internal func loadEvents(from file: NSURL) -> [NSURLComponents] {
-		guard let data = fileManager.restoreData(fromFileUrl: file) else {
+	internal func loadEvents(from file: NSURL) -> [NSURL] {
+		guard let path = file.path else {
+			logger.logError("Could not finds requests at location \(file)")
 			return []
 		}
-		guard let jsonEvents: [[String: AnyObject]] = (try? NSJSONSerialization.JSONObjectWithData(data, options: [])) as? [[String: AnyObject]] else {
-			logger.logInfo("Data was not a valid json to be restored.")
-
+		guard let urls = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as? [NSURL] else {
+			logger.logError("Could not load events to from \(file)")
 			return []
 		}
-
-		var events = [NSURLComponents]()
-		events.reserveCapacity(jsonEvents.count)
-
-		for jsonEvent in jsonEvents {
-			guard let urlString = jsonEvent["url"] as? String, url = NSURLComponents(string: urlString) else {
-				logger.logError("Cannot load pending event from disk: \(jsonEvent)")
-				continue
-			}
-
-			events.append(url)
-		}
-
-		return events
+		logger.logInfo("Could load \(urls.count) requests.")
+		return urls
 	}
 }
 
 
 extension BackupManager: RequestManager.Delegate {
 
-	internal func loadEvents() -> [NSURLComponents] {
+	internal func loadEvents() -> [NSURL] {
 		return loadEvents(from: fileManager.eventFileUrl)
 	}
 
 
-	internal func saveEvents(events: [NSURLComponents]) {
+	internal func saveEvents(events: [NSURL]) {
 		saveEvents(events, to: fileManager.eventFileUrl)
 	}
 }

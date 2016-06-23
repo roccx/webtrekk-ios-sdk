@@ -16,7 +16,7 @@ class ProductListViewController: UITableViewController {
 				return
 			}
 
-			tracker.trackAction("Product tapped")
+			tracker.trackAction(name: "Product tapped")
 
 			productViewController.productId = indexPath.row + 1
 		}
@@ -25,7 +25,7 @@ class ProductListViewController: UITableViewController {
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-		tracker.trackView()
+		tracker.trackPageView()
 	}
 }
 
