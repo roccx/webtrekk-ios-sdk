@@ -397,17 +397,6 @@ public final class Webtrekk {
 	}
 
 
-	internal static func trackViewOfPage(pageName: String) {
-		guard !autoTracker.isEmpty else {
-			return
-		}
-
-		for tracker in autoTracker {
-			tracker.trackViewOfPage(pageName)
-		}
-	}
-
-
 	public func trackerForMedia(mediaName: String, mediaGroups: Set<IndexedProperty> = []) -> MediaTracker {
 		return DefaultMediaTracker(handler: self, mediaName: mediaName, mediaGroups: mediaGroups)
 	}
