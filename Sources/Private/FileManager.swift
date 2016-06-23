@@ -12,9 +12,9 @@ internal final class FileManager {
 	internal init(logger: Webtrekk.Logger, identifier: String) {
 		self.logger = logger
 		self.identifier = identifier
-		#if os(iOS)
+		#if os(iOS) || os(watchOS)
 			_directoryUrl = try! NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: .AllDomainsMask, appropriateForURL: nil, create: true)
-		#elseif os(watchOS)
+		#elseif os(tvOS)
 			_directoryUrl = try! NSFileManager.defaultManager().URLForDirectory(.CachesDirectory, inDomain: .AllDomainsMask, appropriateForURL: nil, create: true)
 		#endif
 	}
