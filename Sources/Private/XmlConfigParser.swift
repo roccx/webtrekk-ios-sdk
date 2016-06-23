@@ -8,34 +8,11 @@ internal struct XmlTrackingConfigurationParser {
 	}
 }
 
-/*
-
-let viewControllerTypeName = try xmlPage.nonemptyStringAttribute("viewControllerType")
-
-let pattern: NSRegularExpression
-if viewControllerTypeName.hasPrefix("/") {
-guard let patternString = viewControllerTypeName.firstMatchForRegularExpression("^/(.*)/$")?[1] else {
-throw Error(message: "Invalid regular expression: missing trailing slash")
-}
-
-pattern = try NSRegularExpression(pattern: patternString, options: [])
-}
-else {
-pattern = try NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPatternForString(viewControllerTypeName))\\b", options: [])
-}
-
-let pageProperties = try parsePageProperties(xmlPage["pageProperties"])
-
-config.autoTrackScreens.append(TrackerConfiguration.AutotrackedPage(
-pageProperties: pageProperties,
-pattern:		pattern
-))
-*/
 
 
 private class Parser: NSObject {
 
-	private var automaticallyTrackedPages: [TrackingConfiguration.Page]?
+	private var automaticallyTrackedPages = Array<TrackingConfiguration.Page>()
 	private var automaticallyTracksAdvertisingId: Bool?
 	private var automaticallyTracksAppName: Bool?
 	private var automaticallyTracksAppUpdates: Bool?
@@ -53,6 +30,7 @@ private class Parser: NSObject {
 	private var webtrekkId: String?
 
 	private lazy var configuration: TrackingConfiguration = lazyPlaceholder()
+	private var currentPageProperties: PageProperties?
 	private var currentString = ""
 	private var elementPath = [String]()
 	private var error: ErrorType?
@@ -87,7 +65,7 @@ private class Parser: NSObject {
 		var configuration = TrackingConfiguration(webtrekkId: webtrekkId, serverUrl: serverUrl)
 		configuration.version = version
 
-		if let automaticallyTrackedPages = automaticallyTrackedPages {
+		if !automaticallyTrackedPages.isEmpty {
 			configuration.automaticallyTrackedPages = automaticallyTrackedPages
 		}
 		if let automaticallyTracksAdvertisingId = automaticallyTracksAdvertisingId {
@@ -143,6 +121,18 @@ private class Parser: NSObject {
 
 	private var elementPathString: String {
 		return elementPath.map({ "<\($0)>" }).joinWithSeparator(".")
+	}
+
+
+	private func parseBool(string: String) -> Bool? {
+		switch (string) {
+		case "true":  return true
+		case "false": return false
+
+		default:
+			fail(message: "'\(string)' is not a valid boolean (expected 'true' or 'false')")
+			return nil
+		}
 	}
 
 
@@ -236,7 +226,7 @@ private class Parser: NSObject {
 			return
 		}
 
-		pushState(.simpleElement(completion))
+		pushState(.simpleElement(completion: completion))
 	}
 
 
@@ -276,9 +266,12 @@ private class Parser: NSObject {
 	private enum State {
 
 		case automaticTracking
+		case automaticTrackingPage(viewControllerTypeName: String, viewControllerTypeNamePattern: NSRegularExpression)
+		case automaticTrackingPages
 		case initial
+		case pageProperties(name: String)
 		case root
-		case simpleElement((String) -> Void)
+		case simpleElement(completion: (String) -> Void)
 		case unknown
 	}
 }
@@ -288,11 +281,23 @@ extension Parser: NSXMLParserDelegate {
 
 	@objc
 	private func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+		currentString = currentString.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+
 		switch state {
+		case let .automaticTrackingPage(_, viewControllerTypePattern):
+			if let pageProperties = currentPageProperties {
+				automaticallyTrackedPages.append(TrackingConfiguration.Page(viewControllerTypeNamePattern: viewControllerTypePattern, pageProperties: pageProperties))
+
+				currentPageProperties = nil
+			}
+			else {
+				fail(message: "<pageProperties> element missing")
+			}
+
 		case let .simpleElement(completion):
 			completion(currentString)
 
-		case .automaticTracking, .initial, .root, .unknown: // FIXME
+		case .automaticTracking, .automaticTrackingPages, .initial, .pageProperties, .root, .unknown:
 			break
 		}
 
@@ -304,17 +309,92 @@ extension Parser: NSXMLParserDelegate {
 
 
 	@objc
-	private func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+	private func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName: String?, attributes: [String : String]) {
 		currentString = ""
 		elementPath.append(elementName)
 
 		switch state {
 		case .automaticTracking:
-			// FIXME
-			pushState(.unknown)
+			switch (elementName) {
+			case "advertisingIdentifier": pushSimpleElement(automaticallyTracksAdvertisingId)        { value in self.automaticallyTracksAdvertisingId = self.parseBool(value) }
+			case "appName":               pushSimpleElement(automaticallyTracksAppName)              { value in self.automaticallyTracksAppName = self.parseBool(value) }
+			case "appUpdates":            pushSimpleElement(automaticallyTracksAppUpdates)           { value in self.automaticallyTracksAppUpdates = self.parseBool(value) }
+			case "appVersion":            pushSimpleElement(automaticallyTracksAppVersion)           { value in self.automaticallyTracksAppVersion = self.parseBool(value) }
+			case "connectionType":        pushSimpleElement(automaticallyTracksConnectionType)       { value in self.automaticallyTracksConnectionType = self.parseBool(value) }
+			case "eventQueueSize":        pushSimpleElement(automaticallyTracksEventQueueSize)       { value in self.automaticallyTracksEventQueueSize = self.parseBool(value) }
+			case "interfaceOrientation":  pushSimpleElement(automaticallyTracksInterfaceOrientation) { value in self.automaticallyTracksInterfaceOrientation = self.parseBool(value) }
+			case "pages":                 pushState(.automaticTrackingPages)
+
+			default:
+				warn(message: "unknown element")
+				pushState(.unknown)
+			}
+
+		case let .automaticTrackingPage(viewControllerTypeName):
+			switch (elementName) {
+			case "pageProperties":
+				if let name = attributes["name"]?.nonEmpty {
+					currentPageProperties = PageProperties(name: name)
+					pushState(.pageProperties(name: name))
+				}
+				else {
+					fail(message: "missing attribute 'name'")
+					pushState(.unknown)
+				}
+
+			default:
+				warn(message: "unknown element in page '\(viewControllerTypeName)'")
+				pushState(.unknown)
+			}
+
+		case .automaticTrackingPages:
+			if elementName == "page" {
+				if let viewControllerTypeName = attributes["viewControllerType"]?.nonEmpty {
+					let patternString: String?
+					if viewControllerTypeName.hasPrefix("/") {
+						if let _patternString = viewControllerTypeName.firstMatchForRegularExpression("^/(.*)/$")?[1] {
+							patternString = _patternString
+						}
+						else {
+							fail(message: "invalid regular expression: missing trailing slash")
+							patternString = nil
+						}
+					}
+					else {
+						patternString = "\\b\(NSRegularExpression.escapedPatternForString(viewControllerTypeName))\\b"
+					}
+
+					if let patternString = patternString {
+						let pattern: NSRegularExpression?
+						do {
+							pattern = try NSRegularExpression(pattern: patternString, options: [])
+						}
+						catch let error {
+							fail(message: "invalid regular expression: \(error)")
+							pattern = nil
+						}
+
+						if let pattern = pattern {
+							pushState(.automaticTrackingPage(viewControllerTypeName: viewControllerTypeName, viewControllerTypeNamePattern: pattern))
+						}
+					}
+				}
+				else {
+					fail(message: "missing attribute 'viewControllerType'")
+					pushState(.unknown)
+				}
+			}
+			else {
+				warn(message: "unknown element")
+				pushState(.unknown)
+			}
 
 		case .initial:
 			pushState(.root)
+
+		case let .pageProperties(name):
+			warn(message: "not yet implemented") // FIXME
+			pushState(.unknown)
 
 		case .root:
 			switch (elementName) {
@@ -334,7 +414,7 @@ extension Parser: NSXMLParserDelegate {
 			}
 
 		case .simpleElement:
-			warn(message: "unexpected element")
+			fail(message: "unexpected element")
 			pushState(.unknown)
 
 		case .unknown:
