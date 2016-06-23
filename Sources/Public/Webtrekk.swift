@@ -6,18 +6,23 @@ import UIKit
 
 public final class Webtrekk {
 
+	public static let version = "4.0"
+
+
+	private static let sharedDefaults = UserDefaults.standardDefaults.child(namespace: "webtrekk")
+
 	internal typealias ScreenDimension = (width: Int, height: Int)
 
-	public static let version = "4.0"
-	public static let pixelVersion = "400"
-
+	internal static let pixelVersion = "400"
 	public static let defaultLogger = DefaultLogger()
 
 	private lazy var backupManager: BackupManager = BackupManager(fileManager: self.fileManager, logger: self.logger)
 	private lazy var fileManager: FileManager = FileManager(logger: self.logger, identifier: self.configuration.webtrekkId)
 	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, backupDelegate: self.backupManager, maximumNumberOfEvents: self.configuration.eventQueueLimit)
 
+	private let defaults: UserDefaults
 	private var hibernationObserver: NSObjectProtocol?
+	private var isSampling = false
 	private var wakeUpObserver: NSObjectProtocol?
 
 	public let configuration: TrackingConfiguration
@@ -28,6 +33,7 @@ public final class Webtrekk {
 
 	public init(configuration: TrackingConfiguration) {
 		self.configuration = configuration
+		self.defaults = Webtrekk.sharedDefaults.child(namespace: configuration.webtrekkId)
 
 		setUp()
 	}
@@ -125,6 +131,15 @@ public final class Webtrekk {
 	}
 
 
+	private static func loadEverId() -> String {
+		return sharedDefaults.stringForKey(DefaultsKeys.everId) ?? {
+			let everId = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
+			sharedDefaults.set(key: DefaultsKeys.everId, to: everId)
+			return everId
+		}()
+	}
+
+
 	private func defaultUserAgent() -> String {
 		return "Tracking Library \(Webtrekk.version) (\(Webtrekk.operatingSystemName()); \(Webtrekk.operatingSystemVersionString()); \(Webtrekk.deviceModelString()); \(NSLocale.currentLocale().localeIdentifier))"
 	}
@@ -141,22 +156,7 @@ public final class Webtrekk {
 	}
 
 
-	private var everId: String {
-		get {
-
-			let userDefaults = NSUserDefaults.standardUserDefaults()
-			if let eid = userDefaults.stringForKey(UserStoreKey.Eid) {
-				return eid
-			}
-			let eid = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
-			userDefaults.setValue(eid, forKey:"eid")
-			return eid
-		}
-		set {
-			let userDefaults = NSUserDefaults.standardUserDefaults()
-			userDefaults.setValue(newValue, forKey:"eid")
-		}
-	}
+	public static let everId = Webtrekk.loadEverId()
 
 
 	private func firstStart() -> Bool {
@@ -168,6 +168,16 @@ public final class Webtrekk {
 		return false
 	}
 
+
+	public static var isOptedOut = sharedDefaults.boolForKey(DefaultsKeys.isOptedOut) ?? false {
+		didSet {
+			guard isOptedOut != oldValue else {
+				return
+			}
+
+			sharedDefaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
+		}
+	}
 
 
 	public var logger: Logger = Webtrekk.defaultLogger {
@@ -219,8 +229,10 @@ public final class Webtrekk {
 	
 	private func setUp() {
 		setUpConfig()
+
+		updateSampling()
+
 		setUpRequestManager()
-		setUpOptedOut()
 		setUpLifecycleObserver()
 
 		updateAutomaticTracking()
@@ -282,11 +294,6 @@ public final class Webtrekk {
 	}
 
 
-	private func setUpOptedOut() {
-		configuration.optedOut =	NSUserDefaults.standardUserDefaults().boolForKey(UserStoreKey.OptedOut)
-	}
-
-
 	private func setUpRequestManager() {
 		NSTimer.scheduledTimerWithTimeInterval(5) {
 			self.requestManager.sendAllEvents()
@@ -294,23 +301,14 @@ public final class Webtrekk {
 	}
 
 
-	func shouldTrack() -> Bool {
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-		let userShouldBeSampled: Bool
-		if let _ = userDefaults.objectForKey(UserStoreKey.Sampled.rawValue) {
-			userShouldBeSampled = userDefaults.boolForKey(UserStoreKey.Sampled)
-		}
-		else {
-			userShouldBeSampled = (configuration.samplingRate == 0) || (Int64(arc4random()) % Int64(configuration.samplingRate) == 0)
-			userDefaults.setBool(userShouldBeSampled, forKey: UserStoreKey.Sampled.rawValue)
-		}
-		return userShouldBeSampled && !configuration.optedOut
+	private var shouldEnqueueNewEvents: Bool {
+		return isSampling && !Webtrekk.isOptedOut
 	}
 
 
 	internal func track(eventKind: TrackingEvent.Kind) {
 		var eventProperties = TrackingEvent.Properties(
-			everId:       everId,
+			everId:       Webtrekk.everId,
 			samplingRate: configuration.samplingRate,
 			timeZone:     NSTimeZone.defaultTimeZone(),
 			timestamp:    NSDate(),
@@ -369,12 +367,17 @@ public final class Webtrekk {
 		var event = TrackingEvent(kind: eventKind, properties: eventProperties)
 		logger.logInfo("Event: \(event)")
 
+		guard let url = UrlCreator.createUrlFromEvent(event, serverUrl: configuration.serverUrl, trackingId: configuration.webtrekkId) else {
+			logger.logError("Cannot create URL for event: \(event)")
+			return
+		}
+
 		for plugin in plugins {
 			event = plugin.tracker(self, eventForTrackingEvent: event)
 		}
 
-		if shouldTrack(), let url = UrlCreator.createUrlFromEvent(event, serverUrl: configuration.serverUrl, trackingId: configuration.webtrekkId) {
-			requestManager.enqueueEvent(url, maximumDelay: configuration.sendDelay)
+		if shouldEnqueueNewEvents {
+			requestManager.enqueueEvent(url, maximumDelay: configuration.maximumSendDelay)
 		}
 
 		for plugin in plugins {
@@ -436,6 +439,19 @@ public final class Webtrekk {
 			}
 
 			UIViewController.setUpAutomaticTracking()
+		}
+	}
+
+
+	private func updateSampling() {
+		if let isSampling = defaults.boolForKey(DefaultsKeys.isSampling), samplingRate = defaults.intForKey(DefaultsKeys.samplingRate) where samplingRate == configuration.samplingRate {
+			self.isSampling = isSampling
+		}
+		else {
+			self.isSampling = Int64(arc4random()) % Int64(configuration.samplingRate) == 0
+
+			defaults.set(key: DefaultsKeys.isSampling, to: isSampling)
+			defaults.set(key: DefaultsKeys.samplingRate, to: configuration.samplingRate)
 		}
 	}
 
@@ -533,6 +549,16 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 			tracker.handleEvent(event)
 		}
 	}
+}
+
+
+
+private struct DefaultsKeys {
+
+	private static let everId = "everId"
+	private static let isSampling = "isSampling"
+	private static let isOptedOut = "optedOut"
+	private static let samplingRate = "samplingRate"
 }
 
 

@@ -10,8 +10,8 @@ Pod::Spec.new do |s|
 	s.source   = { :git => 'https://github.com/webtrekk/webtrekk-ios.git' }
 	s.summary  = 'TODO'
 
-	s.module_map    = 'Module/Webtrekk.modulemap'
-	s.source_files  = ['Sources/**/*.swift', 'Module/Webtrekk.h']
+	s.module_map    = 'Module/Module.modulemap'
+	s.source_files  = ['Sources/**/*.swift', 'Module/Module.h']
 	s.frameworks    = 'AVKit', 'Foundation', 'UIKit'
 
 	s.dependency 'CryptoSwift',       '~> 0.4.1'
