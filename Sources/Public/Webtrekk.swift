@@ -420,39 +420,6 @@ public final class Webtrekk {
 	}
 
 
-	private func track(pageName: String) {
-//		track(PageTracking(pageName: pageName))
-	}
-
-
-//	private func track(pageTracking: PageTracking) {
-//	/*	var parameter = pageTracking
-//		parameter.generalParameter.firstStart = pageTracking.firstStart()
-//		enqueue(parameter, config: config)*/
-//	}
-
-/*
-	private func track(pageName: String, trackingParameter: TrackingParameter) {
-		/*
-		var parameter = trackingParameter
-		parameter.generalParameter.firstStart = trackingParameter.firstStart()
-		if parameter.pixelParameter.pageName.isEmpty {
-			parameter.pixelParameter.pageName = pageName
-		}
-		enqueue(parameter, config: config)*/
-	}
-
-
-	private func track(screen: AutoTrackedScreen) {
-//		if let pageTracking = screen.pageTracking {
-//			track(pageTracking)
-//		}
-//		else {
-//			track(screen.mappingName)
-//		}
-	}*/
-
-
 	public func trackerForMedia(mediaName: String, mediaGroups: Set<IndexedProperty> = []) -> MediaTracker {
 		return DefaultMediaTracker(handler: self, mediaName: mediaName, mediaGroups: mediaGroups)
 	}
