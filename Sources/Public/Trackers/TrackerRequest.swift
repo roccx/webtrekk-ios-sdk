@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-public struct TrackingRequest {
+public struct TrackerRequest {
 
 	public let event: Event
 	public let properties: Properties
@@ -37,8 +37,9 @@ public struct TrackingRequest {
 		public var isFirstEventAfterAppUpdate = false
 		public var isFirstEventOfApp = false
 		public var isFirstEventOfSession = false
+		public var screenSize: (width: Int, height: Int)?
 		public var samplingRate: Int
-		public var sessionCategories: Set<Category>?
+		public var sessionDetails: Set<IndexedProperty>?
 		public var timeZone: NSTimeZone
 		public var timestamp: NSDate
 		public var userAgent: String

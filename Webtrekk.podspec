@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
 
 	s.module_map    = 'Module/Module.modulemap'
 	s.source_files  = ['Sources/**/*.swift', 'Module/Module.h']
-	s.frameworks    = 'AVKit', 'Foundation', 'UIKit'
+	s.frameworks    = 'AVKit', 'Foundation', 'CoreTelephony', 'UIKit'
 
 	s.dependency 'CryptoSwift',       '~> 0.4.1'
 	s.dependency 'ReachabilitySwift', '~> 2.3.3'

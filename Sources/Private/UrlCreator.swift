@@ -1,9 +1,10 @@
 import Foundation
 import CryptoSwift
 
+
 internal final class UrlCreator {
 
-	internal static func createUrlFromEvent(request: TrackingRequest, serverUrl: NSURL, webtrekkId: String) -> NSURL? {
+	internal static func createUrlFromEvent(request: TrackerRequest, serverUrl: NSURL, webtrekkId: String) -> NSURL? {
 		guard let baseUrl = NSURLComponents(URL: serverUrl.URLByAppendingPathComponent("\(webtrekkId)").URLByAppendingPathComponent("wt"), resolvingAgainstBaseURL: false) else {
 			NSLog("Url could not be created from ServerUrl '\(serverUrl)' and WebtrekkId '\(webtrekkId)'.")
 			return nil
@@ -119,8 +120,8 @@ internal final class UrlCreator {
 			NSLog("Url creation could not finish because page name was not set in event '\(request)'.")
 			return nil
 		}
-		let screenDimension = Webtrekk.screenDimensions()
-		let p = "\(Webtrekk.pixelVersion),\(pageName),0,\(screenDimension.width)x\(screenDimension.height),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
+
+		let p = "400,\(pageName),0,\(request.properties.screenSize?.width ?? 0)x\(request.properties.screenSize?.height ?? 0),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
 		items = [NSURLQueryItem(name: "p", value: p)] + items
 
 		items += [NSURLQueryItem(name: "eor", value: nil)]

@@ -8,9 +8,17 @@ public protocol PageTracker: class {
 	var ecommerceProperties: EcommerceProperties { get set }
 	var pageProperties: PageProperties { get set }
 
-	func trackAction     (name name: String)
-	func trackAction     (properties properties: ActionProperties)
-	func trackPageView   ()
-	func trackerForMedia (name name: String, player: AVPlayer)
-	func trackerForMedia (name name: String, groups: Set<IndexedProperty>?, player: AVPlayer) // TODO how to track additional properties?
+
+	func trackAction (actionName: String)
+
+	func trackAction (event: ActionEvent)
+
+	func trackMedia (event: MediaEvent)
+
+	@warn_unused_result
+	func trackMedia (mediaName: String) -> MediaTracker
+
+	func trackMedia (mediaName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker
+
+	func trackPageView ()
 }

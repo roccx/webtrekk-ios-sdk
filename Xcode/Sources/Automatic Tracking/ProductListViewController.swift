@@ -13,7 +13,7 @@ class ProductListViewController: UITableViewController {
 				return
 			}
 
-			Webtrekk.sharedInstance.trackAction("Product tapped", inPage: "Product List")
+			Webtrekk.sharedTracker.trackAction("Product tapped", inPage: "Product List")
 
 			productViewController.productId = indexPath.row + 1
 		}
