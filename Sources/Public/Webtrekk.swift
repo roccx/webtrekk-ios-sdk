@@ -26,16 +26,28 @@ public final class Webtrekk {
 	private var isFirstEventOfSession = true
 	private var isSampling = false
 
-	public let configuration: TrackingConfiguration
 	public var crossDeviceBridge: CrossDeviceBridgeParameter?
 	public var plugins = [TrackingPlugin]()
 
 
 	public init(configuration: TrackingConfiguration) {
-		self.configuration = configuration
 		self.defaults = Webtrekk.sharedDefaults.child(namespace: configuration.webtrekkId)
 		self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
 		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
+
+		var configuration = configuration
+		if let configurationData = defaults.dataForKey(DefaultsKeys.configuration) {
+			do {
+				let savedConfiguration = try XmlTrackingConfigurationParser().parse(xml: configurationData)
+				if savedConfiguration.version > configuration.version {
+					configuration = savedConfiguration
+				}
+			}
+			catch let error {
+				self.logger.logError("Cannot load saved configuration. Will fall back to initial configuration. Error: \(error)")
+			}
+		}
+		self.configuration = configuration
 
 		setUp()
 	}
@@ -116,6 +128,16 @@ public final class Webtrekk {
 			if lastCheckedAppVersion != nil {
 				isFirstEventAfterAppUpdate = true
 			}
+		}
+	}
+
+
+	public private(set) var configuration: TrackingConfiguration {
+		didSet {
+			updateAutomaticTracking()
+			updateSampling()
+
+			requestManager.maximumNumberOfEvents = configuration.eventQueueLimit
 		}
 	}
 
@@ -234,55 +256,14 @@ public final class Webtrekk {
 
 	
 	private func setUp() {
-		setUpConfig()
 		setUpRequestManager()
 		setUpObservers()
 
 		updateAutomaticTracking()
 		updateSampling()
-	}
 
-
-	private func setUpConfig() {
-		// check if there is a local dump of the config saved
-		if let localConfig = fileManager.restoreConfiguration(configuration.trackingId) where localConfig.version > configuration.version {
-			self.config = localConfig
-		}
-		else {
-			fileManager.saveConfiguration(configuration)
-		}
-
-		guard configuration.enableRemoteConfiguration && !configuration.remoteConfigurationUrl.isEmpty, let url = NSURL(string: configuration.remoteConfigurationUrl) else {
-			return
-		}
-
-		requestManager.fetch(url: url) { data, error in
-			guard let xmlData = data else {
-				self.logger.logInfo("No data could be retrieved from \(self.config.remoteConfigurationUrl).")
-				return
-			}
-			guard let xmlString = String(data: xmlData, encoding: NSUTF8StringEncoding) else {
-				self.logger.logInfo("Cannot parse data retreived from \(self.config.remoteConfigurationUrl)")
-				return
-			}
-
-			let config: TrackerConfiguration!
-			do {
-				let parser = try XmlConfigParser(xmlString: xmlString)
-				config = parser.trackerConfiguration
-			} catch {
-				self.logger.logInfo("\(WebtrekkError.RemoteParserError)")
-				return
-			}
-
-
-			guard config.version > self.config.version else {
-				self.logger.logInfo("Remote configuration is not newer then the currently used.")
-				return
-			}
-			self.logger.logInfo("Updating tracker config from version \(self.config.version) to new version \(config.version)")
-			self.config = config
-			self.fileManager.saveConfiguration(config)
+		NSTimer.scheduledTimerWithTimeInterval(10) {
+			self.updateConfiguration()
 		}
 	}
 
@@ -455,12 +436,58 @@ public final class Webtrekk {
 	}
 
 
+	private func updateConfiguration() {
+		guard let updateUrl = configuration.configurationUpdateUrl else {
+			return
+		}
+
+		requestManager.fetch(url: updateUrl) { data, error in
+			if let error = error {
+				self.logger.logError("Cannot load configuration from \(updateUrl): \(error)")
+				return
+			}
+			guard let data = data else {
+				self.logger.logError("Cannot load configuration from \(updateUrl): Server returned no data.")
+				return
+			}
+
+			let configuration: TrackingConfiguration
+			do {
+				configuration = try XmlTrackingConfigurationParser().parse(xml: data)
+			}
+			catch let error {
+				self.logger.logError("Cannot parse configuration located at \(updateUrl): \(error)")
+				return
+			}
+
+			guard configuration.version > self.configuration.version else {
+				self.logger.logInfo("Local configuration is up-to-date with version \(self.configuration.version).")
+				return
+			}
+			guard configuration.webtrekkId == self.configuration.webtrekkId else {
+				self.logger.logError("Cannot apply new configuration located at \(updateUrl): Current webtrekkId (\(self.configuration.webtrekkId)) does not match new webtrekkId (\(configuration.webtrekkId)).")
+				return
+			}
+
+			self.logger.logInfo("Updating from configuration version \(self.configuration.version) to version \(configuration.version) located at \(updateUrl).")
+			self.defaults.set(key: DefaultsKeys.configuration, to: data)
+
+			self.configuration = configuration
+		}
+	}
+
+
 	private func updateSampling() {
 		if let isSampling = defaults.boolForKey(DefaultsKeys.isSampling), samplingRate = defaults.intForKey(DefaultsKeys.samplingRate) where samplingRate == configuration.samplingRate {
 			self.isSampling = isSampling
 		}
 		else {
-			self.isSampling = Int64(arc4random()) % Int64(configuration.samplingRate) == 0
+			if configuration.samplingRate > 1 {
+				self.isSampling = Int64(arc4random()) % Int64(configuration.samplingRate) == 0
+			}
+			else {
+				self.isSampling = true
+			}
 
 			defaults.set(key: DefaultsKeys.isSampling, to: isSampling)
 			defaults.set(key: DefaultsKeys.samplingRate, to: configuration.samplingRate)
@@ -569,6 +596,7 @@ private struct DefaultsKeys {
 
 	private static let appHibernationDate = "appHibernationDate"
 	private static let appVersion = "appVersion"
+	private static let configuration = "configuration"
 	private static let everId = "everId"
 	private static let isFirstEventAfterAppUpdate = "isFirstEventAfterAppUpdate"
 	private static let isFirstEventOfApp = "isFirstEventOfApp"

@@ -24,10 +24,15 @@ extension Webtrekk {
 		guard let configurationFile = NSBundle.mainBundle().URLForResource("Webtrekk", withExtension: "xml") else {
 			fatalError("Cannot locate Webtrekk.xml")
 		}
-		guard let configuration = TrackerConfiguration(configUrl: configurationFile) else {
+		guard let configurationData = NSData(contentsOfURL: configurationFile) else {
 			fatalError("Cannot load Webtrekk.xml")
 		}
 
-		return Webtrekk(config: configuration)
+		do {
+			return Webtrekk(configuration: try TrackingConfiguration(xml: configurationData))
+		}
+		catch let error {
+			fatalError("Cannot parse Webtrekk.xml: \(error)")
+		}
 	}()
 }

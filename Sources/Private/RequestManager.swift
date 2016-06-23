@@ -107,7 +107,7 @@ internal final class RequestManager {
 			precondition(maximumNumberOfEvents > 0)
 
 			if maximumNumberOfEvents < events.count {
-				events = Array(events[0 ..< maximumNumberOfEvents])
+				events = Array(events[(events.count - maximumNumberOfEvents - 1) ..< events.count])
 				// FIXME save?
 			}
 		}

@@ -27,6 +27,11 @@ public struct TrackingConfiguration {
 	}
 
 
+	public init(xml data: NSData) throws {
+		self = try XmlTrackingConfigurationParser().parse(xml: data)
+	}
+
+
 	public struct Page {
 
 		public var pageProperties: PageProperties

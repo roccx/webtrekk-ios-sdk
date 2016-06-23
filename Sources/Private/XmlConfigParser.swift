@@ -3,8 +3,8 @@ import Foundation
 
 internal struct XmlTrackingConfigurationParser {
 
-	internal func parse(xmlData: NSData) throws -> TrackingConfiguration {
-		return try Parser(xmlData: xmlData).configuration
+	internal func parse(xml data: NSData) throws -> TrackingConfiguration {
+		return try Parser(xml: data).configuration
 	}
 }
 
@@ -61,8 +61,8 @@ private class Parser: NSObject {
 	private var stateStack = [State]()
 
 
-	private init(xmlData: NSData) throws {
-		self.parser = NSXMLParser(data: xmlData)
+	private init(xml data: NSData) throws {
+		self.parser = NSXMLParser(data: data)
 
 		super.init()
 
@@ -75,13 +75,13 @@ private class Parser: NSObject {
 		}
 
 		guard let serverUrl = serverUrl else {
-			throw Error(message: "<trackDomain> element missing")
+			throw Error(message: "<webtrekkConfiguration>.<trackDomain> element missing")
 		}
 		guard let webtrekkId = webtrekkId else {
-			throw Error(message: "<trackId> element missing")
+			throw Error(message: "<webtrekkConfiguration>.<trackId> element missing")
 		}
 		guard let version = version else {
-			throw Error(message: "<version> element missing")
+			throw Error(message: "<webtrekkConfiguration>.<version> element missing")
 		}
 
 		var configuration = TrackingConfiguration(webtrekkId: webtrekkId, serverUrl: serverUrl)
@@ -126,6 +126,8 @@ private class Parser: NSObject {
 		if let sessionTimeoutInterval = sessionTimeoutInterval {
 			configuration.sessionTimeoutInterval = sessionTimeoutInterval
 		}
+
+		self.configuration = configuration
 	}
 
 
@@ -134,9 +136,13 @@ private class Parser: NSObject {
 			return
 		}
 
-		let elementPath = self.elementPath.joinWithSeparator(".")
-		error = Error(message: "<\(elementPath)> \(message)")
+		error = Error(message: "\(elementPathString) \(message)")
 		parser.abortParsing()
+	}
+
+
+	private var elementPathString: String {
+		return elementPath.map({ "<\($0)>" }).joinWithSeparator(".")
 	}
 
 
@@ -245,19 +251,23 @@ private class Parser: NSObject {
 			return
 		}
 
-		let elementPath = self.elementPath.joinWithSeparator(".")
-		NSLog("%@", "Warning: <\(elementPath)> \(message)") // FIXME
+		NSLog("%@", "Warning: \(elementPathString) \(message)") // FIXME
 	}
 
 
 
-	private struct Error: ErrorType {
+	private struct Error: CustomStringConvertible, ErrorType {
 
 		private var message: String
 
 
 		private init(message: String) {
 			self.message = message
+		}
+
+
+		private var description: String {
+			return message
 		}
 	}
 
@@ -295,6 +305,7 @@ extension Parser: NSXMLParserDelegate {
 
 	@objc
 	private func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+		currentString = ""
 		elementPath.append(elementName)
 
 		switch state {
@@ -309,7 +320,7 @@ extension Parser: NSXMLParserDelegate {
 			switch (elementName) {
 			case "automaticTracking":      pushState(.automaticTracking)
 			case "configurationUpdateUrl": pushSimpleElement(configurationUpdateUrl) { value in self.configurationUpdateUrl = self.parseUrl(value, emptyAllowed: true) }
-			case "maximumRequests":        pushSimpleElement(eventQueueLimit)        { value in self.eventQueueLimit = self.parseInt(value, allowedRange: 1 ..< .max) }
+			case "maxRequests":            pushSimpleElement(eventQueueLimit)        { value in self.eventQueueLimit = self.parseInt(value, allowedRange: 1 ..< .max) }
 			case "sampling":               pushSimpleElement(samplingRate)           { value in self.samplingRate = self.parseInt(value, allowedRange: 0 ..< .max) }
 			case "trackDomain":            pushSimpleElement(serverUrl)              { value in self.serverUrl = self.parseUrl(value, emptyAllowed: false) }
 			case "trackId":                pushSimpleElement(webtrekkId)             { value in self.webtrekkId = self.parseString(value, emptyAllowed: false) }

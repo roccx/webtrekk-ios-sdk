@@ -25,6 +25,11 @@ internal final class UserDefaults {
 	}
 
 
+	internal func dataForKey(key: String) -> NSData? {
+		return objectForKey(key) as? NSData
+	}
+
+
 	internal func dateForKey(key: String) -> NSDate? {
 		return objectForKey(key) as? NSDate
 	}
@@ -56,6 +61,11 @@ internal final class UserDefaults {
 
 
 	internal func set(key key: String, to value: Bool?) {
+		set(key: key, to: value as AnyObject?)
+	}
+
+
+	internal func set(key key: String, to value: NSData?) {
 		set(key: key, to: value as AnyObject?)
 	}
 
