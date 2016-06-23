@@ -56,10 +56,10 @@ internal final class UrlCreator {
 			case .wifi:        items.append(NSURLQueryItem(name: "cs807", value: "WIFI"))
 			}
 		}
-		// FIXME: NEEED SESSION DETAILS
-//		if let session = event.session { 
-//			items += userProperties.asQueryItems()
-//		}
+
+		if let sessionDetails = properties.sessionDetails {
+			items += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
+		}
 		if let crossDeviceProperties = CrossDeviceProperties() as? CrossDeviceProperties {
 			items += crossDeviceProperties.asQueryItems()
 		}
