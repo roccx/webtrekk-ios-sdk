@@ -5,18 +5,21 @@ internal final class RequestManager {
 
 	internal typealias Delegate = _BackupDelegate
 
-	private var events = [TrackingEvent]()
+	private var events = [NSURLComponents]()
 	private var numberOfFailuresForCurrentEvent = 0
 	private var pendingTask: NSURLSessionDataTask?
 	private var sendNextEventDate: NSDate?
 	private var sendNextEventTimer: NSTimer?
+	private var isShutingDown: Bool = false
 
 	internal var logger: Webtrekk.Logger
 	internal weak var delegate: Delegate?
 
-	internal init(logger: Webtrekk.Logger, maximumNumberOfEvents: Int) {
+	internal init(logger: Webtrekk.Logger, backupDelegate: Delegate?, maximumNumberOfEvents: Int) {
 		self.logger = logger
 		self.maximumNumberOfEvents = maximumNumberOfEvents
+		self.delegate = backupDelegate
+		loadBackups()
 	}
 
 
@@ -27,7 +30,7 @@ internal final class RequestManager {
 	}
 
 
-	internal func enqueueEvent(event: TrackingEvent, maximumDelay: NSTimeInterval) {
+	internal func enqueueEvent(event: NSURLComponents, maximumDelay: NSTimeInterval) {
 		if events.count >= maximumNumberOfEvents {
 			logger.logWarning("Too many events in queue. Dropping oldest one.")
 
@@ -123,7 +126,7 @@ internal final class RequestManager {
 	}
 
 
-	internal func sendAllEvents() {
+	internal func sendAllEvents() { // TODO: talk about sendDelay
 		sendNextEvent()
 	}
 
@@ -132,13 +135,18 @@ internal final class RequestManager {
 		sendNextEventTimer?.invalidate()
 		sendNextEventTimer = nil
 
+
+		if isShutingDown, let delegate = delegate {
+			delegate.saveEvents(events)
+		}
+
 		guard pendingTask == nil && !events.isEmpty else {
 			return
 		}
 
 		let event = events[0]
 
-		guard let url = UrlCreator.createUrlFromEvent(event) else {
+		guard let url = event.URL else {
 			logger.logError("url is not valid")
 
 			events.removeFirst()
@@ -206,6 +214,13 @@ internal final class RequestManager {
 	}
 
 
+	internal func shutDown() {
+		// FIXME: Do it right?
+		isShutingDown = true
+		sendAllEvents()
+	}
+
+
 	internal func startSending() {
 		sendNextEvent()
 	}
@@ -229,6 +244,6 @@ internal final class RequestManager {
 
 internal protocol _BackupDelegate: class {
 
-	func loadEvents() -> [TrackingEvent]
-	func saveEvents(events: [TrackingEvent])
+	func loadEvents() -> [NSURLComponents]
+	func saveEvents(events: [NSURLComponents])
 }

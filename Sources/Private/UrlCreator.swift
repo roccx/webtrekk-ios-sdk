@@ -2,10 +2,11 @@
 
 internal final class UrlCreator {
 
-	internal static func createUrlFromEvent(event: TrackingEvent) -> NSURL? {
-		// FIXME: Dummy Objects
+	internal static func createUrlFromEvent(event: TrackingEvent, serverUrl: String, trackingId: String) -> NSURLComponents? {
+		guard let baseUrl = NSURLComponents(string: "\(serverUrl)/\(trackingId)/wt") else {
+			return nil
+		}
 
-		let baseUrl = NSURLComponents(string: "https://widgetlabs.eu/") // NSURLComponents(string: "\(serverUrl)/\(trackingId)/wt")
 		var items = [NSURLQueryItem]()
 
 		let properties = event.properties
@@ -87,8 +88,8 @@ internal final class UrlCreator {
 		items = [NSURLQueryItem(name: "p", value: p)] + items
 
 		items += [NSURLQueryItem(name: "eor", value: nil)]
-		baseUrl?.queryItems = items
-		return baseUrl?.URL
+		baseUrl.queryItems = items
+		return baseUrl
 	}
 
 }
