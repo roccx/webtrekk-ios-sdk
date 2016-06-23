@@ -1,11 +1,9 @@
 PODS:
   - CryptoSwift (0.4.1)
   - ReachabilitySwift (2.3.3)
-  - SWXMLHash (2.1.0)
   - Webtrekk (1.0.0):
     - CryptoSwift (~> 0.4.1)
     - ReachabilitySwift (~> 2.3.3)
-    - SWXMLHash (~> 2.1.0)
 
 DEPENDENCIES:
   - Webtrekk (from `..`)
@@ -17,8 +15,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   CryptoSwift: 25b5aff3f260967391f8fff2e9abe4254d2c6fd5
   ReachabilitySwift: e0f6b6f280effb47731acfaaa2d5ffe223703793
-  SWXMLHash: 7257a358b3ab2f7a209e0b4e4cf552e8b6df5f0f
-  Webtrekk: c63f37f58ac6e9df38bfd27b2056b4ec8a466948
+  Webtrekk: 69d4252598e2db3949cafb3e1174a90c1b439dc9
 
 PODFILE CHECKSUM: cc658fabf6740ff819bffd73af8a72d4d583358f
 

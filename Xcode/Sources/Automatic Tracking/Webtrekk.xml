@@ -1,60 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <webtrekkConfiguration>
-	<!--the version number for this configuration file -->
+	<!-- configuation file version -->
 	<version>1</version>
-	<!--the webtrekk trackDomain where the requests are send -->
+
+	<!-- server to send tracking events to -->
 	<trackDomain>https://q3.webtrekk.net</trackDomain>
-	<!--customers trackid -->
+
+	<!-- Webtrekk customer id -->
 	<trackId>289053685367929</trackId>
-	<!-- measure only a subset of the users -->
+
+	<!-- measure only every Nth user (0 to disable) -->
 	<sampling>0</sampling>
-	<!-- interval between the requests are send in seconds -->
+
+	<!-- maximum delay after an event occurred before sending it to the server (in seconds) -->
 	<sendDelay>35</sendDelay>
-	<!--maximum amoount of requests to store when the user is offline -->
+
+	<!-- maximum number of events to keep in the queue while there is no internet connection -->
 	<maxRequests>5000</maxRequests>
 
-	<!--optional settings -->
-	<!--automaticly track activities onStart method -->
-	<autoTracked>true</autoTracked>
+	<!-- automatically download updated versions of this configuration file (empty to disable updates) -->
+	<configurationUpdateUrl>https://your.domain/webtrekk.xml</configurationUpdateUrl>
 
-	<!--track if there was an application update -->
-	<autoTrackAppUpdate>true</autoTrackAppUpdate>
-	<!--track the advertiser id -->
-	<autoTrackAdvertiserId>true</autoTrackAdvertiserId>
+	<!-- automatically track various information -->
+	<automaticTracking>
+		<advertisingIdentifier>true</advertisingIdentifier>
+		<appName>true</appName>
+		<appUpdates>true</appUpdates>
+		<appVersion>true</appVersion>
+		<connectionType>true</connectionType>
+		<eventQueueSize>true</eventQueueSize>
+		<interfaceOrientation>true</interfaceOrientation>
+		<pages>
+			<page viewControllerType="ProductListViewController">
+				<pageProperties name="Product List"/>
+			</page>
 
-	<!--track the app versions name -->
-	<autoTrackAppVersionName>true</autoTrackAppVersionName>
-	<!--track the app versions code -->
-	<autoTrackAppVersionCode>true</autoTrackAppVersionCode>
-
-	<!--track the devices screen orientation -->
-	<autoTrackScreenOrientation>true</autoTrackScreenOrientation>
-
-	<!--track the current connection type -->
-	<autoTrackConnectionType>true</autoTrackConnectionType>
-
-	<!--sends the size of the current locally stored urls in a custom parameter -->
-	<autoTrackRequestUrlStoreSize>true</autoTrackRequestUrlStoreSize>
-
-	<!--enables the remote xml configuration -->
-	<enableRemoteConfiguration>true</enableRemoteConfiguration>
-	<!--url of the remote configuration -->
-	<trackingConfigurationUrl>http://remotetrackingconfiguration.info/configfile.xml</trackingConfigurationUrl>
-
-	<pages>
-		<page viewControllerType="ProductListViewController">
-			<pageProperties name="Product List"/>
-		</page>
-
-		<page viewControllerType="/.*\.ProductViewController/">
-			<pageProperties name="Product Details">
-				<details>
-					<detail id="1">Blue Variant</detail>
-				</details>
-				<groups>
-					<group id="2">Media</group>
-				</groups>
-			</pageProperties>
-		</page>
-	</pages>
+			<page viewControllerType="/.*\.ProductViewController/">
+				<pageProperties name="Product Details">
+					<details>
+						<detail id="1">Blue Variant</detail>
+					</details>
+					<groups>
+						<group id="2">Media</group>
+					</groups>
+				</pageProperties>
+			</page>
+		</pages>
+	</automaticTracking>
 </webtrekkConfiguration>

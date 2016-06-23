@@ -1,270 +1,344 @@
 import Foundation
-import SWXMLHash
-
-internal final class XmlConfigParser {
-
-	internal var trackerConfiguration: TrackerConfiguration? {
-		get {
-			do {
-				let config = try parseTrackerConfig()
-				return config
-			} catch XmlError.NoRoot {
-
-			} catch XmlError.MissingDomainOrId {
-
-			} catch {
-
-			}
-			return nil
-		}
-	}
-
-	let xml: XMLIndexer
-
-	internal init(xmlString: String) throws {
-		guard !xmlString.isEmpty else {
-			throw XmlError.CanNotBeEmpty
-		}
-		self.xml = SWXMLHash.parse(xmlString)
-	}
-
-	private func parse(dictionary: [Int: String]?, fromParameters parameters: XMLIndexer) -> [Int: String]{
-		var dic = dictionary ?? [Int: String]()
-		for parameter in parameters.children {
-			guard let indexString = parameter.element?.attributes["id"] else {
-				continue
-			}
-			guard let index = Int(indexString) else {
-				continue
-			}
-			guard let value = parameter.element?.text?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet()) else {
-				continue
-			}
-			dic[index] = value
-		}
-		return dic
-	}
-
-	internal func parseTrackerConfig() throws -> TrackerConfiguration {
-		guard xml[.Root].boolValue else {
-			throw XmlError.NoRoot
-		}
-
-		let root = xml[.Root]
-
-		guard root[.TrackingDomain].boolValue && root[.TrackId].boolValue, let serverUrl = root[.TrackingDomain].element?.text, trackingId = root[.TrackId].element?.text else {
-			throw XmlError.MissingDomainOrId
-		}
-		var config = TrackerConfiguration(serverUrl: serverUrl, trackingId: trackingId)
-
-		if root[.MaxRequests].boolValue, let text = root[.MaxRequests].element?.text, maxRequests = Int(text) {
-			config.maxRequests = maxRequests
-		}
-		if root[.Sampling].boolValue, let text = root[.Sampling].element?.text,  sampling = Int(text) {
-			config.samplingRate = sampling
-		}
-		if root[.SendDelay].boolValue, let text = root[.SendDelay].element?.text, sendDelay = Int(text) {
-			config.sendDelay = NSTimeInterval(sendDelay)
-		}
-		if root[.Version].boolValue, let text = root[.Version].element?.text, version = Int(text) {
-			config.version = version
-		}
-
-		if root[.EnableRemoteConfiguration].boolValue, let text = root[.EnableRemoteConfiguration].element?.text {
-			config.enableRemoteConfiguration = Bool(text.lowercaseString == "true")
-		}
-		if root[.TrackingConfigurationUrl].boolValue, let remoteConfigurationUrl = root[.TrackingConfigurationUrl].element?.text {
-			config.remoteConfigurationUrl = remoteConfigurationUrl
-		}
-
-		if root[.AutoTracked].boolValue, let text = root[.AutoTracked].element?.text {
-			config.autoTrack = Bool(text.lowercaseString == "true")
-		}
-
-		guard config.autoTrack else {
-			return config
-		}
-
-		if root[.AutoTrackAppUpdate].boolValue, let text = root[.AutoTrackAppUpdate].element?.text {
-			config.autoTrackAppUpdate = Bool(text.lowercaseString == "true")
-		}
-		if root[.AutoTrackAppVersionName].boolValue, let text = root[.AutoTrackAppVersionName].element?.text {
-			config.autoTrackAppVersionName = Bool(text.lowercaseString == "true")
-		}
-		if root[.AutoTrackAppVersionCode].boolValue, let text = root[.AutoTrackAppVersionCode].element?.text {
-			config.autoTrackAppVersionCode = Bool(text.lowercaseString == "true")
-		}
-		if root[.AutoTrackApiLevel].boolValue, let text = root[.AutoTrackApiLevel].element?.text {
-			config.autoTrackApiLevel = Bool(text.lowercaseString == "true")
-		}
-		if root[.AutoTrackScreenOrientation].boolValue, let text = root[.AutoTrackScreenOrientation].element?.text {
-			config.autoTrackScreenOrientation = Bool(text.lowercaseString == "true")
-		}
-		if root[.AutoTrackConnectionType].boolValue, let text = root[.AutoTrackConnectionType].element?.text {
-			config.autoTrackConnectionType = Bool(text.lowercaseString == "true")
-		}
-		if root[.AutoTrackRequestUrlStoreSize].boolValue, let text = root[.AutoTrackRequestUrlStoreSize].element?.text {
-			config.autoTrackRequestUrlStoreSize = Bool(text.lowercaseString == "true")
-		}
-		if root[.AutoTrackAdvertiserId].boolValue, let text = root[.AutoTrackAdvertiserId].element?.text {
-			config.autoTrackAdvertiserId = Bool(text.lowercaseString == "true")
-		}
-
-		config.autoTrackScreens.removeAll()
-
-		if let xmlPages = root["pages"].existing {
-			for xmlPage in xmlPages.children {
-				// TODO error logging
-
-				// TODO non-regex pattern matching
-				let viewControllerTypeName = try xmlPage.nonemptyStringAttribute("viewControllerType")
-
-				let pattern: NSRegularExpression
-				if viewControllerTypeName.hasPrefix("/") {
-					guard let patternString = viewControllerTypeName.firstMatchForRegularExpression("^/(.*)/$")?[1] else {
-						throw Error(message: "Invalid regular expression: missing trailing slash")
-					}
-
-					pattern = try NSRegularExpression(pattern: patternString, options: [])
-				}
-				else {
-					pattern = try NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPatternForString(viewControllerTypeName))\\b", options: [])
-				}
-
-				let pageProperties = try parsePageProperties(xmlPage["pageProperties"])
-
-				config.autoTrackScreens.append(TrackerConfiguration.AutotrackedPage(
-					pageProperties: pageProperties,
-					pattern:		pattern
-				))
-			}
-		}
-
-		return config
-	}
 
 
+internal struct XmlTrackingConfigurationParser {
 
-	private func parsePageProperties(xmlPageProperties: XMLIndexer) throws -> PageProperties {
-		let name = try xmlPageProperties.nonemptyStringAttribute("name")
-
-		// TODO more properties
-
-		return PageProperties(name: name)
-	}
-
-
-
-	internal struct Error: ErrorType {
-
-		internal var message: String
-
-
-		internal init(message: String) {
-			self.message = message
-		}
+	internal func parse(xmlData: NSData) throws -> TrackingConfiguration {
+		return try Parser(xmlData: xmlData).configuration
 	}
 }
 
-internal enum XmlConfigParameter: String {
-	case Root = "webtrekkConfiguration"
+/*
 
-	// MARK: required parameters
-	case TrackingDomain = "trackDomain"
-	case TrackId = "trackId"
+let viewControllerTypeName = try xmlPage.nonemptyStringAttribute("viewControllerType")
 
-	// MARK: default parameters
-	case MaxRequests = "maxRequests"
-	case Sampling = "Sampling"
-	case SendDelay = "sendDelay"
-	case Version = "version"
-
-	// MARK: auto parameters
-	case AutoTracked = "autoTracked"
-	case AutoTrackAppUpdate = "autoTrackAppUpdate"
-	case AutoTrackAppVersionName = "autoTrackAppversionName"
-	case AutoTrackAppVersionCode = "autoTrackAppversionCode"
-	case AutoTrackApiLevel = "autoTrackApiLevel"
-	case AutoTrackScreenOrientation = "autoTrackScreenOrientation"
-	case AutoTrackConnectionType = "autoTrackConnectionType"
-	case AutoTrackRequestUrlStoreSize = "autoTrackRequestUrlStoreSize"
-
-	// MARK: advertiser id
-	case AutoTrackAdvertiserId = "autoTrackAdvertiserId"
-
-	// MARK: remote configuration parameter
-	case EnableRemoteConfiguration = "enableRemoteConfiguration"
-	case TrackingConfigurationUrl = "trackingConfigurationUrl"
-
-	// MARK: screen configuration
-	case ClassName = "className"
-	case MappingName = "mappingName"
-	case Screens = "screens"
-	case TrackingParameter = "trackingParameter"
-	case CustomParameters = "customParameters"
-	case PageParameter = "pageParameter"
-	case Categories = "categories"
-	case Page = "page"
-	case Session = "session"
-	case EcommerceParameter = "ecommerceParameter"
-
+let pattern: NSRegularExpression
+if viewControllerTypeName.hasPrefix("/") {
+guard let patternString = viewControllerTypeName.firstMatchForRegularExpression("^/(.*)/$")?[1] else {
+throw Error(message: "Invalid regular expression: missing trailing slash")
 }
 
-internal extension XMLIndexer {
+pattern = try NSRegularExpression(pattern: patternString, options: [])
+}
+else {
+pattern = try NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPatternForString(viewControllerTypeName))\\b", options: [])
+}
 
-	internal var existing: XMLIndexer? {
-		guard boolValue else {
+let pageProperties = try parsePageProperties(xmlPage["pageProperties"])
+
+config.autoTrackScreens.append(TrackerConfiguration.AutotrackedPage(
+pageProperties: pageProperties,
+pattern:		pattern
+))
+*/
+
+
+private class Parser: NSObject {
+
+	private var automaticallyTrackedPages: [TrackingConfiguration.Page]?
+	private var automaticallyTracksAdvertisingId: Bool?
+	private var automaticallyTracksAppName: Bool?
+	private var automaticallyTracksAppUpdates: Bool?
+	private var automaticallyTracksAppVersion: Bool?
+	private var automaticallyTracksConnectionType: Bool?
+	private var automaticallyTracksEventQueueSize: Bool?
+	private var automaticallyTracksInterfaceOrientation: Bool?
+	private var configurationUpdateUrl: NSURL?
+	private var eventQueueLimit: Int?
+	private var maximumSendDelay: NSTimeInterval?
+	private var samplingRate: Int?
+	private var serverUrl: NSURL?
+	private var version: Int?
+	private var webtrekkId: String?
+
+	private lazy var configuration: TrackingConfiguration = lazyPlaceholder()
+	private var currentString = ""
+	private var elementPath = [String]()
+	private var error: ErrorType?
+	private var parser: NSXMLParser
+	private var state = State.initial
+	private var stateStack = [State]()
+
+
+	private init(xmlData: NSData) throws {
+		self.parser = NSXMLParser(data: xmlData)
+
+		super.init()
+
+		parser.delegate = self
+		parser.parse()
+		parser.delegate = nil
+
+		if let error = error {
+			throw error
+		}
+
+		guard let serverUrl = serverUrl else {
+			throw Error(message: "<trackDomain> element missing")
+		}
+		guard let webtrekkId = webtrekkId else {
+			throw Error(message: "<trackId> element missing")
+		}
+		guard let version = version else {
+			throw Error(message: "<version> element missing")
+		}
+
+		var configuration = TrackingConfiguration(webtrekkId: webtrekkId, serverUrl: serverUrl)
+		configuration.version = version
+
+		if let automaticallyTrackedPages = automaticallyTrackedPages {
+			configuration.automaticallyTrackedPages = automaticallyTrackedPages
+		}
+		if let automaticallyTracksAdvertisingId = automaticallyTracksAdvertisingId {
+			configuration.automaticallyTracksAdvertisingId = automaticallyTracksAdvertisingId
+		}
+		if let automaticallyTracksAppName = automaticallyTracksAppName {
+			configuration.automaticallyTracksAppName = automaticallyTracksAppName
+		}
+		if let automaticallyTracksAppUpdates = automaticallyTracksAppUpdates {
+			configuration.automaticallyTracksAppUpdates = automaticallyTracksAppUpdates
+		}
+		if let automaticallyTracksAppVersion = automaticallyTracksAppVersion {
+			configuration.automaticallyTracksAppVersion = automaticallyTracksAppVersion
+		}
+		if let automaticallyTracksConnectionType = automaticallyTracksConnectionType {
+			configuration.automaticallyTracksConnectionType = automaticallyTracksConnectionType
+		}
+		if let automaticallyTracksEventQueueSize = automaticallyTracksEventQueueSize {
+			configuration.automaticallyTracksEventQueueSize = automaticallyTracksEventQueueSize
+		}
+		if let automaticallyTracksInterfaceOrientation = automaticallyTracksInterfaceOrientation {
+			configuration.automaticallyTracksInterfaceOrientation = automaticallyTracksInterfaceOrientation
+		}
+		if let configurationUpdateUrl = configurationUpdateUrl {
+			configuration.configurationUpdateUrl = configurationUpdateUrl
+		}
+		if let eventQueueLimit = eventQueueLimit {
+			configuration.eventQueueLimit = eventQueueLimit
+		}
+		if let maximumSendDelay = maximumSendDelay {
+			configuration.maximumSendDelay = maximumSendDelay
+		}
+		if let samplingRate = samplingRate {
+			configuration.samplingRate = samplingRate
+		}
+	}
+
+
+	private func fail(message message: String) {
+		guard error == nil else {
+			return
+		}
+
+		let elementPath = self.elementPath.joinWithSeparator(".")
+		error = Error(message: "<\(elementPath)> \(message)")
+		parser.abortParsing()
+	}
+
+
+	private func parseDouble(string: String, allowedRange: HalfOpenInterval<Double>) -> Double? {
+		guard let value = Double(string) else {
+			fail(message: "'\(string)' is not a valid number")
 			return nil
 		}
 
-		return self
-	}
+		if !allowedRange.contains(value) {
+			if allowedRange.end.isInfinite {
+				fail(message: "value (\(value)) must be larger than or equal to \(allowedRange.start)")
+				return nil
+			}
+			if allowedRange.start.isInfinite {
+				fail(message: "value (\(value)) must be smaller than \(allowedRange.end)")
+				return nil
+			}
 
-
-	internal subscript(key: XmlConfigParameter) -> XMLIndexer {
-		do {
-			return try self.byKey(key.rawValue)
-		} catch let error as Error {
-			return .XMLError(error)
-		} catch {
-			return .XMLError(.Key(key: key.rawValue))
-		}
-	}
-
-
-	private func nonemptyStringAttribute(name: String) throws -> String {
-		guard let value = try stringAttribute(name).nonEmpty else {
-			throw Error2(message: "FIXME")
+			fail(message: "value (\(value)) must be between \(allowedRange.start) (inclusive) and \(allowedRange.end) (exclusive)")
+			return nil
 		}
 
 		return value
 	}
 
 
-	private func stringAttribute(name: String) throws -> String {
-		guard let attributes = element?.attributes else {
-			throw Error2(message: "FIXME")
+	private func parseInt(string: String, allowedRange: HalfOpenInterval<Int>) -> Int? {
+		guard let value = Int(string) else {
+			fail(message: "'\(string)' is not a valid integer")
+			return nil
 		}
-		guard let value = attributes[name] else {
-			throw Error2(message: "FIXME")
+
+		if !allowedRange.contains(value) {
+			if allowedRange.end == .max {
+				fail(message: "value (\(value)) must be larger than or equal to \(allowedRange.start)")
+				return nil
+			}
+			if allowedRange.start == .min {
+				fail(message: "value (\(value)) must be smaller than \(allowedRange.end)")
+				return nil
+			}
+
+			fail(message: "value (\(value)) must be between \(allowedRange.start) (inclusive) and \(allowedRange.end) (exclusive)")
+			return nil
 		}
 
 		return value
 	}
 
-	internal struct Error2: ErrorType {
 
-		internal var message: String
+	private func parseString(string: String, emptyAllowed: Bool) -> String? {
+		if string.isEmpty {
+			if !emptyAllowed {
+				fail(message: "must not be empty")
+			}
+
+			return nil
+		}
+
+		return string
+	}
 
 
-		internal init(message: String) {
+	private func parseUrl(string: String, emptyAllowed: Bool) -> NSURL? {
+		if string.isEmpty {
+			if !emptyAllowed {
+				fail(message: "must not be empty")
+			}
+
+			return nil
+		}
+
+		guard let value = NSURL(string: string) else {
+			fail(message: "'\(string)' is not a valid URL")
+			return nil
+		}
+
+		return value
+	}
+
+
+	private func popState() {
+		state = stateStack.removeLast()
+	}
+
+
+	private func pushSimpleElement(currentValue: Any?, completion: (String) -> Void) {
+		guard currentValue == nil else {
+			fail(message: "specified multiple times")
+			return
+		}
+
+		pushState(.simpleElement(completion))
+	}
+
+
+	private func pushState(state: State) {
+		stateStack.append(self.state)
+		self.state = state
+	}
+
+
+	private func warn(message message: String) {
+		guard error == nil else {
+			return
+		}
+
+		let elementPath = self.elementPath.joinWithSeparator(".")
+		NSLog("%@", "Warning: <\(elementPath)> \(message)") // FIXME
+	}
+
+
+
+	private struct Error: ErrorType {
+
+		private var message: String
+
+
+		private init(message: String) {
 			self.message = message
 		}
 	}
+
+
+
+	private enum State {
+
+		case automaticTracking
+		case initial
+		case root
+		case simpleElement((String) -> Void)
+		case unknown
+	}
 }
 
-internal enum XmlError: ErrorType {
-	case CanNotBeEmpty
-	case MissingDomainOrId
-	case NoRoot
+
+extension Parser: NSXMLParserDelegate {
+
+	@objc
+	private func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+		switch state {
+		case let .simpleElement(completion):
+			completion(currentString)
+
+		case .automaticTracking, .initial, .root, .unknown: // FIXME
+			break
+		}
+
+		currentString = ""
+		elementPath.removeLast()
+
+		popState()
+	}
+
+
+	@objc
+	private func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+		elementPath.append(elementName)
+
+		switch state {
+		case .automaticTracking:
+			// FIXME
+			pushState(.unknown)
+
+		case .initial:
+			pushState(.root)
+
+		case .root:
+			switch (elementName) {
+			case "automaticTracking":      pushState(.automaticTracking)
+			case "configurationUpdateUrl": pushSimpleElement(configurationUpdateUrl) { value in self.configurationUpdateUrl = self.parseUrl(value, emptyAllowed: true) }
+			case "maximumRequests":        pushSimpleElement(eventQueueLimit)        { value in self.eventQueueLimit = self.parseInt(value, allowedRange: 1 ..< .max) }
+			case "sampling":               pushSimpleElement(samplingRate)           { value in self.samplingRate = self.parseInt(value, allowedRange: 0 ..< .max) }
+			case "trackDomain":            pushSimpleElement(serverUrl)              { value in self.serverUrl = self.parseUrl(value, emptyAllowed: false) }
+			case "trackId":                pushSimpleElement(webtrekkId)             { value in self.webtrekkId = self.parseString(value, emptyAllowed: false) }
+			case "version":                pushSimpleElement(version)                { value in self.version = self.parseInt(value, allowedRange: 1 ..< .max) }
+			case "sendDelay":              pushSimpleElement(maximumSendDelay)       { value in self.maximumSendDelay = self.parseDouble(value, allowedRange: 5 ..< .infinity) }
+
+			default:
+				warn(message: "unknown element")
+				pushState(.unknown)
+			}
+
+		case .simpleElement:
+			warn(message: "unexpected element")
+			pushState(.unknown)
+
+		case .unknown:
+			pushState(.unknown)
+		}
+	}
+
+
+	@objc
+	private func parser(parser: NSXMLParser, foundCharacters string: String) {
+		currentString += string
+	}
+
+
+	@objc
+	private func parser(parser: NSXMLParser, parseErrorOccurred parseError: NSError) {
+		if error == nil {
+			error = parseError
+		}
+
+		parser.abortParsing()
+	}
 }

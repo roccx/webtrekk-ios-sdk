@@ -45,19 +45,6 @@ internal final class FileManager {
 	}
 
 
-	internal func restoreConfiguration(trackingId: String) -> TrackerConfiguration? {
-		guard let data = NSData(contentsOfURL: configurationFileUrl) else {
-			logger.logError("Couldn't find a config for this trackingId.")
-			return nil
-		}
-		guard let conf = (try? NSJSONSerialization.JSONObjectWithData(data, options: .MutableContainers) as? [String : AnyObject])!, let config = TrackerConfiguration.fromJson(conf) else {
-			logger.logError("Couldn't read stored config for this trackingId.")
-			return nil
-		}
-		return config
-	}
-
-
 	internal func restoreData(fromFileUrl fileUrl: NSURL) -> NSData? {
 		guard NSFileManager.defaultManager().fileExistsAtPath(fileUrl.path!) else {
 			return nil
@@ -67,18 +54,6 @@ internal final class FileManager {
 			return nil
 		}
 		return data
-	}
-
-
-	internal func saveConfiguration(config: TrackerConfiguration) {
-		guard let data = try? NSJSONSerialization.dataWithJSONObject(config.toJson(), options: NSJSONWritingOptions()) else {
-			logger.logError("Could not prepare config for saving to file.")
-			return
-		}
-		guard let _ = try? data.writeToURL(configurationFileUrl, options: .DataWritingAtomic) else {
-			logger.logError("Writing config to file failed.")
-			return
-		}
 	}
 
 

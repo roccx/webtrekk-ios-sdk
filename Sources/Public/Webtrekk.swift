@@ -14,19 +14,20 @@ public final class Webtrekk {
 	public static let defaultLogger = DefaultLogger()
 
 	private lazy var backupManager: BackupManager = BackupManager(fileManager: self.fileManager, logger: self.logger)
-	private lazy var fileManager: FileManager = FileManager(logger: self.logger, identifier: self.config.trackingId)
-	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, backupDelegate: self.backupManager, maximumNumberOfEvents: self.config.maxRequests)
+	private lazy var fileManager: FileManager = FileManager(logger: self.logger, identifier: self.configuration.webtrekkId)
+	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, backupDelegate: self.backupManager, maximumNumberOfEvents: self.configuration.eventQueueLimit)
 
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
 
+	public let configuration: TrackingConfiguration
 	public var crossDeviceBridge: CrossDeviceBridgeParameter?
-	public var plugins = [TrackingPlugin]()
 	public var forceNewSession = true
+	public var plugins = [TrackingPlugin]()
 
 
-	public init(config: TrackerConfiguration) {
-		self.config = config
+	public init(configuration: TrackingConfiguration) {
+		self.configuration = configuration
 
 		setUp()
 	}
@@ -72,8 +73,8 @@ public final class Webtrekk {
 
 	private func appUpdate() -> Bool {
 		var appVersion: String
-		if !config.appVersion.isEmpty {
-			appVersion = config.appVersion
+		if !configuration.appVersion.isEmpty {
+			appVersion = configuration.appVersion
 		} else if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
 			appVersion = version
 		}else {
@@ -118,16 +119,9 @@ public final class Webtrekk {
 
 
 	private func autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName: String) -> PageProperties? {
-		return config.autoTrackScreens
+		return configuration.autoTrackScreens
 			.firstMatching({ $0.matches(viewControllerTypeName: viewControllerTypeName) })?
 			.pageProperties
-	}
-
-
-	public var config: TrackerConfiguration {
-		didSet {
-			updateAutomaticTracking()
-		}
 	}
 
 
@@ -235,19 +229,19 @@ public final class Webtrekk {
 
 	private func setUpConfig() {
 		// check if there is a local dump of the config saved
-		if let localConfig = fileManager.restoreConfiguration(config.trackingId) where localConfig.version > config.version {
+		if let localConfig = fileManager.restoreConfiguration(configuration.trackingId) where localConfig.version > configuration.version {
 			self.config = localConfig
 		}
 		else {
-			fileManager.saveConfiguration(config)
+			fileManager.saveConfiguration(configuration)
 		}
 
-		guard config.enableRemoteConfiguration && !config.remoteConfigurationUrl.isEmpty, let url = NSURL(string: config.remoteConfigurationUrl) else {
+		guard config.enableRemoteConfiguration && !config.remoteConfigurationUrl.isEmpty, let url = NSURL(string: configuration.remoteConfigurationUrl) else {
 			return
 		}
 
 		guard !config.remoteConfigurationUrl.containsString("file://") else {
-			if let xmlString = try? String(contentsOfURL: url), parser = try? XmlConfigParser(xmlString: xmlString), config = parser.trackerConfiguration {
+			if let xmlString = try? String(contentsOfURL: url), parser = try? XmlTrackingConfigurationParser(xmlString: xmlString), config = parser.trackerConfiguration {
 				self.config = config
 			}
 			return
@@ -296,7 +290,7 @@ public final class Webtrekk {
 
 
 	private func setUpOptedOut() {
-		config.optedOut =	NSUserDefaults.standardUserDefaults().boolForKey(UserStoreKey.OptedOut)
+		configuration.optedOut =	NSUserDefaults.standardUserDefaults().boolForKey(UserStoreKey.OptedOut)
 	}
 
 
@@ -314,17 +308,17 @@ public final class Webtrekk {
 			userShouldBeSampled = userDefaults.boolForKey(UserStoreKey.Sampled)
 		}
 		else {
-			userShouldBeSampled = (config.samplingRate == 0) || (Int64(arc4random()) % Int64(config.samplingRate) == 0)
+			userShouldBeSampled = (configuration.samplingRate == 0) || (Int64(arc4random()) % Int64(configuration.samplingRate) == 0)
 			userDefaults.setBool(userShouldBeSampled, forKey: UserStoreKey.Sampled.rawValue)
 		}
-		return userShouldBeSampled && !config.optedOut
+		return userShouldBeSampled && !configuration.optedOut
 	}
 
 
 	internal func track(eventKind: TrackingEvent.Kind) {
 		var eventProperties = TrackingEvent.Properties(
 			everId:       everId,
-			samplingRate: config.samplingRate,
+			samplingRate: configuration.samplingRate,
 			timeZone:     NSTimeZone.defaultTimeZone(),
 			timestamp:    NSDate(),
 			userAgent:    defaultUserAgent()
@@ -332,14 +326,14 @@ public final class Webtrekk {
 
 		eventProperties.isFirstAppStart = firstStart()
 
-		if config.autoTrack {
-			if config.autoTrackAdvertiserId {
+		if configuration.autoTrack {
+			if configuration.autoTrackAdvertiserId {
 				eventProperties.advertisingId = advertisingIdentifier
 			}
-			if config.autoTrackAppVersionName {
+			if configuration.autoTrackAppVersionName {
 				eventProperties.appVersion = Webtrekk.appVersion
 			}
-			if config.autoTrackConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
+			if configuration.autoTrackConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
 				if reachability.isReachableViaWiFi() {
 					eventProperties.connectionType = .wifi
 				}
@@ -367,13 +361,13 @@ public final class Webtrekk {
 					eventProperties.connectionType = .offline
 				}
 			}
-			if config.autoTrackRequestUrlStoreSize {
+			if configuration.autoTrackRequestUrlStoreSize {
 				eventProperties.eventQueueSize = requestManager.eventCount
 			}
-			if config.autoTrackScreenOrientation {
+			if configuration.autoTrackScreenOrientation {
 				eventProperties.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
 			}
-			if config.autoTrackAppUpdate {
+			if configuration.autoTrackAppUpdate {
 				eventProperties.isAppUpdate = appUpdate()
 			}
 		}
@@ -387,8 +381,8 @@ public final class Webtrekk {
 			event = plugin.tracker(self, eventForTrackingEvent: event)
 		}
 
-		if shouldTrack(), let url = UrlCreator.createUrlFromEvent(event, serverUrl: config.serverUrl, trackingId: config.trackingId) {
-			requestManager.enqueueEvent(url, maximumDelay: config.sendDelay)
+		if shouldTrack(), let url = UrlCreator.createUrlFromEvent(event, serverUrl: configuration.serverUrl, trackingId: configuration.trackingId) {
+			requestManager.enqueueEvent(url, maximumDelay: configuration.sendDelay)
 		}
 
 		for plugin in plugins {
@@ -472,7 +466,7 @@ public final class Webtrekk {
 	private func updateAutomaticTracking() {
 		let handler = Webtrekk._autotrackingEventHandler
 
-		if config.autoTrack {
+		if configuration.autoTrack {
 			if !handler.trackers.contains({ $0 === self }) {
 				handler.trackers.append(self)
 			}

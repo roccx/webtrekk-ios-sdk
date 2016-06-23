@@ -36,6 +36,16 @@
 		C55657C5605E402036539866 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F99E1518FB6347E94537495 /* Pods_Tests.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		4939D7541D1C351F0090545B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 498683051BE404F7001DCBC7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4986830C1BE404F7001DCBC7;
+			remoteInfo = "Automatic Tracking Example";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		07AECADF8E41AA60742531FF /* Pods-ChildTracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChildTracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ChildTracking Example/Pods-ChildTracking Example.debug.xcconfig"; sourceTree = "<group>"; };
 		0F99E1518FB6347E94537495 /* Pods_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -286,6 +296,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4939D7551D1C351F0090545B /* PBXTargetDependency */,
 			);
 			name = Tests;
 			productName = XcodeTests;
@@ -307,6 +318,7 @@
 					};
 					498683201BE404F7001DCBC7 = {
 						CreatedOnToolsVersion = 7.1;
+						TestTargetID = 4986830C1BE404F7001DCBC7;
 					};
 				};
 			};
@@ -540,6 +552,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		4939D7551D1C351F0090545B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4986830C1BE404F7001DCBC7 /* Automatic Tracking Example */;
+			targetProxy = 4939D7541D1C351F0090545B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		495EE3091D19EDAF00B64698 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -685,6 +705,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Tests;
 				PRODUCT_NAME = Tests;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Webtrekk.app/Webtrekk";
 			};
 			name = Debug;
 		};
@@ -697,6 +718,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Tests;
 				PRODUCT_NAME = Tests;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Webtrekk.app/Webtrekk";
 			};
 			name = Release;
 		};

@@ -16,5 +16,4 @@ Pod::Spec.new do |s|
 
 	s.dependency 'CryptoSwift',       '~> 0.4.1'
 	s.dependency 'ReachabilitySwift', '~> 2.3.3'
-	s.dependency 'SWXMLHash',         '~> 2.1.0'
 end
