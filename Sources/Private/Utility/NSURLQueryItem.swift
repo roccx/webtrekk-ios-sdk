@@ -8,14 +8,4 @@ internal extension NSURLQueryItem {
 		self.init(name: name, value: values.joinWithSeparator(";"))
 	}
 
-
-	internal convenience init(name: ParameterName, value: String?) {
-		self.init(name: name.rawValue, value: value)
-	}
-
-
-	internal convenience init(name: ParameterName, withIndex index: Int, value: String) {
-		self.init(name: "\(name.rawValue)\(index)", value: value)
-	}
-	
 }

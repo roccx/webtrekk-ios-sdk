@@ -31,9 +31,7 @@
 		29825D37430D5A9FD881FBDA4395F5CA /* TrackingEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78933EDD95C7F6D7BB29643D5F074D1 /* TrackingEvent.swift */; };
 		2C89799E9DF05D057466F438C46B193D /* HashProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D6578414F90AF93B45A8CFFEE4C763 /* HashProtocol.swift */; };
 		2CD0E48A1942DA108F45C086B771CEA5 /* BackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74398AD74B6386E1C50D08C5C599EECE /* BackupManager.swift */; };
-		339332F5941E2FFAB27C5528542EBEC6 /* GeneralParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE8E11D4FECA2A218AB9B77A2A7AA6E /* GeneralParameter.swift */; };
 		351F5705E06DE1600A8A09E123F96C15 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4128D0080EDE465C6F4C41A419B50558 /* UIViewController.swift */; };
-		3A49B0823AB94EC330920D7B9E4EC225 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F69A713D3CB53B2888FEE0529498BA /* Event.swift */; };
 		3CF89143D21FCE1C722D554B88E6FD62 /* ChaCha20.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D8E82A026FF4887BE6BD67D67AFD22 /* ChaCha20.swift */; };
 		412E9E35991EAE804887C044DA945CFD /* CRC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114D8E975DBF2F1C0020F847902E4B18 /* CRC.swift */; };
 		414604A8FF3FB72FBF340519531FEEC3 /* Multiplatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 810E5159C90253D21A5884D9AD869EFE /* Multiplatform.swift */; };
@@ -76,12 +74,10 @@
 		8CB4F90922C249B3A859150BF616A4AD /* ArrayUInt8+Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 448A352CFE32C1D5B6A2565C948D18BA /* ArrayUInt8+Foundation.swift */; };
 		8E5B637A0A43C6CC09B0390B6EB14077 /* SWXMLHash-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C71B15514B980F59B62528B7CDB1C506 /* SWXMLHash-dummy.m */; };
 		940CC66F54285B4E6DFF41BCD101FD55 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9E0C40D45BCD97AD4C61BDD5CE3A3B /* Foundation.framework */; };
-		9463F4B211773C220D0D85842B9AA294 /* PixelParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027B6C9A0C62C17BFFA497A9FFA521EB /* PixelParameter.swift */; };
 		948302E37AAB9EC8B812EB369543C8CF /* Utils+Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2285CAFCB4FA6701380DD5C5C255616 /* Utils+Foundation.swift */; };
 		94C21E30D4C8975A8A782BAC99F53A92 /* PKCS7.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDCEA135CE864009B15FAC6E6C2D89EC /* PKCS7.swift */; };
 		94E79413E4699AE8AE49374B5CAF920E /* Padding.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB542CB4C098D539B2AAABFE4D2E78F6 /* Padding.swift */; };
 		96CDB8A5F34B0375F261F7325E4C0EEE /* BytesSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FD83B18BF2D974244AF32A982E6F11F /* BytesSequence.swift */; };
-		99023B533B67AC5F3E7A59D3084002BA /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57BB9564D5A409CD806C693E7C5DBAE /* Extensions.swift */; };
 		99945F21721CDF8126D187FF945B499D /* MediaProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2430097ACE08A0A0767BD1ABDF502070 /* MediaProperties.swift */; };
 		99AAB26FC666C78B690E49D04DBB0F4A /* NSData+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4CC0BC4F152A587BD33A54CEB2DCD33 /* NSData+Extension.swift */; };
 		9A7E210F7DB1815A3B4BDB1BA05EE0C9 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EDD5978B733929F0747E494878679A3 /* CryptoSwift.framework */; };
@@ -103,7 +99,6 @@
 		B266A600FD2C679E7F967D7323F1FEF0 /* EcommerceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE0725FABF12166DE6D7A07C0DB6B3FA /* EcommerceProperties.swift */; };
 		B33CEFE2B293464339FD976CD834DD61 /* Webtrekk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D7F6A89E26D5C62825C6D5325930D1 /* Webtrekk.swift */; };
 		B65773B0448A713786714269C30BB67C /* String+FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F1F597AC6A78B73E70D960A9EB394D /* String+FoundationExtension.swift */; };
-		B9CF3265B5C74D1B9A70FDE32F4F1207 /* ParameterName.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25A6C095DF22F865D2C9C0570F45788 /* ParameterName.swift */; };
 		BA3D18589EC357DFFF95FDE9037F2402 /* ASIdentifierManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E742F456373C0FD27CAB0B8E9CCCC4C5 /* ASIdentifierManager.swift */; };
 		BB7D234C9E46A1E9B27EC1FB950F06AD /* MediaEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4015EC6AADEB134CDDC97A22D0BCDD37 /* MediaEventHandler.swift */; };
 		BD3455BFF784CF4231902A573995596D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9E0C40D45BCD97AD4C61BDD5CE3A3B /* Foundation.framework */; };
@@ -223,7 +218,6 @@
 /* Begin PBXFileReference section */
 		00D6578414F90AF93B45A8CFFEE4C763 /* HashProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HashProtocol.swift; path = Sources/CryptoSwift/HashProtocol.swift; sourceTree = "<group>"; };
 		01555D9130FB3305173622122FE2F1AB /* Rabbit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Rabbit.swift; path = Sources/CryptoSwift/Rabbit.swift; sourceTree = "<group>"; };
-		027B6C9A0C62C17BFFA497A9FFA521EB /* PixelParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PixelParameter.swift; sourceTree = "<group>"; };
 		0514E4369D7D9D0F0D35571BBB563451 /* AdvertisementProperties.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AdvertisementProperties.swift; sourceTree = "<group>"; };
 		05165CA390F7039E8E2ED7DDD9B5C329 /* Logger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		08DE2C8928B8FCB7593A4729A5D4BEC8 /* PageViewEvent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PageViewEvent.swift; sourceTree = "<group>"; };
@@ -318,7 +312,6 @@
 		8C22764F2FE84F1FF76CBDED6253CBA1 /* SWXMLHash.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SWXMLHash.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C49830D56F6C2EE6F9803ECFE4538D7 /* Pods-Manual Tracking Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Manual Tracking Example.modulemap"; sourceTree = "<group>"; };
 		8E1A878A8032507FCB3BD6186D8EF4B0 /* ReachabilitySwift.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = ReachabilitySwift.xcconfig; sourceTree = "<group>"; };
-		8EE8E11D4FECA2A218AB9B77A2A7AA6E /* GeneralParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GeneralParameter.swift; sourceTree = "<group>"; };
 		8EEC327526827E5D558C20DF7CBEE80A /* UrlCreator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UrlCreator.swift; sourceTree = "<group>"; };
 		8F35F83AC28A23F8324AC07E6EDF1272 /* CTR.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CTR.swift; path = Sources/CryptoSwift/BlockMode/CTR.swift; sourceTree = "<group>"; };
 		8FAAE1FE16E444E97F3DB91623203410 /* SequenceType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SequenceType.swift; sourceTree = "<group>"; };
@@ -361,7 +354,6 @@
 		D301784A1E9EAF17E94D9F8FB0E08089 /* Pods-Automatic Tracking Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Automatic Tracking Example-acknowledgements.markdown"; sourceTree = "<group>"; };
 		D325E1B2C2C804BAF2718E44ADFB652C /* NSTimer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NSTimer.swift; sourceTree = "<group>"; };
 		D3629347DD5D133E472C26D46DF602B0 /* ChaCha20+Foundation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "ChaCha20+Foundation.swift"; path = "Sources/CryptoSwift/Foundation/ChaCha20+Foundation.swift"; sourceTree = "<group>"; };
-		D57BB9564D5A409CD806C693E7C5DBAE /* Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D5CCD5865B2783131658FCA217D9D024 /* CryptoSwift-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CryptoSwift-prefix.pch"; sourceTree = "<group>"; };
 		DA57D51E5548F2E14FCC316DF07D4CCF /* TrackerConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackerConfiguration.swift; sourceTree = "<group>"; };
 		DC08F8C5A1212717A11015ED8C2E9023 /* ReachabilitySwift.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = ReachabilitySwift.modulemap; sourceTree = "<group>"; };
@@ -372,7 +364,6 @@
 		E2452672BACD6720CAFF0B6551D3BB7C /* TrackingParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackingParameter.swift; sourceTree = "<group>"; };
 		E27D0495D0257BCF342B99755BE5238C /* PageProperties.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PageProperties.swift; sourceTree = "<group>"; };
 		E3A55F22BE476E7BBBEE3FC9DCB90E1C /* SecureBytes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SecureBytes.swift; path = Sources/CryptoSwift/SecureBytes.swift; sourceTree = "<group>"; };
-		E4F69A713D3CB53B2888FEE0529498BA /* Event.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		E5AAD943D548E8F8FAB652DB551BC042 /* Pods_Manual_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Manual_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6335B73D6BDBBDAF53016042EDA18ED /* UIDevice.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UIDevice.swift; sourceTree = "<group>"; };
 		E742F456373C0FD27CAB0B8E9CCCC4C5 /* ASIdentifierManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ASIdentifierManager.swift; sourceTree = "<group>"; };
@@ -385,7 +376,6 @@
 		EEFC054B53F2ECDA8086699849A79828 /* PBKDF2.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PBKDF2.swift; path = Sources/CryptoSwift/PKCS5/PBKDF2.swift; sourceTree = "<group>"; };
 		EFB8F7C59C5BCFE93D51728D77ED1DE2 /* Pods-Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Tests.modulemap"; sourceTree = "<group>"; };
 		EFEFDAB3DB4DE8EDEF2BAAFE65FF9CFD /* Pods-Manual Tracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Manual Tracking Example.debug.xcconfig"; sourceTree = "<group>"; };
-		F25A6C095DF22F865D2C9C0570F45788 /* ParameterName.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ParameterName.swift; sourceTree = "<group>"; };
 		F4FE8B451EC84CC054C6B9F5CB305BC9 /* PageTracker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PageTracker.swift; sourceTree = "<group>"; };
 		F5C2643F36F8B2FB8F032CB447D29BA7 /* CFB.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CFB.swift; path = Sources/CryptoSwift/BlockMode/CFB.swift; sourceTree = "<group>"; };
 		F78933EDD95C7F6D7BB29643D5F074D1 /* TrackingEvent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackingEvent.swift; sourceTree = "<group>"; };
@@ -740,8 +730,6 @@
 			children = (
 				E742F456373C0FD27CAB0B8E9CCCC4C5 /* ASIdentifierManager.swift */,
 				74398AD74B6386E1C50D08C5C599EECE /* BackupManager.swift */,
-				E4F69A713D3CB53B2888FEE0529498BA /* Event.swift */,
-				D57BB9564D5A409CD806C693E7C5DBAE /* Extensions.swift */,
 				7417D66DB55B992ACDB38CB43A1B14F4 /* FileManager.swift */,
 				FDA132CD48B8B21EDCF7291EF07A6EFB /* Global.swift */,
 				CEDBD412B37F861CFDC515751A59FFB2 /* Locks.swift */,
@@ -799,9 +787,6 @@
 			isa = PBXGroup;
 			children = (
 				7CEDB3D2C0D9B8F62257D7A1048A0248 /* CrossDeviceBridge.swift */,
-				8EE8E11D4FECA2A218AB9B77A2A7AA6E /* GeneralParameter.swift */,
-				F25A6C095DF22F865D2C9C0570F45788 /* ParameterName.swift */,
-				027B6C9A0C62C17BFFA497A9FFA521EB /* PixelParameter.swift */,
 			);
 			path = Parameter;
 			sourceTree = "<group>";
@@ -1215,10 +1200,7 @@
 				FFA6E8F1487538CF48E4144AF260A874 /* DefaultMediaTracker.swift in Sources */,
 				02CE446F1CE519B3986F2BFDADB05FAB /* DefaultPageTracker.swift in Sources */,
 				B266A600FD2C679E7F967D7323F1FEF0 /* EcommerceProperties.swift in Sources */,
-				3A49B0823AB94EC330920D7B9E4EC225 /* Event.swift in Sources */,
-				99023B533B67AC5F3E7A59D3084002BA /* Extensions.swift in Sources */,
 				AE1BD95060ABE303E32EB56D0FB52C64 /* FileManager.swift in Sources */,
-				339332F5941E2FFAB27C5528542EBEC6 /* GeneralParameter.swift in Sources */,
 				1D62C2CC0E5537FACDD9756277A5935A /* Global.swift in Sources */,
 				22DF06230ECE2BFE0753DD5A6C7FC17B /* indexedProperty.swift in Sources */,
 				223470840FEFBB4FF5A2536583B1B8C2 /* Locks.swift in Sources */,
@@ -1236,8 +1218,6 @@
 				80FA8D69705620669814622D649C3B94 /* PageTracker.swift in Sources */,
 				28EA95369AD902B7A108042FDA026921 /* PageViewEvent.swift in Sources */,
 				5FF3998C4F72E4A22AE15AF02A743572 /* PageViewEventHandler.swift in Sources */,
-				B9CF3265B5C74D1B9A70FDE32F4F1207 /* ParameterName.swift in Sources */,
-				9463F4B211773C220D0D85842B9AA294 /* PixelParameter.swift in Sources */,
 				FDFBC3C2292C42BF4979650B73DFA3AE /* RequestManager.swift in Sources */,
 				A5DB0BA560E7B5BABCA212A303AFD69C /* Runtime.swift in Sources */,
 				7570F5F5165746FB4F2B5915C700FC5B /* SequenceType.swift in Sources */,
