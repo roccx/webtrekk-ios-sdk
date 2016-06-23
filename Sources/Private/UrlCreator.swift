@@ -60,9 +60,9 @@ internal final class UrlCreator {
 		if let sessionDetails = properties.sessionDetails {
 			items += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
 		}
-		if let crossDeviceProperties = CrossDeviceProperties() as? CrossDeviceProperties {
-			items += crossDeviceProperties.asQueryItems()
-		}
+
+		items += request.crossDeviceProperties.asQueryItems()
+
 		var pageName: String = ""
 		switch request.event {
 		case .action(let actionEvent):
