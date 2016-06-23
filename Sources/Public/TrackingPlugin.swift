@@ -1,5 +1,5 @@
 public protocol TrackingPlugin: class {
 
-	func tracker (tracker: Webtrekk, eventForTrackingEvent event: TrackingEvent) -> TrackingEvent
-	func tracker (tracker: Webtrekk, didTrackEvent event: TrackingEvent)
+	func tracker (tracker: Webtrekk, requestForQueuingRequest request: TrackingRequest) -> TrackingRequest
+	func tracker (tracker: Webtrekk, didQueueRequest request: TrackingRequest)
 }

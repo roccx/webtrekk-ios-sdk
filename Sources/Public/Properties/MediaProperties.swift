@@ -32,7 +32,7 @@ public struct MediaProperties {
 
 	
 	@warn_unused_result
-	internal func merged(with other: MediaProperties) -> MediaProperties {
+	internal func merged(over other: MediaProperties) -> MediaProperties {
 		return MediaProperties(
 			name:         name,
 			bandwidth:    bandwidth ?? other.bandwidth,

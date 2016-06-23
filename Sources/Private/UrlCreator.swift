@@ -2,7 +2,7 @@ import Foundation
 
 internal final class UrlCreator {
 
-	internal static func createUrlFromEvent(event: TrackingEvent, serverUrl: NSURL, trackingId: String) -> NSURL? {
+	internal static func createUrlFromEvent(request: TrackingRequest, serverUrl: NSURL, trackingId: String) -> NSURLComponents? {
 		guard let baseUrl = NSURLComponents(string: "\(serverUrl)/\(trackingId)/wt") else {
 			NSLog("Url could not be created from ServerUrl '\(serverUrl)' and TrackingId '\(trackingId)'.")
 			return nil
@@ -10,7 +10,7 @@ internal final class UrlCreator {
 
 		var items = [NSURLQueryItem]()
 
-		let properties = event.properties
+		let properties = request.properties
 
 		items.append(NSURLQueryItem(name: "eid", value: properties.everId))
 		items.append(NSURLQueryItem(name: "ps", value: "\(properties.samplingRate)"))
@@ -33,7 +33,7 @@ internal final class UrlCreator {
 		if let language = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as? String {
 			items.append(NSURLQueryItem(name: "la", value: language))
 		}
-		if let userProperties = event.userProperties {
+		if let userProperties = request.userProperties {
 			items += userProperties.asQueryItems()
 		}
 		if let interfaceOrientation = properties.interfaceOrientation {
@@ -59,7 +59,7 @@ internal final class UrlCreator {
 //			items += userProperties.asQueryItems()
 //		}
 		var pageName: String = ""
-		switch event.kind {
+		switch request.event {
 		case .action(let actionEvent):
 			let actionProperties = actionEvent.actionProperties
 			if let details = actionProperties.details {
@@ -112,7 +112,7 @@ internal final class UrlCreator {
 
 		}
 		guard !pageName.isEmpty else {
-			NSLog("Url creation could not finish because page name was not set in event '\(event)'.")
+			NSLog("Url creation could not finish because page name was not set in event '\(request)'.")
 			return nil
 		}
 		let screenDimension = Webtrekk.screenDimensions()
@@ -121,7 +121,7 @@ internal final class UrlCreator {
 
 		items += [NSURLQueryItem(name: "eor", value: nil)]
 		baseUrl.queryItems = items
-		return baseUrl.URL
+		return baseUrl
 	}
 
 }

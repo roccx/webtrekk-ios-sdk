@@ -291,8 +291,8 @@ public final class Webtrekk {
 	}
 
 
-	internal func track(eventKind: TrackingEvent.Kind) {
-		var eventProperties = TrackingEvent.Properties(
+	internal func trackEvent(event: TrackingRequest.Event) {
+		var requestProperties = TrackingRequest.Properties(
 			everId:       Webtrekk.everId,
 			samplingRate: configuration.samplingRate,
 			timeZone:     NSTimeZone.defaultTimeZone(),
@@ -301,68 +301,68 @@ public final class Webtrekk {
 		)
 
 		if isFirstEventAfterAppUpdate {
-			eventProperties.isFirstEventAfterAppUpdate = true
+			requestProperties.isFirstEventAfterAppUpdate = true
 		}
 		if isFirstEventOfApp {
-			eventProperties.isFirstEventOfApp = true
+			requestProperties.isFirstEventOfApp = true
 		}
 		if isFirstEventOfSession {
-			eventProperties.isFirstEventOfSession = true
+			requestProperties.isFirstEventOfSession = true
 		}
 
 		if configuration.automaticallyTracksAdvertisingId {
-			eventProperties.advertisingId = advertisingIdentifier
+			requestProperties.advertisingId = advertisingIdentifier
 		}
 		if configuration.automaticallyTracksAppName {
-			eventProperties.appVersion = Webtrekk.appVersion
+			requestProperties.appVersion = Webtrekk.appVersion
 		}
 		if configuration.automaticallyTracksConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
 			if reachability.isReachableViaWiFi() {
-				eventProperties.connectionType = .wifi
+				requestProperties.connectionType = .wifi
 			}
 			else if reachability.isReachableViaWWAN() {
 				if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
 					switch  carrierType {
 					case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
-						eventProperties.connectionType = .cellular_2G
+						requestProperties.connectionType = .cellular_2G
 					case CTRadioAccessTechnologyWCDMA,CTRadioAccessTechnologyHSDPA,CTRadioAccessTechnologyHSUPA,CTRadioAccessTechnologyCDMAEVDORev0,CTRadioAccessTechnologyCDMAEVDORevA,CTRadioAccessTechnologyCDMAEVDORevB,CTRadioAccessTechnologyeHRPD:
-						eventProperties.connectionType = .cellular_3G
+						requestProperties.connectionType = .cellular_3G
 					case CTRadioAccessTechnologyLTE:
-						eventProperties.connectionType = .cellular_4G
+						requestProperties.connectionType = .cellular_4G
 					default:
-						eventProperties.connectionType = .other
+						requestProperties.connectionType = .other
 					}
 				}
 				else {
-					eventProperties.connectionType = .other
+					requestProperties.connectionType = .other
 				}
 			}
 			else if reachability.isReachable() {
-				eventProperties.connectionType = .other
+				requestProperties.connectionType = .other
 			}
 			else {
-				eventProperties.connectionType = .offline
+				requestProperties.connectionType = .offline
 			}
 		}
 		if configuration.automaticallyTracksEventQueueSize {
-			eventProperties.eventQueueSize = requestManager.eventCount
+			requestProperties.eventQueueSize = requestManager.eventCount
 		}
 		if configuration.automaticallyTracksInterfaceOrientation {
-			eventProperties.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
+			requestProperties.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
 		}
 
 		// FIXME cross-device
 
-		var event = TrackingEvent(kind: eventKind, properties: eventProperties)
-		logger.logInfo("Event: \(event)")
+		var request = TrackingRequest(event: event, properties: requestProperties)
+		logger.logInfo("Request: \(request)")
 
-		guard let url = UrlCreator.createUrlFromEvent(event, serverUrl: configuration.serverUrl, trackingId: configuration.webtrekkId) else {
-			logger.logError("Cannot create URL for event: \(event)")
+		guard let url = UrlCreator.createUrlFromEvent(request, serverUrl: configuration.serverUrl, trackingId: configuration.webtrekkId) else {
+			logger.logError("Cannot create URL for request: \(request)")
 			return
 		}
 
 		for plugin in plugins {
-			event = plugin.tracker(self, eventForTrackingEvent: event)
+			request = plugin.tracker(self, requestForQueuingRequest: request)
 		}
 
 		if shouldEnqueueNewEvents {
@@ -370,7 +370,7 @@ public final class Webtrekk {
 		}
 
 		for plugin in plugins {
-			plugin.tracker(self, didTrackEvent: event)
+			plugin.tracker(self, didQueueRequest: request)
 		}
 
 		isFirstEventAfterAppUpdate = false
@@ -505,7 +505,7 @@ public final class Webtrekk {
 extension Webtrekk: ActionEventHandler {
 
 	internal func handleEvent(event: ActionEvent) {
-		track(.action(event))
+		trackEvent(.action(event))
 	}
 
 }
@@ -514,7 +514,7 @@ extension Webtrekk: ActionEventHandler {
 extension Webtrekk: MediaEventHandler {
 
 	internal func handleEvent(event: MediaEvent) {
-		track(.media(event))
+		trackEvent(.media(event))
 	}
 
 }
@@ -523,7 +523,7 @@ extension Webtrekk: MediaEventHandler {
 extension Webtrekk: PageViewEventHandler {
 
 	internal func handleEvent(event: PageViewEvent) {
-		track(.pageView(event))
+		trackEvent(.pageView(event))
 	}
 }
 
@@ -542,7 +542,7 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 				continue
 			}
 
-			event.pageProperties = event.pageProperties.merged(with: pageProperties)
+			event.pageProperties = event.pageProperties.merged(over: pageProperties)
 
 			tracker.handleEvent(event)
 		}
@@ -557,7 +557,7 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 				continue
 			}
 
-			event.pageProperties = event.pageProperties.merged(with: pageProperties)
+			event.pageProperties = event.pageProperties.merged(over: pageProperties)
 
 			tracker.handleEvent(event)
 		}
@@ -572,7 +572,7 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 				continue
 			}
 
-			event.pageProperties = event.pageProperties.merged(with: pageProperties)
+			event.pageProperties = event.pageProperties.merged(over: pageProperties)
 
 			tracker.handleEvent(event)
 		}
