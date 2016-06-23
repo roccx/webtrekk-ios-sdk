@@ -14,7 +14,6 @@ private class Parser: NSObject {
 
 	private var automaticallyTrackedPages = Array<TrackerConfiguration.Page>()
 	private var automaticallyTracksAdvertisingId: Bool?
-	private var automaticallyTracksAppName: Bool?
 	private var automaticallyTracksAppUpdates: Bool?
 	private var automaticallyTracksAppVersion: Bool?
 	private var automaticallyTracksConnectionType: Bool?
@@ -70,9 +69,6 @@ private class Parser: NSObject {
 		}
 		if let automaticallyTracksAdvertisingId = automaticallyTracksAdvertisingId {
 			configuration.automaticallyTracksAdvertisingId = automaticallyTracksAdvertisingId
-		}
-		if let automaticallyTracksAppName = automaticallyTracksAppName {
-			configuration.automaticallyTracksAppName = automaticallyTracksAppName
 		}
 		if let automaticallyTracksAppUpdates = automaticallyTracksAppUpdates {
 			configuration.automaticallyTracksAppUpdates = automaticallyTracksAppUpdates
@@ -317,7 +313,6 @@ extension Parser: NSXMLParserDelegate {
 		case .automaticTracking:
 			switch (elementName) {
 			case "advertisingIdentifier": pushSimpleElement(automaticallyTracksAdvertisingId)        { value in self.automaticallyTracksAdvertisingId = self.parseBool(value) }
-			case "appName":               pushSimpleElement(automaticallyTracksAppName)              { value in self.automaticallyTracksAppName = self.parseBool(value) }
 			case "appUpdates":            pushSimpleElement(automaticallyTracksAppUpdates)           { value in self.automaticallyTracksAppUpdates = self.parseBool(value) }
 			case "appVersion":            pushSimpleElement(automaticallyTracksAppVersion)           { value in self.automaticallyTracksAppVersion = self.parseBool(value) }
 			case "connectionType":        pushSimpleElement(automaticallyTracksConnectionType)       { value in self.automaticallyTracksConnectionType = self.parseBool(value) }

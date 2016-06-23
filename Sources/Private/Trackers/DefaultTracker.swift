@@ -101,13 +101,6 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	private func autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName: String) -> PageProperties? {
-		return configuration.automaticallyTrackedPages
-			.firstMatching({ $0.matches(viewControllerTypeName: viewControllerTypeName) })?
-			.pageProperties
-	}
-
-
 	private func checkForAppUpdate() {
 		let lastCheckedAppVersion = defaults.stringForKey(DefaultsKeys.appVersion)
 		if lastCheckedAppVersion != Environment.appVersion {
@@ -142,7 +135,7 @@ internal final class DefaultTracker: Tracker {
 		let screenBounds = UIScreen.mainScreen().bounds
 		requestProperties.screenSize = (width: Int(screenBounds.width), height: Int(screenBounds.height))
 
-		if isFirstEventAfterAppUpdate {
+		if isFirstEventAfterAppUpdate && configuration.automaticallyTracksAppUpdates {
 			requestProperties.isFirstEventAfterAppUpdate = true
 		}
 		if isFirstEventOfApp {
@@ -151,11 +144,10 @@ internal final class DefaultTracker: Tracker {
 		if isFirstEventOfSession {
 			requestProperties.isFirstEventOfSession = true
 		}
-
 		if configuration.automaticallyTracksAdvertisingId {
 			requestProperties.advertisingId = advertisingIdentifier
 		}
-		if configuration.automaticallyTracksAppName {
+		if configuration.automaticallyTracksAppVersion {
 			requestProperties.appVersion = Environment.appVersion
 		}
 		if configuration.automaticallyTracksConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
@@ -164,13 +156,16 @@ internal final class DefaultTracker: Tracker {
 			}
 			else if reachability.isReachableViaWWAN() {
 				if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
-					switch  carrierType {
+					switch carrierType {
 					case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
 						requestProperties.connectionType = .cellular_2G
-					case CTRadioAccessTechnologyWCDMA,CTRadioAccessTechnologyHSDPA,CTRadioAccessTechnologyHSUPA,CTRadioAccessTechnologyCDMAEVDORev0,CTRadioAccessTechnologyCDMAEVDORevA,CTRadioAccessTechnologyCDMAEVDORevB,CTRadioAccessTechnologyeHRPD:
+
+					case CTRadioAccessTechnologyWCDMA, CTRadioAccessTechnologyHSDPA, CTRadioAccessTechnologyHSUPA, CTRadioAccessTechnologyCDMAEVDORev0, CTRadioAccessTechnologyCDMAEVDORevA, CTRadioAccessTechnologyCDMAEVDORevB, CTRadioAccessTechnologyeHRPD:
 						requestProperties.connectionType = .cellular_3G
+
 					case CTRadioAccessTechnologyLTE:
 						requestProperties.connectionType = .cellular_4G
+
 					default:
 						requestProperties.connectionType = .other
 					}
@@ -192,8 +187,6 @@ internal final class DefaultTracker: Tracker {
 		if configuration.automaticallyTracksInterfaceOrientation {
 			requestProperties.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
 		}
-
-		// FIXME cross-device
 
 		var request = TrackerRequest(
 			crossDeviceProperties: crossDeviceProperties,
@@ -475,12 +468,12 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 		for tracker in trackers {
 			guard let
 				viewControllerTypeName = event.pageProperties.viewControllerTypeName,
-				pageProperties = tracker.autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName)
+				page = tracker.configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName)
 			else {
 				continue
 			}
 
-			event.pageProperties = event.pageProperties.merged(over: pageProperties)
+			event.pageProperties = event.pageProperties.merged(over: page.pageProperties)
 
 			handler(tracker)(event)
 		}

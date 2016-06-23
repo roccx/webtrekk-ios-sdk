@@ -5,7 +5,6 @@ public struct TrackerConfiguration {
 
 	public var automaticallyTrackedPages = [Page]()
 	public var automaticallyTracksAdvertisingId = true
-	public var automaticallyTracksAppName = true
 	public var automaticallyTracksAppUpdates = true
 	public var automaticallyTracksAppVersion = true
 	public var automaticallyTracksConnectionType = true
@@ -27,6 +26,11 @@ public struct TrackerConfiguration {
 	}
 
 
+	internal func automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName: String) -> Page? {
+		return automaticallyTrackedPages.firstMatching({ $0.matches(viewControllerTypeName: viewControllerTypeName) })
+	}
+
+
 	
 	public struct Page {
 
@@ -40,7 +44,7 @@ public struct TrackerConfiguration {
 		}
 
 
-		internal func matches(viewControllerTypeName viewControllerTypeName: String) -> Bool {
+		private func matches(viewControllerTypeName viewControllerTypeName: String) -> Bool {
 			return viewControllerTypeNamePattern.rangeOfFirstMatchInString(viewControllerTypeName, options: [], range: NSRange(forString: viewControllerTypeName)).location != NSNotFound
 		}
 	}
