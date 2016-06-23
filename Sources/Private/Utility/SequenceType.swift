@@ -1,7 +1,7 @@
 import Foundation
 
 
-public extension SequenceType {
+internal extension SequenceType {
 
 	@warn_unused_result
 	internal func firstMatching(@noescape predicate: Generator.Element throws -> Bool) rethrows -> Generator.Element? {

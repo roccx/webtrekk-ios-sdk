@@ -40,11 +40,10 @@ internal final class RequestManager {
 
 			requests.removeFirst()
 		}
+
 		guard let url = UrlCreator.createUrlFromEvent(request, serverUrl: serverUrl, webtrekkId: webtrekkId) else {
-			logError("Cannot create URL for request: \(request)")
 			return
 		}
-
 
 		requests.append(url)
 		// FIXME save?

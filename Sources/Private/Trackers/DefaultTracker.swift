@@ -20,6 +20,7 @@ internal final class DefaultTracker: Tracker {
 
 	internal var crossDeviceProperties = CrossDeviceProperties()
 	internal var plugins = [TrackerPlugin]()
+	internal var userProperties = UserProperties()
 
 
 	internal init(configuration: TrackerConfiguration) {
@@ -69,18 +70,18 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
+	internal func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
+		NSTimer.scheduledTimerWithTimeInterval(10) {
+			self.updateConfiguration()
+		}
+	}
+
+
 	private func applicationWillResignActive() {
 		defaults.set(key: DefaultsKeys.appHibernationDate, to: NSDate())
 
 		requestManager.shutDown()
 		// TODO backup
-	}
-
-
-	internal func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
-		NSTimer.scheduledTimerWithTimeInterval(10) {
-			self.updateConfiguration()
-		}
 	}
 
 
@@ -135,7 +136,7 @@ internal final class DefaultTracker: Tracker {
 			samplingRate: configuration.samplingRate,
 			timeZone:     NSTimeZone.defaultTimeZone(),
 			timestamp:    NSDate(),
-			userAgent:    defaultUserAgent()
+			userAgent:    DefaultTracker.userAgent
 		)
 
 		let screenBounds = UIScreen.mainScreen().bounds
@@ -194,7 +195,13 @@ internal final class DefaultTracker: Tracker {
 
 		// FIXME cross-device
 
-		var request = TrackerRequest(event: event, properties: requestProperties)
+		var request = TrackerRequest(
+			crossDeviceProperties: crossDeviceProperties,
+			event: event,
+			properties: requestProperties,
+			userProperties: userProperties
+		)
+		
 		logInfo("Request: \(request)")
 
 		for plugin in plugins {
@@ -212,11 +219,6 @@ internal final class DefaultTracker: Tracker {
 		isFirstEventAfterAppUpdate = false
 		isFirstEventOfApp = false
 		isFirstEventOfSession = false
-	}
-
-
-	private func defaultUserAgent() -> String {
-		return "Tracking Library \(Webtrekk.version) (\(Environment.operatingSystemName); \(Environment.operatingSystemVersionString); \(Environment.deviceModelString); \(NSLocale.currentLocale().localeIdentifier))"
 	}
 
 
@@ -427,6 +429,11 @@ internal final class DefaultTracker: Tracker {
 			defaults.set(key: DefaultsKeys.samplingRate, to: configuration.samplingRate)
 		}
 	}
+
+
+	private static let userAgent: String = {
+		return "Tracking Library \(Webtrekk.version) (\(Environment.operatingSystemName); \(Environment.operatingSystemVersionString); \(Environment.deviceModelString); \(NSLocale.currentLocale().localeIdentifier))"
+	}()
 }
 
 

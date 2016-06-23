@@ -5,7 +5,7 @@ internal final class UrlCreator {
 
 	internal static func createUrlFromEvent(request: TrackerRequest, serverUrl: NSURL, webtrekkId: String) -> NSURL? {
 		guard let baseUrl = NSURLComponents(URL: serverUrl.URLByAppendingPathComponent("\(webtrekkId)").URLByAppendingPathComponent("wt"), resolvingAgainstBaseURL: false) else {
-			NSLog("Url could not be created from ServerUrl '\(serverUrl)' and WebtrekkId '\(webtrekkId)'.")
+			logError("Url could not be created from ServerUrl '\(serverUrl)' and WebtrekkId '\(webtrekkId)'.")
 			return nil
 		}
 
@@ -34,9 +34,9 @@ internal final class UrlCreator {
 		if let language = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as? String {
 			items.append(NSURLQueryItem(name: "la", value: language))
 		}
-		if let userProperties = request.userProperties {
-			items += userProperties.asQueryItems()
-		}
+
+		items += request.userProperties.asQueryItems()
+
 		if let interfaceOrientation = properties.interfaceOrientation {
 			switch interfaceOrientation {
 			case .LandscapeLeft, .LandscapeRight: items.append(NSURLQueryItem(name: "cp783", value: "landscape"))
@@ -113,7 +113,7 @@ internal final class UrlCreator {
 
 		}
 		guard !pageName.isEmpty else {
-			NSLog("Url creation could not finish because page name was not set in event '\(request)'.")
+			logError("Url creation could not finish because page name was not set in event '\(request)'.")
 			return nil
 		}
 

@@ -241,7 +241,7 @@ private class Parser: NSObject {
 			return
 		}
 
-		NSLog("%@", "Warning: \(elementPathString) \(message)") // FIXME
+		logWarning("\(elementPathString) \(message)")
 	}
 
 

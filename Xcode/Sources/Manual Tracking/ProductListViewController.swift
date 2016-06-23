@@ -4,9 +4,6 @@ import Webtrekk
 
 class ProductListViewController: UITableViewController {
 
-	private let tracker = Webtrekk.sharedInstance.trackerForPage("Product List")
-
-
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == "openProduct" {
 			guard let cell = sender as? UITableViewCell, indexPath = tableView.indexPathForCell(cell) else {
@@ -25,7 +22,8 @@ class ProductListViewController: UITableViewController {
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-		tracker.trackPageView()
+
+		Webtrekk.sharedTracker.trackPageView()
 	}
 }
 

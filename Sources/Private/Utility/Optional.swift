@@ -1,7 +1,3 @@
-import Foundation
-
-
-
 internal protocol _Optional: NilLiteralConvertible {
 
 	associatedtype Wrapped

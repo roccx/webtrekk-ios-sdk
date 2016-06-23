@@ -10,6 +10,7 @@ public protocol Tracker: class {
 	var configuration: TrackerConfiguration { get }
 	var crossDeviceProperties: CrossDeviceProperties { get set }
 	var plugins: [TrackerPlugin] { get set }
+	var userProperties: UserProperties { get set }
 
 
 	func application (application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?)

@@ -4,14 +4,22 @@ import UIKit
 
 public struct TrackerRequest {
 
+	public var crossDeviceProperties: CrossDeviceProperties
 	public let event: Event
 	public let properties: Properties
-	public var userProperties: UserProperties?
+	public var userProperties: UserProperties
 
 
-	internal init(event: Event, properties: Properties) {
+	internal init(
+		crossDeviceProperties: CrossDeviceProperties,
+		event: Event,
+		properties: Properties,
+		userProperties: UserProperties
+	) {
+		self.crossDeviceProperties = crossDeviceProperties
 		self.event = event
 		self.properties = properties
+		self.userProperties = userProperties
 	}
 
 
