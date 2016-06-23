@@ -1,4 +1,5 @@
 import Foundation
+import CryptoSwift
 
 
 internal final class UrlCreator {
@@ -55,10 +56,13 @@ internal final class UrlCreator {
 			case .wifi:        items.append(NSURLQueryItem(name: "cs807", value: "WIFI"))
 			}
 		}
-		// FIXME: NEEED SESSION DETAILS
-//		if let session = event.session { 
-//			items += userProperties.asQueryItems()
-//		}
+
+		if let sessionDetails = properties.sessionDetails {
+			items += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
+		}
+		if let crossDeviceProperties = CrossDeviceProperties() as? CrossDeviceProperties {
+			items += crossDeviceProperties.asQueryItems()
+		}
 		var pageName: String = ""
 		switch request.event {
 		case .action(let actionEvent):
@@ -125,6 +129,105 @@ internal final class UrlCreator {
 		return baseUrl.URL
 	}
 
+}
+
+
+private extension CrossDeviceProperties {
+	private func asQueryItems() -> [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		if let address = address {
+			switch address {
+			case let .plain(value):
+				if value.isEmpty() {
+					break
+				}
+				var result = ""
+				if let regex = try? NSRegularExpression(pattern: "str(\\.)?(|){1,}", options: NSRegularExpressionOptions.CaseInsensitive) {
+					result = regex.stringByReplacingMatchesInString(value.toLine() , options: .WithTransparentBounds, range: NSMakeRange(0, value.toLine() .characters.count), withTemplate: "strasse")
+				}
+				if result.isEmpty {
+					break
+				}
+				items.append(NSURLQueryItem(name: "cdb5", value: result.md5()))
+				items.append(NSURLQueryItem(name: "cdb6", value: result.sha256()))
+
+			case let .hashed(md5, sha256):
+				if let md5 = md5 {
+					items.append(NSURLQueryItem(name: "cdb5", value: md5))
+				}
+				if let sha256 = sha256 {
+					items.append(NSURLQueryItem(name: "cdb6", value: sha256))
+				}
+			}
+		}
+
+		if let email = emailAddress {
+			switch email {
+			case let .plain(value):
+				let result = value.lowercaseString
+				items.append(NSURLQueryItem(name: "cdb1", value: result.md5()))
+				items.append(NSURLQueryItem(name: "cdb2", value: result.sha256()))
+
+			case let .hashed(md5, sha256):
+				if let md5 = md5 {
+					items.append(NSURLQueryItem(name: "cdb1", value: md5))
+				}
+				if let sha256 = sha256 {
+					items.append(NSURLQueryItem(name: "cdb2", value: sha256))
+				}
+			}
+		}
+
+		if let facebookId = facebookId {
+			items.append(NSURLQueryItem(name: "cdb10", value: facebookId.lowercaseString))
+		}
+
+		if let googlePlusId = googlePlusId {
+			items.append(NSURLQueryItem(name: "cdb12", value: googlePlusId.lowercaseString))
+		}
+
+		if let linkedInId = linkedInId {
+			items.append(NSURLQueryItem(name: "cdb13", value: linkedInId.lowercaseString))
+		}
+
+		if let phoneNumber = phoneNumber {
+			switch phoneNumber {
+			case let .plain(value):
+				let result = value.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: "0123456789").invertedSet).joinWithSeparator("")
+				items.append(NSURLQueryItem(name: "cdb3", value: result.md5()))
+				items.append(NSURLQueryItem(name: "cdb4", value: result.sha256()))
+
+			case let .hashed(md5, sha256):
+				if let md5 = md5 {
+					items.append(NSURLQueryItem(name: "cdb3", value: md5))
+				}
+				if let sha256 = sha256 {
+					items.append(NSURLQueryItem(name: "cdb4", value: sha256))
+				}
+			}
+		}
+
+		if let twitterId = twitterId {
+			items.append(NSURLQueryItem(name: "cdb11", value: twitterId.lowercaseString))
+		}
+		
+		return items
+	}
+}
+
+
+private extension CrossDeviceProperties.Address {
+	private func isEmpty() -> Bool {
+		if firstName != nil || lastName != nil || street != nil || streetNumber != nil || zipCode != nil {
+			return false
+		}
+		return true
+	}
+
+
+	private func toLine() -> String {
+		return [firstName, lastName, zipCode, street, streetNumber].filterNonNil().joinWithSeparator("|").lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "").stringByReplacingOccurrencesOfString("ä", withString: "ae").stringByReplacingOccurrencesOfString("ö", withString: "oe").stringByReplacingOccurrencesOfString("ü", withString: "ue").stringByReplacingOccurrencesOfString("ß", withString: "ss").stringByReplacingOccurrencesOfString("_", withString: "").stringByReplacingOccurrencesOfString("-", withString: "")
+	}
 }
 
 

@@ -1,6 +1,5 @@
 public enum HashableTrackingValue<HashedType> {
 
 	case plain(HashedType)
-	case md5(String)
-	case sha256(String)
+	case hashed(md5: String?, sha256: String?)
 }
