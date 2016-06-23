@@ -20,7 +20,7 @@ public struct TrackerConfiguration {
 	public var autoTrackConnectionType:      Bool
 	public var autoTrackRequestUrlStoreSize: Bool
 	public var autoTrackScreenOrientation:   Bool
-	public var autoTrackScreens:             [String: AutoTrackedScreen]
+	public var autoTrackScreens:             [AutotrackedPage]
 
 	public var enableRemoteConfiguration: Bool
 	public var remoteConfigurationUrl:    String
@@ -63,7 +63,7 @@ public struct TrackerConfiguration {
 	            autoTrackConnectionType: Bool = true,
 	            autoTrackRequestUrlStoreSize: Bool = true,
 	            autoTrackScreenOrientation: Bool = true,
-	            autoTrackScreens: [String: AutoTrackedScreen] = [:],
+	            autoTrackScreens: [AutotrackedPage] = [],
 	            appVersion: String = "",
 	            configFilePath: String = "",
 	            enableRemoteConfiguration: Bool = false,
@@ -107,6 +107,12 @@ public struct TrackerConfiguration {
 		self.configFilePath = configFilePath
 	}
 
+
+	public struct AutotrackedPage {
+
+		public var pageProperties: PageProperties
+		public var pattern: NSRegularExpression
+	}
 }
 
 

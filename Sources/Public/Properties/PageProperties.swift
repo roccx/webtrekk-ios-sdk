@@ -5,11 +5,11 @@ public struct PageProperties {
 
 	public var categories: Set<Category>?
 	public var name: String?
-	public var viewControllerType: UIViewController.Type?
+	public var viewControllerTypeName: String?
 
 
 	public init(
-		name: String,
+		name: String?,
 		categories: Set<Category>? = nil
 	) {
 		self.categories = categories
@@ -18,10 +18,20 @@ public struct PageProperties {
 
 
 	public init(
-		viewControllerType: UIViewController.Type,
+		viewControllerTypeName: String?,
 		categories: Set<Category>? = nil
 	) {
 		self.categories = categories
-		self.viewControllerType = viewControllerType
+		self.viewControllerTypeName = viewControllerTypeName
+	}
+
+	
+	@warn_unused_result
+	internal func merged(with other: PageProperties) -> PageProperties {
+		var new = self
+		new.categories = categories ?? other.categories
+		new.name = name ?? other.name
+		new.viewControllerTypeName = viewControllerTypeName ?? other.viewControllerTypeName
+		return new
 	}
 }

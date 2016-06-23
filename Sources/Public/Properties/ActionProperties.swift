@@ -11,4 +11,13 @@ public struct ActionProperties {
 		self.categories = categories
 		self.name = name
 	}
+
+	
+	@warn_unused_result
+	internal func merged(with other: ActionProperties) -> ActionProperties {
+		return ActionProperties(
+			name:       name,
+			categories: categories ?? other.categories
+		)
+	}
 }

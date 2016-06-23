@@ -1,6 +1,18 @@
 import Foundation
 
 
+public extension SequenceType {
+
+	@warn_unused_result
+	internal func firstMatching(@noescape predicate: Generator.Element throws -> Bool) rethrows -> Generator.Element? {
+		for element in self where try predicate(element) {
+			return element
+		}
+
+		return nil
+	}
+}
+
 
 internal extension SequenceType where Generator.Element: _Optional {
 

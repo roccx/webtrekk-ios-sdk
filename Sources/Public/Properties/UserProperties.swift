@@ -53,6 +53,28 @@ public struct UserProperties {
 		self.streetNumber = streetNumber
 		self.zipCode = zipCode
 	}
+
+	
+	@warn_unused_result
+	internal func merged(with other: UserProperties) -> UserProperties {
+		return UserProperties(
+			birthday:             birthday ?? other.birthday,
+			categories:           categories ?? other.categories,
+			city:                 city ?? other.city,
+			country:              country ?? other.country,
+			emailAddress:         emailAddress ?? other.emailAddress,
+			emailReceiverId:      emailReceiverId ?? other.emailReceiverId,
+			firstName:            firstName ?? other.firstName,
+			gender:               gender ?? other.gender,
+			id:                   id ?? other.id,
+			lastName:             lastName ?? other.lastName,
+			newsletterSubscribed: newsletterSubscribed ?? other.newsletterSubscribed,
+			phoneNumber:          phoneNumber ?? other.phoneNumber,
+			street:               street ?? other.street,
+			streetNumber:         streetNumber ?? other.streetNumber,
+			zipCode:              zipCode ?? other.zipCode
+		)
+	}
 	
 
 

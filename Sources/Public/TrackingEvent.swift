@@ -18,9 +18,9 @@ public struct TrackingEvent {
 
 	public enum Kind {
 
-		case action(ActionTrackingEvent)
-		case media(MediaTrackingEvent)
-		case page(PageTrackingEvent)
+		case action(ActionEvent)
+		case media(MediaEvent)
+		case pageView(PageViewEvent)
 	}
 
 
@@ -37,6 +37,7 @@ public struct TrackingEvent {
 		public var isAppUpdate: Bool?
 		public var isFirstAppStart: Bool?
 		public var samplingRate: Int
+		public var sessionCategories: Set<Category>?
 		public var timeZone: NSTimeZone
 		public var timestamp: NSDate
 		public var userAgent: String

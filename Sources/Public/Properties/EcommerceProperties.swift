@@ -25,6 +25,19 @@ public struct EcommerceProperties {
 		self.voucherValue = voucherValue
 	}
 
+	
+	@warn_unused_result
+	internal func merged(with other: EcommerceProperties) -> EcommerceProperties {
+		return EcommerceProperties(
+			categories:   categories ?? other.categories,
+			currencyCode: currencyCode ?? other.currencyCode,
+			products:     products ?? other.products,
+			status:       status ?? other.status,
+			totalValue:   totalValue ?? other.totalValue,
+			voucherValue: voucherValue ?? other.voucherValue
+		)
+	}
+
 
 
 	public struct Product {

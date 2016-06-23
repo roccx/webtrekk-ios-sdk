@@ -668,7 +668,7 @@ extension PixelParameter: Backupable {
 		return parameter
 	}
 }
-
+/*
 extension ProductParameter: Backupable {
 	internal func toJson() -> [String : AnyObject] {
 		var items = [String: AnyObject]()
@@ -704,7 +704,7 @@ extension ProductParameter: Backupable {
 		return parameter
 	}
 
-}
+}*/
 
 //extension PageParameter: Backupable {
 //	internal func toJson() -> [String : AnyObject] {

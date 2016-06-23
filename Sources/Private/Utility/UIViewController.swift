@@ -41,6 +41,6 @@ internal extension UIViewController {
 	private dynamic func swizzled_viewDidAppear(animated: Bool) {
 		self.swizzled_viewDidAppear(animated)
 
-		automaticTracker.trackView()
+		automaticTracker.trackPageView()
 	}
 }

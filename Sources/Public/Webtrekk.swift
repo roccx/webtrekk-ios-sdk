@@ -99,16 +99,28 @@ public final class Webtrekk {
 	}()
 
 
+	private func appWillEnterForeground() {
+		// TODO: load wating request, check if FNS needs to be set
+
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		if let fns = userDefaults.objectForKey(.ForceNewSession) as? NSDate {
+			// TODO: if fns is older then eventOnStartDelay interval then set to next event
+			userDefaults.removeObjectForKey(.ForceNewSession)
+		}
+		
+	}
+
+
 	private static let _autotrackingEventHandler = AutotrackingEventHandler()
-	internal static var autotrackingEventHandler: protocol<ActionTrackingEventHandler, MediaTrackingEventHandler, PageTrackingEventHandler> {
+	internal static var autotrackingEventHandler: protocol<ActionEventHandler, MediaEventHandler, PageViewEventHandler> {
 		return _autotrackingEventHandler
 	}
 
 
-	private func autotrackingPageNameForClassName(className: String) -> String? {
-		for (pattern, screen) in config.autoTrackScreens {
-			
-		}
+	private func autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName: String) -> PageProperties? {
+		return config.autoTrackScreens
+			.firstMatching({ $0.pattern.rangeOfFirstMatchInString(viewControllerTypeName, options: [], range: NSRange(forString: viewControllerTypeName)).location != NSNotFound })?
+			.pageProperties
 	}
 
 
@@ -116,28 +128,6 @@ public final class Webtrekk {
 		didSet {
 			updateAutomaticTracking()
 		}
-	}
-
-
-	private static func deviceModelString() -> String {
-		let device = UIDevice.currentDevice()
-		if device.isSimulator {
-			return "\(operatingSystemName()) Simulator"
-		}
-		else {
-			return device.modelIdentifier
-		}
-	}
-
-	private func appWillEnterForeground() {
-		// TODO: load wating request, check if FNS needs to be set
-
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-		if let fns = userDefaults.objectForKey(.ForceNewSession) as? NSDate {
-			// TODO: if fns is older then eventOnStartDelay interval then set to next event 
-			userDefaults.removeObjectForKey(.ForceNewSession)
-		}
-
 	}
 
 
@@ -450,7 +440,7 @@ public final class Webtrekk {
 //		enqueue(parameter, config: config)*/
 //	}
 
-
+/*
 	private func track(pageName: String, trackingParameter: TrackingParameter) {
 		/*
 		var parameter = trackingParameter
@@ -469,7 +459,7 @@ public final class Webtrekk {
 //		else {
 //			track(screen.mappingName)
 //		}
-	}
+	}*/
 
 
 	public func trackerForMedia(mediaName: String, mediaCategories: Set<Category> = []) -> MediaTracker {
@@ -518,73 +508,77 @@ public final class Webtrekk {
 }
 
 
-extension Webtrekk: ActionTrackingEventHandler {
+extension Webtrekk: ActionEventHandler {
 
-	internal func handleEvent(event: ActionTrackingEvent) {
+	internal func handleEvent(event: ActionEvent) {
 		track(.action(event))
 	}
 
 }
 
 
-extension Webtrekk: MediaTrackingEventHandler {
+extension Webtrekk: MediaEventHandler {
 
-	internal func handleEvent(event: MediaTrackingEvent) {
+	internal func handleEvent(event: MediaEvent) {
 		track(.media(event))
 	}
 
 }
 
 
-extension Webtrekk: PageTrackingEventHandler {
+extension Webtrekk: PageViewEventHandler {
 
-	internal func handleEvent(event: PageTrackingEvent) {
-		track(.page(event))
+	internal func handleEvent(event: PageViewEvent) {
+		track(.pageView(event))
 	}
 }
 
 
 
-private final class AutotrackingEventHandler: ActionTrackingEventHandler, MediaTrackingEventHandler, PageTrackingEventHandler {
+private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHandler, PageViewEventHandler {
 
 	private var trackers = [Webtrekk]()
 
 
-	private func handleEvent(event: ActionTrackingEvent) {
+	private func handleEvent(event: ActionEvent) {
 		var event = event
 
 		for tracker in trackers {
-			guard let pageName = tracker.autotrackingPageNameForClassName(event.pageProperties.name) else {
+			guard let viewControllerTypeName = event.pageProperties.viewControllerTypeName, pageProperties = tracker.autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName) else {
 				continue
 			}
 
-			event.pageProperties.name = pageName
+			event.pageProperties = event.pageProperties.merged(with: pageProperties)
 
 			tracker.handleEvent(event)
 		}
 	}
 
 
-	private func handleEvent(event: MediaTrackingEvent) {
+	private func handleEvent(event: MediaEvent) {
+		var event = event
+
 		for tracker in trackers {
-			guard let pageName = tracker.autotrackingPageNameForClassName(event.pageProperties.name) else {
+			guard let viewControllerTypeName = event.pageProperties.viewControllerTypeName, pageProperties = tracker.autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName) else {
 				continue
 			}
 
-			event.pageProperties.name = pageName
+			event.pageProperties = event.pageProperties.merged(with: pageProperties)
 
 			tracker.handleEvent(event)
 		}
 	}
 
 
-	private func handleEvent(event: PageTrackingEvent) {
+	private func handleEvent(event: PageViewEvent) {
+		var event = event
+
 		for tracker in trackers {
-			guard let pageName = tracker.autotrackingPageNameForClassName(event.pageProperties.name) else {
+			guard let viewControllerTypeName = event.pageProperties.viewControllerTypeName, pageProperties = tracker.autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName) else {
 				continue
 			}
 
-			event.pageProperties.name = pageName
+			event.pageProperties = event.pageProperties.merged(with: pageProperties)
 
 			tracker.handleEvent(event)
 		}

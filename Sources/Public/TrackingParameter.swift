@@ -1,4 +1,4 @@
-import UIKit
+/*import UIKit
 import ReachabilitySwift
 
 
@@ -7,7 +7,7 @@ public protocol TrackingParameter {
 	var pixelParameter:     PixelParameter      { get set }
 
 	var customParameters:   [String: String]    { get set }
-	var productParameters:  [ProductParameter]  { get set }
+//	var productParameters:  [ProductParameter]  { get set }
 
 //	var pageParameter:      PageParameter?      { get set }
 //	var mediaParameter:     MediaParameter?     { get set }
@@ -84,3 +84,4 @@ internal extension TrackingParameter {
 		return queryItems
 	}
 }
+*/

@@ -1,4 +1,4 @@
-import Foundation
+/*import Foundation
 
 internal final class UrlCreator {
 
@@ -672,4 +672,4 @@ internal extension CrossDeviceBridgeAttributes {
 	private func sha256(string: String) -> String{
 		return string.sha256()
 	}
-}
+}*/

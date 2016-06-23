@@ -11,4 +11,13 @@ public struct AdvertisementProperties {
 		self.categories = categories
 		self.id = id
 	}
+
+	
+	@warn_unused_result
+	internal func merged(with other: AdvertisementProperties) -> AdvertisementProperties {
+		return AdvertisementProperties(
+			id:         id ?? other.id,
+			categories: categories ?? other.categories
+		)
+	}
 }

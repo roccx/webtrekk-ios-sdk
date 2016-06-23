@@ -1,7 +1,7 @@
-public struct MediaTrackingEvent {
+public struct MediaEvent {
 
 	public var advertisementProperties: AdvertisementProperties
-	public var ecommerceProperties: EcommerceProperties?
+	public var ecommerceProperties: EcommerceProperties
 	public var kind: Kind
 	public var mediaProperties: MediaProperties
 	public var pageProperties: PageProperties
@@ -14,8 +14,11 @@ public struct MediaTrackingEvent {
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties()
 	) {
+		self.advertisementProperties = advertisementProperties
+		self.ecommerceProperties = ecommerceProperties
 		self.mediaProperties = mediaProperties
 		self.kind = kind
+		self.pageProperties = pageProperties
 	}
 
 

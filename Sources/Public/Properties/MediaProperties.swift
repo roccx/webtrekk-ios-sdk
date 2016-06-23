@@ -29,4 +29,18 @@ public struct MediaProperties {
 		self.soundIsMuted = soundIsMuted
 		self.soundVolume = soundVolume
 	}
+
+	
+	@warn_unused_result
+	internal func merged(with other: MediaProperties) -> MediaProperties {
+		return MediaProperties(
+			name:         name,
+			bandwidth:    bandwidth ?? other.bandwidth,
+			categories:   categories ?? other.categories,
+			duration:     duration ?? other.duration,
+			position:     position ?? other.position,
+			soundIsMuted: soundIsMuted ?? other.soundIsMuted,
+			soundVolume:  soundVolume ?? other.soundVolume
+		)
+	}
 }
