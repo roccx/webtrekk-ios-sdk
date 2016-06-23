@@ -38,6 +38,7 @@
 		48B999B66A2418368716544D89140531 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6709C49B11B0E6A9FDAB1ED01F402FAB /* Logger.swift */; };
 		490CBB4DB25D195443D8F31D579BD28D /* OFB.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1814BA8573C38D1CB1A18C9192D6D1A /* OFB.swift */; };
 		4939D7231D1C1EC30090545B /* NSRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4939D7211D1C1EBF0090545B /* NSRange.swift */; };
+		4939D7251D1C2AFB0090545B /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4939D7241D1C2AFB0090545B /* String.swift */; };
 		4A33BBDADA9FD85AFC561BEB97168F83 /* CSArrayType+Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C3F1D9F4932F439CA2FD1F8F0AFFEAF /* CSArrayType+Foundation.swift */; };
 		4D356038CB1B725F1A59D5107E24D44C /* Webtrekk-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 83FF2B41FBF2A63AD3026C64B59079D4 /* Webtrekk-dummy.m */; };
 		4FB616EBED49143D13E61CC161A42C39 /* Locks.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9511A583BA3C6819E4CFEA35092AE86 /* Locks.swift */; };
@@ -117,7 +118,7 @@
 		C5B8E98BD2A28B6A3A3552521213C5A0 /* PCBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1538DF92E23808DFFF9798837EA6165 /* PCBC.swift */; };
 		C75C7CB58E441BEA2C02947775B4A2F0 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EDD5978B733929F0747E494878679A3 /* CryptoSwift.framework */; };
 		C8E574A9A461918E5FE5024AA48899DD /* Pods-AutoTracking Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 20BEBEB45E93C76BAB1CF34408600F31 /* Pods-AutoTracking Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CA06E27F70B6D8323372A52D68E6E464 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43CA338ABD64376DA2BA92D355266D40 /* Category.swift */; };
+		CA06E27F70B6D8323372A52D68E6E464 /* IndexedProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43CA338ABD64376DA2BA92D355266D40 /* IndexedProperty.swift */; };
 		D14B10A246F49551CF508C389DE521FF /* ASIdentifierManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3607531AAD0349D6C11434821CACFE22 /* ASIdentifierManager.swift */; };
 		D265E9E8EE8DC2EC23901FEF30A3F988 /* PageProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417D957696352D87BF5088D5CE82D7A4 /* PageProperties.swift */; };
 		D26784E8F871F07F1647D8A26C7D184D /* BlockCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC6FC359DE4BDBA84F233B7E4E36E236 /* BlockCipher.swift */; };
@@ -307,12 +308,13 @@
 		3F1B575ABB4163DDA7AC1B235F971235 /* PKCS5.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PKCS5.swift; path = Sources/CryptoSwift/PKCS5/PKCS5.swift; sourceTree = "<group>"; };
 		417D957696352D87BF5088D5CE82D7A4 /* PageProperties.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PageProperties.swift; sourceTree = "<group>"; };
 		4319F43DF41CBAC3CDE1470ECCF2FBC4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		43CA338ABD64376DA2BA92D355266D40 /* Category.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		43CA338ABD64376DA2BA92D355266D40 /* IndexedProperty.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IndexedProperty.swift; sourceTree = "<group>"; };
 		4460C2386F0F8319ACFE2E0FB6404853 /* SHA1.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SHA1.swift; path = Sources/CryptoSwift/SHA1.swift; sourceTree = "<group>"; };
 		448A352CFE32C1D5B6A2565C948D18BA /* ArrayUInt8+Foundation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "ArrayUInt8+Foundation.swift"; path = "Sources/CryptoSwift/Foundation/ArrayUInt8+Foundation.swift"; sourceTree = "<group>"; };
 		464092D762E9C7E9CFD539D4EF49946F /* Pods-ChildTracking Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-ChildTracking Example.modulemap"; sourceTree = "<group>"; };
 		492EBA9F7FB737FCDBC0CCAA855C143F /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4939D7211D1C1EBF0090545B /* NSRange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSRange.swift; sourceTree = "<group>"; };
+		4939D7241D1C2AFB0090545B /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		4C537F60354C464EE5DBACB58D8CF983 /* ECB.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ECB.swift; path = Sources/CryptoSwift/BlockMode/ECB.swift; sourceTree = "<group>"; };
 		4D04DCBAC3A0559A066C76BE8661DAA6 /* RequestManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RequestManager.swift; sourceTree = "<group>"; };
 		4E724AD5F0DEEFE6038854252389A2FF /* Pods-ManualTracking Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-ManualTracking Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -543,6 +545,7 @@
 				AB3FF52B418954E8CF98FA3F1FF04DE8 /* UIDevice.swift */,
 				5B39D5433CDF092E7167E67B7B035882 /* UIViewController.swift */,
 				4939D7211D1C1EBF0090545B /* NSRange.swift */,
+				4939D7241D1C2AFB0090545B /* String.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -572,7 +575,7 @@
 		2DE100449DC80A13A0EBF81818C7B01C /* Public */ = {
 			isa = PBXGroup;
 			children = (
-				43CA338ABD64376DA2BA92D355266D40 /* Category.swift */,
+				43CA338ABD64376DA2BA92D355266D40 /* IndexedProperty.swift */,
 				6709C49B11B0E6A9FDAB1ED01F402FAB /* Logger.swift */,
 				8E6F22D0FE780D9E435DA11AC813CE18 /* TrackerConfiguration.swift */,
 				3CA75A171BE01A30195AC36072A61FA8 /* TrackingEvent.swift */,
@@ -1246,7 +1249,7 @@
 				D14B10A246F49551CF508C389DE521FF /* ASIdentifierManager.swift in Sources */,
 				B6763EBC552C079D71B4C1277B9AACC9 /* AVPlayerTracker.swift in Sources */,
 				8DDF79857DD22499197E12598DDFA0B8 /* BackupManager.swift in Sources */,
-				CA06E27F70B6D8323372A52D68E6E464 /* Category.swift in Sources */,
+				CA06E27F70B6D8323372A52D68E6E464 /* IndexedProperty.swift in Sources */,
 				39A0DCB58A7D6CA3D69F5DC5D0DD133F /* CrossDeviceBridge.swift in Sources */,
 				0C536DD9583D74DBA47691188C4B97A4 /* DefaultMediaTracker.swift in Sources */,
 				5B0770173E11EE5F9E42C313735B5B07 /* DefaultPageTracker.swift in Sources */,
@@ -1287,6 +1290,7 @@
 				7555990052D14041BA81295F4D964369 /* UserProperties.swift in Sources */,
 				5EB3D36B759B0375F4E2DD1D701651F7 /* UserStoreKey.swift in Sources */,
 				4D356038CB1B725F1A59D5107E24D44C /* Webtrekk-dummy.m in Sources */,
+				4939D7251D1C2AFB0090545B /* String.swift in Sources */,
 				A80EEE2A8B1B91A4871D9592ACD59508 /* Webtrekk.swift in Sources */,
 				BB2206B1703B8220582CFCA5AA5B8D07 /* XmlConfigParser.swift in Sources */,
 			);

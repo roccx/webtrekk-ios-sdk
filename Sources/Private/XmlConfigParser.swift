@@ -110,54 +110,59 @@ internal final class XmlConfigParser {
 			config.autoTrackAdvertiserId = Bool(text.lowercaseString == "true")
 		}
 
-		if root[.Screens].boolValue {
-			let screens = root[.Screens].children
-			for screen in screens {
-				guard let className = screen[.ClassName].element?.text else {
-					continue
-				}
-				let mappingName: String
-				if screen[.MappingName].boolValue, let name = screen[.MappingName].element?.text {
-					mappingName = name
+		config.autoTrackScreens.removeAll()
+
+		if let xmlPages = root["pages"].existing {
+			for xmlPage in xmlPages.children {
+				// TODO error logging
+
+				// TODO non-regex pattern matching
+				let viewControllerTypeName = try xmlPage.nonemptyStringAttribute("viewControllerType")
+
+				let pattern: NSRegularExpression
+				if viewControllerTypeName.hasPrefix("/") {
+					guard let patternString = viewControllerTypeName.firstMatchForRegularExpression("^/(.*)/$")?[1] else {
+						throw Error(message: "Invalid regular expression: missing trailing slash")
+					}
+
+					pattern = try NSRegularExpression(pattern: patternString, options: [])
 				}
 				else {
-					mappingName = className
+					pattern = try NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPatternForString(viewControllerTypeName))\\b", options: [])
 				}
-//				var autoScreen = AutoTrackedScreen(className: className, mappingName: mappingName)
-//				if screen[.AutoTracked].boolValue, let text = screen[.AutoTracked].element?.text {
-//					autoScreen.enabled = Bool(text.lowercaseString == "true")
-//				}
-//				guard screen[.TrackingParameter].boolValue else {
-//					config.autoTrackScreens[className] = autoScreen
-//					continue
-//				}
 
-				let trackingParameter: XMLIndexer = screen[.TrackingParameter]
-//				var pageTracking = PageTracking(pageName: mappingName)
-//				if trackingParameter[.CustomParameters].boolValue {
-//					let customParameters = trackingParameter[.CustomParameters]
-//					for parameter in customParameters.children {
-//						guard let index = parameter.element?.attributes["id"] else {
-//							continue
-//						}
-//						guard let value = parameter.element?.text?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet()) else {
-//							continue
-//						}
-//						pageTracking.customParameters[index] = value
-//					}
-//				}
+				let pageProperties = try parsePageProperties(xmlPage["pageProperties"])
 
-//				if trackingParameter[.PageParameter].boolValue, let _ = pageTracking.pageParameter {
-//					pageTracking.pageParameter?.categories = parse(pageTracking.pageParameter?.categories, fromParameters: trackingParameter[.PageParameter][.Categories])
-//					pageTracking.pageParameter?.page = parse(pageTracking.pageParameter?.page, fromParameters: trackingParameter[.PageParameter][.Page])
-//					pageTracking.pageParameter?.session = parse(pageTracking.pageParameter?.session, fromParameters: trackingParameter[.PageParameter][.Session])
-//				}
-//				autoScreen.pageTracking = pageTracking
-//				config.autoTrackScreens[className] = autoScreen
+				config.autoTrackScreens.append(TrackerConfiguration.AutotrackedPage(
+					pageProperties: pageProperties,
+					pattern:		pattern
+				))
 			}
 		}
 
 		return config
+	}
+
+
+
+	private func parsePageProperties(xmlPageProperties: XMLIndexer) throws -> PageProperties {
+		let name = try xmlPageProperties.nonemptyStringAttribute("name")
+
+		// TODO more properties
+
+		return PageProperties(name: name)
+	}
+
+
+
+	internal struct Error: ErrorType {
+
+		internal var message: String
+
+
+		internal init(message: String) {
+			self.message = message
+		}
 	}
 }
 
@@ -207,6 +212,15 @@ internal enum XmlConfigParameter: String {
 
 internal extension XMLIndexer {
 
+	internal var existing: XMLIndexer? {
+		guard boolValue else {
+			return nil
+		}
+
+		return self
+	}
+
+
 	internal subscript(key: XmlConfigParameter) -> XMLIndexer {
 		do {
 			return try self.byKey(key.rawValue)
@@ -214,6 +228,37 @@ internal extension XMLIndexer {
 			return .XMLError(error)
 		} catch {
 			return .XMLError(.Key(key: key.rawValue))
+		}
+	}
+
+
+	private func nonemptyStringAttribute(name: String) throws -> String {
+		guard let value = try stringAttribute(name).nonEmpty else {
+			throw Error2(message: "FIXME")
+		}
+
+		return value
+	}
+
+
+	private func stringAttribute(name: String) throws -> String {
+		guard let attributes = element?.attributes else {
+			throw Error2(message: "FIXME")
+		}
+		guard let value = attributes[name] else {
+			throw Error2(message: "FIXME")
+		}
+
+		return value
+	}
+
+	internal struct Error2: ErrorType {
+
+		internal var message: String
+
+
+		internal init(message: String) {
+			self.message = message
 		}
 	}
 }

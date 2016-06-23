@@ -112,6 +112,11 @@ public struct TrackerConfiguration {
 
 		public var pageProperties: PageProperties
 		public var pattern: NSRegularExpression
+
+
+		internal func matches(viewControllerTypeName viewControllerTypeName: String) -> Bool {
+			return pattern.rangeOfFirstMatchInString(viewControllerTypeName, options: [], range: NSRange(forString: viewControllerTypeName)).location != NSNotFound
+		}
 	}
 }
 

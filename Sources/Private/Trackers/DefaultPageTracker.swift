@@ -19,6 +19,13 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
+	internal init(handler: Handler, viewControllerTypeName: String) {
+		self.handler = handler
+
+		self.pageProperties = PageProperties(viewControllerTypeName: viewControllerTypeName)
+	}
+
+
 	internal func trackAction(name name: String) {
 		trackAction(properties: ActionProperties(name: name))
 	}
@@ -39,14 +46,14 @@ internal final class DefaultPageTracker: PageTracker {
 
 
 	internal func trackerForMedia(name name: String, player: AVPlayer) {
-		return trackerForMedia(name: name, categories: nil, player: player)
+		return trackerForMedia(name: name, groups: nil, player: player)
 	}
 
 
-	internal func trackerForMedia(name name: String, categories: Set<Category>?, player: AVPlayer) {
+	internal func trackerForMedia(name name: String, groups: Set<IndexedProperty>?, player: AVPlayer) {
 		AVPlayerTracker.track(
 			player: player,
-			with:   DefaultMediaTracker(handler: self, mediaName: name, mediaCategories: categories)
+			with:   DefaultMediaTracker(handler: self, mediaName: name, mediaGroups: groups)
 		)
 	}
 }

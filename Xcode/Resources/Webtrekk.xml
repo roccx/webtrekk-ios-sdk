@@ -41,33 +41,20 @@
 	<!--url of the remote configuration -->
 	<trackingConfigurationUrl>http://remotetrackingconfiguration.info/configfile.xml</trackingConfigurationUrl>
 
-	<screens>
-		<screen>
-			<className>ProductListViewController</className>
-			<mappingName>Product List</mappingName>
-		</screen>
+	<pages>
+		<page viewControllerType="ProductListViewController">
+			<pageProperties name="Product List"/>
+		</page>
 
-		<screen>
-			<className>/.*\.ProductViewController/</className>
-			<mappingName>Product Details</mappingName>
-			<trackingParameter>
-				<customParameters>
-					<parameter id="1">Final Edition</parameter>
-					<parameter id="3">Racing Team</parameter>
-				</customParameters>
-				<pageParameter>
-					<page>
-						<parameter id="1">Blue Variant</parameter>
-					</page>
-					<categories>
-						<parameter id="2">Media</parameter>
-					</categories>
-					<session>
-						<parameter id="1">Viral</parameter>
-					</session>
-				</pageParameter>
-			</trackingParameter>
-		</screen>
-	</screens>
-
+		<page viewControllerType="/.*\.ProductViewController/">
+			<pageProperties name="Product Details">
+				<details>
+					<detail id="1">Blue Variant</detail>
+				</details>
+				<groups>
+					<group id="2">Media</group>
+				</groups>
+			</pageProperties>
+		</page>
+	</pages>
 </webtrekkConfiguration>

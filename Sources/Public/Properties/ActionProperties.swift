@@ -1,14 +1,14 @@
 public struct ActionProperties {
 
-	public var categories: Set<Category>?
+	public var details: Set<IndexedProperty>?
 	public var name: String
 
 
 	public init(
 		name: String,
-		categories: Set<Category>? = nil)
+		details: Set<IndexedProperty>? = nil)
 	{
-		self.categories = categories
+		self.details = details
 		self.name = name
 	}
 
@@ -16,8 +16,8 @@ public struct ActionProperties {
 	@warn_unused_result
 	internal func merged(with other: ActionProperties) -> ActionProperties {
 		return ActionProperties(
-			name:       name,
-			categories: categories ?? other.categories
+			name:    name,
+			details: details ?? other.details
 		)
 	}
 }

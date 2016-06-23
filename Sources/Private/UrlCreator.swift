@@ -1,8 +1,10 @@
-/*import Foundation
+import Foundation
 
 internal final class UrlCreator {
 
 	internal static func createUrlFromEvent(event: TrackingEvent, serverUrl: String, trackingId: String) -> NSURLComponents? {
+		return nil
+		/*
 		guard let baseUrl = NSURLComponents(string: "\(serverUrl)/\(trackingId)/wt") else {
 			return nil
 		}
@@ -671,6 +673,6 @@ internal extension CrossDeviceBridgeAttributes {
 
 
 	private func sha256(string: String) -> String{
-		return string.sha256()
+		return string.sha256()*/
 	}
-}*/
+}

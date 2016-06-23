@@ -119,7 +119,7 @@ public final class Webtrekk {
 
 	private func autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName: String) -> PageProperties? {
 		return config.autoTrackScreens
-			.firstMatching({ $0.pattern.rangeOfFirstMatchInString(viewControllerTypeName, options: [], range: NSRange(forString: viewControllerTypeName)).location != NSNotFound })?
+			.firstMatching({ $0.matches(viewControllerTypeName: viewControllerTypeName) })?
 			.pageProperties
 	}
 
@@ -381,6 +381,7 @@ public final class Webtrekk {
 		// FIXME read forceNewSession value and set to event
 		
 		var event = TrackingEvent(kind: eventKind, properties: eventProperties)
+		logger.logInfo("Event: \(event)")
 
 		for plugin in plugins {
 			event = plugin.tracker(self, eventForTrackingEvent: event)
@@ -401,10 +402,10 @@ public final class Webtrekk {
 	}
 
 
-	public func trackMedia(mediaName: String, mediaCategories: Set<Category> = [], player: AVPlayer) {
+	public func trackMedia(mediaName: String, mediaGroups: Set<IndexedProperty> = [], player: AVPlayer) {
 		AVPlayerTracker.track(
 			player: player,
-			with:   DefaultMediaTracker(handler: self, mediaName: mediaName, mediaCategories: mediaCategories)
+			with:   DefaultMediaTracker(handler: self, mediaName: mediaName, mediaGroups: mediaGroups)
 		)
 	}
 
@@ -458,8 +459,8 @@ public final class Webtrekk {
 	}*/
 
 
-	public func trackerForMedia(mediaName: String, mediaCategories: Set<Category> = []) -> MediaTracker {
-		return DefaultMediaTracker(handler: self, mediaName: mediaName, mediaCategories: mediaCategories)
+	public func trackerForMedia(mediaName: String, mediaGroups: Set<IndexedProperty> = []) -> MediaTracker {
+		return DefaultMediaTracker(handler: self, mediaName: mediaName, mediaGroups: mediaGroups)
 	}
 
 	

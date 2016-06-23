@@ -11,5 +11,5 @@ public protocol PageTracker: class {
 	func trackAction     (properties properties: ActionProperties)
 	func trackPageView   ()
 	func trackerForMedia (name name: String, player: AVPlayer)
-	func trackerForMedia (name name: String, categories: Set<Category>?, player: AVPlayer) // TODO how to track additional properties?
+	func trackerForMedia (name name: String, groups: Set<IndexedProperty>?, player: AVPlayer) // TODO how to track additional properties?
 }

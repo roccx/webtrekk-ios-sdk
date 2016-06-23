@@ -8,9 +8,9 @@ internal final class DefaultMediaTracker: MediaTracker {
 	internal var pageProperties = PageProperties(name: nil)
 
 
-	internal init(handler: MediaEventHandler, mediaName: String, mediaCategories: Set<Category>?) {
+	internal init(handler: MediaEventHandler, mediaName: String, mediaGroups: Set<IndexedProperty>?) {
 		self.handler = handler
-		self.mediaProperties = MediaProperties(name: mediaName, categories: mediaCategories)
+		self.mediaProperties = MediaProperties(name: mediaName, groups: mediaGroups)
 	}
 
 

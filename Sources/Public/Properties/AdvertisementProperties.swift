@@ -1,14 +1,14 @@
 public struct AdvertisementProperties {
 
-	public var categories: Set<Category>?
+	public var details: Set<IndexedProperty>?
 	public var id: String?
 
 
 	public init(
 		id: String?,
-		categories: Set<Category>? = nil
+		details: Set<IndexedProperty>? = nil
 	) {
-		self.categories = categories
+		self.details = details
 		self.id = id
 	}
 
@@ -16,8 +16,8 @@ public struct AdvertisementProperties {
 	@warn_unused_result
 	internal func merged(with other: AdvertisementProperties) -> AdvertisementProperties {
 		return AdvertisementProperties(
-			id:         id ?? other.id,
-			categories: categories ?? other.categories
+			id:      id ?? other.id,
+			details: details ?? other.details
 		)
 	}
 }

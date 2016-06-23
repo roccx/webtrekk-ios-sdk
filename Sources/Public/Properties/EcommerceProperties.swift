@@ -1,7 +1,7 @@
 public struct EcommerceProperties {
 
-	public var categories: Set<Category>?
 	public var currencyCode: String?
+	public var details: Set<IndexedProperty>?
 	public var orderNumber: String?
 	public var products: [Product]?
 	public var status: Status?
@@ -10,15 +10,15 @@ public struct EcommerceProperties {
 
 
 	public init(
-		categories: Set<Category>? = nil,
 		currencyCode: String? = nil,
+		details: Set<IndexedProperty>? = nil,
 		products: [Product]? = nil,
 		status: Status? = nil,
 		totalValue: Double? = nil,
 		voucherValue: Double? = nil
 	) {
-		self.categories = categories
 		self.currencyCode = currencyCode
+		self.details = details
 		self.products = products
 		self.status = status
 		self.totalValue = totalValue
@@ -29,8 +29,8 @@ public struct EcommerceProperties {
 	@warn_unused_result
 	internal func merged(with other: EcommerceProperties) -> EcommerceProperties {
 		return EcommerceProperties(
-			categories:   categories ?? other.categories,
 			currencyCode: currencyCode ?? other.currencyCode,
+			details:      details ?? other.details,
 			products:     products ?? other.products,
 			status:       status ?? other.status,
 			totalValue:   totalValue ?? other.totalValue,
@@ -42,14 +42,14 @@ public struct EcommerceProperties {
 
 	public struct Product {
 
-		public var categories: Set<Category>?
+		public var categories: Set<IndexedProperty>?
 		public var name: String
 		public var price: String?
 		public var quantity: Int?
 
 		public init(
 			name: String,
-			categories: Set<Category>? = nil,
+			categories: Set<IndexedProperty>? = nil,
 		    price: String? = nil,
 			quantity: Int? = nil
 		) {

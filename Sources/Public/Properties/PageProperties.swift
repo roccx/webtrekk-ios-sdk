@@ -3,25 +3,30 @@ import UIKit
 
 public struct PageProperties {
 
-	public var categories: Set<Category>?
+	public var details: Set<IndexedProperty>?
+	public var groups: Set<IndexedProperty>?
 	public var name: String?
 	public var viewControllerTypeName: String?
 
 
 	public init(
 		name: String?,
-		categories: Set<Category>? = nil
+		details: Set<IndexedProperty>? = nil,
+		groups: Set<IndexedProperty>? = nil
 	) {
-		self.categories = categories
+		self.details = details
+		self.groups = groups
 		self.name = name
 	}
 
 
 	public init(
 		viewControllerTypeName: String?,
-		categories: Set<Category>? = nil
-	) {
-		self.categories = categories
+		details: Set<IndexedProperty>? = nil,
+		groups: Set<IndexedProperty>? = nil
+		) {
+		self.details = details
+		self.groups = groups
 		self.viewControllerTypeName = viewControllerTypeName
 	}
 
@@ -29,7 +34,8 @@ public struct PageProperties {
 	@warn_unused_result
 	internal func merged(with other: PageProperties) -> PageProperties {
 		var new = self
-		new.categories = categories ?? other.categories
+		new.details = details ?? other.details
+		new.groups = groups ?? other.groups
 		new.name = name ?? other.name
 		new.viewControllerTypeName = viewControllerTypeName ?? other.viewControllerTypeName
 		return new
