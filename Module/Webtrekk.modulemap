@@ -1,7 +1,0 @@
-framework module Webtrekk {
-
-	umbrella header "Webtrekk.h"
-
-	export *
-	module * { export * }
-}

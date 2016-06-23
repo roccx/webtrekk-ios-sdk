@@ -1,0 +1,24 @@
+import Foundation
+
+
+internal typealias Closure = () -> Void
+
+
+internal func lazyPlaceholder<T>() -> T {
+	fatalError("Lazy variable accessed before being initialized.")
+}
+
+
+internal func logError(@autoclosure message: () -> String) {
+	Webtrekk.logger.logError(message)
+}
+
+
+internal func logInfo(@autoclosure message: () -> String) {
+	Webtrekk.logger.logError(message)
+}
+
+
+internal func logWarning(@autoclosure message: () -> String) {
+	Webtrekk.logger.logError(message)
+}

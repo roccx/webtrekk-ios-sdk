@@ -1,0 +1,37 @@
+import AVFoundation
+import UIKit
+
+
+public protocol Tracker: class {
+
+	static var everId: String { get }
+	static var isOptedOut: Bool { get set }
+
+	var configuration: TrackerConfiguration { get }
+	var crossDeviceProperties: CrossDeviceProperties { get set }
+	var plugins: [TrackerPlugin] { get set }
+	var userProperties: UserProperties { get set }
+
+
+	func application (application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?)
+
+	func sendPendingEvents ()
+
+	func trackAction (actionName: String, inPage pageName: String)
+
+	func trackAction (event: ActionEvent)
+
+	func trackMedia (event: MediaEvent)
+
+	@warn_unused_result
+	func trackMedia (mediaName: String) -> MediaTracker
+
+	func trackMedia (mediaName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker
+
+	@warn_unused_result
+	func trackPage (pageName: String) -> PageTracker
+
+	func trackPageView (pageName: String)
+
+	func trackPageView (event: PageViewEvent)
+}

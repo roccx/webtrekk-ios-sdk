@@ -1,479 +1,459 @@
 import Foundation
+import CryptoSwift
+
 
 internal final class UrlCreator {
 
-
-	internal static func createUrlFromEvent(event: Event) -> NSURL? {
-		var queryItems = [NSURLQueryItem]()
-		queryItems += event.pixel.urlParameter
-		queryItems += event.general.urlParameter
-
-		if let page = event.page {
-			queryItems += page.urlParameter
-		} else if let action = event.action {
-			queryItems += action.urlParameter
-		} else if let media = event.media {
-			queryItems += media.urlParameter
+	internal static func createUrlFromEvent(request: TrackerRequest, serverUrl: NSURL, webtrekkId: String) -> NSURL? {
+		guard let baseUrl = NSURLComponents(URL: serverUrl.URLByAppendingPathComponent("\(webtrekkId)").URLByAppendingPathComponent("wt"), resolvingAgainstBaseURL: false) else {
+			logError("Url could not be created from ServerUrl '\(serverUrl)' and WebtrekkId '\(webtrekkId)'.")
+			return nil
 		}
 
-		queryItems += event.urlProductParameters()
+		var items = [NSURLQueryItem]()
 
-		if let ecommerceParameter = event.ecommerce {
-			queryItems += ecommerceParameter.urlParameter
+		let properties = request.properties
+
+		items.append(NSURLQueryItem(name: "eid", value: properties.everId))
+		items.append(NSURLQueryItem(name: "ps", value: "\(properties.samplingRate)"))
+		items.append(NSURLQueryItem(name: "mts", value: "\(Int64(properties.timestamp.timeIntervalSince1970 * 1000))"))
+		items.append(NSURLQueryItem(name: "tz", value: "\(properties.timeZone.daylightSavingTimeOffset / 60 / 60)"))
+		items.append(NSURLQueryItem(name: "X-WT-UA", value: properties.userAgent))
+
+		if properties.isFirstEventOfApp {
+			items.append(NSURLQueryItem(name: "one", value: "1"))
 		}
 
-		if let customerParameter = event.customer {
-			queryItems += customerParameter.urlParameter
+		if properties.isFirstEventOfSession {
+			items.append(NSURLQueryItem(name: "fns", value: "1"))
 		}
 
-		queryItems += event.dictionaryAsQueryItem(event.custom)
-		queryItems += event.dictionaryAsQueryItem(event.autoTracking)
-		queryItems += event.dictionaryAsQueryItem(event.crossDevice)
-		queryItems.append(NSURLQueryItem(name: .EndOfRequest, value: nil))
-
-		guard let baseUrl = event.baseUrl, url = baseUrl.URLByAppendingQueryItems(queryItems) else {
-			return event.baseUrl
+		if let ipAddress = properties.ipAddress {
+			items.append(NSURLQueryItem(name: "X-WT-IP", value: ipAddress))
 		}
 
-		return url
+		if let language = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as? String {
+			items.append(NSURLQueryItem(name: "la", value: language))
+		}
 
+		items += request.userProperties.asQueryItems()
+
+		if let interfaceOrientation = properties.interfaceOrientation {
+			switch interfaceOrientation {
+			case .LandscapeLeft, .LandscapeRight: items.append(NSURLQueryItem(name: "cp783", value: "landscape"))
+			case .Portrait, .PortraitUpsideDown: items.append(NSURLQueryItem(name: "cp783", value: "portrait"))
+			default: items.append(NSURLQueryItem(name: "cp783", value: "undefined"))
+			}
+
+		}
+		if let connectionType = properties.connectionType {
+			switch connectionType {
+			case .cellular_2G: items.append(NSURLQueryItem(name: "cs807", value: "2G"))
+			case .cellular_3G: items.append(NSURLQueryItem(name: "cs807", value: "3G"))
+			case .cellular_4G: items.append(NSURLQueryItem(name: "cs807", value: "LTE"))
+			case .offline:     items.append(NSURLQueryItem(name: "cs807", value: "offline"))
+			case .other:       items.append(NSURLQueryItem(name: "cs807", value: "unknown"))
+			case .wifi:        items.append(NSURLQueryItem(name: "cs807", value: "WIFI"))
+			}
+		}
+
+		if let sessionDetails = properties.sessionDetails {
+			items += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
+		}
+
+		items += request.crossDeviceProperties.asQueryItems()
+
+		var pageName: String = ""
+		switch request.event {
+		case .action(let actionEvent):
+			let actionProperties = actionEvent.actionProperties
+			if let details = actionProperties.details {
+				items += details.map({NSURLQueryItem(name: "ck\($0.index)", value: $0.value)})
+			}
+			items.append(NSURLQueryItem(name: "ct", value: actionProperties.name))
+
+			items += actionEvent.ecommerceProperties.asQueryItems()
+			items += actionEvent.pageProperties.asQueryItems()
+			if let name = actionEvent.pageProperties.name {
+				pageName = name
+			}
+
+		case .media(let mediaEvent):
+			items += mediaEvent.mediaProperties.asQueryItems(properties.timestamp)
+
+			switch mediaEvent.kind {
+			case .finish: items.append(NSURLQueryItem(name: "mk", value: "eof"))
+			case .pause: items.append(NSURLQueryItem(name: "mk", value: "pause"))
+			case .play: items.append(NSURLQueryItem(name: "mk", value: "play"))
+			case .position: items.append(NSURLQueryItem(name: "mk", value: "pos"))
+			case .seek: items.append(NSURLQueryItem(name: "mk", value: "seek"))
+			case .stop: items.append(NSURLQueryItem(name: "mk", value: "stop"))
+			case .custom(name: let name): items.append(NSURLQueryItem(name: "mk", value: name))
+			}
+
+
+			items += mediaEvent.ecommerceProperties.asQueryItems()
+
+			items += mediaEvent.pageProperties.asQueryItems()
+			if let name = mediaEvent.pageProperties.name {
+				pageName = name
+			}
+
+		case .pageView(let pageViewEvent):
+			items += pageViewEvent.pageProperties.asQueryItems()
+			if let name = pageViewEvent.pageProperties.name {
+				pageName = name
+			}
+
+
+			if let id = pageViewEvent.advertisementProperties.id {
+				items.append(NSURLQueryItem(name: "mc", value: id))
+			}
+			if let details = pageViewEvent.advertisementProperties.details {
+				items += details.map({NSURLQueryItem(name: "cc\($0.index)", value: $0.value)})
+			}
+
+			items += pageViewEvent.ecommerceProperties.asQueryItems()
+
+		}
+		guard !pageName.isEmpty else {
+			logError("Url creation could not finish because page name was not set in event '\(request)'.")
+			return nil
+		}
+
+		let p = "400,\(pageName),0,\(request.properties.screenSize?.width ?? 0)x\(request.properties.screenSize?.height ?? 0),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
+		items = [NSURLQueryItem(name: "p", value: p)] + items
+
+		items += [NSURLQueryItem(name: "eor", value: nil)]
+		baseUrl.queryItems = items
+		return baseUrl.URL
 	}
 
 }
 
 
-private extension Event {
-	private func dictionaryAsQueryItem(dictionary: [String: String]) -> [NSURLQueryItem] {
-		guard !dictionary.isEmpty else {
-			return [NSURLQueryItem]()
-		}
-		var queryItems = [NSURLQueryItem]()
-		for (key, value) in dictionary {
-			queryItems.append(NSURLQueryItem(name: key, value: value))
-		}
-		return queryItems
-	}
-
-
-	private func urlProductParameters() -> [NSURLQueryItem] {
-		guard !products.isEmpty else {
-			return [NSURLQueryItem]()
-		}
-		var queryItems = [NSURLQueryItem]()
-		var currency = ""
-		var name = ""
-		var price = ""
-		var quantity = ""
-		var categorieKeys = Set<Int>()
-
-		for productParameter in products {
-			let appendix = productParameter == products.last! ? "" : ";"
-			name += "\(productParameter.name)\(appendix)"
-			currency = productParameter.currency.isEmpty ? currency : productParameter.currency
-			price += "\(productParameter.price)\(appendix)"
-			quantity += "\(productParameter.quantity)\(appendix)"
-
-			for key in productParameter.categories.keys {
-				categorieKeys.insert(key)
-			}
-
-		}
-		var categories = [Int: String] ()
-		for productParameter in products {
-			let appendix = productParameter == products.last! ? "" : ";"
-
-			for key in categorieKeys {
-				var category: String
-
-				if let cat = productParameter.categories[key] {
-					category = cat
-				} else {
-					category = ""
+private extension CrossDeviceProperties {
+	private func asQueryItems() -> [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		if let address = address {
+			switch address {
+			case let .plain(value):
+				if value.isEmpty() {
+					break
 				}
-
-				if let cat = categories[key] {
-					categories[key] = "\(cat)\(category)\(appendix)"
-				} else {
-					categories[key] = "\(category)\(appendix)"
+				var result = ""
+				if let regex = try? NSRegularExpression(pattern: "str(\\.)?(|){1,}", options: NSRegularExpressionOptions.CaseInsensitive) {
+					result = regex.stringByReplacingMatchesInString(value.toLine() , options: .WithTransparentBounds, range: NSMakeRange(0, value.toLine() .characters.count), withTemplate: "strasse")
 				}
+				if result.isEmpty {
+					break
+				}
+				items.append(NSURLQueryItem(name: "cdb5", value: result.md5()))
+				items.append(NSURLQueryItem(name: "cdb6", value: result.sha256()))
 
-			}
-		}
-		queryItems.append(NSURLQueryItem(name: .ProductName, value:  name))
-		if let ecommerce = ecommerce where !ecommerce.currency.isEmpty { // when ecommerce already has a currency then don't add here
-			currency = ""
-		}
-		if !currency.isEmpty {
-			queryItems.append(NSURLQueryItem(name: .EcomCurrency, value:  currency))
-		}
-		if !price.isEmpty {
-			queryItems.append(NSURLQueryItem(name: .ProductPrice, value:  price))
-		}
-		if !quantity.isEmpty {
-			queryItems.append(NSURLQueryItem(name: .ProductQuantity, value:  quantity))
-		}
-
-		for (index, value) in categories {
-			queryItems.append(NSURLQueryItem(name: .ProductCategory, withIndex: index, value:  value))
-		}
-		return queryItems
-	}
-}
-
-
-
-extension ActionParameter: Parameter {
-	private var urlParameter: [NSURLQueryItem] {
-		get {
-			var queryItems = [NSURLQueryItem]()
-			queryItems.append(NSURLQueryItem(name: .ActionName, value: name))
-
-			if !categories.isEmpty {
-				for (index, value) in categories {
-					queryItems.append(NSURLQueryItem(name: .ActionCategory, withIndex: index, value: value))
+			case let .hashed(md5, sha256):
+				if let md5 = md5 {
+					items.append(NSURLQueryItem(name: "cdb5", value: md5))
+				}
+				if let sha256 = sha256 {
+					items.append(NSURLQueryItem(name: "cdb6", value: sha256))
 				}
 			}
+		}
 
-			if !session.isEmpty {
-				for (index, value) in session {
-					queryItems.append(NSURLQueryItem(name: .Session, withIndex: index, value: value))
+		if let email = emailAddress {
+			switch email {
+			case let .plain(value):
+				let result = value.lowercaseString
+				items.append(NSURLQueryItem(name: "cdb1", value: result.md5()))
+				items.append(NSURLQueryItem(name: "cdb2", value: result.sha256()))
+
+			case let .hashed(md5, sha256):
+				if let md5 = md5 {
+					items.append(NSURLQueryItem(name: "cdb1", value: md5))
+				}
+				if let sha256 = sha256 {
+					items.append(NSURLQueryItem(name: "cdb2", value: sha256))
 				}
 			}
-			return queryItems
 		}
+
+		if let facebookId = facebookId {
+			items.append(NSURLQueryItem(name: "cdb10", value: facebookId.lowercaseString))
+		}
+
+		if let googlePlusId = googlePlusId {
+			items.append(NSURLQueryItem(name: "cdb12", value: googlePlusId.lowercaseString))
+		}
+
+		if let linkedInId = linkedInId {
+			items.append(NSURLQueryItem(name: "cdb13", value: linkedInId.lowercaseString))
+		}
+
+		if let phoneNumber = phoneNumber {
+			switch phoneNumber {
+			case let .plain(value):
+				let result = value.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: "0123456789").invertedSet).joinWithSeparator("")
+				items.append(NSURLQueryItem(name: "cdb3", value: result.md5()))
+				items.append(NSURLQueryItem(name: "cdb4", value: result.sha256()))
+
+			case let .hashed(md5, sha256):
+				if let md5 = md5 {
+					items.append(NSURLQueryItem(name: "cdb3", value: md5))
+				}
+				if let sha256 = sha256 {
+					items.append(NSURLQueryItem(name: "cdb4", value: sha256))
+				}
+			}
+		}
+
+		if let twitterId = twitterId {
+			items.append(NSURLQueryItem(name: "cdb11", value: twitterId.lowercaseString))
+		}
+		
+		return items
 	}
 }
 
 
-extension CustomerParameter: Parameter {
+private extension CrossDeviceProperties.Address {
+	private func isEmpty() -> Bool {
+		if firstName != nil || lastName != nil || street != nil || streetNumber != nil || zipCode != nil {
+			return false
+		}
+		return true
+	}
+
+
+	private func toLine() -> String {
+		return [firstName, lastName, zipCode, street, streetNumber].filterNonNil().joinWithSeparator("|").lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "").stringByReplacingOccurrencesOfString("ä", withString: "ae").stringByReplacingOccurrencesOfString("ö", withString: "oe").stringByReplacingOccurrencesOfString("ü", withString: "ue").stringByReplacingOccurrencesOfString("ß", withString: "ss").stringByReplacingOccurrencesOfString("_", withString: "").stringByReplacingOccurrencesOfString("-", withString: "")
+	}
+}
+
+
+private extension EcommerceProperties {
+
+	private func asQueryItems() ->  [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		if let currencyCode = currencyCode {
+			items.append(NSURLQueryItem(name: "cr", value: currencyCode))
+		}
+		if let details = details {
+			items += details.map({NSURLQueryItem(name: "cb\($0.index)", value: $0.value)})
+		}
+		if let orderNumber = orderNumber {
+			items.append(NSURLQueryItem(name: "oi", value: orderNumber))
+		}
+		if let status = status {
+			switch status {
+			case .addedToBasket:
+				items.append(NSURLQueryItem(name: "st", value: "add"))
+			case .purchased:
+				items.append(NSURLQueryItem(name: "st", value: "conf"))
+			case .viewed:
+				items.append(NSURLQueryItem(name: "st", value: "view"))
+			}
+		}
+		if let totalValue = totalValue {
+			items.append(NSURLQueryItem(name: "ov", value: "\(totalValue)"))
+		}
+		if let voucherValue = voucherValue {
+			items.append(NSURLQueryItem(name: "cb563", value: "\(voucherValue)"))
+		}
+		return items
+	}
+
+	private func mergeProductQueryItems() -> [NSURLQueryItem] {
+		guard let products = products else {
+			return []
+		}
+
+		guard products.count > 0 && products.count != 1 else {
+			return products.map({$0.asQueryItems()})[0]
+		}
+		var items = [NSURLQueryItem] ()
+
+		var names = [String]()
+		var prices = [String]()
+		var quantities =  [String]()
+		var categoryKeys = Set<Int>()
+		for product in products {
+			names.append(product.name)
+			prices.append(product.price ?? "")
+			quantities.append("\(product.quantity != nil ? "\(product.quantity)" : "" )")
+			if let categories = product.categories {
+				for category in categories {
+					categoryKeys.insert(category.index)
+				}
+			}
+		}
+
+		var categories = Set<IndexedProperty>()
+
+		for key in categoryKeys {
+			var categoryValues = [String]()
+			for product in products {
+				var value = ""
+				if let categories = product.categories {
+					for category in categories where category.index == key {
+						value = category.value
+					}
+				}
+				categoryValues.append(value)
+			}
+			categories.insert(IndexedProperty(index: key, value: categoryValues.joinWithSeparator(";")))
+		}
+
+		items.append(NSURLQueryItem(name: "ba", value: names.joinWithSeparator(";")))
+		items.append(NSURLQueryItem(name: "co", value: prices.joinWithSeparator(";")))
+		items.append(NSURLQueryItem(name: "qn", value: quantities.joinWithSeparator(";")))
+		items += categories.map({NSURLQueryItem(name: "ca\($0.index)", value: $0.value)})
+		return items
+	}
+}
+
+
+private extension EcommerceProperties.Product {
+	private func asQueryItems() -> [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		if let categories = categories {
+			items += categories.map({NSURLQueryItem(name: "ca\($0.index)", value: $0.value)})
+		}
+		items.append(NSURLQueryItem(name: "ba", value: name))
+		if let price = price {
+			items.append(NSURLQueryItem(name: "co", value: "\(price)"))
+		}
+		if let quantity = quantity {
+			items.append(NSURLQueryItem(name: "qn", value: "\(quantity)"))
+		}
+		return items
+	}
+}
+
+
+private extension MediaProperties {
+
+	private func asQueryItems(timestamp: NSDate) -> [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		if let bandwidth = bandwidth {
+			items.append(NSURLQueryItem(name: "bw", value: "\(Int64(bandwidth))"))
+		}
+		if let groups = groups {
+			items += groups.map({NSURLQueryItem(name: "mg\($0.index)", value: $0.value)})
+		}
+		if let duration = duration {
+			items.append(NSURLQueryItem(name: "mt2", value: "\(Int64(duration))"))
+		}
+		else {
+			items.append(NSURLQueryItem(name: "mt2", value: "\(0)"))
+		}
+		items.append(NSURLQueryItem(name: "mi", value: name))
+
+		if let position = position {
+			items.append(NSURLQueryItem(name: "mt1", value: "\(Int64(position))"))
+		}
+		else {
+			items.append(NSURLQueryItem(name: "mt1", value: "\(0)"))
+		}
+		if let soundIsMuted = soundIsMuted {
+			items.append(NSURLQueryItem(name: "mut", value: soundIsMuted ? "1" : "0"))
+		}
+		if let soundVolume = soundVolume {
+			items.append(NSURLQueryItem(name: "mut", value: "\(Int64(soundVolume * 100))"))
+		}
+		items.append(NSURLQueryItem(name: "x", value: "\(Int64(timestamp.timeIntervalSince1970 * 1000))"))
+		return items
+	}
+}
+
+
+private extension PageProperties {
+
+	private func asQueryItems() -> [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		if let details = details {
+			items += details.map({NSURLQueryItem(name: "cp\($0.index)", value: $0.value)})
+		}
+		if let groups = groups {
+			items += groups.map({NSURLQueryItem(name: "cg\($0.index)", value: $0.value)})
+		}
+		return items
+	}
+}
+
+
+private extension UserProperties {
+
+	private func asQueryItems() -> [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		if let details = details {
+			items += details.map({NSURLQueryItem(name: "uc\($0.index)", value: $0.value)})
+		}
+		if let birthday = birthday {
+			items = items.filter({$0.name != "uc707"})
+			items.append(NSURLQueryItem(name: "uc707", value: birthdayFormatter.stringFromDate(birthday)))
+		}
+		if let city = city {
+			items = items.filter({$0.name != "uc708"})
+			items.append(NSURLQueryItem(name: "uc708", value: city))
+		}
+		if let country = country {
+			items = items.filter({$0.name != "uc709"})
+			items.append(NSURLQueryItem(name: "uc709", value: country))
+		}
+		if let emailAddress = emailAddress {
+			items = items.filter({$0.name != "uc700"})
+			items.append(NSURLQueryItem(name: "uc700", value: emailAddress))
+		}
+		if let emailReceiverId = emailReceiverId {
+			items = items.filter({$0.name != "uc701"})
+			items.append(NSURLQueryItem(name: "uc701", value: emailReceiverId))
+		}
+		if let firstName = firstName {
+			items = items.filter({$0.name != "uc703"})
+			items.append(NSURLQueryItem(name: "uc703", value: firstName))
+		}
+		if let gender = gender {
+			items = items.filter({$0.name != "uc706"})
+			items.append(NSURLQueryItem(name: "uc706", value: gender == UserProperties.Gender.male ? "1" :  "2"))
+		}
+		if let id = id {
+			items.append(NSURLQueryItem(name: "cd", value: id))
+		}
+		if let lastName = lastName {
+			items = items.filter({$0.name != "uc704"})
+			items.append(NSURLQueryItem(name: "uc704", value: lastName))
+		}
+		if let newsletterSubscribed = newsletterSubscribed {
+			items = items.filter({$0.name != "uc702"})
+			items.append(NSURLQueryItem(name: "uc702", value: newsletterSubscribed ? "1" : "2"))
+		}
+		if let phoneNumber = phoneNumber {
+			items = items.filter({$0.name != "uc705"})
+			items.append(NSURLQueryItem(name: "uc705", value: phoneNumber))
+		}
+		if let street = street {
+			items = items.filter({$0.name != "uc711"})
+			items.append(NSURLQueryItem(name: "uc711", value: street))
+		}
+		if let streetNumber = streetNumber {
+			items = items.filter({$0.name != "uc712"})
+			items.append(NSURLQueryItem(name: "uc712", value: streetNumber))
+		}
+		if let zipCode = zipCode {
+			items = items.filter({$0.name != "uc710"})
+			items.append(NSURLQueryItem(name: "uc710", value: zipCode))
+		}
+
+		return items
+	}
+
+
 	private var birthdayFormatter: NSDateFormatter {
 		get {
 			let formatter = NSDateFormatter()
 			formatter.dateFormat = "yyyyMMdd"
 			return formatter
 		}
-	}
-
-	private var urlParameter: [NSURLQueryItem] {
-		get {
-			var queryItems = [NSURLQueryItem]()
-			var categories = self.categories
-
-			if let value = eMail.isEmpty ? categories.keys.contains(700) ? categories[700] : nil : eMail where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerEmail, value: value))
-			}
-			categories.removeValueForKey(700)
-
-			if let value = eMailReceiverId.isEmpty ? categories.keys.contains(701) ? categories[701] : nil : eMailReceiverId  where !value.isEmpty{
-				queryItems.append(NSURLQueryItem(name: .CustomerEmailReceiver, value: value))
-			}
-			categories.removeValueForKey(701)
-
-			if let value = newsletter {
-				queryItems.append(NSURLQueryItem(name: .CustomerNewsletter, value: value ? "1" : "2"))
-			} else if let value = categories[702] where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerNewsletter, value: value))
-			}
-			categories.removeValueForKey(702)
-
-			if let value = firstName.isEmpty ? categories.keys.contains(703) ? categories[703] : nil : firstName where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerFirstName, value: value))
-			}
-			categories.removeValueForKey(703)
-
-			if let value = lastName.isEmpty ? categories.keys.contains(704) ? categories[704] : nil : lastName where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerLastName, value: value))
-			}
-			categories.removeValueForKey(704)
-
-			if let value = phoneNumber.isEmpty ? categories.keys.contains(705) ? categories[705] : nil : phoneNumber where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerPhoneNumber, value: value))
-			}
-			categories.removeValueForKey(705)
-
-			if let value = gender {
-				queryItems.append(NSURLQueryItem(name: .CustomerGender, value: value.toValue()))
-			} else if let value = categories[706] where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerGender, value: value))
-			}
-			categories.removeValueForKey(706)
-
-			if let value = birthday {
-				queryItems.append(NSURLQueryItem(name: .CustomerBirthday, value: birthdayFormatter.stringFromDate(value)))
-			} else if let value = categories[707] where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerBirthday, value: value))
-			}
-			categories.removeValueForKey(707)
-
-			if let value = city.isEmpty ? categories.keys.contains(708) ? categories[708] : nil : city where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerCity, value: value))
-			}
-			categories.removeValueForKey(708)
-
-			if let value = country.isEmpty ? categories.keys.contains(709) ? categories[709] : nil : country where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerCountry, value: value))
-			}
-			categories.removeValueForKey(709)
-
-			if let value = zip.isEmpty ? categories.keys.contains(710) ? categories[710] : nil : zip where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerZip, value: value))
-			}
-			categories.removeValueForKey(710)
-
-			if let value = street.isEmpty ? categories.keys.contains(711) ? categories[711] : nil : street where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerStreet, value: value))
-			}
-			categories.removeValueForKey(711)
-
-			if let value = streetNumber.isEmpty ? categories.keys.contains(712) ? categories[712] : nil : streetNumber where !value.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerStreetNumber, value: value))
-			}
-			categories.removeValueForKey(712)
-
-			if !number.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .CustomerNumber, value: number))
-			}
-
-			if !categories.isEmpty {
-				for (index, value) in categories {
-					queryItems.append(NSURLQueryItem(name: .CustomerCategory, withIndex: index, value: value))
-				}
-			}
-			return queryItems
-		}
-	}
-}
-
-internal extension CustomerGender {
-	internal func toValue() -> String {
-		switch self {
-		case .Male:
-			return "1"
-		case .Female:
-			return "2"
-		}
-	}
-
-
-	internal static func from(value: String) -> CustomerGender? {
-		switch value {
-		case "1":
-			return .Male
-		case "2":
-			return .Female
-		default:
-			return nil
-		}
-	}
-}
-
-
-extension EcommerceParameter: Parameter {
-	private var urlParameter: [NSURLQueryItem] {
-		get {
-			var queryItems = [NSURLQueryItem]()
-			if !currency.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .EcomCurrency, value: currency))
-			}
-
-			if !categories.isEmpty {
-				for (index, value) in categories {
-					queryItems.append(NSURLQueryItem(name: .EcomCategory, withIndex: index, value: value))
-				}
-			}
-
-			if !orderNumber.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .EcomOrderNumber, value: orderNumber))
-			}
-
-			queryItems.append(NSURLQueryItem(name: .EcomStatus, value: status.rawValue))
-
-			queryItems.append(NSURLQueryItem(name: .EcomTotalValue, value: "\(totalValue)"))
-
-			if let voucherValue = voucherValue {
-				queryItems.append(NSURLQueryItem(name: .EcomVoucherValue, value: "\(voucherValue)"))
-			}
-
-			return queryItems
-		}
-	}
-}
-
-
-extension GeneralParameter: Parameter {
-	private var urlParameter: [NSURLQueryItem] {
-		get {
-			var queryItems = [NSURLQueryItem]()
-			queryItems.append(NSURLQueryItem(name: .EverId, value: everId))
-			if firstStart {
-				queryItems.append(NSURLQueryItem(name: .FirstStart, value: "1"))
-			}
-			if !ip.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .IpAddress, value: ip))
-			}
-			if !nationalCode.isEmpty {
-				queryItems.append(NSURLQueryItem(name: .NationalCode, value: nationalCode))
-			}
-			queryItems.append(NSURLQueryItem(name: .SamplingRate, value: "\(samplingRate)"))
-			queryItems.append(NSURLQueryItem(name: .TimeStamp, value: "\(Int64(timeStamp.timeIntervalSince1970 * 1000))"))
-			queryItems.append(NSURLQueryItem(name: .TimeZoneOffset, value: "\(timeZoneOffset)"))
-			queryItems.append(NSURLQueryItem(name: .UserAgent, value: userAgent))
-
-			return queryItems
-		}
-	}
-}
-
-
-extension MediaParameter: Parameter {
-	private var urlParameter: [NSURLQueryItem] {
-		get {
-			var queryItems = [NSURLQueryItem]()
-			queryItems.append(NSURLQueryItem(name: .MediaName, value: name))
-
-			queryItems.append(NSURLQueryItem(name: .MediaAction, value: action.rawValue))
-			queryItems.append(NSURLQueryItem(name: .MediaPosition, value: "\(position)"))
-			queryItems.append(NSURLQueryItem(name: .MediaDuration, value: "\(duration)"))
-			queryItems.append(NSURLQueryItem(name: .MediaTimeStamp, value: "\(Int64(timeStamp.timeIntervalSince1970 * 1000))"))
-
-			if let bandwidth = bandwidth {
-				queryItems.append(NSURLQueryItem(name: .MediaBandwidth, value: "\(bandwidth)"))
-			}
-
-			if let mute = mute {
-				queryItems.append(NSURLQueryItem(name: .MediaMute, value: mute ? "1" : "0"))
-			}
-
-			if let volume = volume {
-				queryItems.append(NSURLQueryItem(name: .MediaVolume, value: "\(volume)"))
-			}
-
-			if !categories.isEmpty {
-				for (index, value) in categories {
-					queryItems.append(NSURLQueryItem(name: .MediaCategories, withIndex: index, value: value))
-				}
-			}
-
-			return queryItems
-		}
-	}
-}
-
-
-extension PageParameter: Parameter {
-	private var urlParameter: [NSURLQueryItem] {
-		get {
-			var queryItems = [NSURLQueryItem]()
-
-			if !page.isEmpty {
-				for (index, value) in page {
-					queryItems.append(NSURLQueryItem(name: .Page, withIndex: index, value: value))
-				}
-			}
-
-			if !categories.isEmpty {
-				for (index, value) in categories {
-					queryItems.append(NSURLQueryItem(name: .PageCategory, withIndex: index, value: value))
-				}
-			}
-
-			if !session.isEmpty {
-				for (index, value) in session {
-					queryItems.append(NSURLQueryItem(name: .Session, withIndex: index, value: value))
-				}
-			}
-
-			return queryItems
-		}
-	}
-}
-
-
-extension PixelParameter: Parameter {
-	private var urlParameter: [NSURLQueryItem] {
-		get {
-			return [NSURLQueryItem(name: .Pixel, value: "\(version),\(pageName.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())!),0,\(Int(displaySize.width))x\(Int(displaySize.height)),32,0,\(Int64(timeStamp.timeIntervalSince1970 * 1000)),0,0,0")]
-		}
-	}
-}
-
-private protocol Parameter{
-	var urlParameter: [NSURLQueryItem] { get }
-}
-
-internal extension CrossDeviceBridgeParameter {
-	internal func toParameter() -> [String: String] {
-		var result = [String: String]()
-		for item in [email, phone, address, facebook, twitter, googlePlus, linkedIn] {
-			guard let item = item else {
-				continue
-			}
-			result.updateValues(item.toParameter())
-		}
-		return result
-	}
-}
-
-
-internal extension CrossDeviceBridgeAttributes {
-	internal func toParameter() -> [String: String] {
-		switch self {
-		case .Email(let plain, let md5, let sha256):
-			return encodeToParameter(plain: plain, md5: md5, md5Key: .CdbEmailMd5, sha256: sha256, sha256Key: .CdbEmailSha256) { text in
-				return text.lowercaseString
-
-			}
-		case .Phone(let plain, let md5, let sha256):
-			return encodeToParameter(plain: plain, md5: md5, md5Key: .CdbPhoneMd5, sha256: sha256, sha256Key: .CdbPhoneSha256) { text in
-				return text.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: "0123456789").invertedSet).joinWithSeparator("")
-			}
-		case .Address(let addressContainer, let md5, let sha256):
-			return encodeToParameter(plain: addressContainer != nil ? addressContainer?.toLine() : nil, md5: md5, md5Key: .CdbAddressMd5, sha256: sha256, sha256Key: .CdbAddressSha256) { text in
-				let result = text.lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "").stringByReplacingOccurrencesOfString("ä", withString: "ae").stringByReplacingOccurrencesOfString("ö", withString: "oe").stringByReplacingOccurrencesOfString("ü", withString: "ue").stringByReplacingOccurrencesOfString("ß", withString: "ss").stringByReplacingOccurrencesOfString("_", withString: "").stringByReplacingOccurrencesOfString("-", withString: "")
-				if let regex = try? NSRegularExpression(pattern: "str(\\.)?(|){1,}", options: NSRegularExpressionOptions.CaseInsensitive) {
-					return regex.stringByReplacingMatchesInString(result, options: .WithTransparentBounds, range: NSMakeRange(0, result.characters.count), withTemplate: "strasse")
-				}
-				return result
-			}
-		case .Facebook(let id):
-			return [ParameterName.CdbFacebook.rawValue: id]
-		case .Twitter(let id):
-			return [ParameterName.CdbTwitter.rawValue: id]
-		case .GooglePlus(let id):
-			return [ParameterName.CdbGooglePlus.rawValue: id]
-		case .LinkedIn(let id):
-			return [ParameterName.CdbLinkedIn.rawValue: id]
-		}
-	}
-
-
-	private func encodeToParameter(plain plain: String?, md5: String?, md5Key: ParameterName, sha256: String?, sha256Key: ParameterName, normalizer: (String) -> String) -> [String: String] {
-		var result = [String: String]()
-		if let plain = plain {
-			// computate md5 and sha256
-			let text = normalizer(plain)
-			result[md5Key.rawValue] = self.md5(text)
-			result[sha256Key.rawValue] = self.sha256(text)
-		}
-		else {
-			// add if not nil
-			if let md5 = md5 {
-				result[md5Key.rawValue] = md5
-			}
-			if let sha256 = sha256 {
-				result[sha256Key.rawValue] = sha256
-			}
-		}
-		return result
-	}
-
-
-	private func md5(string: String) -> String{
-		return string.md5()
-	}
-
-
-	private func sha256(string: String) -> String{
-		return string.sha256()
 	}
 }

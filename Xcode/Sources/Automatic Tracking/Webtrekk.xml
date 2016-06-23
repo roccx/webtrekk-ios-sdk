@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<webtrekkConfiguration>
+	<!-- configuation file version -->
+	<version>1</version>
+
+	<!-- server to send tracking events to -->
+	<trackDomain>https://q3.webtrekk.net</trackDomain>
+
+	<!-- Webtrekk customer id -->
+	<trackId>289053685367929</trackId>
+
+	<!-- measure only every Nth user (0 to disable) -->
+	<sampling>0</sampling>
+
+	<!-- maximum delay after an event occurred before sending it to the server (in seconds) -->
+	<sendDelay>30</sendDelay>
+
+	<!-- minimum duration the app has to be in the background (or terminated) before starting a new session -->
+	<sessionTimeoutInterval>1800</sessionTimeoutInterval>
+
+	<!-- maximum number of events to keep in the queue while there is no internet connection -->
+	<maxRequests>5000</maxRequests>
+
+	<!-- automatically download updated versions of this configuration file (empty to disable updates) -->
+	<configurationUpdateUrl>https://your.domain/webtrekk.xml</configurationUpdateUrl>
+
+	<!-- automatically track various information -->
+	<automaticTracking>
+		<advertisingIdentifier>true</advertisingIdentifier>
+		<appUpdates>true</appUpdates>
+		<appVersion>true</appVersion>
+		<connectionType>true</connectionType>
+		<eventQueueSize>true</eventQueueSize>
+		<interfaceOrientation>true</interfaceOrientation>
+		<pages>
+			<page viewControllerType="ProductListViewController">
+				<pageProperties name="Product List"/>
+			</page>
+
+			<page viewControllerType="/.*\.ProductViewController/">
+				<pageProperties name="Product Details">
+					<details>
+						<detail id="1">Blue Variant</detail>
+					</details>
+					<groups>
+						<group id="2">Media</group>
+					</groups>
+				</pageProperties>
+			</page>
+		</pages>
+	</automaticTracking>
+</webtrekkConfiguration>
