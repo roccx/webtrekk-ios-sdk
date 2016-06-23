@@ -18,7 +18,7 @@ public final class Webtrekk {
 
 	private lazy var backupManager: BackupManager = BackupManager(fileManager: self.fileManager, logger: self.logger)
 	private lazy var fileManager: FileManager = FileManager(logger: self.logger, identifier: self.configuration.webtrekkId)
-	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, backupDelegate: self.backupManager, maximumNumberOfEvents: self.configuration.eventQueueLimit)
+	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, backupDelegate: self.backupManager, maximumNumberOfRequests: self.configuration.eventQueueLimit, serverUrl: self.configuration.serverUrl, webtrekkId: self.configuration.webtrekkId)
 
 	private let defaults: UserDefaults
 	private var applicationWillEnterForegroundObserver: NSObjectProtocol?
@@ -137,7 +137,7 @@ public final class Webtrekk {
 			updateAutomaticTracking()
 			updateSampling()
 
-			requestManager.maximumNumberOfEvents = configuration.eventQueueLimit
+			requestManager.maximumNumberOfRequests = configuration.eventQueueLimit
 		}
 	}
 
@@ -251,7 +251,7 @@ public final class Webtrekk {
 
 
 	public func sendPendingEvents() {
-		requestManager.sendAllEvents()
+		requestManager.sendAllRequests()
 	}
 
 	
@@ -281,7 +281,7 @@ public final class Webtrekk {
 
 	private func setUpRequestManager() {
 		NSTimer.scheduledTimerWithTimeInterval(5) {
-			self.requestManager.sendAllEvents()
+			self.requestManager.sendAllRequests()
 		}
 	}
 
@@ -345,7 +345,7 @@ public final class Webtrekk {
 			}
 		}
 		if configuration.automaticallyTracksEventQueueSize {
-			requestProperties.eventQueueSize = requestManager.eventCount
+			requestProperties.eventQueueSize = requestManager.requestCount
 		}
 		if configuration.automaticallyTracksInterfaceOrientation {
 			requestProperties.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
@@ -356,17 +356,12 @@ public final class Webtrekk {
 		var request = TrackingRequest(event: event, properties: requestProperties)
 		logger.logInfo("Request: \(request)")
 
-		guard let url = UrlCreator.createUrlFromEvent(request, serverUrl: configuration.serverUrl, trackingId: configuration.webtrekkId) else {
-			logger.logError("Cannot create URL for request: \(request)")
-			return
-		}
-
 		for plugin in plugins {
 			request = plugin.tracker(self, requestForQueuingRequest: request)
 		}
 
 		if shouldEnqueueNewEvents {
-			requestManager.enqueueEvent(url, maximumDelay: configuration.maximumSendDelay)
+			requestManager.enqueueRequest(request, maximumDelay: configuration.maximumSendDelay)
 		}
 
 		for plugin in plugins {

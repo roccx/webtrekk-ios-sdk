@@ -5,44 +5,53 @@ internal final class RequestManager {
 
 	internal typealias Delegate = _BackupDelegate
 
-	private var events = [NSURL]()
-	private var numberOfFailuresForCurrentEvent = 0
+	private var requests = [NSURL]()
+	private var numberOfFailuresForCurrentRequest = 0
 	private var pendingTask: NSURLSessionDataTask?
-	private var sendNextEventDate: NSDate?
-	private var sendNextEventTimer: NSTimer?
+	private var sendNextRequestDate: NSDate?
+	private var sendNextRequestTimer: NSTimer?
 	private var isShutingDown: Bool = false
 
 	internal var logger: Webtrekk.Logger
 	internal weak var delegate: Delegate?
+	internal var serverUrl: NSURL
+	internal var webtrekkId: String
 
-	internal init(logger: Webtrekk.Logger, backupDelegate: Delegate?, maximumNumberOfEvents: Int) {
+	internal init(logger: Webtrekk.Logger, backupDelegate: Delegate?, maximumNumberOfRequests: Int, serverUrl: NSURL, webtrekkId: String) {
 		self.logger = logger
-		self.maximumNumberOfEvents = maximumNumberOfEvents
+		self.maximumNumberOfRequests = maximumNumberOfRequests
 		self.delegate = backupDelegate
+		self.serverUrl = serverUrl
+		self.webtrekkId = webtrekkId
 		loadBackups()
 	}
 
 
-	internal func clearPendingEvents() {
-		logger.logInfo("Clearing queue of \(events.count) events.")
+	internal func clearPendingRequests() {
+		logger.logInfo("Clearing queue of \(requests.count) events.")
 
-		events.removeAll()
+		requests.removeAll()
 	}
 
 
-	internal func enqueueEvent(event: NSURL, maximumDelay: NSTimeInterval) {
-		if events.count >= maximumNumberOfEvents {
+	internal func enqueueRequest(request: TrackingRequest, maximumDelay: NSTimeInterval) {
+		if requests.count >= maximumNumberOfRequests {
 			logger.logWarning("Too many events in queue. Dropping oldest one.")
 
-			events.removeFirst()
+			requests.removeFirst()
+		}
+		guard let url = UrlCreator.createUrlFromEvent(request, serverUrl: serverUrl, webtrekkId: webtrekkId) else {
+			logger.logError("Cannot create URL for request: \(request)")
+			return
 		}
 
-		events.append(event)
+
+		requests.append(url)
 		// FIXME save?
 
-		logger.logInfo("Added event to queue: \(event)")
+		logger.logInfo("Added event to queue: \(request)")
 
-		sendNextEvent(maximumDelay: maximumDelay)
+		sendNextRequest(maximumDelay: maximumDelay)
 	}
 
 
@@ -97,17 +106,17 @@ internal final class RequestManager {
 	}
 
 
-	internal var eventCount: Int {
-		return events.count
+	internal var requestCount: Int {
+		return requests.count
 	}
 
 
-	internal var maximumNumberOfEvents: Int {
+	internal var maximumNumberOfRequests: Int {
 		didSet {
-			precondition(maximumNumberOfEvents > 0)
+			precondition(maximumNumberOfRequests > 0)
 
-			if maximumNumberOfEvents < events.count {
-				events = Array(events[(events.count - maximumNumberOfEvents - 1) ..< events.count])
+			if maximumNumberOfRequests < requests.count {
+				requests = Array(requests[(requests.count - maximumNumberOfRequests - 1) ..< requests.count])
 				// FIXME save?
 			}
 		}
@@ -115,36 +124,42 @@ internal final class RequestManager {
 
 	
 	private func loadBackups() {
-		if let events = delegate?.loadEvents() {
-			self.events = events
+		if let requests = delegate?.loadRequests() {
+			self.requests = requests
 		}
 	}
 
 
 	private func saveBackup() {
-		delegate?.saveEvents(self.events)
+		delegate?.saveRequests(self.requests)
 	}
 
 
-	internal func sendAllEvents() { // TODO: talk about sendDelay
-		sendNextEvent()
+	internal func sendAllRequests() { // TODO: talk about sendDelay
+		sendNextRequest()
 	}
 
 
-	private func sendNextEvent() {
-		sendNextEventTimer?.invalidate()
-		sendNextEventTimer = nil
+	private func sendNextRequest() {
+		sendNextRequestTimer?.invalidate()
+		sendNextRequestTimer = nil
 
 
 		if isShutingDown, let delegate = delegate {
-			delegate.saveEvents(events)
+			delegate.saveRequests(requests)
 		}
 
-		guard pendingTask == nil && !events.isEmpty else {
+		guard pendingTask == nil else {
 			return
 		}
 
-		let url = events[0]
+		guard !requests.isEmpty else {
+			isShutingDown = false
+			return
+		}
+		
+
+		let url = requests[0]
 
 		logger.logInfo("Sending request: \(url)")
 
@@ -155,53 +170,53 @@ internal final class RequestManager {
 				guard error.retryable else {
 					self.logger.logError("Request \(url) failed and will not be retried: \(error)")
 
-					self.numberOfFailuresForCurrentEvent = 0
-					self.events.removeFirst()
+					self.numberOfFailuresForCurrentRequest = 0
+					self.requests.removeFirst()
 					// TODO save backup?
 					return
 				}
-				guard self.numberOfFailuresForCurrentEvent < 10 else { // TODO use config
+				guard self.numberOfFailuresForCurrentRequest < 10 else { // TODO use config
 					self.logger.logError("Request \(url) failed and will no longer be retried: \(error)")
 
-					self.numberOfFailuresForCurrentEvent = 0
-					self.events.removeFirst()
+					self.numberOfFailuresForCurrentRequest = 0
+					self.requests.removeFirst()
 					// TODO save backup?
 					return
 				}
 
-				self.numberOfFailuresForCurrentEvent += 1
-				self.sendNextEvent(maximumDelay: Double(self.numberOfFailuresForCurrentEvent * 5))
+				self.numberOfFailuresForCurrentRequest += 1
+				self.sendNextRequest(maximumDelay: Double(self.numberOfFailuresForCurrentRequest * 5))
 				return
 			}
 
-			self.numberOfFailuresForCurrentEvent = 0
-			self.events.removeFirst()
+			self.numberOfFailuresForCurrentRequest = 0
+			self.requests.removeFirst()
 
-			self.sendNextEvent()
+			self.sendNextRequest()
 			// TODO save backup?
 		}
 	}
 
 
-	private func sendNextEvent(maximumDelay maximumDelay: NSTimeInterval) {
-		guard !events.isEmpty else {
+	private func sendNextRequest(maximumDelay maximumDelay: NSTimeInterval) {
+		guard !requests.isEmpty else {
 			return
 		}
 		guard maximumDelay > 0 else {
-			sendAllEvents()
+			sendAllRequests()
 			return
 		}
 
-		if let sendNextEventTimer = sendNextEventTimer {
+		if let sendNextRequestTimer = sendNextRequestTimer {
 			let fireDate = NSDate(timeIntervalSinceNow: maximumDelay)
-			if fireDate.compare(sendNextEventTimer.fireDate) == NSComparisonResult.OrderedAscending {
-				sendNextEventTimer.fireDate = fireDate
+			if fireDate.compare(sendNextRequestTimer.fireDate) == NSComparisonResult.OrderedAscending {
+				sendNextRequestTimer.fireDate = fireDate
 			}
 		}
 		else {
-			sendNextEventTimer = NSTimer.scheduledTimerWithTimeInterval(maximumDelay) {
-				self.sendNextEventTimer = nil
-				self.sendAllEvents()
+			sendNextRequestTimer = NSTimer.scheduledTimerWithTimeInterval(maximumDelay) {
+				self.sendNextRequestTimer = nil
+				self.sendAllRequests()
 			}
 		}
 	}
@@ -210,12 +225,12 @@ internal final class RequestManager {
 	internal func shutDown() {
 		// FIXME: Do it right?
 		isShutingDown = true
-		sendAllEvents()
+		sendAllRequests()
 	}
 
 
 	internal func startSending() {
-		sendNextEvent()
+		sendNextRequest()
 	}
 
 
@@ -237,6 +252,6 @@ internal final class RequestManager {
 
 internal protocol _BackupDelegate: class {
 
-	func loadEvents() -> [NSURL]
-	func saveEvents(events: [NSURL])
+	func loadRequests() -> [NSURL]
+	func saveRequests(requests: [NSURL])
 }

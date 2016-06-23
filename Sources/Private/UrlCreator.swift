@@ -2,9 +2,9 @@ import Foundation
 
 internal final class UrlCreator {
 
-	internal static func createUrlFromEvent(request: TrackingRequest, serverUrl: NSURL, trackingId: String) -> NSURLComponents? {
-		guard let baseUrl = NSURLComponents(string: "\(serverUrl)/\(trackingId)/wt") else {
-			NSLog("Url could not be created from ServerUrl '\(serverUrl)' and TrackingId '\(trackingId)'.")
+	internal static func createUrlFromEvent(request: TrackingRequest, serverUrl: NSURL, webtrekkId: String) -> NSURL? {
+		guard let baseUrl = NSURLComponents(URL: serverUrl.URLByAppendingPathComponent("\(webtrekkId)").URLByAppendingPathComponent("wt"), resolvingAgainstBaseURL: false) else {
+			NSLog("Url could not be created from ServerUrl '\(serverUrl)' and WebtrekkId '\(webtrekkId)'.")
 			return nil
 		}
 
@@ -121,7 +121,7 @@ internal final class UrlCreator {
 
 		items += [NSURLQueryItem(name: "eor", value: nil)]
 		baseUrl.queryItems = items
-		return baseUrl
+		return baseUrl.URL
 	}
 
 }

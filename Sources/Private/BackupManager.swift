@@ -15,23 +15,23 @@ internal final class BackupManager {
 	}
 
 
-	internal func saveEvents(events: [NSURL], to file: NSURL) {
+	internal func saveRequests(requests: [NSURL], to file: NSURL) {
 		guard let path = file.path else {
 			logger.logError("Could not save requests to location \(file)")
 			return
 		}
-		NSKeyedArchiver.archiveRootObject(events, toFile: path)
-		logger.logInfo("Archived \(events.count) requests.")
+		NSKeyedArchiver.archiveRootObject(requests, toFile: path)
+		logger.logInfo("Archived \(requests.count) requests.")
 	}
 
 
-	internal func loadEvents(from file: NSURL) -> [NSURL] {
+	internal func loadRequests(from file: NSURL) -> [NSURL] {
 		guard let path = file.path else {
 			logger.logError("Could not finds requests at location \(file)")
 			return []
 		}
 		guard let urls = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as? [NSURL] else {
-			logger.logError("Could not load events to from \(file)")
+			logger.logError("Could not load requests to from \(file)")
 			return []
 		}
 		logger.logInfo("Could load \(urls.count) requests.")
@@ -42,12 +42,12 @@ internal final class BackupManager {
 
 extension BackupManager: RequestManager.Delegate {
 
-	internal func loadEvents() -> [NSURL] {
-		return loadEvents(from: fileManager.eventFileUrl)
+	internal func loadRequests() -> [NSURL] {
+		return loadRequests(from: fileManager.eventFileUrl)
 	}
 
 
-	internal func saveEvents(events: [NSURL]) {
-		saveEvents(events, to: fileManager.eventFileUrl)
+	internal func saveRequests(requests: [NSURL]) {
+		saveRequests(requests, to: fileManager.eventFileUrl)
 	}
 }
