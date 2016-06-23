@@ -23,11 +23,11 @@ public final class Webtrekk {
 	private let defaults: UserDefaults
 	private var applicationWillEnterForegroundObserver: NSObjectProtocol?
 	private var applicationWillResignActiveObserver: NSObjectProtocol?
+	private var isFirstEventOfSession = true
 	private var isSampling = false
 
 	public let configuration: TrackingConfiguration
 	public var crossDeviceBridge: CrossDeviceBridgeParameter?
-	public var forceNewSession = true
 	public var plugins = [TrackingPlugin]()
 
 
@@ -94,9 +94,7 @@ public final class Webtrekk {
 
 
 	private func applicationWillResignActive() {
-		// store a date to reference how long the app was in background
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-		userDefaults.setValue(NSDate(), forKey: .ForceNewSession)
+		defaults.set(key: DefaultsKeys.applicationHibernationDate, to: NSDate())
 
 		requestManager.sendAllEvents()
 		// TODO backup
@@ -109,14 +107,12 @@ public final class Webtrekk {
 
 
 	private func applicationWillEnterForeground() {
-		// TODO: load wating request, check if FNS needs to be set
-
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-		if let fns = userDefaults.objectForKey(.ForceNewSession) as? NSDate {
-			// TODO: if fns is older then eventOnStartDelay interval then set to next event
-			userDefaults.removeObjectForKey(.ForceNewSession)
+		if let hibernationDate = defaults.dateForKey(DefaultsKeys.applicationHibernationDate) where -hibernationDate.timeIntervalSinceNow < configuration.sessionTimeoutInterval {
+			isFirstEventOfSession = false
 		}
-		
+		else {
+			isFirstEventOfSession = true
+		}
 	}
 
 
@@ -291,10 +287,10 @@ public final class Webtrekk {
 
 	private func setUpObservers() {
 		let notificationCenter = NSNotificationCenter.defaultCenter()
-		applicationWillEnterForegroundObserver = notificationCenter.addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: nil) { [weak self] in
+		applicationWillEnterForegroundObserver = notificationCenter.addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: nil) { [weak self] _ in
 			self?.applicationWillEnterForeground()
 		}
-		applicationWillResignActiveObserver = notificationCenter.addObserverForName(UIApplicationWillResignActiveNotification, object: nil, queue: nil) { [weak self] in
+		applicationWillResignActiveObserver = notificationCenter.addObserverForName(UIApplicationWillResignActiveNotification, object: nil, queue: nil) { [weak self] _ in
 			self?.applicationWillResignActive()
 		}
 	}
@@ -322,7 +318,10 @@ public final class Webtrekk {
 		)
 
 		if isFirstEventOfApp {
-			eventProperties.isFirstEvent = true
+			eventProperties.isFirstEventOfApp = true
+		}
+		if isFirstEventOfSession {
+			eventProperties.isFirstEventOfSession = true
 		}
 
 		if configuration.automaticallyTracksAdvertisingId {
@@ -339,11 +338,11 @@ public final class Webtrekk {
 				if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
 					switch  carrierType {
 					case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
-						eventProperties.connectionType = .mobile(generation: 1) // FIXME
+						eventProperties.connectionType = .cellular_2G
 					case CTRadioAccessTechnologyWCDMA,CTRadioAccessTechnologyHSDPA,CTRadioAccessTechnologyHSUPA,CTRadioAccessTechnologyCDMAEVDORev0,CTRadioAccessTechnologyCDMAEVDORevA,CTRadioAccessTechnologyCDMAEVDORevB,CTRadioAccessTechnologyeHRPD:
-						eventProperties.connectionType = .mobile(generation: 2)
+						eventProperties.connectionType = .cellular_3G
 					case CTRadioAccessTechnologyLTE:
-						eventProperties.connectionType = .mobile(generation: 3)
+						eventProperties.connectionType = .cellular_4G
 					default:
 						eventProperties.connectionType = .other
 					}
@@ -370,8 +369,7 @@ public final class Webtrekk {
 		}
 
 		// FIXME cross-device
-		// FIXME read forceNewSession value and set to event
-		
+
 		var event = TrackingEvent(kind: eventKind, properties: eventProperties)
 		logger.logInfo("Event: \(event)")
 
@@ -392,9 +390,8 @@ public final class Webtrekk {
 			plugin.tracker(self, didTrackEvent: event)
 		}
 
-		if isFirstEventOfApp {
-			isFirstEventOfApp = false
-		}
+		isFirstEventOfApp = false
+		isFirstEventOfSession = false
 	}
 
 
@@ -567,6 +564,7 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 
 private struct DefaultsKeys {
 
+	private static let applicationHibernationDate = "applicationHibernationDate"
 	private static let everId = "everId"
 	private static let isFirstEventOfApp = "isFirstEventOfApp"
 	private static let isSampling = "isSampling"

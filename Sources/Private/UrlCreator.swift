@@ -17,8 +17,12 @@ internal final class UrlCreator {
 		items.append(NSURLQueryItem(name: "tz", value: "\(properties.timeZone.daylightSavingTimeOffset / 60 / 60)"))
 		items.append(NSURLQueryItem(name: "X-WT-UA", value: properties.userAgent))
 
-		if properties.isFirstEvent {
+		if properties.isFirstEventOfApp {
 			items.append(NSURLQueryItem(name: "one", value: "1"))
+		}
+
+		if properties.isFirstEventOfSession {
+			items.append(NSURLQueryItem(name: "fns", value: "1"))
 		}
 
 		if let ipAddress = properties.ipAddress {
@@ -30,6 +34,24 @@ internal final class UrlCreator {
 		}
 		if let userProperties = event.userProperties {
 			items += userProperties.asQueryItems()
+		}
+		if let interfaceOrientation = properties.interfaceOrientation {
+			switch interfaceOrientation {
+			case .LandscapeLeft, .LandscapeRight: items.append(NSURLQueryItem(name: "cp783", value: "landscape"))
+			case .Portrait, .PortraitUpsideDown: items.append(NSURLQueryItem(name: "cp783", value: "portrait"))
+			default: items.append(NSURLQueryItem(name: "cp783", value: "undefined"))
+			}
+
+		}
+		if let connectionType = properties.connectionType {
+			switch connectionType {
+			case .cellular_2G: items.append(NSURLQueryItem(name: "cs807", value: "2G"))
+			case .cellular_3G: items.append(NSURLQueryItem(name: "cs807", value: "3G"))
+			case .cellular_4G: items.append(NSURLQueryItem(name: "cs807", value: "LTE"))
+			case .offline:     items.append(NSURLQueryItem(name: "cs807", value: "offline"))
+			case .other:       items.append(NSURLQueryItem(name: "cs807", value: "unknown"))
+			case .wifi:        items.append(NSURLQueryItem(name: "cs807", value: "WIFI"))
+			}
 		}
 		// FIXME: NEEED SESSION DETAILS
 //		if let session = event.session { 
@@ -87,6 +109,9 @@ internal final class UrlCreator {
 
 			items += pageViewEvent.ecommerceProperties.asQueryItems()
 
+		}
+		guard !pageName.isEmpty else {
+			return nil
 		}
 		let screenDimension = Webtrekk.screenDimensions()
 		let p = "\(Webtrekk.pixelVersion),\(pageName),0,\(screenDimension.width)x\(screenDimension.height),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0"

@@ -35,7 +35,8 @@ public struct TrackingEvent {
 		public var interfaceOrientation: UIInterfaceOrientation?
 		public var ipAddress: String?
 		public var isAppUpdate: Bool?
-		public var isFirstEvent = false
+		public var isFirstEventOfApp = false
+		public var isFirstEventOfSession = false
 		public var samplingRate: Int
 		public var sessionCategories: Set<Category>?
 		public var timeZone: NSTimeZone
@@ -61,7 +62,9 @@ public struct TrackingEvent {
 
 		public enum ConnectionType {
 
-			case mobile(generation: Int)
+			case cellular_2G
+			case cellular_3G
+			case cellular_4G
 			case offline
 			case other
 			case wifi
