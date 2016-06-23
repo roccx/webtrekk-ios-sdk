@@ -6,6 +6,8 @@ import UIKit
 
 public final class Webtrekk {
 
+	internal typealias ScreenDimension = (width: Int, height: Int)
+
 	public static let version = "4.0"
 	public static let pixelVersion = "400"
 
@@ -127,7 +129,6 @@ public final class Webtrekk {
 		}
 	}
 
-	
 	private func appWillEnterForeground() {
 		// TODO: load wating request, check if FNS needs to be set
 
@@ -140,32 +141,19 @@ public final class Webtrekk {
 	}
 
 
-	private static func operatingSystemName() -> String {
-		#if os(iOS)
-			return "iOS"
-		#elseif os(watchOS)
-			return "watchOS"
-		#elseif os(tvOS)
-			return "tvOS"
-		#elseif os(OSX)
-			return "macOS"
-		#endif
-	}
-
-
-	private static func operatingSystemVersionString() -> String {
-		let version = NSProcessInfo().operatingSystemVersion
-		if version.patchVersion == 0 {
-			return "\(version.majorVersion).\(version.minorVersion)"
-		}
-		else {
-			return "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-		}
-	}
-
-
 	private func defaultUserAgent() -> String {
 		return "Tracking Library \(Webtrekk.version) (\(Webtrekk.operatingSystemName()); \(Webtrekk.operatingSystemVersionString()); \(Webtrekk.deviceModelString()); \(NSLocale.currentLocale().localeIdentifier))"
+	}
+
+
+	private static func deviceModelString() -> String {
+		let device = UIDevice.currentDevice()
+		if device.isSimulator {
+			return "\(operatingSystemName()) Simulator"
+		}
+		else {
+			return device.modelIdentifier
+		}
 	}
 
 
@@ -207,6 +195,36 @@ public final class Webtrekk {
 			fileManager.logger = logger
 			requestManager.logger = logger
 		}
+	}
+
+
+	private static func operatingSystemName() -> String {
+		#if os(iOS)
+			return "iOS"
+		#elseif os(watchOS)
+			return "watchOS"
+		#elseif os(tvOS)
+			return "tvOS"
+		#elseif os(OSX)
+			return "macOS"
+		#endif
+	}
+
+
+	private static func operatingSystemVersionString() -> String {
+		let version = NSProcessInfo().operatingSystemVersion
+		if version.patchVersion == 0 {
+			return "\(version.majorVersion).\(version.minorVersion)"
+		}
+		else {
+			return "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+		}
+	}
+
+
+	internal static func screenDimensions() -> ScreenDimension {
+		let screenSize: CGRect = UIScreen.mainScreen().bounds
+		return (width: Int(screenSize.width), height: Int(screenSize.height))
 	}
 
 
@@ -419,7 +437,6 @@ public final class Webtrekk {
 			tracker.trackViewOfPage(pageName)
 		}
 	}
-
 
 
 	private func track(pageName: String) {

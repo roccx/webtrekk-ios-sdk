@@ -14,10 +14,3 @@ public protocol PageTracker: class {
 	func trackMedia  (mediaName: String, mediaCategories: Set<Category>, player: AVPlayer) // TODO how to track additional properties?
 	func trackView   () // TODO how to track additional properties?
 }
-
-
-public struct AdvertisementProperties {
-
-	public var advertisement: String // e.g. mc=wonderland
-	public var campaign: Set<Category> = []
-}

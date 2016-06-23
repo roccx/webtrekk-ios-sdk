@@ -12,7 +12,7 @@ public struct EcommerceProperties {
 	public init(
 		categories: Set<Category>? = nil,
 		currencyCode: String? = nil,
-		products: [Product]?,
+		products: [Product]? = nil,
 		status: Status? = nil,
 		totalValue: Double? = nil,
 		voucherValue: Double? = nil
