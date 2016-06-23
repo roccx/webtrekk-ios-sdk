@@ -34,6 +34,7 @@ public final class Webtrekk {
 	public init(configuration: TrackingConfiguration) {
 		self.configuration = configuration
 		self.defaults = Webtrekk.sharedDefaults.child(namespace: configuration.webtrekkId)
+		self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
 		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
 
 		setUp()
@@ -64,37 +65,13 @@ public final class Webtrekk {
 	}
 
 
-	private func appUpdate() -> Bool {
-		var appVersion: String
-		if !configuration.appVersion.isEmpty {
-			appVersion = configuration.appVersion
-		} else if let version = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
-			appVersion = version
-		}else {
-			appVersion = ""
-		}
-
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-		if let version = userDefaults.stringForKey(UserStoreKey.VersionNumber) {
-			if version != appVersion {
-				userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
-				return true
-			}
-		} else {
-			userDefaults.setValue(appVersion, forKey:UserStoreKey.VersionNumber.rawValue)
-		}
-
-		return false
-	}
-
-
 	private static let appVersion: String? = {
 		return NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
 	}()
 
 
 	private func applicationWillResignActive() {
-		defaults.set(key: DefaultsKeys.applicationHibernationDate, to: NSDate())
+		defaults.set(key: DefaultsKeys.appHibernationDate, to: NSDate())
 
 		requestManager.sendAllEvents()
 		// TODO backup
@@ -107,7 +84,7 @@ public final class Webtrekk {
 
 
 	private func applicationWillEnterForeground() {
-		if let hibernationDate = defaults.dateForKey(DefaultsKeys.applicationHibernationDate) where -hibernationDate.timeIntervalSinceNow < configuration.sessionTimeoutInterval {
+		if let hibernationDate = defaults.dateForKey(DefaultsKeys.appHibernationDate) where -hibernationDate.timeIntervalSinceNow < configuration.sessionTimeoutInterval {
 			isFirstEventOfSession = false
 		}
 		else {
@@ -126,6 +103,20 @@ public final class Webtrekk {
 		return configuration.automaticallyTrackedPages
 			.firstMatching({ $0.matches(viewControllerTypeName: viewControllerTypeName) })?
 			.pageProperties
+	}
+
+
+	private func checkForAppUpdate() {
+		let lastCheckedAppVersion = defaults.stringForKey(DefaultsKeys.appVersion)
+		let appVersion = Webtrekk.appVersion
+
+		if appVersion != lastCheckedAppVersion {
+			defaults.set(key: DefaultsKeys.appVersion, to: appVersion)
+
+			if lastCheckedAppVersion != nil {
+				isFirstEventAfterAppUpdate = true
+			}
+		}
 	}
 
 
@@ -160,6 +151,17 @@ public final class Webtrekk {
 
 
 	public static let everId = Webtrekk.loadEverId()
+
+
+	private var isFirstEventAfterAppUpdate: Bool {
+		didSet {
+			guard isFirstEventAfterAppUpdate != oldValue else {
+				return
+			}
+
+			defaults.set(key: DefaultsKeys.isFirstEventAfterAppUpdate, to: isFirstEventAfterAppUpdate)
+		}
+	}
 
 
 	private var isFirstEventOfApp: Bool {
@@ -317,6 +319,9 @@ public final class Webtrekk {
 			userAgent:    defaultUserAgent()
 		)
 
+		if isFirstEventAfterAppUpdate {
+			eventProperties.isFirstEventAfterAppUpdate = true
+		}
 		if isFirstEventOfApp {
 			eventProperties.isFirstEventOfApp = true
 		}
@@ -364,9 +369,6 @@ public final class Webtrekk {
 		if configuration.automaticallyTracksInterfaceOrientation {
 			eventProperties.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
 		}
-		if configuration.automaticallyTracksAppUpdates {
-			eventProperties.isAppUpdate = appUpdate()
-		}
 
 		// FIXME cross-device
 
@@ -390,6 +392,7 @@ public final class Webtrekk {
 			plugin.tracker(self, didTrackEvent: event)
 		}
 
+		isFirstEventAfterAppUpdate = false
 		isFirstEventOfApp = false
 		isFirstEventOfSession = false
 	}
@@ -564,8 +567,10 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 
 private struct DefaultsKeys {
 
-	private static let applicationHibernationDate = "applicationHibernationDate"
+	private static let appHibernationDate = "appHibernationDate"
+	private static let appVersion = "appVersion"
 	private static let everId = "everId"
+	private static let isFirstEventAfterAppUpdate = "isFirstEventAfterAppUpdate"
 	private static let isFirstEventOfApp = "isFirstEventOfApp"
 	private static let isSampling = "isSampling"
 	private static let isOptedOut = "optedOut"

@@ -34,7 +34,7 @@ public struct TrackingEvent {
 		public var everId: String
 		public var interfaceOrientation: UIInterfaceOrientation?
 		public var ipAddress: String?
-		public var isAppUpdate: Bool?
+		public var isFirstEventAfterAppUpdate = false
 		public var isFirstEventOfApp = false
 		public var isFirstEventOfSession = false
 		public var samplingRate: Int
