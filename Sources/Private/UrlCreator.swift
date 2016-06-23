@@ -131,6 +131,72 @@ private extension EcommerceProperties {
 		}
 		return items
 	}
+
+	private func mergeProductQueryItems() -> [NSURLQueryItem] {
+		guard let products = products else {
+			return []
+		}
+
+		guard products.count > 0 && products.count != 1 else {
+			return products.map({$0.asQueryItems()})[0]
+		}
+		var items = [NSURLQueryItem] ()
+
+		var names = [String]()
+		var prices = [String]()
+		var quantities =  [String]()
+		var categoryKeys = Set<Int>()
+		for product in products {
+			names.append(product.name)
+			prices.append(product.price ?? "")
+			quantities.append("\(product.quantity != nil ? "\(product.quantity)" : "" )")
+			if let categories = product.categories {
+				for category in categories {
+					categoryKeys.insert(category.index)
+				}
+			}
+		}
+
+		var categories = Set<IndexedProperty>()
+
+		for key in categoryKeys {
+			var categoryValues = [String]()
+			for product in products {
+				var value = ""
+				if let categories = product.categories {
+					for category in categories where category.index == key {
+						value = category.value
+					}
+				}
+				categoryValues.append(value)
+			}
+			categories.insert(IndexedProperty(index: key, value: categoryValues.joinWithSeparator(";")))
+		}
+
+		items.append(NSURLQueryItem(name: "ba", value: names.joinWithSeparator(";")))
+		items.append(NSURLQueryItem(name: "co", value: prices.joinWithSeparator(";")))
+		items.append(NSURLQueryItem(name: "qn", value: quantities.joinWithSeparator(";")))
+		items += categories.map({NSURLQueryItem(name: "ca\($0.index)", value: $0.value)})
+		return items
+	}
+}
+
+
+private extension EcommerceProperties.Product {
+	private func asQueryItems() -> [NSURLQueryItem] {
+		var items = [NSURLQueryItem]()
+		if let categories = categories {
+			items += categories.map({NSURLQueryItem(name: "ca\($0.index)", value: $0.value)})
+		}
+		items.append(NSURLQueryItem(name: "ba", value: name))
+		if let price = price {
+			items.append(NSURLQueryItem(name: "co", value: "\(price)"))
+		}
+		if let quantity = quantity {
+			items.append(NSURLQueryItem(name: "qn", value: "\(quantity)"))
+		}
+		return items
+	}
 }
 
 

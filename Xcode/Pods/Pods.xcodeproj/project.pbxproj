@@ -104,7 +104,6 @@
 		BD3455BFF784CF4231902A573995596D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9E0C40D45BCD97AD4C61BDD5CE3A3B /* Foundation.framework */; };
 		BE4D68C8C5B2736CAA7C58FEA6FF5BBE /* CFB.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C2643F36F8B2FB8F032CB447D29BA7 /* CFB.swift */; };
 		BF05E420ABE5BC7CE455FEF0326FC17B /* Bit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26214CB8E73F62CF55F3B6F87696FBF5 /* Bit.swift */; };
-		C1BADF07F638E6C838CB0351CE961A58 /* TrackingParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2452672BACD6720CAFF0B6551D3BB7C /* TrackingParameter.swift */; };
 		C29A0011318AADCE119A11FC60A485C3 /* AES.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289AB4A90F9371E6B3F0D7C84373E2BA /* AES.swift */; };
 		C2A2EF86018AD2C9168572FCBD88B724 /* CryptoSwift-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AF5BC12A017F495CAF3334E5F4C96A8 /* CryptoSwift-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C36C9249499D949895576FF04505A073 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6101ADAE0550506B24D5E4927750F2F2 /* Reachability.swift */; };
@@ -361,7 +360,6 @@
 		DCEC885CFC24B5452EA3F7F83D166292 /* CipherProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CipherProtocol.swift; path = Sources/CryptoSwift/CipherProtocol.swift; sourceTree = "<group>"; };
 		DE04AC020424EDD7E076DD5DA50C8E48 /* Pods-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		E101D64C9D0FB1E60E99F92576505025 /* Webtrekk.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Webtrekk.xcconfig; sourceTree = "<group>"; };
-		E2452672BACD6720CAFF0B6551D3BB7C /* TrackingParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackingParameter.swift; sourceTree = "<group>"; };
 		E27D0495D0257BCF342B99755BE5238C /* PageProperties.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PageProperties.swift; sourceTree = "<group>"; };
 		E3A55F22BE476E7BBBEE3FC9DCB90E1C /* SecureBytes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SecureBytes.swift; path = Sources/CryptoSwift/SecureBytes.swift; sourceTree = "<group>"; };
 		E5AAD943D548E8F8FAB652DB551BC042 /* Pods_Manual_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Manual_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -470,7 +468,6 @@
 				05165CA390F7039E8E2ED7DDD9B5C329 /* Logger.swift */,
 				DA57D51E5548F2E14FCC316DF07D4CCF /* TrackerConfiguration.swift */,
 				F78933EDD95C7F6D7BB29643D5F074D1 /* TrackingEvent.swift */,
-				E2452672BACD6720CAFF0B6551D3BB7C /* TrackingParameter.swift */,
 				7C3AB35A03C8300B1077C4869BCC9B57 /* TrackingPlugin.swift */,
 				50D7F6A89E26D5C62825C6D5325930D1 /* Webtrekk.swift */,
 				2F8E1B360183293DFB9D0FC745BB3673 /* Events */,
@@ -1225,7 +1222,6 @@
 				020E84C9633508820FDBE5A8D19F76DC /* StrongReference.swift in Sources */,
 				084599208946AA1CCA932E42D049B18C /* TrackerConfiguration.swift in Sources */,
 				29825D37430D5A9FD881FBDA4395F5CA /* TrackingEvent.swift in Sources */,
-				C1BADF07F638E6C838CB0351CE961A58 /* TrackingParameter.swift in Sources */,
 				0C22343669DF33F1B749552D4ACE674F /* TrackingPlugin.swift in Sources */,
 				AF0975F6C1801FABE01E1F7B06D641D8 /* UIDevice.swift in Sources */,
 				351F5705E06DE1600A8A09E123F96C15 /* UIViewController.swift in Sources */,
