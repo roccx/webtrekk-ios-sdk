@@ -48,6 +48,7 @@ private class Parser: NSObject {
 	private var maximumSendDelay: NSTimeInterval?
 	private var samplingRate: Int?
 	private var serverUrl: NSURL?
+	private var sessionTimeoutInterval: NSTimeInterval?
 	private var version: Int?
 	private var webtrekkId: String?
 
@@ -121,6 +122,9 @@ private class Parser: NSObject {
 		}
 		if let samplingRate = samplingRate {
 			configuration.samplingRate = samplingRate
+		}
+		if let sessionTimeoutInterval = sessionTimeoutInterval {
+			configuration.sessionTimeoutInterval = sessionTimeoutInterval
 		}
 	}
 
@@ -311,6 +315,7 @@ extension Parser: NSXMLParserDelegate {
 			case "trackId":                pushSimpleElement(webtrekkId)             { value in self.webtrekkId = self.parseString(value, emptyAllowed: false) }
 			case "version":                pushSimpleElement(version)                { value in self.version = self.parseInt(value, allowedRange: 1 ..< .max) }
 			case "sendDelay":              pushSimpleElement(maximumSendDelay)       { value in self.maximumSendDelay = self.parseDouble(value, allowedRange: 5 ..< .infinity) }
+			case "sessionTimeoutInterval": pushSimpleElement(sessionTimeoutInterval) { value in self.sessionTimeoutInterval = self.parseDouble(value, allowedRange: 5 ..< .infinity) }
 
 			default:
 				warn(message: "unknown element")

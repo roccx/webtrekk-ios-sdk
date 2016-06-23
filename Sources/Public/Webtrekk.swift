@@ -21,9 +21,9 @@ public final class Webtrekk {
 	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, backupDelegate: self.backupManager, maximumNumberOfEvents: self.configuration.eventQueueLimit)
 
 	private let defaults: UserDefaults
-	private var hibernationObserver: NSObjectProtocol?
+	private var applicationWillEnterForegroundObserver: NSObjectProtocol?
+	private var applicationWillResignActiveObserver: NSObjectProtocol?
 	private var isSampling = false
-	private var wakeUpObserver: NSObjectProtocol?
 
 	public let configuration: TrackingConfiguration
 	public var crossDeviceBridge: CrossDeviceBridgeParameter?
@@ -34,17 +34,19 @@ public final class Webtrekk {
 	public init(configuration: TrackingConfiguration) {
 		self.configuration = configuration
 		self.defaults = Webtrekk.sharedDefaults.child(namespace: configuration.webtrekkId)
+		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
 
 		setUp()
 	}
 
 
 	deinit {
-		if let hibernationObserver = hibernationObserver {
-			NSNotificationCenter.defaultCenter().removeObserver(hibernationObserver)
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		if let applicationWillEnterForegroundObserver = applicationWillEnterForegroundObserver {
+			notificationCenter.removeObserver(applicationWillEnterForegroundObserver)
 		}
-		if let wakeUpObserver = wakeUpObserver {
-			NSNotificationCenter.defaultCenter().removeObserver(wakeUpObserver)
+		if let applicationWillResignActiveObserver = applicationWillResignActiveObserver {
+			notificationCenter.removeObserver(applicationWillResignActiveObserver)
 		}
 	}
 
@@ -59,21 +61,6 @@ public final class Webtrekk {
 		}
 
 		return advertisingIdentifier
-	}
-
-
-	private func appDidEnterBackground() {
-		// store a date to reference how long the app was in background
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-		userDefaults.setValue(NSDate(), forKey: .ForceNewSession)
-
-		// TODO: shutdown queue
-		requestManager.shutDown()
-	}
-
-
-	public func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
-		updateAutomaticTracking()
 	}
 
 
@@ -106,7 +93,22 @@ public final class Webtrekk {
 	}()
 
 
-	private func appWillEnterForeground() {
+	private func applicationWillResignActive() {
+		// store a date to reference how long the app was in background
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		userDefaults.setValue(NSDate(), forKey: .ForceNewSession)
+
+		requestManager.sendAllEvents()
+		// TODO backup
+	}
+
+
+	public func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
+		updateAutomaticTracking()
+	}
+
+
+	private func applicationWillEnterForeground() {
 		// TODO: load wating request, check if FNS needs to be set
 
 		let userDefaults = NSUserDefaults.standardUserDefaults()
@@ -140,6 +142,11 @@ public final class Webtrekk {
 	}
 
 
+	private static func loadIsOptedOut() -> Bool {
+		 return sharedDefaults.boolForKey(DefaultsKeys.isOptedOut) ?? false
+	}
+
+
 	private func defaultUserAgent() -> String {
 		return "Tracking Library \(Webtrekk.version) (\(Webtrekk.operatingSystemName()); \(Webtrekk.operatingSystemVersionString()); \(Webtrekk.deviceModelString()); \(NSLocale.currentLocale().localeIdentifier))"
 	}
@@ -159,17 +166,18 @@ public final class Webtrekk {
 	public static let everId = Webtrekk.loadEverId()
 
 
-	private func firstStart() -> Bool {
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-		guard let _ = userDefaults.objectForKey(UserStoreKey.FirstStart) else {
-			userDefaults.setBool(true, forKey: UserStoreKey.FirstStart)
-			return true
+	private var isFirstEventOfApp: Bool {
+		didSet {
+			guard isFirstEventOfApp != oldValue else {
+				return
+			}
+
+			defaults.set(key: DefaultsKeys.isFirstEventOfApp, to: isFirstEventOfApp)
 		}
-		return false
 	}
 
 
-	public static var isOptedOut = sharedDefaults.boolForKey(DefaultsKeys.isOptedOut) ?? false {
+	public static var isOptedOut = Webtrekk.loadIsOptedOut() {
 		didSet {
 			guard isOptedOut != oldValue else {
 				return
@@ -229,13 +237,11 @@ public final class Webtrekk {
 	
 	private func setUp() {
 		setUpConfig()
-
-		updateSampling()
-
 		setUpRequestManager()
-		setUpLifecycleObserver()
+		setUpObservers()
 
 		updateAutomaticTracking()
+		updateSampling()
 	}
 
 
@@ -283,13 +289,13 @@ public final class Webtrekk {
 	}
 
 
-	private func setUpLifecycleObserver() {
-		hibernationObserver = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationDidEnterBackgroundNotification, object: nil, queue: NSOperationQueue.mainQueue()) {
-			_ in self.appDidEnterBackground()
+	private func setUpObservers() {
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		applicationWillEnterForegroundObserver = notificationCenter.addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: nil) { [weak self] in
+			self?.applicationWillEnterForeground()
 		}
-
-		wakeUpObserver = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: NSOperationQueue.mainQueue()) {
-			_ in self.appWillEnterForeground()
+		applicationWillResignActiveObserver = notificationCenter.addObserverForName(UIApplicationWillResignActiveNotification, object: nil, queue: nil) { [weak self] in
+			self?.applicationWillResignActive()
 		}
 	}
 
@@ -315,7 +321,9 @@ public final class Webtrekk {
 			userAgent:    defaultUserAgent()
 		)
 
-		eventProperties.isFirstAppStart = firstStart()
+		if isFirstEventOfApp {
+			eventProperties.isFirstEvent = true
+		}
 
 		if configuration.automaticallyTracksAdvertisingId {
 			eventProperties.advertisingId = advertisingIdentifier
@@ -331,7 +339,7 @@ public final class Webtrekk {
 				if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
 					switch  carrierType {
 					case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
-						eventProperties.connectionType = .mobile(generation: 1)
+						eventProperties.connectionType = .mobile(generation: 1) // FIXME
 					case CTRadioAccessTechnologyWCDMA,CTRadioAccessTechnologyHSDPA,CTRadioAccessTechnologyHSUPA,CTRadioAccessTechnologyCDMAEVDORev0,CTRadioAccessTechnologyCDMAEVDORevA,CTRadioAccessTechnologyCDMAEVDORevB,CTRadioAccessTechnologyeHRPD:
 						eventProperties.connectionType = .mobile(generation: 2)
 					case CTRadioAccessTechnologyLTE:
@@ -382,6 +390,10 @@ public final class Webtrekk {
 
 		for plugin in plugins {
 			plugin.tracker(self, didTrackEvent: event)
+		}
+
+		if isFirstEventOfApp {
+			isFirstEventOfApp = false
 		}
 	}
 
@@ -556,6 +568,7 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 private struct DefaultsKeys {
 
 	private static let everId = "everId"
+	private static let isFirstEventOfApp = "isFirstEventOfApp"
 	private static let isSampling = "isSampling"
 	private static let isOptedOut = "optedOut"
 	private static let samplingRate = "samplingRate"

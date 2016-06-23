@@ -17,7 +17,7 @@ internal final class UrlCreator {
 		items.append(NSURLQueryItem(name: "tz", value: "\(properties.timeZone.daylightSavingTimeOffset / 60 / 60)"))
 		items.append(NSURLQueryItem(name: "X-WT-UA", value: properties.userAgent))
 
-		if let firstStart = properties.isFirstAppStart where firstStart {
+		if properties.isFirstEvent {
 			items.append(NSURLQueryItem(name: "one", value: "1"))
 		}
 

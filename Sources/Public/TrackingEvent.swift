@@ -35,7 +35,7 @@ public struct TrackingEvent {
 		public var interfaceOrientation: UIInterfaceOrientation?
 		public var ipAddress: String?
 		public var isAppUpdate: Bool?
-		public var isFirstAppStart: Bool?
+		public var isFirstEvent = false
 		public var samplingRate: Int
 		public var sessionCategories: Set<Category>?
 		public var timeZone: NSTimeZone

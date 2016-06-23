@@ -16,6 +16,7 @@ public struct TrackingConfiguration {
 	public var maximumSendDelay = NSTimeInterval(5 * 60)
 	public var samplingRate = 0
 	public var serverUrl: NSURL
+	public var sessionTimeoutInterval = NSTimeInterval(30 * 60)
 	public var version = 1
 	public var webtrekkId: String
 
