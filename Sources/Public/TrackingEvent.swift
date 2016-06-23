@@ -2,21 +2,21 @@ import Foundation
 import UIKit
 
 
-public struct TrackingEvent {
+public struct TrackingRequest {
 
-	public let kind: Kind
+	public let event: Event
 	public let properties: Properties
 	public var userProperties: UserProperties?
 
 
-	internal init(kind: Kind, properties: Properties) {
-		self.kind = kind
+	internal init(event: Event, properties: Properties) {
+		self.event = event
 		self.properties = properties
 	}
 
 
 
-	public enum Kind {
+	public enum Event {
 
 		case action(ActionEvent)
 		case media(MediaEvent)

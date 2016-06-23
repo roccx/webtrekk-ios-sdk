@@ -27,7 +27,7 @@ public struct EcommerceProperties {
 
 	
 	@warn_unused_result
-	internal func merged(with other: EcommerceProperties) -> EcommerceProperties {
+	internal func merged(over other: EcommerceProperties) -> EcommerceProperties {
 		return EcommerceProperties(
 			currencyCode: currencyCode ?? other.currencyCode,
 			details:      details ?? other.details,

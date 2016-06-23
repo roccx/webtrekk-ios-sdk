@@ -32,7 +32,7 @@ public struct PageProperties {
 
 	
 	@warn_unused_result
-	internal func merged(with other: PageProperties) -> PageProperties {
+	internal func merged(over other: PageProperties) -> PageProperties {
 		var new = self
 		new.details = details ?? other.details
 		new.groups = groups ?? other.groups

@@ -56,7 +56,7 @@ public struct UserProperties {
 
 	
 	@warn_unused_result
-	internal func merged(with other: UserProperties) -> UserProperties {
+	internal func merged(over other: UserProperties) -> UserProperties {
 		return UserProperties(
 			birthday:             birthday ?? other.birthday,
 			city:                 city ?? other.city,
