@@ -20,9 +20,9 @@ public final class Webtrekk {
 	private lazy var fileManager: FileManager = FileManager(logger: self.logger, identifier: self.configuration.webtrekkId)
 	private lazy var requestManager: RequestManager = RequestManager(logger: self.logger, backupDelegate: self.backupManager, maximumNumberOfRequests: self.configuration.eventQueueLimit, serverUrl: self.configuration.serverUrl, webtrekkId: self.configuration.webtrekkId)
 
-	private let defaults: UserDefaults
 	private var applicationWillEnterForegroundObserver: NSObjectProtocol?
 	private var applicationWillResignActiveObserver: NSObjectProtocol?
+	private let defaults: UserDefaults
 	private var isFirstEventOfSession = true
 	private var isSampling = false
 
@@ -529,48 +529,36 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 	private var trackers = [Webtrekk]()
 
 
-	private func handleEvent(event: ActionEvent) {
+	private func broadcastEvent<Event: TrackingEvent>(event: Event, handler: (Webtrekk) -> (Event) -> Void) {
 		var event = event
 
 		for tracker in trackers {
-			guard let viewControllerTypeName = event.pageProperties.viewControllerTypeName, pageProperties = tracker.autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName) else {
+			guard let
+				viewControllerTypeName = event.pageProperties.viewControllerTypeName,
+				pageProperties = tracker.autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName)
+			else {
 				continue
 			}
 
 			event.pageProperties = event.pageProperties.merged(over: pageProperties)
 
-			tracker.handleEvent(event)
+			handler(tracker)(event)
 		}
+	}
+
+
+	private func handleEvent(event: ActionEvent) {
+		broadcastEvent(event, handler: Webtrekk.handleEvent(_:))
 	}
 
 
 	private func handleEvent(event: MediaEvent) {
-		var event = event
-
-		for tracker in trackers {
-			guard let viewControllerTypeName = event.pageProperties.viewControllerTypeName, pageProperties = tracker.autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName) else {
-				continue
-			}
-
-			event.pageProperties = event.pageProperties.merged(over: pageProperties)
-
-			tracker.handleEvent(event)
-		}
+		broadcastEvent(event, handler: Webtrekk.handleEvent(_:))
 	}
 
 
 	private func handleEvent(event: PageViewEvent) {
-		var event = event
-
-		for tracker in trackers {
-			guard let viewControllerTypeName = event.pageProperties.viewControllerTypeName, pageProperties = tracker.autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName) else {
-				continue
-			}
-
-			event.pageProperties = event.pageProperties.merged(over: pageProperties)
-
-			tracker.handleEvent(event)
-		}
+		broadcastEvent(event, handler: Webtrekk.handleEvent(_:))
 	}
 }
 
@@ -587,13 +575,4 @@ private struct DefaultsKeys {
 	private static let isSampling = "isSampling"
 	private static let isOptedOut = "optedOut"
 	private static let samplingRate = "samplingRate"
-}
-
-
-
-public enum WebtrekkError: ErrorType {
-	case InitError
-	case InitParserError
-	case NoTrackerConfiguration
-	case RemoteParserError
 }

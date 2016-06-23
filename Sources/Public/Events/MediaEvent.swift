@@ -1,4 +1,4 @@
-public struct MediaEvent {
+public struct MediaEvent: TrackingEvent {
 
 	public var advertisementProperties: AdvertisementProperties
 	public var customProperties: [String : String]
