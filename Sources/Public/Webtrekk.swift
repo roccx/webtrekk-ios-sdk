@@ -85,7 +85,7 @@ public final class Webtrekk {
 	private func applicationWillResignActive() {
 		defaults.set(key: DefaultsKeys.appHibernationDate, to: NSDate())
 
-		requestManager.sendAllEvents()
+		requestManager.shutDown()
 		// TODO backup
 	}
 
