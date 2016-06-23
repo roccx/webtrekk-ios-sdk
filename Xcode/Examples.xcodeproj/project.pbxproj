@@ -26,7 +26,6 @@
 		495EE3031D19EDAF00B64698 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A61D19E5EC00B64698 /* Media.xcassets */; };
 		495EE3041D19EDAF00B64698 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A41D19E5EC00B64698 /* LaunchScreen.storyboard */; };
 		495EE3051D19EDAF00B64698 /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A81D19E5EC00B64698 /* Video.mp4 */; };
-		6A0859B0EA5D9D893E0825EF /* Pods_ChildTracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0077A92D4020D9008DFF370 /* Pods_ChildTracking_Example.framework */; };
 		A4E337C4F01F2CD791B02438 /* Pods_Manual_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517990375DCF9362F2957A58 /* Pods_Manual_Tracking_Example.framework */; };
 		B708D3141C90731A00FEFC37 /* BackupManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */; };
 		B78DF2141C74C730002AADDF /* DefaultConfig.xml in Resources */ = {isa = PBXBuildFile; fileRef = B78DF2121C74C730002AADDF /* DefaultConfig.xml */; };
@@ -35,7 +34,6 @@
 		B7957BD81C6B56A200C6161D /* Webtrekk.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7957BD71C6B56A200C6161D /* Webtrekk.swift */; };
 		B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */; };
 		C55657C5605E402036539866 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F99E1518FB6347E94537495 /* Pods_Tests.framework */; };
-		D52BFA9FFA945CE6F1B97DC7 /* Pods_AutoTracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4717D26C552E1FB03DB848C /* Pods_AutoTracking_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -92,7 +90,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6A0859B0EA5D9D893E0825EF /* Pods_ChildTracking_Example.framework in Frameworks */,
 				A4E337C4F01F2CD791B02438 /* Pods_Manual_Tracking_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,7 +98,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D52BFA9FFA945CE6F1B97DC7 /* Pods_AutoTracking_Example.framework in Frameworks */,
 				3252F6251EE9036E0C9665ED /* Pods_Automatic_Tracking_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
