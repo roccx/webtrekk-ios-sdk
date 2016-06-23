@@ -26,7 +26,7 @@ public final class Webtrekk {
 	private var isFirstEventOfSession = true
 	private var isSampling = false
 
-	public var crossDeviceBridge: CrossDeviceBridgeParameter?
+	public var crossDeviceProperties = CrossDeviceProperties()
 	public var plugins = [TrackingPlugin]()
 
 
