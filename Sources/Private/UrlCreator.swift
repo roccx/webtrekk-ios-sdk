@@ -4,36 +4,47 @@ internal final class UrlCreator {
 
 	internal static func createUrlFromEvent(event: TrackingEvent) -> NSURL? {
 		// FIXME: Dummy Objects
-		let pixel = Pixel(width: 1111, height: 777, timestamp: NSDate())
 
 		let baseUrl = NSURLComponents(string: "https://widgetlabs.eu/") // NSURLComponents(string: "\(serverUrl)/\(trackingId)/wt")
 		var items = [NSURLQueryItem]()
 
-		// FIXME: Every Event needs a pageName
-		let p = "\(Webtrekk.pixelVersion),\("PAGE NAME"),0,\(pixel.width)x\(pixel.height),32,0,\(Int64(pixel.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
-		items.append(NSURLQueryItem(name: "p", value: p))
+		let properties = event.properties
 
-		items.append(NSURLQueryItem(name: "eid", value: event.properties.everId))
-		items.append(NSURLQueryItem(name: "ps", value: "\(event.properties.samplingRate)"))
-		items.append(NSURLQueryItem(name: "mts", value: "\(Int64(event.properties.timestamp.timeIntervalSince1970 * 1000))"))
-		items.append(NSURLQueryItem(name: "tz", value: "\(event.properties.timeZone.daylightSavingTimeOffset / 60 / 60)"))
-		items.append(NSURLQueryItem(name: "X-WT-UA", value: event.properties.userAgent))
+		items.append(NSURLQueryItem(name: "eid", value: properties.everId))
+		items.append(NSURLQueryItem(name: "ps", value: "\(properties.samplingRate)"))
+		items.append(NSURLQueryItem(name: "mts", value: "\(Int64(properties.timestamp.timeIntervalSince1970 * 1000))"))
+		items.append(NSURLQueryItem(name: "tz", value: "\(properties.timeZone.daylightSavingTimeOffset / 60 / 60)"))
+		items.append(NSURLQueryItem(name: "X-WT-UA", value: properties.userAgent))
 
-		if let firstStart = event.properties.isFirstAppStart where firstStart {
+		if let firstStart = properties.isFirstAppStart where firstStart {
 			items.append(NSURLQueryItem(name: "one", value: "1"))
 		}
 
-		if let ipAddress = event.properties.ipAddress {
+		if let ipAddress = properties.ipAddress {
 			items.append(NSURLQueryItem(name: "X-WT-IP", value: ipAddress))
 		}
 
-		// FIXME: missing "la" NSLocal?
+		if let language = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as? String {
+			items.append(NSURLQueryItem(name: "la", value: language))
+		}
 
-
+		var pageName: String = ""
 		switch event.kind {
-		case .action(let actionEvent): break
+		case .action(let actionEvent):
+			let actionProperties = actionEvent.actionProperties
+			items += actionProperties.category.map({NSURLQueryItem(name: "ck\($0.index)", value: $0.name)})
+			items.append(NSURLQueryItem(name: "ct", value: actionProperties.name))
+			items += actionProperties.session.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.name)}) // FIXME: duplicated with page params?
+			if let ecommerceProperties = actionEvent.ecommerceProperties {
+				items += ecommerceProperties.asQueryItems()
+			}
+			if let pageProperties = actionEvent.pageProperties {  // FIXME: NEEDS TO BE Available for PageName
+				items += pageProperties.asQueryItems()
+				pageName = pageProperties.name
+			}
+
 		case .media(let mediaEvent):
-			items += mediaEvent.mediaProperties.asQueryItems(pixel.timestamp)
+			items += mediaEvent.mediaProperties.asQueryItems(properties.timestamp)
 
 			switch mediaEvent.kind {
 			case .finish: items.append(NSURLQueryItem(name: "mk", value: "eof"))
@@ -48,12 +59,14 @@ internal final class UrlCreator {
 				items += ecommerceProperties.asQueryItems()
 			}
 
-			if let pageProperties = mediaEvent.pageProperties {
+			if let pageProperties = mediaEvent.pageProperties { // FIXME: NEEDS TO BE Available for PageName
 				items += pageProperties.asQueryItems()
+				pageName = pageProperties.name
 			}
 
 		case .page(let pageEvent):
 			items += pageEvent.pageProperties.asQueryItems()
+			pageName = pageEvent.pageProperties.name
 
 
 			if let advertisementProperties = pageEvent.advertisementProperties {
@@ -69,6 +82,9 @@ internal final class UrlCreator {
 				items += userProperties.asQueryItems()
 			}
 		}
+		let screenDimension = Webtrekk.screenDimensions()
+		let p = "\(Webtrekk.pixelVersion),\(pageName),0,\(screenDimension.width)x\(screenDimension.height),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
+		items = [NSURLQueryItem(name: "p", value: p)] + items
 
 		items += [NSURLQueryItem(name: "eor", value: nil)]
 		baseUrl?.queryItems = items
@@ -77,11 +93,6 @@ internal final class UrlCreator {
 
 }
 
-internal struct Pixel {
-	var width: Int
-	var height: Int
-	var timestamp: NSDate
-}
 
 private extension EcommerceProperties {
 
