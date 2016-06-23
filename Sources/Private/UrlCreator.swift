@@ -2,7 +2,7 @@ import Foundation
 
 internal final class UrlCreator {
 
-	internal static func createUrlFromEvent(event: TrackingEvent, serverUrl: String, trackingId: String) -> NSURLComponents? {
+	internal static func createUrlFromEvent(event: TrackingEvent, serverUrl: NSURL, trackingId: String) -> NSURLComponents? {
 		guard let baseUrl = NSURLComponents(string: "\(serverUrl)/\(trackingId)/wt") else {
 			return nil
 		}

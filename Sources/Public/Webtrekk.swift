@@ -119,7 +119,7 @@ public final class Webtrekk {
 
 
 	private func autotrackingPagePropertiesNameForViewControllerTypeName(viewControllerTypeName: String) -> PageProperties? {
-		return configuration.autoTrackScreens
+		return configuration.automaticallyTrackedPages
 			.firstMatching({ $0.matches(viewControllerTypeName: viewControllerTypeName) })?
 			.pageProperties
 	}
@@ -236,14 +236,7 @@ public final class Webtrekk {
 			fileManager.saveConfiguration(configuration)
 		}
 
-		guard config.enableRemoteConfiguration && !config.remoteConfigurationUrl.isEmpty, let url = NSURL(string: configuration.remoteConfigurationUrl) else {
-			return
-		}
-
-		guard !config.remoteConfigurationUrl.containsString("file://") else {
-			if let xmlString = try? String(contentsOfURL: url), parser = try? XmlTrackingConfigurationParser(xmlString: xmlString), config = parser.trackerConfiguration {
-				self.config = config
-			}
+		guard configuration.enableRemoteConfiguration && !configuration.remoteConfigurationUrl.isEmpty, let url = NSURL(string: configuration.remoteConfigurationUrl) else {
 			return
 		}
 
@@ -326,51 +319,50 @@ public final class Webtrekk {
 
 		eventProperties.isFirstAppStart = firstStart()
 
-		if configuration.autoTrack {
-			if configuration.autoTrackAdvertiserId {
-				eventProperties.advertisingId = advertisingIdentifier
+		if configuration.automaticallyTracksAdvertisingId {
+			eventProperties.advertisingId = advertisingIdentifier
+		}
+		if configuration.automaticallyTracksAppName {
+			eventProperties.appVersion = Webtrekk.appVersion
+		}
+		if configuration.automaticallyTracksConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
+			if reachability.isReachableViaWiFi() {
+				eventProperties.connectionType = .wifi
 			}
-			if configuration.autoTrackAppVersionName {
-				eventProperties.appVersion = Webtrekk.appVersion
-			}
-			if configuration.autoTrackConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
-				if reachability.isReachableViaWiFi() {
-					eventProperties.connectionType = .wifi
-				}
-				else if reachability.isReachableViaWWAN() {
-					if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
-						switch  carrierType {
-						case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
-							eventProperties.connectionType = .mobile(generation: 1)
-						case CTRadioAccessTechnologyWCDMA,CTRadioAccessTechnologyHSDPA,CTRadioAccessTechnologyHSUPA,CTRadioAccessTechnologyCDMAEVDORev0,CTRadioAccessTechnologyCDMAEVDORevA,CTRadioAccessTechnologyCDMAEVDORevB,CTRadioAccessTechnologyeHRPD:
-							eventProperties.connectionType = .mobile(generation: 2)
-						case CTRadioAccessTechnologyLTE:
-							eventProperties.connectionType = .mobile(generation: 3)
-						default:
-							eventProperties.connectionType = .other
-						}
-					}
-					else {
+			else if reachability.isReachableViaWWAN() {
+				if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
+					switch  carrierType {
+					case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
+						eventProperties.connectionType = .mobile(generation: 1)
+					case CTRadioAccessTechnologyWCDMA,CTRadioAccessTechnologyHSDPA,CTRadioAccessTechnologyHSUPA,CTRadioAccessTechnologyCDMAEVDORev0,CTRadioAccessTechnologyCDMAEVDORevA,CTRadioAccessTechnologyCDMAEVDORevB,CTRadioAccessTechnologyeHRPD:
+						eventProperties.connectionType = .mobile(generation: 2)
+					case CTRadioAccessTechnologyLTE:
+						eventProperties.connectionType = .mobile(generation: 3)
+					default:
 						eventProperties.connectionType = .other
 					}
 				}
-				else if reachability.isReachable() {
+				else {
 					eventProperties.connectionType = .other
 				}
-				else {
-					eventProperties.connectionType = .offline
-				}
 			}
-			if configuration.autoTrackRequestUrlStoreSize {
-				eventProperties.eventQueueSize = requestManager.eventCount
+			else if reachability.isReachable() {
+				eventProperties.connectionType = .other
 			}
-			if configuration.autoTrackScreenOrientation {
-				eventProperties.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
-			}
-			if configuration.autoTrackAppUpdate {
-				eventProperties.isAppUpdate = appUpdate()
+			else {
+				eventProperties.connectionType = .offline
 			}
 		}
+		if configuration.automaticallyTracksEventQueueSize {
+			eventProperties.eventQueueSize = requestManager.eventCount
+		}
+		if configuration.automaticallyTracksInterfaceOrientation {
+			eventProperties.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
+		}
+		if configuration.automaticallyTracksAppUpdates {
+			eventProperties.isAppUpdate = appUpdate()
+		}
+
 		// FIXME cross-device
 		// FIXME read forceNewSession value and set to event
 		
@@ -381,7 +373,7 @@ public final class Webtrekk {
 			event = plugin.tracker(self, eventForTrackingEvent: event)
 		}
 
-		if shouldTrack(), let url = UrlCreator.createUrlFromEvent(event, serverUrl: configuration.serverUrl, trackingId: configuration.trackingId) {
+		if shouldTrack(), let url = UrlCreator.createUrlFromEvent(event, serverUrl: configuration.serverUrl, trackingId: configuration.webtrekkId) {
 			requestManager.enqueueEvent(url, maximumDelay: configuration.sendDelay)
 		}
 
@@ -433,17 +425,17 @@ public final class Webtrekk {
 	private func updateAutomaticTracking() {
 		let handler = Webtrekk._autotrackingEventHandler
 
-		if configuration.autoTrack {
+		if configuration.automaticallyTrackedPages.isEmpty {
+			if let index = handler.trackers.indexOf({ $0 === self}) {
+				handler.trackers.removeAtIndex(index)
+			}
+		}
+		else {
 			if !handler.trackers.contains({ $0 === self }) {
 				handler.trackers.append(self)
 			}
 
 			UIViewController.setUpAutomaticTracking()
-		}
-		else {
-			if let index = handler.trackers.indexOf({ $0 === self}) {
-				handler.trackers.removeAtIndex(index)
-			}
 		}
 	}
 
