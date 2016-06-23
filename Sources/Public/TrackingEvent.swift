@@ -32,6 +32,7 @@ public struct TrackingEvent {
 		public var connectionType: ConnectionType?
 		public var eventQueueSize: Int?
 		public var everId: String
+		public var forceNewSesson: Bool?
 		public var interfaceOrientation: UIInterfaceOrientation?
 		public var ipAddress: String?
 		public var isAppUpdate: Bool?
@@ -61,7 +62,9 @@ public struct TrackingEvent {
 
 		public enum ConnectionType {
 
-			case mobile(generation: Int)
+			case cellular_2G
+			case cellular_3G
+			case cellular_4G
 			case offline
 			case other
 			case wifi

@@ -67,7 +67,6 @@ public final class Webtrekk {
 		let userDefaults = NSUserDefaults.standardUserDefaults()
 		userDefaults.setValue(NSDate(), forKey: .ForceNewSession)
 
-		// TODO: shutdown queue
 		requestManager.shutDown()
 	}
 
@@ -110,8 +109,9 @@ public final class Webtrekk {
 		// TODO: load wating request, check if FNS needs to be set
 
 		let userDefaults = NSUserDefaults.standardUserDefaults()
-		if let fns = userDefaults.objectForKey(.ForceNewSession) as? NSDate {
+		if let fns = userDefaults.objectForKey(.ForceNewSession) as? NSDate where fns.timeIntervalSinceNow > 30 * 60 { // 30 Min
 			// TODO: if fns is older then eventOnStartDelay interval then set to next event
+
 			userDefaults.removeObjectForKey(.ForceNewSession)
 		}
 		
@@ -316,7 +316,7 @@ public final class Webtrekk {
 		)
 
 		eventProperties.isFirstAppStart = firstStart()
-
+		eventProperties.forceNewSesson = forceNewSession ? true : nil
 		if configuration.automaticallyTracksAdvertisingId {
 			eventProperties.advertisingId = advertisingIdentifier
 		}
@@ -331,11 +331,11 @@ public final class Webtrekk {
 				if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
 					switch  carrierType {
 					case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
-						eventProperties.connectionType = .mobile(generation: 1)
+						eventProperties.connectionType = .cellular_2G
 					case CTRadioAccessTechnologyWCDMA,CTRadioAccessTechnologyHSDPA,CTRadioAccessTechnologyHSUPA,CTRadioAccessTechnologyCDMAEVDORev0,CTRadioAccessTechnologyCDMAEVDORevA,CTRadioAccessTechnologyCDMAEVDORevB,CTRadioAccessTechnologyeHRPD:
-						eventProperties.connectionType = .mobile(generation: 2)
+						eventProperties.connectionType = .cellular_3G
 					case CTRadioAccessTechnologyLTE:
-						eventProperties.connectionType = .mobile(generation: 3)
+						eventProperties.connectionType = .cellular_4G
 					default:
 						eventProperties.connectionType = .other
 					}
