@@ -9,8 +9,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+		Webtrekk.sharedInstance.application(application, didFinishLaunchingWithOptions: launchOptions)
 
-		Webtrekk.appendAutoTracker(Webtrekk.sharedInstance)
 		return true
 	}
 }

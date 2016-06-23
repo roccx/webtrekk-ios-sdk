@@ -18,13 +18,14 @@ public final class Webtrekk {
 	private var hibernationObserver: NSObjectProtocol?
 	private var wakeUpObserver: NSObjectProtocol?
 
-	public var config: TrackerConfiguration
 	public var crossDeviceBridge: CrossDeviceBridgeParameter?
 	public var plugins = [TrackingPlugin]()
 	public var forceNewSession = true
 
+
 	public init(config: TrackerConfiguration) {
 		self.config = config
+
 		setUp()
 	}
 
@@ -62,8 +63,8 @@ public final class Webtrekk {
 	}
 
 
-	public static func appendAutoTracker(tracker: Webtrekk) {
-		autoTracker.append(tracker)
+	public func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
+		updateAutomaticTracking()
 	}
 
 
@@ -94,6 +95,26 @@ public final class Webtrekk {
 	private static let appVersion: String? = {
 		return NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
 	}()
+
+
+	private static let _autotrackingEventHandler = AutotrackingEventHandler()
+	internal static var autotrackingEventHandler: protocol<ActionTrackingEventHandler, MediaTrackingEventHandler, PageTrackingEventHandler> {
+		return _autotrackingEventHandler
+	}
+
+
+	private func autotrackingPageNameForClassName(className: String) -> String? {
+		for (pattern, screen) in config.autoTrackScreens {
+			
+		}
+	}
+
+
+	public var config: TrackerConfiguration {
+		didSet {
+			updateAutomaticTracking()
+		}
+	}
 
 
 	private static func deviceModelString() -> String {
@@ -199,12 +220,14 @@ public final class Webtrekk {
 		setUpRequestManager()
 		setUpOptedOut()
 		setUpLifecycleObserver()
+
+		updateAutomaticTracking()
 	}
 
 
 	private func setUpConfig() {
 		// check if there is a local dump of the config saved
-		if let localConfig = fileManager.restoreConfiguration(config.trackingId) where localConfig.version > config.version{
+		if let localConfig = fileManager.restoreConfiguration(config.trackingId) where localConfig.version > config.version {
 			self.config = localConfig
 		}
 		else {
@@ -397,25 +420,6 @@ public final class Webtrekk {
 		}
 	}
 
-	// MARK: Tracking
-
-	public func autoTrack(className: String) throws {
-		guard config.autoTrack else {
-			return
-		}
-
-		for (key, screen) in config.autoTrackScreens {
-			guard className.containsString(key) else {
-				continue
-			}
-			guard screen.enabled else {
-				return
-			}
-			track(screen)
-			return
-		}
-		track(className)
-	}
 
 
 	private func track(pageName: String) {
@@ -461,6 +465,24 @@ public final class Webtrekk {
 	}
 
 
+	private func updateAutomaticTracking() {
+		let handler = Webtrekk._autotrackingEventHandler
+
+		if config.autoTrack {
+			if !handler.trackers.contains({ $0 === self }) {
+				handler.trackers.append(self)
+			}
+
+			UIViewController.setUpAutomaticTracking()
+		}
+		else {
+			if let index = handler.trackers.indexOf({ $0 === self}) {
+				handler.trackers.removeAtIndex(index)
+			}
+		}
+	}
+
+
 
 	public final class DefaultLogger: Logger {
 
@@ -501,6 +523,54 @@ extension Webtrekk: PageTrackingEventHandler {
 
 	internal func handleEvent(event: PageTrackingEvent) {
 		track(.page(event))
+	}
+}
+
+
+
+private final class AutotrackingEventHandler: ActionTrackingEventHandler, MediaTrackingEventHandler, PageTrackingEventHandler {
+
+	private var trackers = [Webtrekk]()
+
+
+	private func handleEvent(event: ActionTrackingEvent) {
+		var event = event
+
+		for tracker in trackers {
+			guard let pageName = tracker.autotrackingPageNameForClassName(event.pageProperties.name) else {
+				continue
+			}
+
+			event.pageProperties.name = pageName
+
+			tracker.handleEvent(event)
+		}
+	}
+
+
+	private func handleEvent(event: MediaTrackingEvent) {
+		for tracker in trackers {
+			guard let pageName = tracker.autotrackingPageNameForClassName(event.pageProperties.name) else {
+				continue
+			}
+
+			event.pageProperties.name = pageName
+
+			tracker.handleEvent(event)
+		}
+	}
+
+
+	private func handleEvent(event: PageTrackingEvent) {
+		for tracker in trackers {
+			guard let pageName = tracker.autotrackingPageNameForClassName(event.pageProperties.name) else {
+				continue
+			}
+
+			event.pageProperties.name = pageName
+
+			tracker.handleEvent(event)
+		}
 	}
 }
 

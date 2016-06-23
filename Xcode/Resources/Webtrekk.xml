@@ -43,18 +43,13 @@
 
 	<screens>
 		<screen>
-			<className>UITabBarController</className>
-			<autoTracked>false</autoTracked>
+			<className>ProductListViewController</className>
+			<mappingName>Product List</mappingName>
 		</screen>
 
 		<screen>
-			<className>ActionViewController</className>
-			<mappingName>Home</mappingName>
-		</screen>
-
-		<screen>
-			<className>MediaViewController</className>
-			<mappingName>VideoOverview</mappingName>
+			<className>/.*\.ProductViewController/</className>
+			<mappingName>Product Details</mappingName>
 			<trackingParameter>
 				<customParameters>
 					<parameter id="1">Final Edition</parameter>
