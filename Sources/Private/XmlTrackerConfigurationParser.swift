@@ -1,9 +1,9 @@
 import Foundation
 
 
-internal struct XmlTrackingConfigurationParser {
+internal struct XmlTrackerConfigurationParser {
 
-	internal func parse(xml data: NSData) throws -> TrackingConfiguration {
+	internal func parse(xml data: NSData) throws -> TrackerConfiguration {
 		return try Parser(xml: data).configuration
 	}
 }
@@ -12,7 +12,7 @@ internal struct XmlTrackingConfigurationParser {
 
 private class Parser: NSObject {
 
-	private var automaticallyTrackedPages = Array<TrackingConfiguration.Page>()
+	private var automaticallyTrackedPages = Array<TrackerConfiguration.Page>()
 	private var automaticallyTracksAdvertisingId: Bool?
 	private var automaticallyTracksAppName: Bool?
 	private var automaticallyTracksAppUpdates: Bool?
@@ -29,7 +29,7 @@ private class Parser: NSObject {
 	private var version: Int?
 	private var webtrekkId: String?
 
-	private lazy var configuration: TrackingConfiguration = lazyPlaceholder()
+	private lazy var configuration: TrackerConfiguration = lazyPlaceholder()
 	private var currentPageProperties: PageProperties?
 	private var currentString = ""
 	private var elementPath = [String]()
@@ -62,7 +62,7 @@ private class Parser: NSObject {
 			throw Error(message: "<webtrekkConfiguration>.<version> element missing")
 		}
 
-		var configuration = TrackingConfiguration(webtrekkId: webtrekkId, serverUrl: serverUrl)
+		var configuration = TrackerConfiguration(webtrekkId: webtrekkId, serverUrl: serverUrl)
 		configuration.version = version
 
 		if !automaticallyTrackedPages.isEmpty {
@@ -286,7 +286,7 @@ extension Parser: NSXMLParserDelegate {
 		switch state {
 		case let .automaticTrackingPage(_, viewControllerTypePattern):
 			if let pageProperties = currentPageProperties {
-				automaticallyTrackedPages.append(TrackingConfiguration.Page(viewControllerTypeNamePattern: viewControllerTypePattern, pageProperties: pageProperties))
+				automaticallyTrackedPages.append(TrackerConfiguration.Page(viewControllerTypeNamePattern: viewControllerTypePattern, pageProperties: pageProperties))
 
 				currentPageProperties = nil
 			}

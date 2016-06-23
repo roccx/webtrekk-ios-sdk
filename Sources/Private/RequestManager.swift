@@ -12,36 +12,36 @@ internal final class RequestManager {
 	private var sendNextRequestTimer: NSTimer?
 	private var isShutingDown: Bool = false
 
-	internal var logger: Webtrekk.Logger
 	internal weak var delegate: Delegate?
 	internal var serverUrl: NSURL
 	internal var webtrekkId: String
 
-	internal init(logger: Webtrekk.Logger, backupDelegate: Delegate?, maximumNumberOfRequests: Int, serverUrl: NSURL, webtrekkId: String) {
-		self.logger = logger
+
+	internal init(backupDelegate: Delegate?, maximumNumberOfRequests: Int, serverUrl: NSURL, webtrekkId: String) {
 		self.maximumNumberOfRequests = maximumNumberOfRequests
 		self.delegate = backupDelegate
 		self.serverUrl = serverUrl
 		self.webtrekkId = webtrekkId
+
 		loadBackups()
 	}
 
 
 	internal func clearPendingRequests() {
-		logger.logInfo("Clearing queue of \(requests.count) events.")
+		logInfo("Clearing queue of \(requests.count) events.")
 
 		requests.removeAll()
 	}
 
 
-	internal func enqueueRequest(request: TrackingRequest, maximumDelay: NSTimeInterval) {
+	internal func enqueueRequest(request: TrackerRequest, maximumDelay: NSTimeInterval) {
 		if requests.count >= maximumNumberOfRequests {
-			logger.logWarning("Too many events in queue. Dropping oldest one.")
+			logWarning("Too many events in queue. Dropping oldest one.")
 
 			requests.removeFirst()
 		}
 		guard let url = UrlCreator.createUrlFromEvent(request, serverUrl: serverUrl, webtrekkId: webtrekkId) else {
-			logger.logError("Cannot create URL for request: \(request)")
+			logError("Cannot create URL for request: \(request)")
 			return
 		}
 
@@ -49,7 +49,7 @@ internal final class RequestManager {
 		requests.append(url)
 		// FIXME save?
 
-		logger.logInfo("Added event to queue: \(request)")
+		logInfo("Added event to queue: \(request)")
 
 		sendNextRequest(maximumDelay: maximumDelay)
 	}
@@ -161,14 +161,14 @@ internal final class RequestManager {
 
 		let url = requests[0]
 
-		logger.logInfo("Sending request: \(url)")
+		logInfo("Sending request: \(url)")
 
 		pendingTask = fetch(url: url) { data, error in
 			self.pendingTask = nil
 
 			if let error = error {
 				guard error.retryable else {
-					self.logger.logError("Request \(url) failed and will not be retried: \(error)")
+					logError("Request \(url) failed and will not be retried: \(error)")
 
 					self.numberOfFailuresForCurrentRequest = 0
 					self.requests.removeFirst()
@@ -176,7 +176,7 @@ internal final class RequestManager {
 					return
 				}
 				guard self.numberOfFailuresForCurrentRequest < 10 else { // TODO use config
-					self.logger.logError("Request \(url) failed and will no longer be retried: \(error)")
+					logError("Request \(url) failed and will no longer be retried: \(error)")
 
 					self.numberOfFailuresForCurrentRequest = 0
 					self.requests.removeFirst()

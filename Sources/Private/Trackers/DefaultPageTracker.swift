@@ -27,13 +27,32 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
-	internal func trackAction(name name: String) {
-		trackAction(properties: ActionProperties(name: name))
+	internal func trackAction(actionName: String) {
+		trackAction(ActionEvent(actionProperties: ActionProperties(name: actionName), pageProperties: pageProperties))
 	}
 
 
-	internal func trackAction(properties properties: ActionProperties) {
-		handler.handleEvent(ActionEvent(actionProperties: properties, pageProperties: pageProperties))
+	internal func trackAction(event: ActionEvent) {
+		handleEvent(event)
+	}
+
+
+	internal func trackMedia(event: MediaEvent) {
+		handleEvent(event)
+	}
+
+
+	@warn_unused_result
+	internal func trackMedia(mediaName: String) -> MediaTracker {
+		return DefaultMediaTracker(handler: self, mediaName: mediaName)
+	}
+
+
+	internal func trackMedia(mediaName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker {
+		let tracker = trackMedia(mediaName)
+		AVPlayerTracker.track(player: player, with: tracker)
+
+		return tracker
 	}
 
 
@@ -45,18 +64,19 @@ internal final class DefaultPageTracker: PageTracker {
 			ecommerceProperties:     ecommerceProperties
 		))
 	}
+}
 
 
-	internal func trackerForMedia(name name: String, player: AVPlayer) {
-		return trackerForMedia(name: name, groups: nil, player: player)
-	}
+extension DefaultPageTracker: ActionEventHandler {
 
+	internal func handleEvent(event: ActionEvent) {
+		var event = event
+		event.advertisementProperties = event.advertisementProperties.merged(over: advertisementProperties)
+		event.customProperties = event.customProperties.merged(over: customProperties)
+		event.ecommerceProperties = event.ecommerceProperties.merged(over: ecommerceProperties)
+		event.pageProperties = event.pageProperties.merged(over: pageProperties)
 
-	internal func trackerForMedia(name name: String, groups: Set<IndexedProperty>?, player: AVPlayer) {
-		AVPlayerTracker.track(
-			player: player,
-			with:   DefaultMediaTracker(handler: self, mediaName: name, mediaGroups: groups)
-		)
+		handler.handleEvent(event)
 	}
 }
 

@@ -15,11 +15,11 @@ class ProductViewController: UIViewController {
 				return
 			}
 
-			Webtrekk.sharedInstance.trackAction("Play Video tapped", inPage: "Product Details")
+			Webtrekk.sharedTracker.trackAction("Play Video tapped", inPage: "Product Details")
 
 			let player = AVPlayer(URL: videoUrl)
 			// TODO how to track page?
-			Webtrekk.sharedInstance.trackMedia("product-video-\(productId)", player: player)
+			Webtrekk.sharedTracker.trackMedia("product-video-\(productId)", byAttachingToPlayer: player)
 
 			playerViewController.player = player
 

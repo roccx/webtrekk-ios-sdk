@@ -6,12 +6,10 @@ internal final class FileManager {
 	private let _directoryUrl: NSURL
 	private let identifier: String
 
-	internal var logger: Webtrekk.Logger
 
-
-	internal init(logger: Webtrekk.Logger, identifier: String) {
-		self.logger = logger
+	internal init(identifier: String) {
 		self.identifier = identifier
+
 		#if os(iOS) || os(watchOS)
 			_directoryUrl = try! NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: .AllDomainsMask, appropriateForURL: nil, create: true)
 		#elseif os(tvOS)
@@ -32,7 +30,7 @@ internal final class FileManager {
 				try NSFileManager.defaultManager().createDirectoryAtURL(directory, withIntermediateDirectories: true, attributes: nil)
 			}
 			catch let error {
-				logger.logError("Cannot create directory '\(directory)': \(error)")
+				logError("Cannot create directory '\(directory)': \(error)")
 				return _directoryUrl
 			}
 		}
@@ -50,7 +48,7 @@ internal final class FileManager {
 			return nil
 		}
 		guard let data: NSData = NSData(contentsOfURL: fileUrl) else {
-			logger.logError("Couldn't find a data at \(fileUrl) for restoring data.")
+			logError("Couldn't find a data at \(fileUrl) for restoring data.")
 			return nil
 		}
 		return data
@@ -59,7 +57,7 @@ internal final class FileManager {
 
 	internal func saveData(toFileUrl fileUrl: NSURL, data: NSData) {
 		guard let url: NSURL = fileUrl.URLByDeletingLastPathComponent else {
-			logger.logError("\(fileUrl) is not a valid url to save data to.")
+			logError("\(fileUrl) is not a valid url to save data to.")
 			return
 		}
 
@@ -68,12 +66,12 @@ internal final class FileManager {
 				try NSFileManager.defaultManager().createDirectoryAtURL(url, withIntermediateDirectories: false, attributes: nil)
 			}
 			catch let error {
-				logger.logError("Cannot create directory '\(url)': \(error)")
+				logError("Cannot create directory '\(url)': \(error)")
 				return
 			}
 		}
 		guard let _ = try? data.writeToURL(fileUrl, options: .DataWritingAtomic) else {
-			logger.logError("Writing data to file at \(fileUrl) failed.")
+			logError("Writing data to file at \(fileUrl) failed.")
 			return
 		}
 	}
