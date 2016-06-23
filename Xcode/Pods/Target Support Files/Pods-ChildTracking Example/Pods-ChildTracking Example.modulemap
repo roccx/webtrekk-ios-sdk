@@ -1,6 +1,0 @@
-framework module Pods_ChildTracking_Example {
-  umbrella header "Pods-ChildTracking Example-umbrella.h"
-
-  export *
-  module * { export * }
-}

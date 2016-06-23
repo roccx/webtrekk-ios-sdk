@@ -4,9 +4,9 @@ import Foundation
 public struct UserProperties {
 
 	public var birthday: NSDate?
-	public var categories: Set<Category>?
 	public var city: String?
 	public var country: String?
+	public var details: Set<IndexedProperty>?
 	public var emailAddress: String?
 	public var emailReceiverId: String?
 	public var firstName: String?
@@ -22,9 +22,9 @@ public struct UserProperties {
 
 	public init(
 		birthday: NSDate? = nil,
-		categories: Set<Category>? = nil,
 		city: String? = nil,
 		country: String? = nil,
+		details: Set<IndexedProperty>? = nil,
 		emailAddress: String? = nil,
 		emailReceiverId: String? = nil,
 		firstName: String? = nil,
@@ -38,9 +38,9 @@ public struct UserProperties {
 		zipCode: String? = nil
 	) {
 		self.birthday = birthday
-		self.categories = categories
 		self.city = city
 		self.country = country
+		self.details = details
 		self.emailAddress = emailAddress
 		self.emailReceiverId = emailReceiverId
 		self.firstName = firstName
@@ -59,9 +59,9 @@ public struct UserProperties {
 	internal func merged(with other: UserProperties) -> UserProperties {
 		return UserProperties(
 			birthday:             birthday ?? other.birthday,
-			categories:           categories ?? other.categories,
 			city:                 city ?? other.city,
 			country:              country ?? other.country,
+			details:              details ?? other.details,
 			emailAddress:         emailAddress ?? other.emailAddress,
 			emailReceiverId:      emailReceiverId ?? other.emailReceiverId,
 			firstName:            firstName ?? other.firstName,

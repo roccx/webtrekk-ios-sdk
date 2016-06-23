@@ -1,6 +1,0 @@
-framework module Pods_ManualTracking_Example {
-  umbrella header "Pods-ManualTracking Example-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -3,9 +3,8 @@ use_frameworks!
 
 install! 'cocoapods', :share_schemes_for_development_pods => false
 
-target 'AutoTracking Example'
-target 'ChildTracking Example'
-target 'ManualTracking Example'
+target 'Automatic Tracking Example'
+target 'Manual Tracking Example'
 
 target 'Tests' do
 	inherit! :search_paths

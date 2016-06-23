@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4986830C1BE404F7001DCBC7"
                BuildableName = "Webtrekk.app"
-               BlueprintName = "AutoTracking Example"
+               BlueprintName = "Automatic Tracking Example"
                ReferencedContainer = "container:Examples.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -59,7 +59,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4986830C1BE404F7001DCBC7"
             BuildableName = "Webtrekk.app"
-            BlueprintName = "AutoTracking Example"
+            BlueprintName = "Automatic Tracking Example"
             ReferencedContainer = "container:Examples.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -82,7 +82,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4986830C1BE404F7001DCBC7"
             BuildableName = "Webtrekk.app"
-            BlueprintName = "AutoTracking Example"
+            BlueprintName = "Automatic Tracking Example"
             ReferencedContainer = "container:Examples.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -101,7 +101,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4986830C1BE404F7001DCBC7"
             BuildableName = "Webtrekk.app"
-            BlueprintName = "AutoTracking Example"
+            BlueprintName = "Automatic Tracking Example"
             ReferencedContainer = "container:Examples.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
