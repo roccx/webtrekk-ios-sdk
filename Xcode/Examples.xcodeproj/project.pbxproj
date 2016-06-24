@@ -33,6 +33,7 @@
 		B718353C1D1D4722003279C3 /* ConfigManual.xml in Resources */ = {isa = PBXBuildFile; fileRef = B71835391D1D4722003279C3 /* ConfigManual.xml */; };
 		B718353D1D1D4722003279C3 /* ConfigMinimal.xml in Resources */ = {isa = PBXBuildFile; fileRef = B718353A1D1D4722003279C3 /* ConfigMinimal.xml */; };
 		B718353F1D1D5807003279C3 /* EventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B718353E1D1D5807003279C3 /* EventTest.swift */; };
+		B71835411D1D8396003279C3 /* PropertiesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71835401D1D8396003279C3 /* PropertiesTest.swift */; };
 		B792C5DF1C7B53220093DF35 /* ParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B792C5DE1C7B53220093DF35 /* ParameterTest.swift */; };
 		B7957BD81C6B56A200C6161D /* ToDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7957BD71C6B56A200C6161D /* ToDo.swift */; };
 		B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */; };
@@ -96,6 +97,7 @@
 		B71835391D1D4722003279C3 /* ConfigManual.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConfigManual.xml; sourceTree = "<group>"; };
 		B718353A1D1D4722003279C3 /* ConfigMinimal.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConfigMinimal.xml; sourceTree = "<group>"; };
 		B718353E1D1D5807003279C3 /* EventTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTest.swift; sourceTree = "<group>"; };
+		B71835401D1D8396003279C3 /* PropertiesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PropertiesTest.swift; sourceTree = "<group>"; };
 		B792C5DE1C7B53220093DF35 /* ParameterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterTest.swift; sourceTree = "<group>"; };
 		B7957BD71C6B56A200C6161D /* ToDo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDo.swift; sourceTree = "<group>"; };
 		B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
@@ -231,6 +233,7 @@
 				B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */,
 				B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */,
 				B718353E1D1D5807003279C3 /* EventTest.swift */,
+				B71835401D1D8396003279C3 /* PropertiesTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -562,6 +565,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B71835411D1D8396003279C3 /* PropertiesTest.swift in Sources */,
 				B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */,
 				B7957BD81C6B56A200C6161D /* ToDo.swift in Sources */,
 				B708D3141C90731A00FEFC37 /* BackupManagerTest.swift in Sources */,

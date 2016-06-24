@@ -101,6 +101,9 @@ internal final class RequestUrlBuilder {
 			if let name = actionEvent.pageProperties.name {
 				pageName = name
 			}
+			if !actionEvent.customProperties.isEmpty {
+				parameters += actionEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
+			}
 
 		case .media(let mediaEvent):
 			guard !mediaEvent.mediaProperties.name.isEmpty else {
@@ -126,6 +129,10 @@ internal final class RequestUrlBuilder {
 				pageName = name
 			}
 
+			if !mediaEvent.customProperties.isEmpty {
+				parameters += mediaEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
+			}
+
 		case .pageView(let pageViewEvent):
 			parameters += pageViewEvent.pageProperties.asQueryItems()
 			if let name = pageViewEvent.pageProperties.name {
@@ -141,6 +148,10 @@ internal final class RequestUrlBuilder {
 			}
 
 			parameters += pageViewEvent.ecommerceProperties.asQueryItems()
+
+			if !pageViewEvent.customProperties.isEmpty {
+				parameters += pageViewEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
+			}
 
 		}
 		guard !pageName.isEmpty else {
