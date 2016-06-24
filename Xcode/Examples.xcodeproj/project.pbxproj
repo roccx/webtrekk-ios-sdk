@@ -35,14 +35,11 @@
 		49FCB7881D1DDE8100B6A956 /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FCB7801D1DDE8100B6A956 /* InterfaceController.swift */; };
 		49FCB7891D1DDE8100B6A956 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FCB7811D1DDE8100B6A956 /* NotificationController.swift */; };
 		49FCB78C1D1DDEDC00B6A956 /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FCB78B1D1DDEDC00B6A956 /* WebtrekkTracking.swift */; };
-		B708D3141C90731A00FEFC37 /* BackupManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */; };
 		B718353B1D1D4722003279C3 /* ConfigAutomatic.xml in Resources */ = {isa = PBXBuildFile; fileRef = B71835381D1D4722003279C3 /* ConfigAutomatic.xml */; };
 		B718353C1D1D4722003279C3 /* ConfigManual.xml in Resources */ = {isa = PBXBuildFile; fileRef = B71835391D1D4722003279C3 /* ConfigManual.xml */; };
 		B718353D1D1D4722003279C3 /* ConfigMinimal.xml in Resources */ = {isa = PBXBuildFile; fileRef = B718353A1D1D4722003279C3 /* ConfigMinimal.xml */; };
 		B718353F1D1D5807003279C3 /* EventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B718353E1D1D5807003279C3 /* EventTest.swift */; };
 		B71835411D1D8396003279C3 /* PropertiesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71835401D1D8396003279C3 /* PropertiesTest.swift */; };
-		B792C5DF1C7B53220093DF35 /* ParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B792C5DE1C7B53220093DF35 /* ParameterTest.swift */; };
-		B7957BD81C6B56A200C6161D /* ToDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7957BD71C6B56A200C6161D /* ToDo.swift */; };
 		B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */; };
 		C11F26F446B4BCE755B6F8E0 /* Pods_iOS_Manual_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 470D9826A854FFFA517E77CE /* Pods_iOS_Manual_Tracking_Example.framework */; };
 		C55657C5605E402036539866 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F99E1518FB6347E94537495 /* Pods_Tests.framework */; };
@@ -150,14 +147,11 @@
 		AC25DF179B8C3DC06AC76A5B /* Pods_Automatic_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Automatic_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0077A92D4020D9008DFF370 /* Pods_ChildTracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChildTracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B423E27B17234D4190D7CFE9 /* Pods-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig"; sourceTree = "<group>"; };
-		B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackupManagerTest.swift; sourceTree = "<group>"; };
 		B71835381D1D4722003279C3 /* ConfigAutomatic.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConfigAutomatic.xml; sourceTree = "<group>"; };
 		B71835391D1D4722003279C3 /* ConfigManual.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConfigManual.xml; sourceTree = "<group>"; };
 		B718353A1D1D4722003279C3 /* ConfigMinimal.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConfigMinimal.xml; sourceTree = "<group>"; };
 		B718353E1D1D5807003279C3 /* EventTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTest.swift; sourceTree = "<group>"; };
 		B71835401D1D8396003279C3 /* PropertiesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PropertiesTest.swift; sourceTree = "<group>"; };
-		B792C5DE1C7B53220093DF35 /* ParameterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterTest.swift; sourceTree = "<group>"; };
-		B7957BD71C6B56A200C6161D /* ToDo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDo.swift; sourceTree = "<group>"; };
 		B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
 		B7FA63771CCE0EEB0051FD89 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		BC36762042406FA83B5421CF /* Pods-iOS-Automatic Tracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Automatic Tracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -308,12 +302,9 @@
 			isa = PBXGroup;
 			children = (
 				4986833C1BE410D0001DCBC7 /* Info.plist */,
-				B7957BD71C6B56A200C6161D /* ToDo.swift */,
 				B71835381D1D4722003279C3 /* ConfigAutomatic.xml */,
 				B71835391D1D4722003279C3 /* ConfigManual.xml */,
 				B718353A1D1D4722003279C3 /* ConfigMinimal.xml */,
-				B792C5DE1C7B53220093DF35 /* ParameterTest.swift */,
-				B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */,
 				B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */,
 				B718353E1D1D5807003279C3 /* EventTest.swift */,
 				B71835401D1D8396003279C3 /* PropertiesTest.swift */,
@@ -752,9 +743,6 @@
 			files = (
 				B71835411D1D8396003279C3 /* PropertiesTest.swift in Sources */,
 				B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */,
-				B7957BD81C6B56A200C6161D /* ToDo.swift in Sources */,
-				B708D3141C90731A00FEFC37 /* BackupManagerTest.swift in Sources */,
-				B792C5DF1C7B53220093DF35 /* ParameterTest.swift in Sources */,
 				B718353F1D1D5807003279C3 /* EventTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
