@@ -113,16 +113,18 @@ internal final class RequestUrlBuilder {
 				return nil
 			}
 			parameters += mediaEvent.mediaProperties.asQueryItems(properties.timestamp)
-			switch mediaEvent.kind {
-			case .finish: parameters.append(name: "mk", value: "eof")
-			case .pause: parameters.append(name: "mk", value: "pause")
-			case .play: parameters.append(name: "mk", value: "play")
-			case .position: parameters.append(name: "mk", value: "pos")
-			case .seek: parameters.append(name: "mk", value: "seek")
-			case .stop: parameters.append(name: "mk", value: "stop")
-			case .custom(name: let name): parameters.append(name: "mk", value: name)
-			}
 
+			let actionId: String
+			switch mediaEvent.action {
+			case .finish:           actionId = "finish"
+			case .pause:            actionId = "pause"
+			case .play:             actionId = "play"
+			case .position:         actionId = "pos"
+			case .seek:             actionId = "seek"
+			case .stop:             actionId = "stop"
+			case let .custom(name): actionId = name
+			}
+			parameters.append(name: "mk", value: actionId)
 
 			parameters += mediaEvent.ecommerceProperties.asQueryItems()
 
