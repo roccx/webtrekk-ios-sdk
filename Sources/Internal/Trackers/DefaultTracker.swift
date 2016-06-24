@@ -724,8 +724,15 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
+	internal func trackPageView(event: PageViewEvent) {
+		checkIsOnMainThread()
+
+		handleEvent(event)
+	}
+
+
 	@warn_unused_result
-	internal func trackMedia(mediaName: String, pageName: String) -> MediaTracker {
+	internal func trackerForMedia(mediaName: String, pageName: String) -> MediaTracker {
 		checkIsOnMainThread()
 
 		return DefaultMediaTracker(handler: self, mediaName: mediaName, pageName: pageName)
@@ -733,10 +740,10 @@ internal final class DefaultTracker: Tracker {
 
 
 	#if !os(watchOS)
-	internal func trackMedia(mediaName: String, pageName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker {
+	internal func trackerForMedia(mediaName: String, pageName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker {
 		checkIsOnMainThread()
 
-		let tracker = trackMedia(mediaName, pageName: pageName)
+		let tracker = trackerForMedia(mediaName, pageName: pageName)
 		AVPlayerTracker.track(player: player, with: tracker)
 
 		return tracker
@@ -745,17 +752,10 @@ internal final class DefaultTracker: Tracker {
 
 
 	@warn_unused_result
-	internal func trackPage(pageName: String) -> PageTracker {
+	internal func trackerForPage(pageName: String) -> PageTracker {
 		checkIsOnMainThread()
 
 		return DefaultPageTracker(handler: self, pageName: pageName)
-	}
-
-
-	internal func trackPageView(event: PageViewEvent) {
-		checkIsOnMainThread()
-
-		handleEvent(event)
 	}
 
 

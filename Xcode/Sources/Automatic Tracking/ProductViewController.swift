@@ -18,7 +18,7 @@ class ProductViewController: UIViewController {
 			autoTracker.trackAction("Play Video tapped")
 
 			let player = AVPlayer(URL: videoUrl)
-			autoTracker.trackMedia("product-video-\(productId)", byAttachingToPlayer: player)
+			autoTracker.trackerForMedia("product-video-\(productId)", automaticallyTrackingPlayer: player)
 
 			playerViewController.player = player
 

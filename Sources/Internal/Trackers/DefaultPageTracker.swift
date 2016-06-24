@@ -47,26 +47,6 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
-	@warn_unused_result
-	internal func trackMedia(mediaName: String) -> MediaTracker {
-		checkIsOnMainThread()
-
-		return DefaultMediaTracker(handler: self, mediaName: mediaName, pageName: nil)
-	}
-
-
-	#if !os(watchOS)
-	internal func trackMedia(mediaName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker {
-		checkIsOnMainThread()
-
-		let tracker = trackMedia(mediaName)
-		AVPlayerTracker.track(player: player, with: tracker)
-
-		return tracker
-	}
-	#endif
-
-
 	internal func trackPageView() {
 		checkIsOnMainThread()
 
@@ -77,6 +57,26 @@ internal final class DefaultPageTracker: PageTracker {
 			ecommerceProperties:     ecommerceProperties
 		))
 	}
+
+
+	@warn_unused_result
+	internal func trackerForMedia(mediaName: String) -> MediaTracker {
+		checkIsOnMainThread()
+
+		return DefaultMediaTracker(handler: self, mediaName: mediaName, pageName: nil)
+	}
+
+
+	#if !os(watchOS)
+	internal func trackerForMedia(mediaName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker {
+		checkIsOnMainThread()
+
+		let tracker = trackerForMedia(mediaName)
+		AVPlayerTracker.track(player: player, with: tracker)
+
+		return tracker
+	}
+	#endif
 }
 
 
