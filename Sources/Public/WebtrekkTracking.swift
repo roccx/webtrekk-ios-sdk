@@ -11,6 +11,8 @@ public enum WebtrekkTracking {
 
 	
 	public static func tracker(configurationFile configurationFile: NSURL) throws -> Tracker {
+		checkIsOnMainThread()
+
 		guard let configurationData = NSData(contentsOfURL: configurationFile) else {
 			fatalError("Cannot load Webtrekk configuration file '\(configurationFile)'")
 		}
@@ -25,11 +27,15 @@ public enum WebtrekkTracking {
 
 
 	public static func tracker(configuration configuration: TrackerConfiguration) -> Tracker {
+		checkIsOnMainThread()
+
 		return DefaultTracker(configuration: configuration)
 	}
 
 
 	public static func trackerForAutotrackedViewController(viewController: UIViewController) -> PageTracker {
+		checkIsOnMainThread()
+
 		return viewController.automaticTracker
 	}
 }
