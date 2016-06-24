@@ -22,9 +22,9 @@ public protocol Tracker: class {
 	func trackMedia (event: MediaEvent)
 
 	@warn_unused_result
-	func trackMedia (mediaName: String) -> MediaTracker
+	func trackMedia (mediaName: String, pageName: String) -> MediaTracker
 
-	func trackMedia (mediaName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker
+	func trackMedia (mediaName: String, pageName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker
 
 	@warn_unused_result
 	func trackPage (pageName: String) -> PageTracker

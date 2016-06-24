@@ -49,7 +49,7 @@ internal final class DefaultPageTracker: PageTracker {
 	internal func trackMedia(mediaName: String) -> MediaTracker {
 		checkIsOnMainThread()
 
-		return DefaultMediaTracker(handler: self, mediaName: mediaName)
+		return DefaultMediaTracker(handler: self, mediaName: mediaName, pageName: nil)
 	}
 
 

@@ -669,17 +669,17 @@ internal final class DefaultTracker: Tracker {
 
 
 	@warn_unused_result
-	internal func trackMedia(mediaName: String) -> MediaTracker {
+	internal func trackMedia(mediaName: String, pageName: String) -> MediaTracker {
 		checkIsOnMainThread()
 
-		return DefaultMediaTracker(handler: self, mediaName: mediaName)
+		return DefaultMediaTracker(handler: self, mediaName: mediaName, pageName: pageName)
 	}
 
 
-	internal func trackMedia(mediaName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker {
+	internal func trackMedia(mediaName: String, pageName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker {
 		checkIsOnMainThread()
 
-		let tracker = trackMedia(mediaName)
+		let tracker = trackMedia(mediaName, pageName: pageName)
 		AVPlayerTracker.track(player: player, with: tracker)
 
 		return tracker

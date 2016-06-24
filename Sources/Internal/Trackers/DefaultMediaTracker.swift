@@ -6,14 +6,15 @@ internal final class DefaultMediaTracker: MediaTracker {
 	internal var customProperties = [String : String]()
 	internal var ecommerceProperties = EcommerceProperties()
 	internal var mediaProperties: MediaProperties
-	internal var pageProperties = PageProperties(name: nil)
+	internal var pageProperties: PageProperties
 
 
-	internal init(handler: MediaEventHandler, mediaName: String) {
+	internal init(handler: MediaEventHandler, mediaName: String, pageName: String?) {
 		checkIsOnMainThread()
 
 		self.handler = handler
 		self.mediaProperties = MediaProperties(name: mediaName)
+		self.pageProperties = PageProperties(name: pageName)
 	}
 
 
