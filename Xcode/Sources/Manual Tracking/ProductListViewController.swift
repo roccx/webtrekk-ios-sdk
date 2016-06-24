@@ -6,6 +6,7 @@ class ProductListViewController: UITableViewController {
 
 	private let tracker = WebtrekkTracking.sharedTracker.trackPage("Product Details")
 
+
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == "openProduct" {
 			guard let cell = sender as? UITableViewCell, indexPath = tableView.indexPathForCell(cell) else {

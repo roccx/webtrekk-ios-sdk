@@ -15,7 +15,6 @@
 		4939D7501D1C34840090545B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4939D7481D1C347A0090545B /* AppDelegate.swift */; };
 		4939D7511D1C34840090545B /* ProductListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4939D7491D1C347A0090545B /* ProductListViewController.swift */; };
 		4939D7521D1C34840090545B /* ProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4939D74A1D1C347A0090545B /* ProductViewController.swift */; };
-		4939D7531D1C34840090545B /* Webtrekk.xml in Resources */ = {isa = PBXBuildFile; fileRef = 4939D74B1D1C347A0090545B /* Webtrekk.xml */; };
 		495EE2AB1D19E5EC00B64698 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A41D19E5EC00B64698 /* LaunchScreen.storyboard */; };
 		495EE2AC1D19E5EC00B64698 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A51D19E5EC00B64698 /* Main.storyboard */; };
 		495EE2AD1D19E5EC00B64698 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A61D19E5EC00B64698 /* Media.xcassets */; };
@@ -26,6 +25,8 @@
 		495EE3031D19EDAF00B64698 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A61D19E5EC00B64698 /* Media.xcassets */; };
 		495EE3041D19EDAF00B64698 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A41D19E5EC00B64698 /* LaunchScreen.storyboard */; };
 		495EE3051D19EDAF00B64698 /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A81D19E5EC00B64698 /* Video.mp4 */; };
+		496F3BCF1D1D87E50003D800 /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496F3BCE1D1D87E50003D800 /* WebtrekkTracking.swift */; };
+		496F3BD11D1D88410003D800 /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496F3BD01D1D88410003D800 /* WebtrekkTracking.swift */; };
 		A4E337C4F01F2CD791B02438 /* Pods_Manual_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517990375DCF9362F2957A58 /* Pods_Manual_Tracking_Example.framework */; };
 		B708D3141C90731A00FEFC37 /* BackupManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */; };
 		B718353B1D1D4722003279C3 /* ConfigAutomatic.xml in Resources */ = {isa = PBXBuildFile; fileRef = B71835381D1D4722003279C3 /* ConfigAutomatic.xml */; };
@@ -69,7 +70,6 @@
 		4939D7481D1C347A0090545B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4939D7491D1C347A0090545B /* ProductListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductListViewController.swift; sourceTree = "<group>"; };
 		4939D74A1D1C347A0090545B /* ProductViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductViewController.swift; sourceTree = "<group>"; };
-		4939D74B1D1C347A0090545B /* Webtrekk.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Webtrekk.xml; sourceTree = "<group>"; };
 		495EE2A31D19E5EC00B64698 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		495EE2A41D19E5EC00B64698 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		495EE2A51D19E5EC00B64698 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -78,6 +78,8 @@
 		495EE2A81D19E5EC00B64698 /* Video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Video.mp4; sourceTree = "<group>"; };
 		495EE30B1D19EDAF00B64698 /* Webtrekk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Webtrekk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		495EE30D1D19F05700B64698 /* Webtrekk.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = Webtrekk.podspec; path = ../Webtrekk.podspec; sourceTree = "<group>"; };
+		496F3BCE1D1D87E50003D800 /* WebtrekkTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
+		496F3BD01D1D88410003D800 /* WebtrekkTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
 		4986830D1BE404F7001DCBC7 /* Webtrekk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Webtrekk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		498683211BE404F7001DCBC7 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4986833C1BE410D0001DCBC7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -167,6 +169,7 @@
 				4939D7431D1C347A0090545B /* AppDelegate.swift */,
 				4939D7441D1C347A0090545B /* ProductListViewController.swift */,
 				4939D7451D1C347A0090545B /* ProductViewController.swift */,
+				496F3BCE1D1D87E50003D800 /* WebtrekkTracking.swift */,
 				4939D7461D1C347A0090545B /* Webtrekk.xml */,
 			);
 			path = "Automatic Tracking";
@@ -178,7 +181,7 @@
 				4939D7481D1C347A0090545B /* AppDelegate.swift */,
 				4939D7491D1C347A0090545B /* ProductListViewController.swift */,
 				4939D74A1D1C347A0090545B /* ProductViewController.swift */,
-				4939D74B1D1C347A0090545B /* Webtrekk.xml */,
+				496F3BD01D1D88410003D800 /* WebtrekkTracking.swift */,
 			);
 			path = "Manual Tracking";
 			sourceTree = "<group>";
@@ -364,7 +367,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4939D7531D1C34840090545B /* Webtrekk.xml in Resources */,
 				495EE3001D19EDAF00B64698 /* Main.storyboard in Resources */,
 				495EE3021D19EDAF00B64698 /* UpdateConfig.xml in Resources */,
 				495EE3031D19EDAF00B64698 /* Media.xcassets in Resources */,
@@ -544,6 +546,7 @@
 				4939D7521D1C34840090545B /* ProductViewController.swift in Sources */,
 				4939D7511D1C34840090545B /* ProductListViewController.swift in Sources */,
 				4939D7501D1C34840090545B /* AppDelegate.swift in Sources */,
+				496F3BD11D1D88410003D800 /* WebtrekkTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -554,6 +557,7 @@
 				4939D74E1D1C34810090545B /* ProductViewController.swift in Sources */,
 				4939D74D1D1C34810090545B /* ProductListViewController.swift in Sources */,
 				4939D74C1D1C34810090545B /* AppDelegate.swift in Sources */,
+				496F3BCF1D1D87E50003D800 /* WebtrekkTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

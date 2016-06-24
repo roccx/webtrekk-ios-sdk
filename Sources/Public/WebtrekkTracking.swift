@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 
 public enum WebtrekkTracking {
@@ -25,5 +26,10 @@ public enum WebtrekkTracking {
 
 	public static func tracker(configuration configuration: TrackerConfiguration) -> Tracker {
 		return DefaultTracker(configuration: configuration)
+	}
+
+
+	public static func trackerForAutotrackedViewController(viewController: UIViewController) -> PageTracker {
+		return viewController.automaticTracker
 	}
 }
