@@ -57,7 +57,7 @@ To track page views from the different screens of an App it is common to do this
 ```swift
 class ProductListViewController: UITableViewController {
 
-	private let pageTracker = webtrekkTracker.trackPage("Product Details")
+	private let pageTracker = webtrekkTracker.trackerForPage("Product Details")
 
 
 	override func viewDidAppear(animated: Bool) {
@@ -90,39 +90,31 @@ The Webtrekk SDK offers a simple integration to track different states of you me
 @IBAction
 func productTapped(sender: UIButton) {
     let player = AVPlayer(URL: videoUrl)
-    tracker.trackMedia("product-video-productId", automaticallyTrackingPlayer: player)
+    pageTracker.trackerForMedia("product-video-productId", automaticallyTrackingPlayer: player)
+    
+    let playerViewController = AVPlayerViewController()
     playerViewController.player = player
     
+    presentViewController(playerViewController, animated: true, completion: nil)
     player.play()
 }
 ```
 
-The second code snippet shows the integration using the Webtrekk instance directly.
-
-```swift
-@IBAction func productTapped(sender: UIButton) {
-  let player = AVPlayer(URL: videoUrl)
-  WebtrekkTracking.sharedTracker.trackMedia("product-video-productId", pageName: "Product Details",  byAttachingToPlayer: player)
-  playerViewController.player = player
-
-  player.play()
-}
-```
 
 Configuration XML
 =================
 
-A Configuration XML contains every option for a Webtrekk Tracker and offers a simple possibility to setup you Webtrekk instance. The Configuration XML is even used to integrate a remote configuation option for the Webtrekk instance
+A Configuration XML contains every option for a Webtrekk Tracker and offers a simple possibility to setup you Webtrekk instance. The Configuration XML is even used to integrate a remote configuration option for the Webtrekk instance
 
 Minimal
 -------
 
 A Configuration XML consist of at least three parameters: 'version', 'trackDomain' and 'trackId'
 
-```XML
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <webtrekkConfiguration>
-	<!-- configuation file version -->
+	<!-- configuration file version -->
 	<version>1</version>
 
 	<!-- server to send tracking events to -->
@@ -133,8 +125,8 @@ A Configuration XML consist of at least three parameters: 'version', 'trackDomai
 </webtrekkConfiguration>
 ```
 
-Optional Options
-----------------
+Optional Settings
+-----------------
 
 Addition to be able to configure the minimal options for a Webtrekk Tracker the Configuration XMl opens the possibility to change other options too.
 
@@ -146,7 +138,7 @@ Addition to be able to configure the minimal options for a Webtrekk Tracker the 
 | `maxRequests`            | s           |
 
 ```xml
-<!-- measure only every Nth user (0 to disable) -->
+    <!-- measure only every Nth user (0 to disable) -->
 	<sampling>0</sampling>
 	<!-- maximum delay after an event occurred before sending it to the server (in seconds) -->
 	<sendDelay>300</sendDelay>
@@ -168,15 +160,15 @@ Automatic Tracking
 
 To use the automatic Tracking feature the Configuration XML contains options to enable or disable different aspects for tracking.
 
-```XML
+```xml
 <!-- automatically track various information -->
 <automaticTracking>
-  <advertisingIdentifier>true</advertisingIdentifier>
-  <appUpdates>true</appUpdates>
-  <appVersion>true</appVersion>
-  <connectionType>true</connectionType>
-  <interfaceOrientation>true</interfaceOrientation>
-  <requestQueueSize>true</requestQueueSize>
+    <advertisingIdentifier>true</advertisingIdentifier>
+    <appUpdates>true</appUpdates>
+    <appVersion>true</appVersion>
+    <connectionType>true</connectionType>
+    <interfaceOrientation>true</interfaceOrientation>
+    <requestQueueSize>true</requestQueueSize>
 </automaticTracking>
 ```
 
@@ -184,7 +176,7 @@ To use the automatic Tracking feature the Configuration XML contains options to 
 
 To make use of the automatic page view tracking of the Webtrekk SDK the Configuration XML offers the possibility to configure the screens which should be tracked. The code snippet below demonstrates a simple case and a more detailed case where instead of a pure String a RegularExpression is used and some properties are set.
 
-```XML
+```xml
 <automaticTracking>
   <pages>
     <page viewControllerType="ProductListViewController">
@@ -202,38 +194,26 @@ To make use of the automatic page view tracking of the Webtrekk SDK the Configur
 
 ```
 
-Migration from Webtrekk SDK V3
+Migrating from Webtrekk SDK V3
 ==============================
 
-The Webtrekk SDK V4 offers the possibility to migrate some stored information to the new SDK. This option is enabled as per default but in case the old data should be neglected and deleted the value of the 'migratesFromLibraryV3' variable needs to be set to false before initializing the first tracker. The code snippet belows shows this case.
+The Webtrekk SDK V4 offers the possibility to migrate some stored information to the new SDK. This option is enabled as per default but in case the old data should be neglected and deleted the value of the `migratesFromLibraryV3` variable needs to be set to `false` before creating the first tracker. The code snippet below shows this case.
 
 ```swift
-extension WebtrekkTracking {
-
-  static let sharedTracker: Tracker = {
-    var configuration = TrackerConfiguration(
-    webtrekkId: "289053685367929",
-      serverUrl:  NSURL(string: "https://q3.webtrekk.net")!
-    )
-    WebtrekkTracking.migratesFromLibraryV3 = false
-    return WebtrekkTracking.tracker(configuration: configuration)
-  }()
-}
+WebtrekkTracking.migratesFromLibraryV3 = false
 ```
 
 Following properties are part of the migration.
 
 | Option           | Description                                                       |
 |------------------|-------------------------------------------------------------------|
-| `everId`         | previously generated EverId for the user                          |
+| `everId`         | previously generated everId for the user                          |
 | `appVersion`     | previously stored appVersion used to detect app updates           |
 | `optedOut`       | previously stored status which is only migrated if not set before |
 | `samplingState`  | previously stored samplingState                                   |
-| `unsendRequests` | previously saved unsend Requests                                  |
+| `unsentRequests` | previously saved unsent requests                                  |
 
-SSL Notice
-==========
+SSL
+===
 
-As of iOS 9 Apple is more strictly forcing the usage of the SSL for network connections. Webtrekk highly recommend and offers the usage of a valid serverUrl with SSL support. In case there is a need to circumvent this the App needs an exception entry within the info.plis this and the regulation Apple bestows upon that are well documented within the [iOS Developer Library](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33)
-
-\`\`\`
+As of iOS 9 Apple is more strictly enforcing the usage of the SSL for network connections. Webtrekk highly recommend and offers the usage of a valid serverUrl with SSL support. In case there is a need to circumvent this the App needs an exception entry within the `Info.plist` this and the regulation Apple bestows upon that are well documented within the [iOS Developer Library](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33)
