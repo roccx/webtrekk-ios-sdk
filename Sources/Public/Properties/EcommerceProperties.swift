@@ -5,8 +5,8 @@ public struct EcommerceProperties {
 	public var orderNumber: String?
 	public var products: [Product]?
 	public var status: Status?
-	public var totalValue: Double?
-	public var voucherValue: Double?
+	public var totalValue: String?
+	public var voucherValue: String?
 
 
 	public init(
@@ -14,8 +14,8 @@ public struct EcommerceProperties {
 		details: Set<IndexedProperty>? = nil,
 		products: [Product]? = nil,
 		status: Status? = nil,
-		totalValue: Double? = nil,
-		voucherValue: Double? = nil
+		totalValue: String? = nil,
+		voucherValue: String? = nil
 	) {
 		self.currencyCode = currencyCode
 		self.details = details
