@@ -215,6 +215,35 @@ To make use of the automatic page view tracking of the Webtrekk SDK the Configur
 
 ```
 
+Migration from Webtrekk SDK V3
+==============================
+
+The Webtrekk SDK V4 offers the possibility to migrate some stored information to the new SDK. This option is enabled as per default but in case the old data should be neglected and deleted the value of the 'migratesFromLibraryV3' variable needs to be set to false before initializing the first tracker. The code snippet belows shows this case.
+
+```swift
+extension WebtrekkTracking {
+
+  static let sharedTracker: Tracker = {
+    var configuration = TrackerConfiguration(
+    webtrekkId: "289053685367929",
+      serverUrl:  NSURL(string: "https://q3.webtrekk.net")!
+    )
+    WebtrekkTracking.migratesFromLibraryV3 = false
+    return WebtrekkTracking.tracker(configuration: configuration)
+  }()
+}
+```
+
+Following properties are part of the migration.
+
+| Option           | Description                                                       |
+|------------------|-------------------------------------------------------------------|
+| `everId`         | previously generated EverId for the user                          |
+| `appVersion`     | previously stored appVersion used to detect app updates           |
+| `optedOut`       | previously stored status which is only migrated if not set before |
+| `samplingState`  | previously stored samplingState                                   |
+| `unsendRequests` | previously saved unsend Requests                                  |
+
 SSL Notice
 ==========
 
