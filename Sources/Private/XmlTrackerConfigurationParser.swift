@@ -146,23 +146,14 @@ private class Parser: NSObject {
 	}
 
 
-	private func parseDouble(string: String, allowedRange: HalfOpenInterval<Double>) -> Double? {
+	private func parseDouble(string: String, allowedRange: ClosedInterval<Double>) -> Double? {
 		guard let value = Double(string) else {
 			fail(message: "'\(string)' is not a valid number")
 			return nil
 		}
 
 		if !allowedRange.contains(value) {
-			if allowedRange.end.isInfinite {
-				fail(message: "value (\(value)) must be larger than or equal to \(allowedRange.start)")
-				return nil
-			}
-			if allowedRange.start.isInfinite {
-				fail(message: "value (\(value)) must be smaller than \(allowedRange.end)")
-				return nil
-			}
-
-			fail(message: "value (\(value)) must be between \(allowedRange.start) (inclusive) and \(allowedRange.end) (exclusive)")
+			fail(message: "value (\(value)) must be \(allowedRange.conditionText)")
 			return nil
 		}
 
@@ -185,7 +176,7 @@ private class Parser: NSObject {
 	}
 
 
-	private func parseInt(string: String, allowedRange: HalfOpenInterval<Int>) -> Int? {
+	private func parseInt(string: String, allowedRange: ClosedInterval<Int>) -> Int? {
 		guard let value = Int(string) else {
 			fail(message: "'\(string)' is not a valid integer")
 			return nil
@@ -197,11 +188,11 @@ private class Parser: NSObject {
 				return nil
 			}
 			if allowedRange.start == .min {
-				fail(message: "value (\(value)) must be smaller than \(allowedRange.end)")
+				fail(message: "value (\(value)) must be smaller than or equal to \(allowedRange.end)")
 				return nil
 			}
 
-			fail(message: "value (\(value)) must be between \(allowedRange.start) (inclusive) and \(allowedRange.end) (exclusive)")
+			fail(message: "value (\(value)) must be between \(allowedRange.start) (inclusive) and \(allowedRange.end) (inclusive)")
 			return nil
 		}
 
@@ -365,15 +356,32 @@ private class Parser: NSObject {
 
 		case .root:
 			switch (elementName) {
-			case "automaticTracking":      return .automaticTracking
-			case "configurationUpdateUrl": return buildSimpleElementState(configurationUpdateUrl) { value in self.configurationUpdateUrl = self.parseUrl(value, emptyAllowed: true) }
-			case "maxRequests":            return buildSimpleElementState(requestQueueLimit)      { value in self.requestQueueLimit = self.parseInt(value, allowedRange: 1 ..< .max) }
-			case "sampling":               return buildSimpleElementState(samplingRate)           { value in self.samplingRate = self.parseInt(value, allowedRange: 0 ..< .max) }
-			case "trackDomain":            return buildSimpleElementState(serverUrl)              { value in self.serverUrl = self.parseUrl(value, emptyAllowed: false) }
-			case "trackId":                return buildSimpleElementState(webtrekkId)             { value in self.webtrekkId = self.parseString(value, emptyAllowed: false) }
-			case "version":                return buildSimpleElementState(version)                { value in self.version = self.parseInt(value, allowedRange: 1 ..< .max) }
-			case "sendDelay":              return buildSimpleElementState(maximumSendDelay)       { value in self.maximumSendDelay = self.parseDouble(value, allowedRange: 5 ..< .infinity) }
-			case "sessionTimeoutInterval": return buildSimpleElementState(sessionTimeoutInterval) { value in self.sessionTimeoutInterval = self.parseDouble(value, allowedRange: 5 ..< .infinity) }
+			case "automaticTracking":
+				return .automaticTracking
+
+			case "configurationUpdateUrl":
+				return buildSimpleElementState(configurationUpdateUrl) { value in self.configurationUpdateUrl = self.parseUrl(value, emptyAllowed: true) }
+
+			case "maxRequests":
+				return buildSimpleElementState(requestQueueLimit) { value in self.requestQueueLimit = self.parseInt(value, allowedRange: TrackerConfiguration.allowedRequestQueueLimits) }
+
+			case "sampling":
+				return buildSimpleElementState(samplingRate) { value in self.samplingRate = self.parseInt(value, allowedRange: TrackerConfiguration.allowedSamplingRates) }
+
+			case "trackDomain":
+				return buildSimpleElementState(serverUrl) { value in self.serverUrl = self.parseUrl(value, emptyAllowed: false) }
+
+			case "trackId":
+				return buildSimpleElementState(webtrekkId) { value in self.webtrekkId = self.parseString(value, emptyAllowed: false) }
+
+			case "version":
+				return buildSimpleElementState(version) { value in self.version = self.parseInt(value, allowedRange: TrackerConfiguration.allowedVersions) }
+
+			case "sendDelay":
+				return buildSimpleElementState(maximumSendDelay) { value in self.maximumSendDelay = self.parseDouble(value, allowedRange: TrackerConfiguration.allowedMaximumSendDelays) }
+
+			case "sessionTimeoutInterval":
+				return buildSimpleElementState(sessionTimeoutInterval) { value in self.sessionTimeoutInterval = self.parseDouble(value, allowedRange: TrackerConfiguration.allowedSessionTimeoutIntervals) }
 
 			default:
 				warn(message: "unknown element")

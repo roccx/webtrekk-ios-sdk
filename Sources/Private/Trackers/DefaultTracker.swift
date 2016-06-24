@@ -29,9 +29,7 @@ internal final class DefaultTracker: Tracker {
 
 
 	internal init(configuration: TrackerConfiguration) {
-		defaults = DefaultTracker.sharedDefaults.child(namespace: configuration.webtrekkId)
-		isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
-		isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
+		var defaults = DefaultTracker.sharedDefaults.child(namespace: configuration.webtrekkId)
 
 		var configuration = configuration
 		if let configurationData = defaults.dataForKey(DefaultsKeys.configuration) {
@@ -46,11 +44,22 @@ internal final class DefaultTracker: Tracker {
 				logError("Cannot load saved configuration. Will fall back to initial configuration. Error: \(error)")
 			}
 		}
-		self.configuration = configuration
-		self.requestQueueBackupFile = DefaultTracker.requestQueueBackupFileForWebtrekkId(configuration.webtrekkId)
 
-		requestManager = RequestManager(queueLimit: configuration.requestQueueLimit)
-		requestUrlBuilder = RequestUrlBuilder(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId)
+		let validatedConfiguration = DefaultTracker.validatedConfiguration(configuration)
+
+		if validatedConfiguration.webtrekkId != configuration.webtrekkId {
+			defaults = DefaultTracker.sharedDefaults.child(namespace: validatedConfiguration.webtrekkId)
+		}
+
+		configuration = validatedConfiguration
+
+		self.configuration = configuration
+		self.defaults = defaults
+		self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
+		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
+		self.requestManager = RequestManager(queueLimit: configuration.requestQueueLimit)
+		self.requestQueueBackupFile = DefaultTracker.requestQueueBackupFileForWebtrekkId(configuration.webtrekkId)
+		self.requestUrlBuilder = RequestUrlBuilder(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId)
 
 		DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
 
@@ -186,6 +195,8 @@ internal final class DefaultTracker: Tracker {
 
 	internal private(set) var configuration: TrackerConfiguration {
 		didSet {
+			self.configuration = DefaultTracker.validatedConfiguration(configuration)
+
 			requestManager.queueLimit = configuration.requestQueueLimit
 
 			requestUrlBuilder.serverUrl = configuration.serverUrl
@@ -678,6 +689,54 @@ internal final class DefaultTracker: Tracker {
 
 		return "Tracking Library \(WebtrekkTracking.version) (\(properties))"
 	}()
+
+
+	private static func validatedConfiguration(configuration: TrackerConfiguration) -> TrackerConfiguration {
+		var configuration = configuration
+		var problems = [String]()
+		var isError = false
+
+		if configuration.webtrekkId.isEmpty {
+			configuration.webtrekkId = "ERROR"
+			problems.append("webtrekkId must not be empty!! -> changed to 'ERROR'")
+
+			isError = true
+		}
+
+		var pageIndex = 0
+		configuration.automaticallyTrackedPages = configuration.automaticallyTrackedPages.filter { page in
+			defer { pageIndex += 1 }
+
+			guard page.pageProperties.name?.nonEmpty != nil else {
+				problems.append("automaticallyTrackedPages[\(pageIndex)] must not be empty")
+				return false
+			}
+
+			return true
+		}
+
+		func checkProperty<Value: Comparable>(name: String, value: Value, allowedValues: ClosedInterval<Value>) -> Value {
+			guard !allowedValues.contains(value) else {
+				return value
+			}
+
+			let newValue = allowedValues.clamp(value)
+			problems.append("\(name) (\(value)) must be \(TrackerConfiguration.allowedMaximumSendDelays.conditionText) -> was corrected to \(newValue)")
+			return newValue
+		}
+
+		configuration.maximumSendDelay       = checkProperty("maximumSendDelay",       value: configuration.maximumSendDelay,       allowedValues: TrackerConfiguration.allowedMaximumSendDelays)
+		configuration.requestQueueLimit      = checkProperty("requestQueueLimit",      value: configuration.requestQueueLimit,      allowedValues: TrackerConfiguration.allowedRequestQueueLimits)
+		configuration.samplingRate           = checkProperty("samplingRate",           value: configuration.samplingRate,           allowedValues: TrackerConfiguration.allowedSamplingRates)
+		configuration.sessionTimeoutInterval = checkProperty("sessionTimeoutInterval", value: configuration.sessionTimeoutInterval, allowedValues: TrackerConfiguration.allowedSessionTimeoutIntervals)
+		configuration.version                = checkProperty("version",                value: configuration.version,                allowedValues: TrackerConfiguration.allowedVersions)
+
+		if !problems.isEmpty {
+			(isError ? logError : logWarning)("Illegal values in tracker configuration: \(problems.joinWithSeparator(", "))")
+		}
+
+		return configuration
+	}
 
 
 	private func validateEvent(event: TrackerRequest.Event) -> Bool {

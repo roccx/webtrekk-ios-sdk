@@ -3,6 +3,12 @@ import Foundation
 
 public struct TrackerConfiguration {
 
+	public static let allowedMaximumSendDelays: ClosedInterval<NSTimeInterval> = 5 ... .infinity
+	public static let allowedRequestQueueLimits: ClosedInterval<Int> = 1 ... .max
+	public static let allowedSamplingRates: ClosedInterval<Int> = 0 ... .max
+	public static let allowedSessionTimeoutIntervals: ClosedInterval<NSTimeInterval> = 0 ... .infinity
+	public static let allowedVersions: ClosedInterval<Int> = 1 ... .max
+
 	public var automaticallyTrackedPages = [Page]()
 	public var automaticallyTracksAdvertisingId = true
 	public var automaticallyTracksAppUpdates = true
