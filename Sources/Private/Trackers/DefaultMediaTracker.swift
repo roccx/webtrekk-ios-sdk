@@ -10,12 +10,16 @@ internal final class DefaultMediaTracker: MediaTracker {
 
 
 	internal init(handler: MediaEventHandler, mediaName: String) {
+		checkIsOnMainThread()
+
 		self.handler = handler
 		self.mediaProperties = MediaProperties(name: mediaName)
 	}
 
 
 	internal func trackEvent(kind: MediaEvent.Kind) {
+		checkIsOnMainThread()
+
 		handler.handleEvent(MediaEvent(
 			kind:                     kind,
 			mediaProperties:          mediaProperties,

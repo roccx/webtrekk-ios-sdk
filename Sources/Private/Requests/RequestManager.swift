@@ -20,6 +20,8 @@ internal final class RequestManager {
 
 
 	internal init(queueLimit: Int) {
+		checkIsOnMainThread()
+
 		self.queueLimit = queueLimit
 
 		do {
@@ -45,6 +47,8 @@ internal final class RequestManager {
 
 
 	private func cancelCurrentRequest() {
+		checkIsOnMainThread()
+
 		guard let pendingTask = pendingTask else {
 			return
 		}
@@ -58,6 +62,8 @@ internal final class RequestManager {
 
 
 	internal func clearPendingRequests() {
+		checkIsOnMainThread()
+
 		logInfo("Clearing queue of \(queue.count) requests.")
 
 		queue.removeAll()
@@ -65,6 +71,8 @@ internal final class RequestManager {
 
 
 	internal func enqueueRequest(request: NSURL, maximumDelay: NSTimeInterval) {
+		checkIsOnMainThread()
+
 		if queue.count >= queueLimit {
 			logWarning("Too many requests in queue. Dropping oldest one.")
 
@@ -80,6 +88,8 @@ internal final class RequestManager {
 
 
 	internal func fetch(url url: NSURL, completion: (NSData?, Error?) -> Void) -> NSURLSessionDataTask {
+		checkIsOnMainThread()
+
 		let task = NSURLSession.defaultSession().dataTaskWithURL(url) { data, response, error in
 			if let error = error {
 				let retryable: Bool
@@ -142,6 +152,8 @@ internal final class RequestManager {
 
 
 	private func maximumNumberOfFailures(with error: Error) -> Int {
+		checkIsOnMainThread()
+
 		if error.isCompletelyOffline {
 			return 60
 		}
@@ -152,6 +164,8 @@ internal final class RequestManager {
 
 
 	internal func prependRequests(requests: [NSURL]) {
+		checkIsOnMainThread()
+
 		queue.insertContentsOf(requests, at: 0)
 		
 		removeRequestsExceedingQueueLimit()
@@ -160,6 +174,8 @@ internal final class RequestManager {
 
 	internal var queueLimit: Int {
 		didSet {
+			checkIsOnMainThread()
+
 			precondition(queueLimit > 0)
 
 			removeRequestsExceedingQueueLimit()
@@ -168,11 +184,15 @@ internal final class RequestManager {
 
 
 	internal var queueSize: Int {
+		checkIsOnMainThread()
+
 		return queue.count
 	}
 
 
 	private func removeRequestsExceedingQueueLimit() {
+		checkIsOnMainThread()
+
 		if queueLimit < queue.count {
 			queue = Array(queue[(queue.count - queueLimit - 1) ..< queue.count])
 		}
@@ -180,11 +200,15 @@ internal final class RequestManager {
 
 
 	internal func sendAllRequests() {
+		checkIsOnMainThread()
+
 		sendNextRequest()
 	}
 
 
 	private func sendNextRequest() {
+		checkIsOnMainThread()
+
 		sendNextRequestTimer?.invalidate()
 		sendNextRequestTimer = nil
 
@@ -276,6 +300,8 @@ internal final class RequestManager {
 
 
 	private func sendNextRequest(maximumDelay maximumDelay: NSTimeInterval) {
+		checkIsOnMainThread()
+
 		guard !queue.isEmpty else {
 			return
 		}
@@ -300,6 +326,8 @@ internal final class RequestManager {
 
 
 	internal func start() {
+		checkIsOnMainThread()
+
 		guard !started else {
 			logWarning("Cannot start RequestManager which was already started.")
 			return
@@ -312,6 +340,8 @@ internal final class RequestManager {
 
 
 	internal func stop() {
+		checkIsOnMainThread()
+
 		guard started else {
 			logWarning("Cannot stop RequestManager which wasn't started.")
 			return

@@ -15,6 +15,8 @@ internal final class AVPlayerTracker: NSObject {
 
 
 	private init(player: AVPlayer, parentTracker: MediaTracker) {
+		checkIsOnMainThread()
+
 		self.parent = parentTracker
 		self.player = player
 
@@ -30,29 +32,44 @@ internal final class AVPlayerTracker: NSObject {
 		if let itemDidPlayToEndTimeObserver = itemDidPlayToEndTimeObserver {
 			NSNotificationCenter.defaultCenter().removeObserver(itemDidPlayToEndTimeObserver)
 		}
-		if let player = player, playerTimeObserver = playerTimeObserver {
-			player.removeTimeObserver(playerTimeObserver)
-		}
 
 		pauseDetectionTimer?.invalidate()
 		positionTimer?.invalidate()
 
-		switch playbackState {
-		case .paused, .pausedOrSeeking, .playing, .seeking:
-			if let lastKnownPlaybackTime = lastKnownPlaybackTime {
-				parent.mediaProperties.position = lastKnownPlaybackTime
+		let lastKnownPlaybackTime = self._lastKnownPlaybackTime
+		let parent = self.parent
+		let player = self.player
+		let playbackState = self.playbackState
+
+		onMainQueue(synchronousIfPossible: true) {
+			switch playbackState {
+			case .paused, .pausedOrSeeking, .playing, .seeking:
+				if let time = player?.currentTime() {
+					parent.mediaProperties.position = CMTimeGetSeconds(time)
+				}
+				else if let lastKnownPlaybackTime = lastKnownPlaybackTime {
+					parent.mediaProperties.position = lastKnownPlaybackTime
+				}
+
+				parent.trackEvent(.stop)
+
+			case .finished, .stopped:
+				break
 			}
+		}
 
-			parent.trackEvent(.stop)
-
-		case .finished, .stopped:
-			break
+		if let player = player, playerTimeObserver = playerTimeObserver {
+			onMainQueue(synchronousIfPossible: true) {
+				player.removeTimeObserver(playerTimeObserver)
+			}
 		}
 	}
 
 
 	private var _lastKnownPlaybackTime: NSTimeInterval?
 	private var lastKnownPlaybackTime: NSTimeInterval? {
+		checkIsOnMainThread()
+
 		if let time = player?.currentTime() {
 			_lastKnownPlaybackTime = CMTimeGetSeconds(time)
 		}
@@ -62,18 +79,22 @@ internal final class AVPlayerTracker: NSObject {
 
 
 	private func onPlayerDeinit(unownedPlayer: Unmanaged<AVPlayer>) {
-		if let playerTimeObserver = playerTimeObserver {
-			self.playerTimeObserver = nil
+		onMainQueue(synchronousIfPossible: true) {
+			if let playerTimeObserver = self.playerTimeObserver {
+				self.playerTimeObserver = nil
 
-			unownedPlayer.takeUnretainedValue().removeTimeObserver(playerTimeObserver)
+				unownedPlayer.takeUnretainedValue().removeTimeObserver(playerTimeObserver)
+			}
+
+			self.player = nil
+			self.updatePlaybackState()
 		}
-
-		player = nil
-		updatePlaybackState()
 	}
 
 
 	private func setUpObservers(player player: AVPlayer) {
+		checkIsOnMainThread()
+
 		let mainQueue = NSOperationQueue.mainQueue()
 		let notificationCenter = NSNotificationCenter.defaultCenter()
 
@@ -121,11 +142,15 @@ internal final class AVPlayerTracker: NSObject {
 
 
 	internal static func track(player player: AVPlayer, with tracker: MediaTracker) {
+		checkIsOnMainThread()
+
 		player.trackers.add(AVPlayerTracker(player: player, parentTracker: tracker))
 	}
 
 
 	private func updateMediaProperties() {
+		checkIsOnMainThread()
+
 		guard let player = player, item = player.currentItem else {
 			return
 		}
@@ -149,6 +174,8 @@ internal final class AVPlayerTracker: NSObject {
 
 
 	private func updatePlaybackState() {
+		checkIsOnMainThread()
+
 		let playerIsPlaying = player?.isPlaying ?? false
 
 		switch playbackState {
@@ -166,6 +193,8 @@ internal final class AVPlayerTracker: NSObject {
 
 
 	private func updatePositionTimer() {
+		checkIsOnMainThread()
+
 		if playbackState == .playing {
 			if positionTimer == nil {
 				positionTimer = NSTimer.scheduledTimerWithTimeInterval(30, repeats: true) {
@@ -188,6 +217,8 @@ internal final class AVPlayerTracker: NSObject {
 
 
 	private func updateToPlaybackState(playbackState: PlaybackState) {
+		checkIsOnMainThread()
+
 		guard playbackState != self.playbackState else {
 			return
 		}
@@ -255,11 +286,15 @@ extension AVPlayer {
 
 
 	private var isPlaying: Bool {
+		checkIsOnMainThread()
+
 		return abs(rate) >= 0.000001
 	}
 
 
 	private var trackers: Trackers {
+		checkIsOnMainThread()
+
 		return objc_getAssociatedObject(self, &AssociatedKeys.trackers) as? Trackers ?? {
 			let trackers = Trackers(player: self)
 			objc_setAssociatedObject(self, &AssociatedKeys.trackers, trackers, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

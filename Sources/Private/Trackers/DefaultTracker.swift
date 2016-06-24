@@ -29,6 +29,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	internal init(configuration: TrackerConfiguration) {
+		checkIsOnMainThread()
+
 		var defaults = DefaultTracker.sharedDefaults.child(namespace: configuration.webtrekkId)
 
 		var configuration = configuration
@@ -71,12 +73,14 @@ internal final class DefaultTracker: Tracker {
 
 	deinit {
 		let id = ObjectIdentifier(self)
-		onMainQueue {
-			DefaultTracker.instances[id] = nil
-		}
+		let requestManager = self.requestManager
 
-		if requestManager.started {
-			requestManager.stop()
+		onMainQueue(synchronousIfPossible: true) {
+			DefaultTracker.instances[id] = nil
+
+			if requestManager.started {
+				requestManager.stop()
+			}
 		}
 
 		let notificationCenter = NSNotificationCenter.defaultCenter()
@@ -93,6 +97,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private var advertisingIdentifier: NSUUID? {
+		checkIsOnMainThread()
+
 		guard
 			let identifierManagerClass = unsafeBitCast(NSClassFromString("ASIdentifierManager"), Optional<ASIdentifierManager.Type>.self),
 			let manager = identifierManagerClass.sharedManager() where manager.advertisingTrackingEnabled,
@@ -106,6 +112,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	internal func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
+		checkIsOnMainThread()
+
 		if requestManagerStartTimer == nil {
 			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
 				self.startRequestManager()
@@ -119,6 +127,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func applicationDidBecomeActive() {
+		checkIsOnMainThread()
+
 		if requestManagerStartTimer == nil {
 			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
 				self.startRequestManager()
@@ -133,6 +143,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func applicationWillResignActive() {
+		checkIsOnMainThread()
+
 		defaults.set(key: DefaultsKeys.appHibernationDate, to: NSDate())
 
 		if backgroundTaskIdentifier == UIBackgroundTaskInvalid {
@@ -166,6 +178,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func applicationWillEnterForeground() {
+		checkIsOnMainThread()
+
 		if let hibernationDate = defaults.dateForKey(DefaultsKeys.appHibernationDate) where -hibernationDate.timeIntervalSinceNow < configuration.sessionTimeoutInterval {
 			isFirstEventOfSession = false
 		}
@@ -182,6 +196,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func checkForAppUpdate() {
+		checkIsOnMainThread()
+
 		let lastCheckedAppVersion = defaults.stringForKey(DefaultsKeys.appVersion)
 		if lastCheckedAppVersion != Environment.appVersion {
 			defaults.set(key: DefaultsKeys.appVersion, to: Environment.appVersion)
@@ -195,6 +211,8 @@ internal final class DefaultTracker: Tracker {
 
 	internal private(set) var configuration: TrackerConfiguration {
 		didSet {
+			checkIsOnMainThread()
+
 			self.configuration = DefaultTracker.validatedConfiguration(configuration)
 
 			requestManager.queueLimit = configuration.requestQueueLimit
@@ -209,6 +227,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func createRequestForEvent(event: TrackerRequest.Event) -> TrackerRequest? {
+		checkIsOnMainThread()
+
 		guard validateEvent(event) else {
 			return nil
 		}
@@ -287,6 +307,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	internal func enqueueRequestForEvent(event: TrackerRequest.Event) {
+		checkIsOnMainThread()
+
 		guard var request = createRequestForEvent(eventByApplyingAutomaticPageTracking(to: event)) else {
 			return
 		}
@@ -310,6 +332,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func eventByApplyingAutomaticPageTracking(to event: TrackerRequest.Event) -> TrackerRequest.Event {
+		checkIsOnMainThread()
+
 		guard let
 			viewControllerTypeName = event.pageProperties.viewControllerTypeName,
 			page = configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName)
@@ -329,6 +353,8 @@ internal final class DefaultTracker: Tracker {
 
 	private var isFirstEventAfterAppUpdate: Bool {
 		didSet {
+			checkIsOnMainThread()
+
 			guard isFirstEventAfterAppUpdate != oldValue else {
 				return
 			}
@@ -340,6 +366,8 @@ internal final class DefaultTracker: Tracker {
 
 	private var isFirstEventOfApp: Bool {
 		didSet {
+			checkIsOnMainThread()
+
 			guard isFirstEventOfApp != oldValue else {
 				return
 			}
@@ -351,6 +379,8 @@ internal final class DefaultTracker: Tracker {
 
 	internal static var isOptedOut = DefaultTracker.loadIsOptedOut() {
 		didSet {
+			checkIsOnMainThread()
+
 			guard isOptedOut != oldValue else {
 				return
 			}
@@ -367,6 +397,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private static func loadEverId() -> String {
+		checkIsOnMainThread()
+
 		return sharedDefaults.stringForKey(DefaultsKeys.everId) ?? {
 			let everId = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
 			sharedDefaults.set(key: DefaultsKeys.everId, to: everId)
@@ -376,11 +408,15 @@ internal final class DefaultTracker: Tracker {
 
 
 	private static func loadIsOptedOut() -> Bool {
+		checkIsOnMainThread()
+
 		return sharedDefaults.boolForKey(DefaultsKeys.isOptedOut) ?? false
 	}
 
 
 	private func loadRequestQueue() {
+		checkIsOnMainThread()
+
 		guard !requestQueueLoaded else {
 			return
 		}
@@ -438,6 +474,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private static func requestQueueBackupFileForWebtrekkId(webtrekkId: String) -> NSURL? {
+		checkIsOnMainThread()
+
 		let searchPathDirectory: NSSearchPathDirectory
 		#if os(iOS) || os(OSX) || os(watchOS)
 			searchPathDirectory = .ApplicationSupportDirectory
@@ -479,6 +517,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	internal func sendPendingEvents() {
+		checkIsOnMainThread()
+
 		startRequestManager()
 
 		requestManager.sendAllRequests()
@@ -486,6 +526,8 @@ internal final class DefaultTracker: Tracker {
 
 	
 	private func setUp() {
+		checkIsOnMainThread()
+
 		setUpObservers()
 
 		updateAutomaticTracking()
@@ -494,6 +536,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func setUpObservers() {
+		checkIsOnMainThread()
+
 		let notificationCenter = NSNotificationCenter.defaultCenter()
 		applicationDidBecomeActiveObserver = notificationCenter.addObserverForName(UIApplicationDidBecomeActiveNotification, object: nil, queue: nil) { [weak self] _ in
 			self?.applicationDidBecomeActive()
@@ -508,11 +552,15 @@ internal final class DefaultTracker: Tracker {
 
 
 	private var shouldEnqueueNewEvents: Bool {
+		checkIsOnMainThread()
+
 		return isSampling && !DefaultTracker.isOptedOut
 	}
 
 
 	private func saveRequestQueue() {
+		checkIsOnMainThread()
+
 		guard let file = requestQueueBackupFile, filePath = file.path else {
 			return
 		}
@@ -545,6 +593,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func startRequestManager() {
+		checkIsOnMainThread()
+
 		requestManagerStartTimer?.invalidate()
 		requestManagerStartTimer = nil
 
@@ -558,6 +608,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func stopRequestManager() {
+		checkIsOnMainThread()
+
 		guard requestManager.started else {
 			return
 		}
@@ -568,22 +620,30 @@ internal final class DefaultTracker: Tracker {
 
 
 	internal func trackAction(event: ActionEvent) {
+		checkIsOnMainThread()
+
 		handleEvent(event)
 	}
 
 
 	internal func trackMedia(event: MediaEvent) {
+		checkIsOnMainThread()
+
 		handleEvent(event)
 	}
 
 
 	@warn_unused_result
 	internal func trackMedia(mediaName: String) -> MediaTracker {
+		checkIsOnMainThread()
+
 		return DefaultMediaTracker(handler: self, mediaName: mediaName)
 	}
 
 
 	internal func trackMedia(mediaName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker {
+		checkIsOnMainThread()
+
 		let tracker = trackMedia(mediaName)
 		AVPlayerTracker.track(player: player, with: tracker)
 
@@ -593,16 +653,22 @@ internal final class DefaultTracker: Tracker {
 
 	@warn_unused_result
 	internal func trackPage(pageName: String) -> PageTracker {
+		checkIsOnMainThread()
+
 		return DefaultPageTracker(handler: self, pageName: pageName)
 	}
 
 
 	internal func trackPageView(event: PageViewEvent) {
+		checkIsOnMainThread()
+
 		handleEvent(event)
 	}
 
 
 	private func updateAutomaticTracking() {
+		checkIsOnMainThread()
+
 		let handler = DefaultTracker._autotrackingEventHandler
 
 		if configuration.automaticallyTrackedPages.isEmpty {
@@ -621,6 +687,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func updateConfiguration() {
+		checkIsOnMainThread()
+
 		guard let updateUrl = configuration.configurationUpdateUrl else {
 			return
 		}
@@ -662,6 +730,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func updateSampling() {
+		checkIsOnMainThread()
+
 		if let isSampling = defaults.boolForKey(DefaultsKeys.isSampling), samplingRate = defaults.intForKey(DefaultsKeys.samplingRate) where samplingRate == configuration.samplingRate {
 			self.isSampling = isSampling
 		}
@@ -680,6 +750,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private static let userAgent: String = {
+		checkIsOnMainThread()
+
 		let properties = [
 			Environment.operatingSystemName,
 			Environment.operatingSystemVersionString,
@@ -692,6 +764,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private static func validatedConfiguration(configuration: TrackerConfiguration) -> TrackerConfiguration {
+		checkIsOnMainThread()
+
 		var configuration = configuration
 		var problems = [String]()
 		var isError = false
@@ -740,6 +814,8 @@ internal final class DefaultTracker: Tracker {
 
 
 	private func validateEvent(event: TrackerRequest.Event) -> Bool {
+		checkIsOnMainThread()
+
 		switch event {
 		case let .action(event):
 			guard event.actionProperties.name.nonEmpty != nil else {
@@ -780,6 +856,8 @@ internal final class DefaultTracker: Tracker {
 extension DefaultTracker: ActionEventHandler {
 
 	internal func handleEvent(event: ActionEvent) {
+		checkIsOnMainThread()
+
 		enqueueRequestForEvent(.action(event))
 	}
 
@@ -789,6 +867,8 @@ extension DefaultTracker: ActionEventHandler {
 extension DefaultTracker: MediaEventHandler {
 
 	internal func handleEvent(event: MediaEvent) {
+		checkIsOnMainThread()
+
 		enqueueRequestForEvent(.media(event))
 	}
 
@@ -798,6 +878,8 @@ extension DefaultTracker: MediaEventHandler {
 extension DefaultTracker: PageViewEventHandler {
 
 	internal func handleEvent(event: PageViewEvent) {
+		checkIsOnMainThread()
+
 		enqueueRequestForEvent(.pageView(event))
 	}
 }
@@ -806,16 +888,22 @@ extension DefaultTracker: PageViewEventHandler {
 extension DefaultTracker: RequestManager.Delegate {
 
 	internal func requestManager(requestManager: RequestManager, didFailToSendRequest request: NSURL, error: RequestManager.Error) {
+		checkIsOnMainThread()
+
 		requestManagerDidFinishRequest()
 	}
 
 
 	internal func requestManager(requestManager: RequestManager, didSendRequest request: NSURL) {
+		checkIsOnMainThread()
+
 		requestManagerDidFinishRequest()
 	}
 
 
 	private func requestManagerDidFinishRequest() {
+		checkIsOnMainThread()
+
 		saveRequestQueue()
 
 		if requestManager.queueSize == 0 {
@@ -854,16 +942,22 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 
 
 	private func handleEvent(event: ActionEvent) {
+		checkIsOnMainThread()
+
 		broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
 	}
 
 
 	private func handleEvent(event: MediaEvent) {
+		checkIsOnMainThread()
+
 		broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
 	}
 
 
 	private func handleEvent(event: PageViewEvent) {
+		checkIsOnMainThread()
+
 		broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
 	}
 }
