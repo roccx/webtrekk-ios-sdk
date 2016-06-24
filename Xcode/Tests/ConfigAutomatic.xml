@@ -39,14 +39,9 @@
 
 			<page viewControllerType="/.*\.ProductViewController/">
 				<pageProperties name="Product Details">
-					<details>
-						<detail id="1">Blue Variant</detail>
-						<detail id="2">Small</detail>
-					</details>
-					<groups>
-						<group id="2">Media</group>
-					</groups>
+					<details index1="Blue Variant" index2="Media"/>
 				</pageProperties>
+				<customProperties myProperty="myValue" anotherProperty="anotherValue"/>
 			</page>
 		</pages>
 	</automaticTracking>

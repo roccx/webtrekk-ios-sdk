@@ -303,6 +303,7 @@ private extension EcommerceProperties {
 		if let orderNumber = orderNumber {
 			items.append(name: "oi", value: orderNumber)
 		}
+		items += mergeProductQueryItems()
 		if let status = status {
 			switch status {
 			case .addedToBasket:
@@ -339,7 +340,7 @@ private extension EcommerceProperties {
 		for product in products {
 			names.append(product.name)
 			prices.append(product.price ?? "")
-			quantities.append("\(product.quantity != nil ? "\(product.quantity)" : "" )")
+			quantities.append("\(product.quantity != nil ? "\(product.quantity!)" : "" )")
 			if let categories = product.categories {
 				for category in categories {
 					categoryKeys.insert(category.index)
