@@ -16,7 +16,7 @@ internal extension UIViewController {
 
 
 	@nonobjc
-	private var automaticTracker: PageTracker {
+	internal var automaticTracker: PageTracker {
 		return objc_getAssociatedObject(self, &AssociatedKeys.automaticTracker) as? PageTracker ?? {
 			let tracker = DefaultPageTracker(handler: DefaultTracker.autotrackingEventHandler, viewControllerTypeName: String(reflecting: self.dynamicType))
 			objc_setAssociatedObject(self, &AssociatedKeys.automaticTracker, tracker, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
