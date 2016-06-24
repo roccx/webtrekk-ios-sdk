@@ -7,15 +7,15 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "YES"
+            buildForTesting = "NO"
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "495EE2F11D19EDAF00B64698"
-               BuildableName = "Webtrekk.app"
+               BlueprintIdentifier = "495162161D1DFBE80006A82D"
+               BuildableName = "Manual Tracking Example.app"
                BlueprintName = "Manual Tracking Example"
                ReferencedContainer = "container:Examples.xcodeproj">
             </BuildableReference>
@@ -26,25 +26,14 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      codeCoverageEnabled = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "498683201BE404F7001DCBC7"
-               BuildableName = "Tests.xctest"
-               BlueprintName = "Tests"
-               ReferencedContainer = "container:Examples.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "495EE2F11D19EDAF00B64698"
-            BuildableName = "Webtrekk.app"
+            BlueprintIdentifier = "495162161D1DFBE80006A82D"
+            BuildableName = "Manual Tracking Example.app"
             BlueprintName = "Manual Tracking Example"
             ReferencedContainer = "container:Examples.xcodeproj">
          </BuildableReference>
@@ -66,8 +55,8 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "495EE2F11D19EDAF00B64698"
-            BuildableName = "Webtrekk.app"
+            BlueprintIdentifier = "495162161D1DFBE80006A82D"
+            BuildableName = "Manual Tracking Example.app"
             BlueprintName = "Manual Tracking Example"
             ReferencedContainer = "container:Examples.xcodeproj">
          </BuildableReference>
@@ -85,8 +74,8 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "495EE2F11D19EDAF00B64698"
-            BuildableName = "Webtrekk.app"
+            BlueprintIdentifier = "495162161D1DFBE80006A82D"
+            BuildableName = "Manual Tracking Example.app"
             BlueprintName = "Manual Tracking Example"
             ReferencedContainer = "container:Examples.xcodeproj">
          </BuildableReference>
