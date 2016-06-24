@@ -38,13 +38,13 @@ public struct TrackerRequest {
 		public var advertisingId: NSUUID?
 		public var appVersion: String?
 		public var connectionType: ConnectionType?
-		public var eventQueueSize: Int?
 		public var everId: String
 		public var interfaceOrientation: UIInterfaceOrientation?
 		public var ipAddress: String?
 		public var isFirstEventAfterAppUpdate = false
 		public var isFirstEventOfApp = false
 		public var isFirstEventOfSession = false
+		public var requestQueueSize: Int?
 		public var screenSize: (width: Int, height: Int)?
 		public var samplingRate: Int
 		public var sessionDetails: Set<IndexedProperty>?

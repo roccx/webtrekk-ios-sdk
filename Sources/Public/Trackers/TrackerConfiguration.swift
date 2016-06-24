@@ -8,11 +8,11 @@ public struct TrackerConfiguration {
 	public var automaticallyTracksAppUpdates = true
 	public var automaticallyTracksAppVersion = true
 	public var automaticallyTracksConnectionType = true
-	public var automaticallyTracksEventQueueSize = true
 	public var automaticallyTracksInterfaceOrientation = true
+	public var automaticallyTracksRequestQueueSize = true
 	public var configurationUpdateUrl: NSURL? = nil
-	public var eventQueueLimit = 1000
 	public var maximumSendDelay = NSTimeInterval(5 * 60)
+	public var requestQueueLimit = 1000
 	public var samplingRate = 0
 	public var serverUrl: NSURL
 	public var sessionTimeoutInterval = NSTimeInterval(30 * 60)
