@@ -207,7 +207,7 @@ internal class MediaPropertiesTest: XCTestCase {
 
 
 	internal func urlFromMediaProperties(mediaProperties: MediaProperties) -> NSURL? {
-		return urlFromMediaEvent(MediaEvent(kind: .play, mediaProperties: mediaProperties, pageProperties: PageProperties(name: "page-test")))
+		return urlFromMediaEvent(MediaEvent(action: .play, mediaProperties: mediaProperties, pageProperties: PageProperties(name: "page-test")))
 	}
 }
 

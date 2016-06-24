@@ -25,7 +25,6 @@
 		496F3BCF1D1D87E50003D800 /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496F3BCE1D1D87E50003D800 /* WebtrekkTracking.swift */; };
 		496F3BD11D1D88410003D800 /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496F3BD01D1D88410003D800 /* WebtrekkTracking.swift */; };
 		496F3BE71D1DD1630003D800 /* WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 496F3BE61D1DD1630003D800 /* WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		496F3BFC1D1DD1630003D800 /* WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 496F3BDA1D1DD1630003D800 /* WatchKit App.app */; };
 		49FCB7771D1DDE7300B6A956 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49FCB7731D1DDE7300B6A956 /* Assets.xcassets */; };
 		49FCB7781D1DDE7300B6A956 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49FCB7741D1DDE7300B6A956 /* Interface.storyboard */; };
 		49FCB7831D1DDE8100B6A956 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49FCB77B1D1DDE8100B6A956 /* Assets.xcassets */; };
@@ -88,7 +87,6 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				496F3BFC1D1DD1630003D800 /* WatchKit App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -373,8 +371,8 @@
 				495EE2F31D19EDAF00B64698 /* Sources */,
 				495EE2FD1D19EDAF00B64698 /* Frameworks */,
 				495EE2FF1D19EDAF00B64698 /* Resources */,
-				495EE3061D19EDAF00B64698 /* [CP] Embed Pods Frameworks */,
 				495EE3071D19EDAF00B64698 /* [CP] Copy Pods Resources */,
+				CEBB40BCADDC21D4068FBD8D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -428,9 +426,9 @@
 				498683091BE404F7001DCBC7 /* Sources */,
 				4986830A1BE404F7001DCBC7 /* Frameworks */,
 				4986830B1BE404F7001DCBC7 /* Resources */,
-				AC05E40BE3999D5C88023DCC /* [CP] Embed Pods Frameworks */,
 				7AA245E7FE45E8C9252D91E1 /* [CP] Copy Pods Resources */,
 				496F3C041D1DD1630003D800 /* Embed Watch Content */,
+				889F1A36C6E007F3521BA8C6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -449,8 +447,8 @@
 				4986831D1BE404F7001DCBC7 /* Sources */,
 				4986831E1BE404F7001DCBC7 /* Frameworks */,
 				4986831F1BE404F7001DCBC7 /* Resources */,
-				3F39DCB7A68D63C855009407 /* [CP] Embed Pods Frameworks */,
 				0241D69AD2E8A04EB4D25215 /* [CP] Copy Pods Resources */,
+				36581EA6E011F62771E1D4E0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -579,7 +577,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Tests/Pods-Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3F39DCB7A68D63C855009407 /* [CP] Embed Pods Frameworks */ = {
+		36581EA6E011F62771E1D4E0 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -607,21 +605,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		495EE3061D19EDAF00B64698 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		495EE3071D19EDAF00B64698 /* [CP] Copy Pods Resources */ = {
@@ -669,7 +652,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		AC05E40BE3999D5C88023DCC /* [CP] Embed Pods Frameworks */ = {
+		889F1A36C6E007F3521BA8C6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -682,6 +665,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CEBB40BCADDC21D4068FBD8D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E6E5DDF324AA8C67689405C6 /* [CP] Check Pods Manifest.lock */ = {

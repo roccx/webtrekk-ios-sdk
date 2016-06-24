@@ -67,7 +67,7 @@ internal class MediaEventTest: XCTestCase {
 	internal func testMediaEvent() {
 		let mediaProperties = MediaProperties(name: "media-test")
 		let pageProperties = PageProperties(name: "page-test")
-		let mediaEvent = MediaEvent(kind: .play, mediaProperties: mediaProperties, pageProperties: pageProperties)
+		let mediaEvent = MediaEvent(action: .play, mediaProperties: mediaProperties, pageProperties: pageProperties)
 		let event = TrackerRequest.Event.media(mediaEvent)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
@@ -87,7 +87,7 @@ internal class MediaEventTest: XCTestCase {
 	internal func testMediaEventEmptyMediaName() {
 		let mediaProperties = MediaProperties(name: "")
 		let pageProperties = PageProperties(name: "page-test")
-		let mediaEvent = MediaEvent(kind: .play, mediaProperties: mediaProperties, pageProperties: pageProperties)
+		let mediaEvent = MediaEvent(action: .play, mediaProperties: mediaProperties, pageProperties: pageProperties)
 		let event = TrackerRequest.Event.media(mediaEvent)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
@@ -100,7 +100,7 @@ internal class MediaEventTest: XCTestCase {
 	internal func testMediaEventEmptyPageName() {
 		let mediaProperties = MediaProperties(name: "")
 		let pageProperties = PageProperties(name: "")
-		let mediaEvent = MediaEvent(kind: .play, mediaProperties: mediaProperties, pageProperties: pageProperties)
+		let mediaEvent = MediaEvent(action: .play, mediaProperties: mediaProperties, pageProperties: pageProperties)
 		let event = TrackerRequest.Event.media(mediaEvent)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")

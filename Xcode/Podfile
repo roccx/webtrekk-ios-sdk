@@ -10,11 +10,12 @@ abstract_target 'iOS' do
 	target 'Automatic Tracking Example'
 	target 'Manual Tracking Example'
 
+
 	target 'Tests' do
 		inherit! :search_paths
 
 		# workaround for https://github.com/CocoaPods/CocoaPods/issues/5562
-		pod 'Webtrekk', :path => '..'
+		#pod 'Webtrekk', :path => '..'
 	end
 end
 
