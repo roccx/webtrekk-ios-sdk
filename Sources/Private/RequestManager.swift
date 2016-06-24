@@ -27,6 +27,18 @@ internal final class RequestManager {
 	}
 
 
+	private func cancelCurrentRequest() {
+		guard let pendingTask = pendingTask else {
+			return
+		}
+
+		pendingTask.cancel()
+
+		self.numberOfFailuresForCurrentRequest = 0
+		self.pendingTask = nil
+	}
+
+
 	internal func clearPendingRequests() {
 		logInfo("Clearing queue of \(requests.count) events.")
 
@@ -52,7 +64,6 @@ internal final class RequestManager {
 
 		sendNextRequest(maximumDelay: maximumDelay)
 	}
-
 
 
 	internal func fetch(url url: NSURL, completion: (NSData?, Error?) -> Void) -> NSURLSessionDataTask {
@@ -170,7 +181,11 @@ internal final class RequestManager {
 					logError("Request \(url) failed and will not be retried: \(error)")
 
 					self.numberOfFailuresForCurrentRequest = 0
-					self.requests.removeFirst()
+
+					if self.requests.first == url {
+						self.requests.removeFirst()
+					}
+
 					// TODO save backup?
 					return
 				}
@@ -178,7 +193,11 @@ internal final class RequestManager {
 					logError("Request \(url) failed and will no longer be retried: \(error)")
 
 					self.numberOfFailuresForCurrentRequest = 0
-					self.requests.removeFirst()
+
+					if self.requests.first == url {
+						self.requests.removeFirst()
+					}
+
 					// TODO save backup?
 					return
 				}
@@ -189,7 +208,10 @@ internal final class RequestManager {
 			}
 
 			self.numberOfFailuresForCurrentRequest = 0
-			self.requests.removeFirst()
+
+			if self.requests.first == url {
+				self.requests.removeFirst()
+			}
 
 			self.sendNextRequest()
 			// TODO save backup?

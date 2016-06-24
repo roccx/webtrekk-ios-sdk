@@ -6,6 +6,7 @@ import UIKit
 
 internal final class DefaultTracker: Tracker {
 
+	private static var instances = [ObjectIdentifier: WeakReference<DefaultTracker>]()
 	private static let sharedDefaults = UserDefaults.standardDefaults.child(namespace: "webtrekk")
 
 	private lazy var backupManager: BackupManager = BackupManager(fileManager: self.fileManager)
@@ -42,11 +43,15 @@ internal final class DefaultTracker: Tracker {
 		}
 		self.configuration = configuration
 
+		DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
+
 		setUp()
 	}
 
 
 	deinit {
+		DefaultTracker.instances[ObjectIdentifier(self)] = nil
+
 		let notificationCenter = NSNotificationCenter.defaultCenter()
 		if let applicationWillEnterForegroundObserver = applicationWillEnterForegroundObserver {
 			notificationCenter.removeObserver(applicationWillEnterForegroundObserver)
@@ -247,6 +252,12 @@ internal final class DefaultTracker: Tracker {
 			}
 
 			sharedDefaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
+
+			if isOptedOut {
+				for trackerReference in instances.values {
+					trackerReference.target?.requestManager.clearPendingRequests()
+				}
+			}
 		}
 	}
 
@@ -256,7 +267,7 @@ internal final class DefaultTracker: Tracker {
 			let everId = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
 			sharedDefaults.set(key: DefaultsKeys.everId, to: everId)
 			return everId
-			}()
+		}()
 	}
 
 
