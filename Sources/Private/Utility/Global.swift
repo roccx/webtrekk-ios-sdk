@@ -10,22 +10,22 @@ internal func lazyPlaceholder<T>() -> T {
 
 
 internal func logDebug(@autoclosure message: () -> String) {
-	Webtrekk.logger.logDebug(message)
+	WebtrekkTracking.logger.logDebug(message)
 }
 
 
 internal func logError(@autoclosure message: () -> String) {
-	Webtrekk.logger.logError(message)
+	WebtrekkTracking.logger.logError(message)
 }
 
 
 internal func logInfo(@autoclosure message: () -> String) {
-	Webtrekk.logger.logInfo(message)
+	WebtrekkTracking.logger.logInfo(message)
 }
 
 
 internal func logWarning(@autoclosure message: () -> String) {
-	Webtrekk.logger.logWarning(message)
+	WebtrekkTracking.logger.logWarning(message)
 }
 
 

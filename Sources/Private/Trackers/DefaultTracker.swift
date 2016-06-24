@@ -642,7 +642,14 @@ internal final class DefaultTracker: Tracker {
 
 
 	private static let userAgent: String = {
-		return "Tracking Library \(Webtrekk.version) (\(Environment.operatingSystemName); \(Environment.operatingSystemVersionString); \(Environment.deviceModelString); \(NSLocale.currentLocale().localeIdentifier))"
+		let properties = [
+			Environment.operatingSystemName,
+			Environment.operatingSystemVersionString,
+			Environment.deviceModelString,
+			NSLocale.currentLocale().localeIdentifier
+		].joinWithSeparator("; ")
+
+		return "Tracking Library \(WebtrekkTracking.version) (\(properties))"
 	}()
 }
 
@@ -719,6 +726,7 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 				continue
 			}
 
+			event.customProperties = event.customProperties.merged(over: page.customProperties)
 			event.pageProperties = event.pageProperties.merged(over: page.pageProperties)
 
 			handler(tracker)(event)

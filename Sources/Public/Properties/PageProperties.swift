@@ -24,7 +24,7 @@ public struct PageProperties {
 		viewControllerTypeName: String?,
 		details: Set<IndexedProperty>? = nil,
 		groups: Set<IndexedProperty>? = nil
-		) {
+	) {
 		self.details = details
 		self.groups = groups
 		self.viewControllerTypeName = viewControllerTypeName

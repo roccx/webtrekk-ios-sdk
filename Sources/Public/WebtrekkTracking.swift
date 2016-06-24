@@ -1,9 +1,12 @@
 import Foundation
 
 
-public enum Webtrekk {
+public enum WebtrekkTracking {
 
 	public static let version = "4.0"
+
+	public static let defaultLogger = DefaultTrackingLogger()
+	public static var logger: TrackingLogger = WebtrekkTracking.defaultLogger
 
 	
 	public static func tracker(configurationFile configurationFile: NSURL) throws -> Tracker {

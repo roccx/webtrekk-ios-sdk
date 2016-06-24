@@ -6,7 +6,7 @@ import Webtrekk
 
 class ProductViewController: UIViewController {
 
-	private let tracker = Webtrekk.sharedTracker.trackPage("Product Details")
+	private let tracker = WebtrekkTracking.sharedTracker.trackPage("Product Details")
 
 
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

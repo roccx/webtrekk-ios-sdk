@@ -34,11 +34,17 @@ public struct TrackerConfiguration {
 	
 	public struct Page {
 
+		public var customProperties: [String : String]
 		public var pageProperties: PageProperties
 		public var viewControllerTypeNamePattern: NSRegularExpression
 
 
-		public init(viewControllerTypeNamePattern: NSRegularExpression, pageProperties: PageProperties) {
+		public init(
+			viewControllerTypeNamePattern: NSRegularExpression,
+			pageProperties: PageProperties,
+			customProperties: [String : String] = [:]
+		) {
+			self.customProperties = customProperties
 			self.pageProperties = pageProperties
 			self.viewControllerTypeNamePattern = viewControllerTypeNamePattern
 		}

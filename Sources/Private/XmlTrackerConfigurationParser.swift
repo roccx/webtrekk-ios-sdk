@@ -12,6 +12,8 @@ internal struct XmlTrackerConfigurationParser {
 
 private class Parser: NSObject {
 
+	private lazy var indexedPropertyAttributeNamePattern = try! NSRegularExpression(pattern: "^index(\\d+)$", options: [])
+
 	private var automaticallyTrackedPages = Array<TrackerConfiguration.Page>()
 	private var automaticallyTracksAdvertisingId: Bool?
 	private var automaticallyTracksAppUpdates: Bool?
@@ -29,6 +31,7 @@ private class Parser: NSObject {
 	private var webtrekkId: String?
 
 	private lazy var configuration: TrackerConfiguration = lazyPlaceholder()
+	private var currentPage: TrackerConfiguration.Page?
 	private var currentPageProperties: PageProperties?
 	private var currentString = ""
 	private var elementPath = [String]()
@@ -105,13 +108,24 @@ private class Parser: NSObject {
 	}
 
 
-	private func fail(message message: String) {
+	private func buildSimpleElementState(currentValue: Any?, completion: (String) -> Void) -> State {
+		guard currentValue == nil else {
+			return fail(message: "specified multiple times")
+		}
+
+		return .simpleElement(completion: completion)
+	}
+
+
+	private func fail(message message: String) -> State {
 		guard error == nil else {
-			return
+			return .error
 		}
 
 		error = Error(message: "\(elementPathString) \(message)")
 		parser.abortParsing()
+
+		return .error
 	}
 
 
@@ -153,6 +167,21 @@ private class Parser: NSObject {
 		}
 
 		return value
+	}
+
+
+	private func parseIndexedProperties(attributes attributes: [String : String]) -> Set<IndexedProperty> {
+		var indexedProperties = Set<IndexedProperty>()
+
+		for (name, value) in attributes {
+			guard let indexString = name.firstMatchForRegularExpression(indexedPropertyAttributeNamePattern)?[1], index = Int(indexString) else {
+				continue
+			}
+
+			indexedProperties.insert(IndexedProperty(index: index, value: value))
+		}
+
+		return indexedProperties
 	}
 
 
@@ -216,19 +245,148 @@ private class Parser: NSObject {
 	}
 
 
-	private func pushSimpleElement(currentValue: Any?, completion: (String) -> Void) {
-		guard currentValue == nil else {
-			fail(message: "specified multiple times")
-			return
-		}
-
-		pushState(.simpleElement(completion: completion))
-	}
-
-
 	private func pushState(state: State) {
 		stateStack.append(self.state)
 		self.state = state
+	}
+
+
+	private func stateAfterStartingElement(name elementName: String, attributes: [String: String]) -> State {
+		switch state {
+		case .automaticTracking:
+			switch (elementName) {
+			case "advertisingIdentifier": return buildSimpleElementState(automaticallyTracksAdvertisingId)        { value in self.automaticallyTracksAdvertisingId = self.parseBool(value) }
+			case "appUpdates":            return buildSimpleElementState(automaticallyTracksAppUpdates)           { value in self.automaticallyTracksAppUpdates = self.parseBool(value) }
+			case "appVersion":            return buildSimpleElementState(automaticallyTracksAppVersion)           { value in self.automaticallyTracksAppVersion = self.parseBool(value) }
+			case "connectionType":        return buildSimpleElementState(automaticallyTracksConnectionType)       { value in self.automaticallyTracksConnectionType = self.parseBool(value) }
+			case "interfaceOrientation":  return buildSimpleElementState(automaticallyTracksInterfaceOrientation) { value in self.automaticallyTracksInterfaceOrientation = self.parseBool(value) }
+			case "pages":                 return .automaticTrackingPages
+			case "requestQueueSize":      return buildSimpleElementState(automaticallyTracksRequestQueueSize)     { value in self.automaticallyTracksRequestQueueSize = self.parseBool(value) }
+
+			default:
+				warn(message: "unknown element")
+				return .unknown
+			}
+
+		case .automaticTrackingPage:
+			guard var currentPage = currentPage else {
+				return fail(message: "internal error")
+			}
+
+			switch (elementName) {
+			case "customProperties":
+				currentPage.customProperties = attributes
+				self.currentPage = currentPage
+
+				return .simpleElement(completion: nil)
+
+			case "pageProperties":
+				if let name = attributes["name"]?.nonEmpty {
+					currentPageProperties = PageProperties(name: name)
+					return .pageProperties
+				}
+				else {
+					return fail(message: "missing attribute 'name'")
+				}
+
+			default:
+				warn(message: "unknown element in page '\(currentPage.pageProperties.viewControllerTypeName ?? "?")'")
+				return .unknown
+			}
+
+		case .automaticTrackingPages:
+			if elementName == "page" {
+				if let viewControllerTypeName = attributes["viewControllerType"]?.nonEmpty {
+					let patternString: String
+					if viewControllerTypeName.hasPrefix("/") {
+						guard let _patternString = viewControllerTypeName.firstMatchForRegularExpression("^/(.*)/$")?[1] else {
+							return fail(message: "invalid regular expression: missing trailing slash")
+						}
+
+						patternString = _patternString
+					}
+					else {
+						patternString = "\\b\(NSRegularExpression.escapedPatternForString(viewControllerTypeName))\\b"
+					}
+
+					do {
+						let pattern = try NSRegularExpression(pattern: patternString, options: [])
+
+						currentPage = TrackerConfiguration.Page(viewControllerTypeNamePattern: pattern, pageProperties: PageProperties(viewControllerTypeName: viewControllerTypeName))
+						return .automaticTrackingPage
+					}
+					catch let error {
+						return fail(message: "invalid regular expression: \(error)")
+					}
+				}
+				else {
+					return fail(message: "missing attribute 'viewControllerType'")
+				}
+			}
+			else {
+				warn(message: "unknown element")
+				return .unknown
+			}
+
+		case .error:
+			fatalError()
+
+		case .initial:
+			return .root
+
+		case .pageProperties:
+			guard var pageProperties = currentPageProperties else {
+				return fail(message: "internal error")
+			}
+
+			switch (elementName) {
+			case "details":
+				guard pageProperties.details == nil else {
+					return fail(message: "specified multiple times")
+				}
+
+				pageProperties.details = parseIndexedProperties(attributes: attributes)
+
+			case "groups":
+				guard pageProperties.groups == nil else {
+					return fail(message: "specified multiple times")
+				}
+
+				pageProperties.groups = parseIndexedProperties(attributes: attributes)
+
+			default:
+				warn(message: "unknown element")
+				return .unknown
+			}
+
+			currentPageProperties = pageProperties
+
+			return .simpleElement(completion: nil)
+
+		case .root:
+			switch (elementName) {
+			case "automaticTracking":      return .automaticTracking
+			case "configurationUpdateUrl": return buildSimpleElementState(configurationUpdateUrl) { value in self.configurationUpdateUrl = self.parseUrl(value, emptyAllowed: true) }
+			case "maxRequests":            return buildSimpleElementState(requestQueueLimit)      { value in self.requestQueueLimit = self.parseInt(value, allowedRange: 1 ..< .max) }
+			case "sampling":               return buildSimpleElementState(samplingRate)           { value in self.samplingRate = self.parseInt(value, allowedRange: 0 ..< .max) }
+			case "trackDomain":            return buildSimpleElementState(serverUrl)              { value in self.serverUrl = self.parseUrl(value, emptyAllowed: false) }
+			case "trackId":                return buildSimpleElementState(webtrekkId)             { value in self.webtrekkId = self.parseString(value, emptyAllowed: false) }
+			case "version":                return buildSimpleElementState(version)                { value in self.version = self.parseInt(value, allowedRange: 1 ..< .max) }
+			case "sendDelay":              return buildSimpleElementState(maximumSendDelay)       { value in self.maximumSendDelay = self.parseDouble(value, allowedRange: 5 ..< .infinity) }
+			case "sessionTimeoutInterval": return buildSimpleElementState(sessionTimeoutInterval) { value in self.sessionTimeoutInterval = self.parseDouble(value, allowedRange: 5 ..< .infinity) }
+
+			default:
+				warn(message: "unknown element")
+				return .unknown
+			}
+
+		case .simpleElement:
+			warn(message: "unexpected element")
+			return .unknown
+			
+		case .unknown:
+			return .unknown
+		}
 	}
 
 
@@ -262,12 +420,13 @@ private class Parser: NSObject {
 	private enum State {
 
 		case automaticTracking
-		case automaticTrackingPage(viewControllerTypeName: String, viewControllerTypeNamePattern: NSRegularExpression)
+		case automaticTrackingPage
 		case automaticTrackingPages
+		case error
 		case initial
-		case pageProperties(name: String)
+		case pageProperties
 		case root
-		case simpleElement(completion: (String) -> Void)
+		case simpleElement(completion: ((String) -> Void)?)
 		case unknown
 	}
 }
@@ -280,18 +439,28 @@ extension Parser: NSXMLParserDelegate {
 		currentString = currentString.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
 
 		switch state {
-		case let .automaticTrackingPage(_, viewControllerTypePattern):
-			if let pageProperties = currentPageProperties {
-				automaticallyTrackedPages.append(TrackerConfiguration.Page(viewControllerTypeNamePattern: viewControllerTypePattern, pageProperties: pageProperties))
+		case .automaticTrackingPage:
+			guard var currentPage = currentPage else {
+				fail(message: "internal error")
+				return
+			}
+			self.currentPage = nil
 
-				currentPageProperties = nil
-			}
-			else {
+			guard let currentPageProperties = currentPageProperties else {
 				fail(message: "<pageProperties> element missing")
+				return
 			}
+			self.currentPageProperties = nil
+
+			currentPage.pageProperties = currentPageProperties
+
+			automaticallyTrackedPages.append(currentPage)
+
+		case .error:
+			fatalError()
 
 		case let .simpleElement(completion):
-			completion(currentString)
+			completion?(currentString)
 
 		case .automaticTracking, .automaticTrackingPages, .initial, .pageProperties, .root, .unknown:
 			break
@@ -309,112 +478,7 @@ extension Parser: NSXMLParserDelegate {
 		currentString = ""
 		elementPath.append(elementName)
 
-		switch state {
-		case .automaticTracking:
-			switch (elementName) {
-			case "advertisingIdentifier": pushSimpleElement(automaticallyTracksAdvertisingId)        { value in self.automaticallyTracksAdvertisingId = self.parseBool(value) }
-			case "appUpdates":            pushSimpleElement(automaticallyTracksAppUpdates)           { value in self.automaticallyTracksAppUpdates = self.parseBool(value) }
-			case "appVersion":            pushSimpleElement(automaticallyTracksAppVersion)           { value in self.automaticallyTracksAppVersion = self.parseBool(value) }
-			case "connectionType":        pushSimpleElement(automaticallyTracksConnectionType)       { value in self.automaticallyTracksConnectionType = self.parseBool(value) }
-			case "interfaceOrientation":  pushSimpleElement(automaticallyTracksInterfaceOrientation) { value in self.automaticallyTracksInterfaceOrientation = self.parseBool(value) }
-			case "requestQueueSize":      pushSimpleElement(automaticallyTracksRequestQueueSize)     { value in self.automaticallyTracksRequestQueueSize = self.parseBool(value) }
-			case "pages":                 pushState(.automaticTrackingPages)
-
-			default:
-				warn(message: "unknown element")
-				pushState(.unknown)
-			}
-
-		case let .automaticTrackingPage(viewControllerTypeName):
-			switch (elementName) {
-			case "pageProperties":
-				if let name = attributes["name"]?.nonEmpty {
-					currentPageProperties = PageProperties(name: name)
-					pushState(.pageProperties(name: name))
-				}
-				else {
-					fail(message: "missing attribute 'name'")
-					pushState(.unknown)
-				}
-
-			default:
-				warn(message: "unknown element in page '\(viewControllerTypeName)'")
-				pushState(.unknown)
-			}
-
-		case .automaticTrackingPages:
-			if elementName == "page" {
-				if let viewControllerTypeName = attributes["viewControllerType"]?.nonEmpty {
-					let patternString: String?
-					if viewControllerTypeName.hasPrefix("/") {
-						if let _patternString = viewControllerTypeName.firstMatchForRegularExpression("^/(.*)/$")?[1] {
-							patternString = _patternString
-						}
-						else {
-							fail(message: "invalid regular expression: missing trailing slash")
-							patternString = nil
-						}
-					}
-					else {
-						patternString = "\\b\(NSRegularExpression.escapedPatternForString(viewControllerTypeName))\\b"
-					}
-
-					if let patternString = patternString {
-						let pattern: NSRegularExpression?
-						do {
-							pattern = try NSRegularExpression(pattern: patternString, options: [])
-						}
-						catch let error {
-							fail(message: "invalid regular expression: \(error)")
-							pattern = nil
-						}
-
-						if let pattern = pattern {
-							pushState(.automaticTrackingPage(viewControllerTypeName: viewControllerTypeName, viewControllerTypeNamePattern: pattern))
-						}
-					}
-				}
-				else {
-					fail(message: "missing attribute 'viewControllerType'")
-					pushState(.unknown)
-				}
-			}
-			else {
-				warn(message: "unknown element")
-				pushState(.unknown)
-			}
-
-		case .initial:
-			pushState(.root)
-
-		case let .pageProperties(name):
-			warn(message: "not yet implemented") // FIXME
-			pushState(.unknown)
-
-		case .root:
-			switch (elementName) {
-			case "automaticTracking":      pushState(.automaticTracking)
-			case "configurationUpdateUrl": pushSimpleElement(configurationUpdateUrl) { value in self.configurationUpdateUrl = self.parseUrl(value, emptyAllowed: true) }
-			case "maxRequests":            pushSimpleElement(requestQueueLimit)      { value in self.requestQueueLimit = self.parseInt(value, allowedRange: 1 ..< .max) }
-			case "sampling":               pushSimpleElement(samplingRate)           { value in self.samplingRate = self.parseInt(value, allowedRange: 0 ..< .max) }
-			case "trackDomain":            pushSimpleElement(serverUrl)              { value in self.serverUrl = self.parseUrl(value, emptyAllowed: false) }
-			case "trackId":                pushSimpleElement(webtrekkId)             { value in self.webtrekkId = self.parseString(value, emptyAllowed: false) }
-			case "version":                pushSimpleElement(version)                { value in self.version = self.parseInt(value, allowedRange: 1 ..< .max) }
-			case "sendDelay":              pushSimpleElement(maximumSendDelay)       { value in self.maximumSendDelay = self.parseDouble(value, allowedRange: 5 ..< .infinity) }
-			case "sessionTimeoutInterval": pushSimpleElement(sessionTimeoutInterval) { value in self.sessionTimeoutInterval = self.parseDouble(value, allowedRange: 5 ..< .infinity) }
-
-			default:
-				warn(message: "unknown element")
-				pushState(.unknown)
-			}
-
-		case .simpleElement:
-			fail(message: "unexpected element")
-			pushState(.unknown)
-
-		case .unknown:
-			pushState(.unknown)
-		}
+		pushState(stateAfterStartingElement(name: elementName, attributes: attributes))
 	}
 
 
