@@ -65,7 +65,7 @@ To track page views from the different screens of an App it is common to do this
 ```swift
 class ProductListViewController: UITableViewController {
 
-	private let tracker = WebtrekkTracking.sharedTracker.trackPage("Product Details")
+	private let tracker = WebtrekkTracking.sharedTracker.trackerForPage("Product Details")
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
@@ -103,7 +103,7 @@ The Webtrekk SDK offers a simple integration to track different states of you me
 ```swift
 @IBAction func productTapped(sender: UIButton) {
   let player = AVPlayer(URL: videoUrl)
-  tracker.trackMedia("product-video-productId", byAttachingToPlayer: player)
+  tracker.trackerForMedia("product-video-productId", automaticallyTrackingPlayer: player)
   playerViewController.player = player
 
   player.play()
@@ -115,7 +115,7 @@ The second code snippet shows the integration using the Webtrekk instace directl
 ```swift
 @IBAction func productTapped(sender: UIButton) {
   let player = AVPlayer(URL: videoUrl)
-  WebtrekkTracking.sharedTracker.trackMedia("product-video-productId", pageName: "Product Details",  byAttachingToPlayer: player)
+  WebtrekkTracking.sharedTracker.trackerForMedia("product-video-productId", pageName: "Product Details",  automaticallyTrackingPlayer: player)
   playerViewController.player = player
 
   player.play()
