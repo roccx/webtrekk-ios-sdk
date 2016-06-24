@@ -28,7 +28,9 @@
 		495EE3051D19EDAF00B64698 /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A81D19E5EC00B64698 /* Video.mp4 */; };
 		A4E337C4F01F2CD791B02438 /* Pods_Manual_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517990375DCF9362F2957A58 /* Pods_Manual_Tracking_Example.framework */; };
 		B708D3141C90731A00FEFC37 /* BackupManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */; };
-		B78DF2141C74C730002AADDF /* DefaultConfig.xml in Resources */ = {isa = PBXBuildFile; fileRef = B78DF2121C74C730002AADDF /* DefaultConfig.xml */; };
+		B718353B1D1D4722003279C3 /* ConfigAutomatic.xml in Resources */ = {isa = PBXBuildFile; fileRef = B71835381D1D4722003279C3 /* ConfigAutomatic.xml */; };
+		B718353C1D1D4722003279C3 /* ConfigManual.xml in Resources */ = {isa = PBXBuildFile; fileRef = B71835391D1D4722003279C3 /* ConfigManual.xml */; };
+		B718353D1D1D4722003279C3 /* ConfigMinimal.xml in Resources */ = {isa = PBXBuildFile; fileRef = B718353A1D1D4722003279C3 /* ConfigMinimal.xml */; };
 		B792C5DF1C7B53220093DF35 /* ParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B792C5DE1C7B53220093DF35 /* ParameterTest.swift */; };
 		B7957BD81C6B56A200C6161D /* ToDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7957BD71C6B56A200C6161D /* ToDo.swift */; };
 		B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */; };
@@ -87,7 +89,9 @@
 		B0077A92D4020D9008DFF370 /* Pods_ChildTracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChildTracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B423E27B17234D4190D7CFE9 /* Pods-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig"; sourceTree = "<group>"; };
 		B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackupManagerTest.swift; sourceTree = "<group>"; };
-		B78DF2121C74C730002AADDF /* DefaultConfig.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DefaultConfig.xml; sourceTree = "<group>"; };
+		B71835381D1D4722003279C3 /* ConfigAutomatic.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConfigAutomatic.xml; sourceTree = "<group>"; };
+		B71835391D1D4722003279C3 /* ConfigManual.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConfigManual.xml; sourceTree = "<group>"; };
+		B718353A1D1D4722003279C3 /* ConfigMinimal.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConfigMinimal.xml; sourceTree = "<group>"; };
 		B792C5DE1C7B53220093DF35 /* ParameterTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterTest.swift; sourceTree = "<group>"; };
 		B7957BD71C6B56A200C6161D /* ToDo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDo.swift; sourceTree = "<group>"; };
 		B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
@@ -215,7 +219,9 @@
 			children = (
 				4986833C1BE410D0001DCBC7 /* Info.plist */,
 				B7957BD71C6B56A200C6161D /* ToDo.swift */,
-				B78DF2121C74C730002AADDF /* DefaultConfig.xml */,
+				B71835381D1D4722003279C3 /* ConfigAutomatic.xml */,
+				B71835391D1D4722003279C3 /* ConfigManual.xml */,
+				B718353A1D1D4722003279C3 /* ConfigMinimal.xml */,
 				B792C5DE1C7B53220093DF35 /* ParameterTest.swift */,
 				B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */,
 				B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */,
@@ -378,7 +384,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B78DF2141C74C730002AADDF /* DefaultConfig.xml in Resources */,
+				B718353C1D1D4722003279C3 /* ConfigManual.xml in Resources */,
+				B718353D1D1D4722003279C3 /* ConfigMinimal.xml in Resources */,
+				B718353B1D1D4722003279C3 /* ConfigAutomatic.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
