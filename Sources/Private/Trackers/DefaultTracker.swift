@@ -6,6 +6,7 @@ import UIKit
 
 internal final class DefaultTracker: Tracker {
 
+	private static var instances = [ObjectIdentifier: WeakReference<DefaultTracker>]()
 	private static let sharedDefaults = UserDefaults.standardDefaults.child(namespace: "webtrekk")
 
 	private lazy var backupManager: BackupManager = BackupManager(fileManager: self.fileManager)
@@ -42,11 +43,15 @@ internal final class DefaultTracker: Tracker {
 		}
 		self.configuration = configuration
 
+		DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
+
 		setUp()
 	}
 
 
 	deinit {
+		DefaultTracker.instances[ObjectIdentifier(self)] = nil
+
 		let notificationCenter = NSNotificationCenter.defaultCenter()
 		if let applicationWillEnterForegroundObserver = applicationWillEnterForegroundObserver {
 			notificationCenter.removeObserver(applicationWillEnterForegroundObserver)
@@ -71,7 +76,11 @@ internal final class DefaultTracker: Tracker {
 
 
 	internal func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
-		NSTimer.scheduledTimerWithTimeInterval(10) {
+		NSTimer.scheduledTimerWithTimeInterval(5) {
+			self.requestManager.sendAllRequests()
+		}
+
+		NSTimer.scheduledTimerWithTimeInterval(15) {
 			self.updateConfiguration()
 		}
 	}
@@ -247,6 +256,12 @@ internal final class DefaultTracker: Tracker {
 			}
 
 			sharedDefaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
+
+			if isOptedOut {
+				for trackerReference in instances.values {
+					trackerReference.target?.requestManager.clearPendingRequests()
+				}
+			}
 		}
 	}
 
@@ -256,7 +271,7 @@ internal final class DefaultTracker: Tracker {
 			let everId = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
 			sharedDefaults.set(key: DefaultsKeys.everId, to: everId)
 			return everId
-			}()
+		}()
 	}
 
 
@@ -271,7 +286,6 @@ internal final class DefaultTracker: Tracker {
 
 	
 	private func setUp() {
-		setUpRequestManager()
 		setUpObservers()
 
 		updateAutomaticTracking()
@@ -286,13 +300,6 @@ internal final class DefaultTracker: Tracker {
 		}
 		applicationWillResignActiveObserver = notificationCenter.addObserverForName(UIApplicationWillResignActiveNotification, object: nil, queue: nil) { [weak self] _ in
 			self?.applicationWillResignActive()
-		}
-	}
-
-
-	private func setUpRequestManager() {
-		NSTimer.scheduledTimerWithTimeInterval(5) {
-			self.requestManager.sendAllRequests()
 		}
 	}
 

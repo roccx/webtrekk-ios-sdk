@@ -62,13 +62,14 @@ internal final class AVPlayerTracker: NSObject {
 
 
 	private func onPlayerDeinit(unownedPlayer: Unmanaged<AVPlayer>) {
-		guard let playerTimeObserver = playerTimeObserver else {
-			return
+		if let playerTimeObserver = playerTimeObserver {
+			self.playerTimeObserver = nil
+
+			unownedPlayer.takeUnretainedValue().removeTimeObserver(playerTimeObserver)
 		}
 
-		self.playerTimeObserver = nil
-
-		unownedPlayer.takeUnretainedValue().removeTimeObserver(playerTimeObserver)
+		player = nil
+		updatePlaybackState()
 	}
 
 
@@ -148,18 +149,16 @@ internal final class AVPlayerTracker: NSObject {
 
 
 	private func updatePlaybackState() {
-		guard let player = player else {
-			return
-		}
+		let playerIsPlaying = player?.isPlaying ?? false
 
 		switch playbackState {
 		case .finished, .paused, .pausedOrSeeking, .seeking, .stopped:
-			if player.isPlaying {
+			if playerIsPlaying {
 				updateToPlaybackState(.playing)
 			}
 
 		case .playing:
-			if !player.isPlaying {
+			if !playerIsPlaying {
 				updateToPlaybackState(.pausedOrSeeking)
 			}
 		}
