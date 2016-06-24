@@ -1,6 +1,5 @@
 import XCTest
 
-import Foundation
 @testable import Webtrekk
 
 

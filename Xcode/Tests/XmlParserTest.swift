@@ -1,6 +1,5 @@
 import XCTest
 
-import Foundation
 @testable import Webtrekk
 
 
@@ -104,7 +103,7 @@ internal class XmlParserManualTest: XCTestCase {
 		XCTAssertEqual(config.requestQueueLimit, 5000)
 		XCTAssertEqual(config.samplingRate, 0)
 		XCTAssertEqual(config.serverUrl.absoluteString, "https://q3.webtrekk.net")
-		XCTAssertEqual(config.sessionTimeoutInterval, 1800)
+		XCTAssertEqual(config.sessionTimeoutInterval, 1200)
 		XCTAssertEqual(config.version, 1)
 		XCTAssertEqual(config.webtrekkId, "289053685367929")
 		XCTAssertNil(config.configurationUpdateUrl)
