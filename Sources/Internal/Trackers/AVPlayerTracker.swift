@@ -51,7 +51,7 @@ internal final class AVPlayerTracker: NSObject {
 					parent.mediaProperties.position = lastKnownPlaybackTime
 				}
 
-				parent.trackEvent(.stop)
+				parent.trackAction(.stop)
 
 			case .finished, .stopped:
 				break
@@ -203,7 +203,7 @@ internal final class AVPlayerTracker: NSObject {
 					}
 
 					self.updateMediaProperties()
-					self.parent.trackEvent(.position)
+					self.parent.trackAction(.position)
 				}
 			}
 		}
@@ -250,11 +250,11 @@ internal final class AVPlayerTracker: NSObject {
 		updateMediaProperties()
 
 		switch playbackState {
-		case .finished: parent.trackEvent(.finish)
-		case .paused:   parent.trackEvent(.pause)
-		case .playing:  parent.trackEvent(.play)
-		case .seeking:  parent.trackEvent(.seek)
-		case .stopped:  parent.trackEvent(.stop)
+		case .finished: parent.trackAction(.finish)
+		case .paused:   parent.trackAction(.pause)
+		case .playing:  parent.trackAction(.play)
+		case .seeking:  parent.trackAction(.seek)
+		case .stopped:  parent.trackAction(.stop)
 		case .pausedOrSeeking: break
 		}
 

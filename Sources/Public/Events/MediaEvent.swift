@@ -1,31 +1,32 @@
 public struct MediaEvent: TrackingEvent {
 
+	public var action: Action
 	public var advertisementProperties: AdvertisementProperties
 	public var customProperties: [String : String]
 	public var ecommerceProperties: EcommerceProperties
-	public var kind: Kind
 	public var mediaProperties: MediaProperties
 	public var pageProperties: PageProperties
 
 
 	public init(
-		kind: Kind,
+		action: Action,
 		mediaProperties: MediaProperties,
 		pageProperties: PageProperties,
 		customProperties: [String : String] = [:],
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties()
 	) {
+		self.action = action
 		self.advertisementProperties = advertisementProperties
 		self.customProperties = customProperties
 		self.ecommerceProperties = ecommerceProperties
 		self.mediaProperties = mediaProperties
-		self.kind = kind
 		self.pageProperties = pageProperties
 	}
 
 
-	public enum Kind {
+
+	public enum Action {
 
 		case finish
 		case pause

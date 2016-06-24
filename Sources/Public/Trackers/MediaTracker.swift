@@ -6,5 +6,5 @@ public protocol MediaTracker: class {
 	var mediaProperties: MediaProperties { get set }
 	var pageProperties: PageProperties { get set }
 
-	func trackEvent (kind: MediaEvent.Kind) // TODO improve naming
+	func trackAction (action: MediaEvent.Action)
 }

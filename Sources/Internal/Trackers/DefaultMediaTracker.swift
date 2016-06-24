@@ -18,11 +18,11 @@ internal final class DefaultMediaTracker: MediaTracker {
 	}
 
 
-	internal func trackEvent(kind: MediaEvent.Kind) {
+	internal func trackAction(action: MediaEvent.Action) {
 		checkIsOnMainThread()
 
 		handler.handleEvent(MediaEvent(
-			kind:                     kind,
+			action:                   action,
 			mediaProperties:          mediaProperties,
 			pageProperties:           pageProperties,
 			customProperties:         customProperties,
