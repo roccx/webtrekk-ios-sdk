@@ -38,6 +38,7 @@ internal final class DefaultTracker: Tracker {
 			do {
 				let savedConfiguration = try XmlTrackerConfigurationParser().parse(xml: configurationData)
 				if savedConfiguration.version > configuration.version {
+					logDebug("Using saved configuration (version \(savedConfiguration.version).")
 					configuration = savedConfiguration
 				}
 			}
@@ -196,7 +197,11 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	internal func enqueueRequestForEvent(event: TrackerRequest.Event) {
+	private func createRequestForEvent(event: TrackerRequest.Event) -> TrackerRequest? {
+		guard validateEvent(event) else {
+			return nil
+		}
+
 		var requestProperties = TrackerRequest.Properties(
 			everId:       DefaultTracker.everId,
 			samplingRate: configuration.samplingRate,
@@ -261,12 +266,19 @@ internal final class DefaultTracker: Tracker {
 			requestProperties.interfaceOrientation = application.statusBarOrientation
 		}
 
-		var request = TrackerRequest(
+		return TrackerRequest(
 			crossDeviceProperties: crossDeviceProperties,
 			event: event,
 			properties: requestProperties,
 			userProperties: userProperties
 		)
+	}
+
+
+	internal func enqueueRequestForEvent(event: TrackerRequest.Event) {
+		guard var request = createRequestForEvent(eventByApplyingAutomaticPageTracking(to: event)) else {
+			return
+		}
 
 		for plugin in plugins {
 			request = plugin.tracker(self, requestForQueuingRequest: request)
@@ -283,6 +295,21 @@ internal final class DefaultTracker: Tracker {
 		isFirstEventAfterAppUpdate = false
 		isFirstEventOfApp = false
 		isFirstEventOfSession = false
+	}
+
+
+	private func eventByApplyingAutomaticPageTracking(to event: TrackerRequest.Event) -> TrackerRequest.Event {
+		guard let
+			viewControllerTypeName = event.pageProperties.viewControllerTypeName,
+			page = configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName)
+		else {
+			return event
+		}
+
+		var event = event
+		event.customProperties = event.customProperties.merged(over: page.customProperties)
+		event.pageProperties = event.pageProperties.merged(over: page.pageProperties)
+		return event
 	}
 
 
@@ -651,6 +678,43 @@ internal final class DefaultTracker: Tracker {
 
 		return "Tracking Library \(WebtrekkTracking.version) (\(properties))"
 	}()
+
+
+	private func validateEvent(event: TrackerRequest.Event) -> Bool {
+		switch event {
+		case let .action(event):
+			guard event.actionProperties.name.nonEmpty != nil else {
+				logError("Cannot track action event without action name (actionProperties.name) set: \(event)")
+				return false
+			}
+			guard event.pageProperties.name?.nonEmpty != nil else {
+				logError("Cannot track action event without page name (pageProperties.name) set: \(event)")
+				return false
+			}
+
+			return true
+
+		case let .media(event):
+			guard event.mediaProperties.name.nonEmpty != nil else {
+				logError("Cannot track media event without media name (mediaProperties.name) set: \(event)")
+				return false
+			}
+			guard event.pageProperties.name?.nonEmpty != nil else {
+				logError("Cannot track media event without page name (pageProperties.name) set: \(event)")
+				return false
+			}
+
+			return true
+
+		case let .pageView(event):
+			guard event.pageProperties.name?.nonEmpty != nil else {
+				logError("Cannot track page view event without page name (pageProperties.name) set: \(event)")
+				return false
+			}
+
+			return true
+		}
+	}
 }
 
 
@@ -719,15 +783,11 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 		var event = event
 
 		for tracker in trackers {
-			guard let
-				viewControllerTypeName = event.pageProperties.viewControllerTypeName,
-				page = tracker.configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName)
+			guard let viewControllerTypeName = event.pageProperties.viewControllerTypeName
+				where tracker.configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName) != nil
 			else {
 				continue
 			}
-
-			event.customProperties = event.customProperties.merged(over: page.customProperties)
-			event.pageProperties = event.pageProperties.merged(over: page.pageProperties)
 
 			handler(tracker)(event)
 		}
