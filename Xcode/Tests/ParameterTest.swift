@@ -1,5 +1,5 @@
 import XCTest
-
+/*
 
 @testable import Webtrekk
 
@@ -463,3 +463,4 @@ class PixelParameterTest: XCTestCase {
 //		XCTAssertTrue(pixel.urlParameter.containsString("400"))
 	}
 }
+*/

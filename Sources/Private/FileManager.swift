@@ -38,6 +38,16 @@ internal final class FileManager {
 	}
 
 
+	internal func doesExist(url: NSURL) -> Bool {
+		guard let path = url.path else {
+			logWarning("Url '\(url)' has no valid path")
+			return false
+		}
+
+		return NSFileManager.defaultManager().fileExistsAtPath(path)
+	}
+
+
 	internal var eventFileUrl: NSURL {
 		return directoryUrl.URLByAppendingPathComponent("events.json")
 	}

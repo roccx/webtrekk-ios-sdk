@@ -26,11 +26,19 @@ internal final class BackupManager {
 			logError("Could not finds requests at location \(file)")
 			return []
 		}
+
+		guard fileManager.doesExist(file) else { // if there is no file there was nothing saved
+			return []
+		}
+
 		guard let urls = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as? [NSURL] else {
 			logError("Could not load requests to from \(file)")
 			return []
 		}
-		logInfo("Could load \(urls.count) requests.")
+		NSKeyedArchiver.archiveRootObject([], toFile: path)
+		if !urls.isEmpty {
+			logInfo("Could load \(urls.count) requests.")
+		}
 		return urls
 	}
 }

@@ -6,9 +6,6 @@ install! 'cocoapods', :share_schemes_for_development_pods => false
 target 'Automatic Tracking Example'
 target 'Manual Tracking Example'
 
-target 'Tests' do
-	inherit! :search_paths
-end
-
+target 'Tests' 
 
 pod 'Webtrekk', :path => '..'

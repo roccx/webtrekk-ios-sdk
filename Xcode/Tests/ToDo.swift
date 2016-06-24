@@ -2,7 +2,7 @@ import XCTest
 
 
 @testable import Webtrekk
-
+/*
 
 class WebtrekkTests: XCTestCase {
 
@@ -164,4 +164,4 @@ class PageTest: WebtrekkTests {
 		ecommerceParameter.voucherValue = 5.12
 		webtrekk?.track(pageName, trackingParameter: PageTracking(pageName: pageName, ecommerceParameter: ecommerceParameter))
 	}
-}
+}*/

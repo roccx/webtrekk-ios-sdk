@@ -15,10 +15,10 @@ internal func logError(@autoclosure message: () -> String) {
 
 
 internal func logInfo(@autoclosure message: () -> String) {
-	Webtrekk.logger.logError(message)
+	Webtrekk.logger.logInfo(message)
 }
 
 
 internal func logWarning(@autoclosure message: () -> String) {
-	Webtrekk.logger.logError(message)
+	Webtrekk.logger.logWarning(message)
 }

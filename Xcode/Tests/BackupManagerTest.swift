@@ -1,6 +1,6 @@
 import XCTest
 
-
+/*
 @testable import Webtrekk
 
 private var webtrekk: Webtrekk? = {
@@ -227,4 +227,4 @@ class CustomerParameterBackupTest: XCTestCase {
 		XCTAssertEqual(parameter.streetNumber, parsedParameter.streetNumber)
 		XCTAssertEqual(parameter.zip, parsedParameter.zip)
 	}
-}
+}*/

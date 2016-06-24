@@ -43,6 +43,13 @@
 			remoteGlobalIDString = 4986830C1BE404F7001DCBC7;
 			remoteInfo = "Automatic Tracking Example";
 		};
+		B71835361D1D3DCC003279C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 498683051BE404F7001DCBC7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 495EE2F11D19EDAF00B64698;
+			remoteInfo = "Manual Tracking Example";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -294,6 +301,7 @@
 			);
 			dependencies = (
 				4939D7551D1C351F0090545B /* PBXTargetDependency */,
+				B71835371D1D3DCC003279C3 /* PBXTargetDependency */,
 			);
 			name = Tests;
 			productName = XcodeTests;
@@ -315,7 +323,7 @@
 					};
 					498683201BE404F7001DCBC7 = {
 						CreatedOnToolsVersion = 7.1;
-						TestTargetID = 4986830C1BE404F7001DCBC7;
+						TestTargetID = 495EE2F11D19EDAF00B64698;
 					};
 				};
 			};
@@ -553,6 +561,11 @@
 			isa = PBXTargetDependency;
 			target = 4986830C1BE404F7001DCBC7 /* Automatic Tracking Example */;
 			targetProxy = 4939D7541D1C351F0090545B /* PBXContainerItemProxy */;
+		};
+		B71835371D1D3DCC003279C3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 495EE2F11D19EDAF00B64698 /* Manual Tracking Example */;
+			targetProxy = B71835361D1D3DCC003279C3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -5,22 +5,23 @@ import Foundation
 
 class XmlParserTest: XCTestCase {
 
-	internal var fileData: NSData? {
-
-	}
-
-	override func setUp() {
-		guard let url = NSBundle(forClass: XmlParserTest.self).URLForResource("DefaultConfig", withExtension: "xml"), let xmlString = try? String(contentsOfURL: url) else {
-			fatalError("config file url not possible")
+	internal var configurationData: NSData = {
+		guard let configurationFile = NSBundle(forClass: XmlParserTest.self).URLForResource("DefaultConfig", withExtension: "xml") else {
+			fatalError("Cannot locate DefaultConfig.xml")
 		}
-		do {
-			parser = try XmlConfigParser(xmlString: xmlString)
-		} catch {
-			fatalError("config file not parsable")
+		guard let configurationData = NSData(contentsOfURL: configurationFile) else {
+			fatalError("Cannot load Webtrekk configuration file '\(configurationFile)'")
 		}
-	}
+		return configurationData
+	}()
+
 
 	func testParserInit() {
-		try XmlTrackerConfigurationParser().parse(xml: configurationData)
+		do {
+			try XmlTrackerConfigurationParser().parse(xml: configurationData)
+		}
+		catch let error {
+			fatalError("Cannot Read Webtrekk configuration: \(error)")
+		}
 	}
 }
