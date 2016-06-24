@@ -28,13 +28,15 @@ public extension Webtrekk {
 
 	public enum LogLevel: Int {
 
-		case info    = 1
-		case warning = 2
-		case error   = 3
+		case debug   = 1
+		case info    = 2
+		case warning = 3
+		case error   = 4
 
 
 		private var title: String {
 			switch (self) {
+			case .debug:   return "Debug"
 			case .info:    return "Info"
 			case .warning: return "Warning"
 			case .error:   return "ERROR"
@@ -51,6 +53,11 @@ public protocol _Logger: class {
 
 
 public extension _Logger {
+
+	public func logDebug(@autoclosure message: () -> String) {
+		log(message: message, level: .debug)
+	}
+
 
 	public func logError(@autoclosure message: () -> String) {
 		log(message: message, level: .error)

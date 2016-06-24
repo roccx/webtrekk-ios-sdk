@@ -1,119 +1,139 @@
-import Foundation
 import CryptoSwift
+import Foundation
 
 
-internal final class UrlCreator {
+internal final class RequestUrlBuilder {
 
-	internal static func createUrlFromEvent(request: TrackerRequest, serverUrl: NSURL, webtrekkId: String) -> NSURL? {
-		guard let baseUrl = NSURLComponents(URL: serverUrl.URLByAppendingPathComponent("\(webtrekkId)").URLByAppendingPathComponent("wt"), resolvingAgainstBaseURL: false) else {
-			logError("Url could not be created from ServerUrl '\(serverUrl)' and WebtrekkId '\(webtrekkId)'.")
-			return nil
+	internal var baseUrl: NSURL
+
+
+	internal init(serverUrl: NSURL, webtrekkId: String) {
+		self.baseUrl = RequestUrlBuilder.buildBaseUrl(serverUrl: serverUrl, webtrekkId: webtrekkId)
+		self.serverUrl = serverUrl
+		self.webtrekkId = webtrekkId
+	}
+
+
+	private static func buildBaseUrl(serverUrl serverUrl: NSURL, webtrekkId: String) -> NSURL {
+		return serverUrl.URLByAppendingPathComponent(webtrekkId).URLByAppendingPathComponent("wt")
+	}
+
+
+	internal var serverUrl: NSURL {
+		didSet {
+			guard serverUrl != oldValue else {
+				return
+			}
+
+			baseUrl = RequestUrlBuilder.buildBaseUrl(serverUrl: serverUrl, webtrekkId: webtrekkId)
 		}
+	}
 
-		var items = [NSURLQueryItem]()
 
+	internal func urlForRequest(request: TrackerRequest) -> NSURL? {
 		let properties = request.properties
 
-		items.append(NSURLQueryItem(name: "eid", value: properties.everId))
-		items.append(NSURLQueryItem(name: "ps", value: "\(properties.samplingRate)"))
-		items.append(NSURLQueryItem(name: "mts", value: "\(Int64(properties.timestamp.timeIntervalSince1970 * 1000))"))
-		items.append(NSURLQueryItem(name: "tz", value: "\(properties.timeZone.daylightSavingTimeOffset / 60 / 60)"))
-		items.append(NSURLQueryItem(name: "X-WT-UA", value: properties.userAgent))
+		var parameters = [NSURLQueryItem]()
+		parameters.append(name: "eid", value: properties.everId)
+		parameters.append(name: "ps", value: "\(properties.samplingRate)")
+		parameters.append(name: "mts", value: "\(Int64(properties.timestamp.timeIntervalSince1970 * 1000))")
+		parameters.append(name: "tz", value: "\(properties.timeZone.daylightSavingTimeOffset / 60 / 60)")
+		parameters.append(name: "X-WT-UA", value: properties.userAgent)
 
 		if properties.isFirstEventOfApp {
-			items.append(NSURLQueryItem(name: "one", value: "1"))
+			parameters.append(name: "one", value: "1")
 		}
 
 		if properties.isFirstEventOfSession {
-			items.append(NSURLQueryItem(name: "fns", value: "1"))
+			parameters.append(name: "fns", value: "1")
 		}
 
 		if let ipAddress = properties.ipAddress {
-			items.append(NSURLQueryItem(name: "X-WT-IP", value: ipAddress))
+			parameters.append(name: "X-WT-IP", value: ipAddress)
 		}
 
 		if let language = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as? String {
-			items.append(NSURLQueryItem(name: "la", value: language))
+			parameters.append(name: "la", value: language)
 		}
 
-		items += request.userProperties.asQueryItems()
+		parameters += request.userProperties.asQueryItems()
 
 		if let interfaceOrientation = properties.interfaceOrientation {
 			switch interfaceOrientation {
-			case .LandscapeLeft, .LandscapeRight: items.append(NSURLQueryItem(name: "cp783", value: "landscape"))
-			case .Portrait, .PortraitUpsideDown: items.append(NSURLQueryItem(name: "cp783", value: "portrait"))
-			default: items.append(NSURLQueryItem(name: "cp783", value: "undefined"))
+			case .LandscapeLeft, .LandscapeRight: parameters.append(name: "cp783", value: "landscape")
+			case .Portrait, .PortraitUpsideDown: parameters.append(name: "cp783", value: "portrait")
+			default: parameters.append(name: "cp783", value: "undefined")
 			}
 
 		}
 		if let connectionType = properties.connectionType {
 			switch connectionType {
-			case .cellular_2G: items.append(NSURLQueryItem(name: "cs807", value: "2G"))
-			case .cellular_3G: items.append(NSURLQueryItem(name: "cs807", value: "3G"))
-			case .cellular_4G: items.append(NSURLQueryItem(name: "cs807", value: "LTE"))
-			case .offline:     items.append(NSURLQueryItem(name: "cs807", value: "offline"))
-			case .other:       items.append(NSURLQueryItem(name: "cs807", value: "unknown"))
-			case .wifi:        items.append(NSURLQueryItem(name: "cs807", value: "WIFI"))
+			case .cellular_2G: parameters.append(name: "cs807", value: "2G")
+			case .cellular_3G: parameters.append(name: "cs807", value: "3G")
+			case .cellular_4G: parameters.append(name: "cs807", value: "LTE")
+			case .offline:     parameters.append(name: "cs807", value: "offline")
+			case .other:       parameters.append(name: "cs807", value: "unknown")
+			case .wifi:        parameters.append(name: "cs807", value: "WIFI")
 			}
 		}
 
 		if let sessionDetails = properties.sessionDetails {
-			items += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
+			parameters += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
 		}
 
-		items += request.crossDeviceProperties.asQueryItems()
+		parameters += request.crossDeviceProperties.asQueryItems()
 
 		var pageName: String = ""
 		switch request.event {
 		case .action(let actionEvent):
 			let actionProperties = actionEvent.actionProperties
 			if let details = actionProperties.details {
-				items += details.map({NSURLQueryItem(name: "ck\($0.index)", value: $0.value)})
+				parameters += details.map({NSURLQueryItem(name: "ck\($0.index)", value: $0.value)})
 			}
-			items.append(NSURLQueryItem(name: "ct", value: actionProperties.name))
+			parameters.append(name: "ct", value: actionProperties.name)
 
-			items += actionEvent.ecommerceProperties.asQueryItems()
-			items += actionEvent.pageProperties.asQueryItems()
+			parameters += actionEvent.ecommerceProperties.asQueryItems()
+			parameters += actionEvent.pageProperties.asQueryItems()
 			if let name = actionEvent.pageProperties.name {
 				pageName = name
 			}
 
 		case .media(let mediaEvent):
-			items += mediaEvent.mediaProperties.asQueryItems(properties.timestamp)
+			parameters += mediaEvent.mediaProperties.asQueryItems(properties.timestamp)
 
 			switch mediaEvent.kind {
-			case .finish: items.append(NSURLQueryItem(name: "mk", value: "eof"))
-			case .pause: items.append(NSURLQueryItem(name: "mk", value: "pause"))
-			case .play: items.append(NSURLQueryItem(name: "mk", value: "play"))
-			case .position: items.append(NSURLQueryItem(name: "mk", value: "pos"))
-			case .seek: items.append(NSURLQueryItem(name: "mk", value: "seek"))
-			case .stop: items.append(NSURLQueryItem(name: "mk", value: "stop"))
-			case .custom(name: let name): items.append(NSURLQueryItem(name: "mk", value: name))
+			case .finish: parameters.append(name: "mk", value: "eof")
+			case .pause: parameters.append(name: "mk", value: "pause")
+			case .play: parameters.append(name: "mk", value: "play")
+			case .position: parameters.append(name: "mk", value: "pos")
+			case .seek: parameters.append(name: "mk", value: "seek")
+			case .stop: parameters.append(name: "mk", value: "stop")
+			case .custom(name: let name): parameters.append(name: "mk", value: name)
 			}
 
 
-			items += mediaEvent.ecommerceProperties.asQueryItems()
+			parameters += mediaEvent.ecommerceProperties.asQueryItems()
 
-			items += mediaEvent.pageProperties.asQueryItems()
+			parameters += mediaEvent.pageProperties.asQueryItems()
 			if let name = mediaEvent.pageProperties.name {
 				pageName = name
 			}
 
 		case .pageView(let pageViewEvent):
-			items += pageViewEvent.pageProperties.asQueryItems()
+			parameters += pageViewEvent.pageProperties.asQueryItems()
 			if let name = pageViewEvent.pageProperties.name {
 				pageName = name
 			}
 
 
 			if let id = pageViewEvent.advertisementProperties.id {
-				items.append(NSURLQueryItem(name: "mc", value: id))
+				parameters.append(name: "mc", value: id)
 			}
 			if let details = pageViewEvent.advertisementProperties.details {
-				items += details.map({NSURLQueryItem(name: "cc\($0.index)", value: $0.value)})
+				parameters += details.map({NSURLQueryItem(name: "cc\($0.index)", value: $0.value)})
 			}
 
-			items += pageViewEvent.ecommerceProperties.asQueryItems()
+			parameters += pageViewEvent.ecommerceProperties.asQueryItems()
 
 		}
 		guard !pageName.isEmpty else {
@@ -122,13 +142,34 @@ internal final class UrlCreator {
 		}
 
 		let p = "400,\(pageName),0,\(request.properties.screenSize?.width ?? 0)x\(request.properties.screenSize?.height ?? 0),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
-		items = [NSURLQueryItem(name: "p", value: p)] + items
+		parameters = [NSURLQueryItem(name: "p", value: p)] + parameters
+		parameters += [NSURLQueryItem(name: "eor", value: nil)]
 
-		items += [NSURLQueryItem(name: "eor", value: nil)]
-		baseUrl.queryItems = items
-		return baseUrl.URL
+		guard let urlComponents = NSURLComponents(URL: baseUrl, resolvingAgainstBaseURL: true) else {
+			logError("Url could not be created from ServerUrl '\(serverUrl)' and WebtrekkId '\(webtrekkId)'.")
+			return nil
+		}
+
+		urlComponents.queryItems = parameters
+
+		guard let url = urlComponents.URL else {
+			logError("Cannot build URL from components: \(urlComponents)")
+			return nil
+		}
+
+		return url
 	}
 
+
+	internal var webtrekkId: String {
+		didSet {
+			guard webtrekkId != oldValue else {
+				return
+			}
+
+			baseUrl = RequestUrlBuilder.buildBaseUrl(serverUrl: serverUrl, webtrekkId: webtrekkId)
+		}
+	}
 }
 
 
@@ -148,15 +189,15 @@ private extension CrossDeviceProperties {
 				if result.isEmpty {
 					break
 				}
-				items.append(NSURLQueryItem(name: "cdb5", value: result.md5()))
-				items.append(NSURLQueryItem(name: "cdb6", value: result.sha256()))
+				items.append(name: "cdb5", value: result.md5())
+				items.append(name: "cdb6", value: result.sha256())
 
 			case let .hashed(md5, sha256):
 				if let md5 = md5 {
-					items.append(NSURLQueryItem(name: "cdb5", value: md5))
+					items.append(name: "cdb5", value: md5)
 				}
 				if let sha256 = sha256 {
-					items.append(NSURLQueryItem(name: "cdb6", value: sha256))
+					items.append(name: "cdb6", value: sha256)
 				}
 			}
 		}
@@ -165,50 +206,50 @@ private extension CrossDeviceProperties {
 			switch email {
 			case let .plain(value):
 				let result = value.lowercaseString
-				items.append(NSURLQueryItem(name: "cdb1", value: result.md5()))
-				items.append(NSURLQueryItem(name: "cdb2", value: result.sha256()))
+				items.append(name: "cdb1", value: result.md5())
+				items.append(name: "cdb2", value: result.sha256())
 
 			case let .hashed(md5, sha256):
 				if let md5 = md5 {
-					items.append(NSURLQueryItem(name: "cdb1", value: md5))
+					items.append(name: "cdb1", value: md5)
 				}
 				if let sha256 = sha256 {
-					items.append(NSURLQueryItem(name: "cdb2", value: sha256))
+					items.append(name: "cdb2", value: sha256)
 				}
 			}
 		}
 
 		if let facebookId = facebookId {
-			items.append(NSURLQueryItem(name: "cdb10", value: facebookId.lowercaseString))
+			items.append(name: "cdb10", value: facebookId.lowercaseString)
 		}
 
 		if let googlePlusId = googlePlusId {
-			items.append(NSURLQueryItem(name: "cdb12", value: googlePlusId.lowercaseString))
+			items.append(name: "cdb12", value: googlePlusId.lowercaseString)
 		}
 
 		if let linkedInId = linkedInId {
-			items.append(NSURLQueryItem(name: "cdb13", value: linkedInId.lowercaseString))
+			items.append(name: "cdb13", value: linkedInId.lowercaseString)
 		}
 
 		if let phoneNumber = phoneNumber {
 			switch phoneNumber {
 			case let .plain(value):
 				let result = value.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: "0123456789").invertedSet).joinWithSeparator("")
-				items.append(NSURLQueryItem(name: "cdb3", value: result.md5()))
-				items.append(NSURLQueryItem(name: "cdb4", value: result.sha256()))
+				items.append(name: "cdb3", value: result.md5())
+				items.append(name: "cdb4", value: result.sha256())
 
 			case let .hashed(md5, sha256):
 				if let md5 = md5 {
-					items.append(NSURLQueryItem(name: "cdb3", value: md5))
+					items.append(name: "cdb3", value: md5)
 				}
 				if let sha256 = sha256 {
-					items.append(NSURLQueryItem(name: "cdb4", value: sha256))
+					items.append(name: "cdb4", value: sha256)
 				}
 			}
 		}
 
 		if let twitterId = twitterId {
-			items.append(NSURLQueryItem(name: "cdb11", value: twitterId.lowercaseString))
+			items.append(name: "cdb11", value: twitterId.lowercaseString)
 		}
 		
 		return items
@@ -236,29 +277,29 @@ private extension EcommerceProperties {
 	private func asQueryItems() ->  [NSURLQueryItem] {
 		var items = [NSURLQueryItem]()
 		if let currencyCode = currencyCode {
-			items.append(NSURLQueryItem(name: "cr", value: currencyCode))
+			items.append(name: "cr", value: currencyCode)
 		}
 		if let details = details {
 			items += details.map({NSURLQueryItem(name: "cb\($0.index)", value: $0.value)})
 		}
 		if let orderNumber = orderNumber {
-			items.append(NSURLQueryItem(name: "oi", value: orderNumber))
+			items.append(name: "oi", value: orderNumber)
 		}
 		if let status = status {
 			switch status {
 			case .addedToBasket:
-				items.append(NSURLQueryItem(name: "st", value: "add"))
+				items.append(name: "st", value: "add")
 			case .purchased:
-				items.append(NSURLQueryItem(name: "st", value: "conf"))
+				items.append(name: "st", value: "conf")
 			case .viewed:
-				items.append(NSURLQueryItem(name: "st", value: "view"))
+				items.append(name: "st", value: "view")
 			}
 		}
 		if let totalValue = totalValue {
-			items.append(NSURLQueryItem(name: "ov", value: "\(totalValue)"))
+			items.append(name: "ov", value: "\(totalValue)")
 		}
 		if let voucherValue = voucherValue {
-			items.append(NSURLQueryItem(name: "cb563", value: "\(voucherValue)"))
+			items.append(name: "cb563", value: "\(voucherValue)")
 		}
 		return items
 	}
@@ -304,9 +345,9 @@ private extension EcommerceProperties {
 			categories.insert(IndexedProperty(index: key, value: categoryValues.joinWithSeparator(";")))
 		}
 
-		items.append(NSURLQueryItem(name: "ba", value: names.joinWithSeparator(";")))
-		items.append(NSURLQueryItem(name: "co", value: prices.joinWithSeparator(";")))
-		items.append(NSURLQueryItem(name: "qn", value: quantities.joinWithSeparator(";")))
+		items.append(name: "ba", value: names.joinWithSeparator(";"))
+		items.append(name: "co", value: prices.joinWithSeparator(";"))
+		items.append(name: "qn", value: quantities.joinWithSeparator(";"))
 		items += categories.map({NSURLQueryItem(name: "ca\($0.index)", value: $0.value)})
 		return items
 	}
@@ -319,12 +360,12 @@ private extension EcommerceProperties.Product {
 		if let categories = categories {
 			items += categories.map({NSURLQueryItem(name: "ca\($0.index)", value: $0.value)})
 		}
-		items.append(NSURLQueryItem(name: "ba", value: name))
+		items.append(name: "ba", value: name)
 		if let price = price {
-			items.append(NSURLQueryItem(name: "co", value: "\(price)"))
+			items.append(name: "co", value: "\(price)")
 		}
 		if let quantity = quantity {
-			items.append(NSURLQueryItem(name: "qn", value: "\(quantity)"))
+			items.append(name: "qn", value: "\(quantity)")
 		}
 		return items
 	}
@@ -336,32 +377,32 @@ private extension MediaProperties {
 	private func asQueryItems(timestamp: NSDate) -> [NSURLQueryItem] {
 		var items = [NSURLQueryItem]()
 		if let bandwidth = bandwidth {
-			items.append(NSURLQueryItem(name: "bw", value: "\(Int64(bandwidth))"))
+			items.append(name: "bw", value: "\(Int64(bandwidth))")
 		}
 		if let groups = groups {
 			items += groups.map({NSURLQueryItem(name: "mg\($0.index)", value: $0.value)})
 		}
 		if let duration = duration {
-			items.append(NSURLQueryItem(name: "mt2", value: "\(Int64(duration))"))
+			items.append(name: "mt2", value: "\(Int64(duration))")
 		}
 		else {
-			items.append(NSURLQueryItem(name: "mt2", value: "\(0)"))
+			items.append(name: "mt2", value: "\(0)")
 		}
-		items.append(NSURLQueryItem(name: "mi", value: name))
+		items.append(name: "mi", value: name)
 
 		if let position = position {
-			items.append(NSURLQueryItem(name: "mt1", value: "\(Int64(position))"))
+			items.append(name: "mt1", value: "\(Int64(position))")
 		}
 		else {
-			items.append(NSURLQueryItem(name: "mt1", value: "\(0)"))
+			items.append(name: "mt1", value: "\(0)")
 		}
 		if let soundIsMuted = soundIsMuted {
-			items.append(NSURLQueryItem(name: "mut", value: soundIsMuted ? "1" : "0"))
+			items.append(name: "mut", value: soundIsMuted ? "1" : "0")
 		}
 		if let soundVolume = soundVolume {
-			items.append(NSURLQueryItem(name: "mut", value: "\(Int64(soundVolume * 100))"))
+			items.append(name: "mut", value: "\(Int64(soundVolume * 100))")
 		}
-		items.append(NSURLQueryItem(name: "x", value: "\(Int64(timestamp.timeIntervalSince1970 * 1000))"))
+		items.append(name: "x", value: "\(Int64(timestamp.timeIntervalSince1970 * 1000))")
 		return items
 	}
 }
@@ -391,69 +432,76 @@ private extension UserProperties {
 		}
 		if let birthday = birthday {
 			items = items.filter({$0.name != "uc707"})
-			items.append(NSURLQueryItem(name: "uc707", value: birthdayFormatter.stringFromDate(birthday)))
+			items.append(name: "uc707", value: UserProperties.birthdayFormatter.stringFromDate(birthday))
 		}
 		if let city = city {
 			items = items.filter({$0.name != "uc708"})
-			items.append(NSURLQueryItem(name: "uc708", value: city))
+			items.append(name: "uc708", value: city)
 		}
 		if let country = country {
 			items = items.filter({$0.name != "uc709"})
-			items.append(NSURLQueryItem(name: "uc709", value: country))
+			items.append(name: "uc709", value: country)
 		}
 		if let emailAddress = emailAddress {
 			items = items.filter({$0.name != "uc700"})
-			items.append(NSURLQueryItem(name: "uc700", value: emailAddress))
+			items.append(name: "uc700", value: emailAddress)
 		}
 		if let emailReceiverId = emailReceiverId {
 			items = items.filter({$0.name != "uc701"})
-			items.append(NSURLQueryItem(name: "uc701", value: emailReceiverId))
+			items.append(name: "uc701", value: emailReceiverId)
 		}
 		if let firstName = firstName {
 			items = items.filter({$0.name != "uc703"})
-			items.append(NSURLQueryItem(name: "uc703", value: firstName))
+			items.append(name: "uc703", value: firstName)
 		}
 		if let gender = gender {
 			items = items.filter({$0.name != "uc706"})
-			items.append(NSURLQueryItem(name: "uc706", value: gender == UserProperties.Gender.male ? "1" :  "2"))
+			items.append(name: "uc706", value: gender == UserProperties.Gender.male ? "1" :  "2")
 		}
 		if let id = id {
-			items.append(NSURLQueryItem(name: "cd", value: id))
+			items.append(name: "cd", value: id)
 		}
 		if let lastName = lastName {
 			items = items.filter({$0.name != "uc704"})
-			items.append(NSURLQueryItem(name: "uc704", value: lastName))
+			items.append(name: "uc704", value: lastName)
 		}
 		if let newsletterSubscribed = newsletterSubscribed {
 			items = items.filter({$0.name != "uc702"})
-			items.append(NSURLQueryItem(name: "uc702", value: newsletterSubscribed ? "1" : "2"))
+			items.append(name: "uc702", value: newsletterSubscribed ? "1" : "2")
 		}
 		if let phoneNumber = phoneNumber {
 			items = items.filter({$0.name != "uc705"})
-			items.append(NSURLQueryItem(name: "uc705", value: phoneNumber))
+			items.append(name: "uc705", value: phoneNumber)
 		}
 		if let street = street {
 			items = items.filter({$0.name != "uc711"})
-			items.append(NSURLQueryItem(name: "uc711", value: street))
+			items.append(name: "uc711", value: street)
 		}
 		if let streetNumber = streetNumber {
 			items = items.filter({$0.name != "uc712"})
-			items.append(NSURLQueryItem(name: "uc712", value: streetNumber))
+			items.append(name: "uc712", value: streetNumber)
 		}
 		if let zipCode = zipCode {
 			items = items.filter({$0.name != "uc710"})
-			items.append(NSURLQueryItem(name: "uc710", value: zipCode))
+			items.append(name: "uc710", value: zipCode)
 		}
 
 		return items
 	}
 
 
-	private var birthdayFormatter: NSDateFormatter {
-		get {
-			let formatter = NSDateFormatter()
-			formatter.dateFormat = "yyyyMMdd"
-			return formatter
-		}
+	private static let birthdayFormatter: NSDateFormatter = {
+		let formatter = NSDateFormatter()
+		formatter.dateFormat = "yyyyMMdd"
+		return formatter
+	}()
+}
+
+
+
+private extension Array where Element: NSURLQueryItem {
+
+	private mutating func append(name name: String, value: String?) {
+		append(Element.init(name: name, value: value))
 	}
 }

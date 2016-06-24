@@ -12,16 +12,11 @@ internal final class RequestManager {
 	internal private(set) var queue = [NSURL]()
 	internal private(set) var started = false
 
-	internal var serverUrl: NSURL
-	internal var webtrekkId: String
-
 	internal weak var delegate: Delegate?
 
 
-	internal init(serverUrl: NSURL, webtrekkId: String, queueLimit: Int) {
+	internal init(queueLimit: Int) {
 		self.queueLimit = queueLimit
-		self.serverUrl = serverUrl
-		self.webtrekkId = webtrekkId
 	}
 
 
@@ -44,20 +39,16 @@ internal final class RequestManager {
 	}
 
 
-	internal func enqueueRequest(request: TrackerRequest, maximumDelay: NSTimeInterval) {
+	internal func enqueueRequest(request: NSURL, maximumDelay: NSTimeInterval) {
 		if queue.count >= queueLimit {
 			logWarning("Too many requests in queue. Dropping oldest one.")
 
 			queue.removeFirst()
 		}
 
-		guard let url = UrlCreator.createUrlFromEvent(request, serverUrl: serverUrl, webtrekkId: webtrekkId) else {
-			return
-		}
+		queue.append(request)
 
-		queue.append(url)
-
-		logInfo("Queued: \(url)")
+		logInfo("Queued: \(request)")
 
 		sendNextRequest(maximumDelay: maximumDelay)
 	}
@@ -162,7 +153,7 @@ internal final class RequestManager {
 
 		let url = queue[0]
 
-		logInfo("Sending: \(url)")
+		logDebug("Sending: \(url)")
 
 		pendingTask = fetch(url: url) { data, error in
 			self.pendingTask = nil
@@ -195,7 +186,7 @@ internal final class RequestManager {
 			self.numberOfFailuresForCurrentRequest = 0
 			self.queue.removeFirstEqual(url)
 
-			logInfo("Sent: \(url)")
+			logDebug("Sent: \(url)")
 
 			self.delegate?.requestManager(self, didSendRequest: url)
 

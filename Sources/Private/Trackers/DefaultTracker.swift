@@ -17,10 +17,11 @@ internal final class DefaultTracker: Tracker {
 	private let defaults: UserDefaults
 	private var isFirstEventOfSession = true
 	private var isSampling = false
-	private var requestManager: RequestManager
+	private let requestManager: RequestManager
 	private var requestManagerStartTimer: NSTimer?
 	private let requestQueueBackupFile: NSURL?
 	private var requestQueueLoaded = false
+	private let requestUrlBuilder: RequestUrlBuilder
 
 	internal var crossDeviceProperties = CrossDeviceProperties()
 	internal var plugins = [TrackerPlugin]()
@@ -47,10 +48,12 @@ internal final class DefaultTracker: Tracker {
 		self.configuration = configuration
 		self.requestQueueBackupFile = DefaultTracker.requestQueueBackupFileForWebtrekkId(configuration.webtrekkId)
 
-		requestManager = RequestManager(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId, queueLimit: configuration.requestQueueLimit)
-		requestManager.delegate = self
+		requestManager = RequestManager(queueLimit: configuration.requestQueueLimit)
+		requestUrlBuilder = RequestUrlBuilder(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId)
 
 		DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
+
+		requestManager.delegate = self
 
 		setUp()
 	}
@@ -184,6 +187,9 @@ internal final class DefaultTracker: Tracker {
 		didSet {
 			requestManager.queueLimit = configuration.requestQueueLimit
 
+			requestUrlBuilder.serverUrl = configuration.serverUrl
+			requestUrlBuilder.webtrekkId = configuration.webtrekkId
+
 			updateAutomaticTracking()
 			updateSampling()
 		}
@@ -266,8 +272,8 @@ internal final class DefaultTracker: Tracker {
 			request = plugin.tracker(self, requestForQueuingRequest: request)
 		}
 
-		if shouldEnqueueNewEvents {
-			requestManager.enqueueRequest(request, maximumDelay: configuration.maximumSendDelay)
+		if shouldEnqueueNewEvents, let requestUrl = requestUrlBuilder.urlForRequest(request) {
+			requestManager.enqueueRequest(requestUrl, maximumDelay: configuration.maximumSendDelay)
 		}
 
 		for plugin in plugins {
@@ -355,7 +361,7 @@ internal final class DefaultTracker: Tracker {
 		guard !DefaultTracker.isOptedOut else {
 			do {
 				try fileManager.removeItemAtURL(file)
-				logInfo("Ignored request queue at '\(file)': User opted out of tracking.")
+				logDebug("Ignored request queue at '\(file)': User opted out of tracking.")
 			}
 			catch let error {
 				logError("Cannot remove request queue at '\(file)': \(error)")
@@ -388,7 +394,7 @@ internal final class DefaultTracker: Tracker {
 			return
 		}
 
-		logInfo("Loaded \(queue.count) queued request(s) from '\(file)'.")
+		logDebug("Loaded \(queue.count) queued request(s) from '\(file)'.")
 		requestManager.prependRequests(queue)
 	}
 
@@ -479,7 +485,7 @@ internal final class DefaultTracker: Tracker {
 			if fileManager.fileExistsAtPath(filePath) {
 				do {
 					try NSFileManager.defaultManager().removeItemAtURL(file)
-					logInfo("Deleted request queue at '\(file).")
+					logDebug("Deleted request queue at '\(file).")
 				}
 				catch let error {
 					logError("Cannot remove request queue at '\(file)': \(error)")
@@ -492,7 +498,7 @@ internal final class DefaultTracker: Tracker {
 		let data = NSKeyedArchiver.archivedDataWithRootObject(queue)
 		do {
 			try data.writeToURL(file, options: .AtomicWrite)
-			logInfo("Saved \(queue.count) queued request(s) to '\(file).")
+			logDebug("Saved \(queue.count) queued request(s) to '\(file).")
 		}
 		catch let error {
 			logError("Cannot save request queue to '\(file)': \(error)")

@@ -18,9 +18,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 extension Webtrekk {
 
-
 	static let sharedTracker: Tracker = {
-		Webtrekk.defaultLogger.minimumLevel = .info
+		Webtrekk.defaultLogger.minimumLevel = .debug
 
 		guard let configurationFile = NSBundle.mainBundle().URLForResource("Webtrekk", withExtension: "xml") else {
 			fatalError("Cannot locate Webtrekk.xml")
@@ -33,5 +32,4 @@ extension Webtrekk {
 			fatalError("Cannot parse Webtrekk.xml: \(error)")
 		}
 	}()
-
 }

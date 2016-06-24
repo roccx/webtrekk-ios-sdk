@@ -9,6 +9,11 @@ internal func lazyPlaceholder<T>() -> T {
 }
 
 
+internal func logDebug(@autoclosure message: () -> String) {
+	Webtrekk.logger.logDebug(message)
+}
+
+
 internal func logError(@autoclosure message: () -> String) {
 	Webtrekk.logger.logError(message)
 }
