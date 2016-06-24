@@ -3,27 +3,25 @@ import Foundation
 
 internal final class RequestManager {
 
-	internal typealias Delegate = _BackupDelegate
+	internal typealias Delegate = _RequestManagerDelegate
 
-	private var requests = [NSURL]()
 	private var numberOfFailuresForCurrentRequest = 0
 	private var pendingTask: NSURLSessionDataTask?
-	private var sendNextRequestDate: NSDate?
 	private var sendNextRequestTimer: NSTimer?
-	private var isShutingDown: Bool = false
 
-	internal weak var delegate: Delegate?
+	internal private(set) var queue = [NSURL]()
+	internal private(set) var started = false
+
 	internal var serverUrl: NSURL
 	internal var webtrekkId: String
 
+	internal weak var delegate: Delegate?
 
-	internal init(backupDelegate: Delegate?, maximumNumberOfRequests: Int, serverUrl: NSURL, webtrekkId: String) {
-		self.maximumNumberOfRequests = maximumNumberOfRequests
-		self.delegate = backupDelegate
+
+	internal init(serverUrl: NSURL, webtrekkId: String, queueLimit: Int) {
+		self.queueLimit = queueLimit
 		self.serverUrl = serverUrl
 		self.webtrekkId = webtrekkId
-
-		loadBackups()
 	}
 
 
@@ -40,27 +38,26 @@ internal final class RequestManager {
 
 
 	internal func clearPendingRequests() {
-		logInfo("Clearing queue of \(requests.count) events.")
+		logInfo("Clearing queue of \(queue.count) requests.")
 
-		requests.removeAll()
+		queue.removeAll()
 	}
 
 
 	internal func enqueueRequest(request: TrackerRequest, maximumDelay: NSTimeInterval) {
-		if requests.count >= maximumNumberOfRequests {
-			logWarning("Too many events in queue. Dropping oldest one.")
+		if queue.count >= queueLimit {
+			logWarning("Too many requests in queue. Dropping oldest one.")
 
-			requests.removeFirst()
+			queue.removeFirst()
 		}
 
 		guard let url = UrlCreator.createUrlFromEvent(request, serverUrl: serverUrl, webtrekkId: webtrekkId) else {
 			return
 		}
 
-		requests.append(url)
-		// FIXME save?
+		queue.append(url)
 
-		logInfo("Added event to queue: \(request)")
+		logInfo("Queued: \(url)")
 
 		sendNextRequest(maximumDelay: maximumDelay)
 	}
@@ -116,36 +113,35 @@ internal final class RequestManager {
 	}
 
 
-	internal var requestCount: Int {
-		return requests.count
+	internal func prependRequests(requests: [NSURL]) {
+		queue.insertContentsOf(requests, at: 0)
+		
+		removeRequestsExceedingQueueLimit()
 	}
 
 
-	internal var maximumNumberOfRequests: Int {
+	internal var queueLimit: Int {
 		didSet {
-			precondition(maximumNumberOfRequests > 0)
+			precondition(queueLimit > 0)
 
-			if maximumNumberOfRequests < requests.count {
-				requests = Array(requests[(requests.count - maximumNumberOfRequests - 1) ..< requests.count])
-				// FIXME save?
-			}
-		}
-	}
-
-	
-	private func loadBackups() {
-		if let requests = delegate?.loadRequests() {
-			self.requests = requests
+			removeRequestsExceedingQueueLimit()
 		}
 	}
 
 
-	private func saveBackup() {
-		delegate?.saveRequests(self.requests)
+	internal var queueSize: Int {
+		return queue.count
 	}
 
 
-	internal func sendAllRequests() { // TODO: talk about sendDelay
+	private func removeRequestsExceedingQueueLimit() {
+		if queueLimit < queue.count {
+			queue = Array(queue[(queue.count - queueLimit - 1) ..< queue.count])
+		}
+	}
+
+
+	internal func sendAllRequests() {
 		sendNextRequest()
 	}
 
@@ -154,24 +150,19 @@ internal final class RequestManager {
 		sendNextRequestTimer?.invalidate()
 		sendNextRequestTimer = nil
 
-
-		if isShutingDown, let delegate = delegate {
-			delegate.saveRequests(requests)
+		guard started else {
+			return
 		}
-
 		guard pendingTask == nil else {
 			return
 		}
-
-		guard !requests.isEmpty else {
-			isShutingDown = false
+		guard !queue.isEmpty else {
 			return
 		}
-		
 
-		let url = requests[0]
+		let url = queue[0]
 
-		logInfo("Sending request: \(url)")
+		logInfo("Sending: \(url)")
 
 		pendingTask = fetch(url: url) { data, error in
 			self.pendingTask = nil
@@ -181,24 +172,18 @@ internal final class RequestManager {
 					logError("Request \(url) failed and will not be retried: \(error)")
 
 					self.numberOfFailuresForCurrentRequest = 0
+					self.queue.removeFirstEqual(url)
 
-					if self.requests.first == url {
-						self.requests.removeFirst()
-					}
-
-					// TODO save backup?
+					self.delegate?.requestManager(self, didFailToSendRequest: url, error: error)
 					return
 				}
-				guard self.numberOfFailuresForCurrentRequest < 10 else { // TODO use config
+				guard self.numberOfFailuresForCurrentRequest < 10 else {
 					logError("Request \(url) failed and will no longer be retried: \(error)")
 
 					self.numberOfFailuresForCurrentRequest = 0
+					self.queue.removeFirstEqual(url)
 
-					if self.requests.first == url {
-						self.requests.removeFirst()
-					}
-
-					// TODO save backup?
+					self.delegate?.requestManager(self, didFailToSendRequest: url, error: error)
 					return
 				}
 
@@ -208,19 +193,19 @@ internal final class RequestManager {
 			}
 
 			self.numberOfFailuresForCurrentRequest = 0
+			self.queue.removeFirstEqual(url)
 
-			if self.requests.first == url {
-				self.requests.removeFirst()
-			}
+			logInfo("Sent: \(url)")
+
+			self.delegate?.requestManager(self, didSendRequest: url)
 
 			self.sendNextRequest()
-			// TODO save backup?
 		}
 	}
 
 
 	private func sendNextRequest(maximumDelay maximumDelay: NSTimeInterval) {
-		guard !requests.isEmpty else {
+		guard !queue.isEmpty else {
 			return
 		}
 		guard maximumDelay > 0 else {
@@ -243,15 +228,28 @@ internal final class RequestManager {
 	}
 
 
-	internal func shutDown() {
-		// FIXME: Do it right?
-		isShutingDown = true
-		sendAllRequests()
+	internal func start() {
+		guard !started else {
+			logWarning("Cannot start RequestManager which was already started.")
+			return
+		}
+
+		started = true
+
+		sendNextRequest()
 	}
 
 
-	internal func startSending() {
-		sendNextRequest()
+	internal func stop() {
+		guard started else {
+			logWarning("Cannot stop RequestManager which wasn't started.")
+			return
+		}
+
+		started = false
+
+		sendNextRequestTimer?.invalidate()
+		sendNextRequestTimer = nil
 	}
 
 
@@ -271,8 +269,9 @@ internal final class RequestManager {
 	}
 }
 
-internal protocol _BackupDelegate: class {
 
-	func loadRequests() -> [NSURL]
-	func saveRequests(requests: [NSURL])
+internal protocol _RequestManagerDelegate: class {
+
+	func requestManager (requestManager: RequestManager, didSendRequest request: NSURL)
+	func requestManager (requestManager: RequestManager, didFailToSendRequest request: NSURL, error: RequestManager.Error)
 }

@@ -34,13 +34,13 @@ internal class XmlParserAutomaticTest: XCTestCase {
 		catch let error {
 			fatalError("Cannot Read Webtrekk configuration: \(error)")
 		}
-		XCTAssertEqual(config.version, 1)
-		XCTAssertEqual(config.serverUrl.absoluteString, "https://q3.webtrekk.net")
-		XCTAssertEqual(config.webtrekkId, "289053685367929")
-		XCTAssertEqual(config.samplingRate, 0)
 		XCTAssertEqual(config.maximumSendDelay, 30)
+		XCTAssertEqual(config.requestQueueLimit, 5000)
+		XCTAssertEqual(config.samplingRate, 0)
+		XCTAssertEqual(config.serverUrl.absoluteString, "https://q3.webtrekk.net")
 		XCTAssertEqual(config.sessionTimeoutInterval, 1800)
-		XCTAssertEqual(config.eventQueueLimit, 5000)
+		XCTAssertEqual(config.version, 1)
+		XCTAssertEqual(config.webtrekkId, "289053685367929")
 		XCTAssertNotNil(config.configurationUpdateUrl)
 		if let url = config.configurationUpdateUrl {
 			XCTAssertEqual(url.absoluteString, "https://your.domain/webtrekk.xml")
@@ -49,8 +49,8 @@ internal class XmlParserAutomaticTest: XCTestCase {
 		XCTAssertEqual(config.automaticallyTracksAppUpdates, true)
 		XCTAssertEqual(config.automaticallyTracksAppVersion, true)
 		XCTAssertEqual(config.automaticallyTracksConnectionType, true)
-		XCTAssertEqual(config.automaticallyTracksEventQueueSize, true)
 		XCTAssertEqual(config.automaticallyTracksInterfaceOrientation, true)
+		XCTAssertEqual(config.automaticallyTracksRequestQueueSize, true)
 
 		XCTAssertFalse(config.automaticallyTrackedPages.isEmpty)
 
@@ -100,21 +100,21 @@ internal class XmlParserManualTest: XCTestCase {
 		catch let error {
 			fatalError("Cannot Read Webtrekk configuration: \(error)")
 		}
-		XCTAssertEqual(config.version, 1)
-		XCTAssertEqual(config.serverUrl.absoluteString, "https://q3.webtrekk.net")
-		XCTAssertEqual(config.webtrekkId, "289053685367929")
-		XCTAssertEqual(config.samplingRate, 0)
 		XCTAssertEqual(config.maximumSendDelay, 30)
+		XCTAssertEqual(config.requestQueueLimit, 5000)
+		XCTAssertEqual(config.samplingRate, 0)
+		XCTAssertEqual(config.serverUrl.absoluteString, "https://q3.webtrekk.net")
 		XCTAssertEqual(config.sessionTimeoutInterval, 1800)
-		XCTAssertEqual(config.eventQueueLimit, 5000)
+		XCTAssertEqual(config.version, 1)
+		XCTAssertEqual(config.webtrekkId, "289053685367929")
 		XCTAssertNil(config.configurationUpdateUrl)
 		XCTAssert(config.automaticallyTrackedPages.isEmpty)
 		XCTAssertEqual(config.automaticallyTracksAdvertisingId, false)
 		XCTAssertEqual(config.automaticallyTracksAppUpdates, false)
 		XCTAssertEqual(config.automaticallyTracksAppVersion, false)
 		XCTAssertEqual(config.automaticallyTracksConnectionType, false)
-		XCTAssertEqual(config.automaticallyTracksEventQueueSize, false)
 		XCTAssertEqual(config.automaticallyTracksInterfaceOrientation, false)
+		XCTAssertEqual(config.automaticallyTracksRequestQueueSize, false)
 	}
 }
 
@@ -149,20 +149,20 @@ internal class XmlParserMinimalTest: XCTestCase {
 		catch let error {
 			fatalError("Cannot Read Webtrekk configuration: \(error)")
 		}
-		XCTAssertEqual(config.version, 1)
-		XCTAssertEqual(config.serverUrl.absoluteString, "https://q3.webtrekk.net")
-		XCTAssertEqual(config.webtrekkId, "289053685367929")
-		XCTAssertEqual(config.samplingRate, 0)
 		XCTAssertEqual(config.maximumSendDelay, 5 * 60)
+		XCTAssertEqual(config.requestQueueLimit, 1000)
+		XCTAssertEqual(config.samplingRate, 0)
+		XCTAssertEqual(config.serverUrl.absoluteString, "https://q3.webtrekk.net")
 		XCTAssertEqual(config.sessionTimeoutInterval, 30 * 60)
-		XCTAssertEqual(config.eventQueueLimit, 1000)
+		XCTAssertEqual(config.version, 1)
+		XCTAssertEqual(config.webtrekkId, "289053685367929")
 		XCTAssertNil(config.configurationUpdateUrl)
 		XCTAssert(config.automaticallyTrackedPages.isEmpty)
 		XCTAssertEqual(config.automaticallyTracksAdvertisingId, true)
 		XCTAssertEqual(config.automaticallyTracksAppUpdates, true)
 		XCTAssertEqual(config.automaticallyTracksAppVersion, true)
 		XCTAssertEqual(config.automaticallyTracksConnectionType, true)
-		XCTAssertEqual(config.automaticallyTracksEventQueueSize, true)
 		XCTAssertEqual(config.automaticallyTracksInterfaceOrientation, true)
+		XCTAssertEqual(config.automaticallyTracksRequestQueueSize, true)
 	}
 }

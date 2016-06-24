@@ -22,3 +22,8 @@ internal func logInfo(@autoclosure message: () -> String) {
 internal func logWarning(@autoclosure message: () -> String) {
 	Webtrekk.logger.logWarning(message)
 }
+
+
+internal func onMainQueue(closure: Closure) {
+	dispatch_async(dispatch_get_main_queue(), closure)
+}

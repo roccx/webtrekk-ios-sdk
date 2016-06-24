@@ -30,8 +30,8 @@
 		<appUpdates>true</appUpdates>
 		<appVersion>true</appVersion>
 		<connectionType>true</connectionType>
-		<eventQueueSize>true</eventQueueSize>
 		<interfaceOrientation>true</interfaceOrientation>
+		<requestQueueSize>true</requestQueueSize>
 		<pages>
 			<page viewControllerType="ProductListViewController">
 				<pageProperties name="Product List"/>

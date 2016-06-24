@@ -17,11 +17,11 @@ private class Parser: NSObject {
 	private var automaticallyTracksAppUpdates: Bool?
 	private var automaticallyTracksAppVersion: Bool?
 	private var automaticallyTracksConnectionType: Bool?
-	private var automaticallyTracksEventQueueSize: Bool?
 	private var automaticallyTracksInterfaceOrientation: Bool?
+	private var automaticallyTracksRequestQueueSize: Bool?
 	private var configurationUpdateUrl: NSURL?
-	private var eventQueueLimit: Int?
 	private var maximumSendDelay: NSTimeInterval?
+	private var requestQueueLimit: Int?
 	private var samplingRate: Int?
 	private var serverUrl: NSURL?
 	private var sessionTimeoutInterval: NSTimeInterval?
@@ -79,20 +79,20 @@ private class Parser: NSObject {
 		if let automaticallyTracksConnectionType = automaticallyTracksConnectionType {
 			configuration.automaticallyTracksConnectionType = automaticallyTracksConnectionType
 		}
-		if let automaticallyTracksEventQueueSize = automaticallyTracksEventQueueSize {
-			configuration.automaticallyTracksEventQueueSize = automaticallyTracksEventQueueSize
-		}
 		if let automaticallyTracksInterfaceOrientation = automaticallyTracksInterfaceOrientation {
 			configuration.automaticallyTracksInterfaceOrientation = automaticallyTracksInterfaceOrientation
+		}
+		if let automaticallyTracksRequestQueueSize = automaticallyTracksRequestQueueSize {
+			configuration.automaticallyTracksRequestQueueSize = automaticallyTracksRequestQueueSize
 		}
 		if let configurationUpdateUrl = configurationUpdateUrl {
 			configuration.configurationUpdateUrl = configurationUpdateUrl
 		}
-		if let eventQueueLimit = eventQueueLimit {
-			configuration.eventQueueLimit = eventQueueLimit
-		}
 		if let maximumSendDelay = maximumSendDelay {
 			configuration.maximumSendDelay = maximumSendDelay
+		}
+		if let requestQueueLimit = requestQueueLimit {
+			configuration.requestQueueLimit = requestQueueLimit
 		}
 		if let samplingRate = samplingRate {
 			configuration.samplingRate = samplingRate
@@ -316,8 +316,8 @@ extension Parser: NSXMLParserDelegate {
 			case "appUpdates":            pushSimpleElement(automaticallyTracksAppUpdates)           { value in self.automaticallyTracksAppUpdates = self.parseBool(value) }
 			case "appVersion":            pushSimpleElement(automaticallyTracksAppVersion)           { value in self.automaticallyTracksAppVersion = self.parseBool(value) }
 			case "connectionType":        pushSimpleElement(automaticallyTracksConnectionType)       { value in self.automaticallyTracksConnectionType = self.parseBool(value) }
-			case "eventQueueSize":        pushSimpleElement(automaticallyTracksEventQueueSize)       { value in self.automaticallyTracksEventQueueSize = self.parseBool(value) }
 			case "interfaceOrientation":  pushSimpleElement(automaticallyTracksInterfaceOrientation) { value in self.automaticallyTracksInterfaceOrientation = self.parseBool(value) }
+			case "requestQueueSize":      pushSimpleElement(automaticallyTracksRequestQueueSize)     { value in self.automaticallyTracksRequestQueueSize = self.parseBool(value) }
 			case "pages":                 pushState(.automaticTrackingPages)
 
 			default:
@@ -395,7 +395,7 @@ extension Parser: NSXMLParserDelegate {
 			switch (elementName) {
 			case "automaticTracking":      pushState(.automaticTracking)
 			case "configurationUpdateUrl": pushSimpleElement(configurationUpdateUrl) { value in self.configurationUpdateUrl = self.parseUrl(value, emptyAllowed: true) }
-			case "maxRequests":            pushSimpleElement(eventQueueLimit)        { value in self.eventQueueLimit = self.parseInt(value, allowedRange: 1 ..< .max) }
+			case "maxRequests":            pushSimpleElement(requestQueueLimit)      { value in self.requestQueueLimit = self.parseInt(value, allowedRange: 1 ..< .max) }
 			case "sampling":               pushSimpleElement(samplingRate)           { value in self.samplingRate = self.parseInt(value, allowedRange: 0 ..< .max) }
 			case "trackDomain":            pushSimpleElement(serverUrl)              { value in self.serverUrl = self.parseUrl(value, emptyAllowed: false) }
 			case "trackId":                pushSimpleElement(webtrekkId)             { value in self.webtrekkId = self.parseString(value, emptyAllowed: false) }

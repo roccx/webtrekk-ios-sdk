@@ -9,15 +9,18 @@ internal final class DefaultTracker: Tracker {
 	private static var instances = [ObjectIdentifier: WeakReference<DefaultTracker>]()
 	private static let sharedDefaults = UserDefaults.standardDefaults.child(namespace: "webtrekk")
 
-	private lazy var backupManager: BackupManager = BackupManager(fileManager: self.fileManager)
-	private lazy var fileManager: FileManager = FileManager(identifier: self.configuration.webtrekkId)
-	private lazy var requestManager: RequestManager = RequestManager(backupDelegate: self.backupManager, maximumNumberOfRequests: self.configuration.eventQueueLimit, serverUrl: self.configuration.serverUrl, webtrekkId: self.configuration.webtrekkId)
-
+	private let application = UIApplication.sharedApplication()
+	private var applicationDidBecomeActiveObserver: NSObjectProtocol?
 	private var applicationWillEnterForegroundObserver: NSObjectProtocol?
 	private var applicationWillResignActiveObserver: NSObjectProtocol?
+	private var backgroundTaskIdentifier = UIBackgroundTaskInvalid
 	private let defaults: UserDefaults
 	private var isFirstEventOfSession = true
 	private var isSampling = false
+	private var requestManager: RequestManager
+	private var requestManagerStartTimer: NSTimer?
+	private let requestQueueBackupFile: NSURL?
+	private var requestQueueLoaded = false
 
 	internal var crossDeviceProperties = CrossDeviceProperties()
 	internal var plugins = [TrackerPlugin]()
@@ -25,9 +28,9 @@ internal final class DefaultTracker: Tracker {
 
 
 	internal init(configuration: TrackerConfiguration) {
-		self.defaults = DefaultTracker.sharedDefaults.child(namespace: configuration.webtrekkId)
-		self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
-		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
+		defaults = DefaultTracker.sharedDefaults.child(namespace: configuration.webtrekkId)
+		isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
+		isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
 
 		var configuration = configuration
 		if let configurationData = defaults.dataForKey(DefaultsKeys.configuration) {
@@ -42,6 +45,10 @@ internal final class DefaultTracker: Tracker {
 			}
 		}
 		self.configuration = configuration
+		self.requestQueueBackupFile = DefaultTracker.requestQueueBackupFileForWebtrekkId(configuration.webtrekkId)
+
+		requestManager = RequestManager(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId, queueLimit: configuration.requestQueueLimit)
+		requestManager.delegate = self
 
 		DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
 
@@ -50,9 +57,15 @@ internal final class DefaultTracker: Tracker {
 
 
 	deinit {
-		DefaultTracker.instances[ObjectIdentifier(self)] = nil
+		let id = ObjectIdentifier(self)
+		onMainQueue {
+			DefaultTracker.instances[id] = nil
+		}
 
 		let notificationCenter = NSNotificationCenter.defaultCenter()
+		if let applicationDidBecomeActiveObserver = applicationDidBecomeActiveObserver {
+			notificationCenter.removeObserver(applicationDidBecomeActiveObserver)
+		}
 		if let applicationWillEnterForegroundObserver = applicationWillEnterForegroundObserver {
 			notificationCenter.removeObserver(applicationWillEnterForegroundObserver)
 		}
@@ -76,8 +89,10 @@ internal final class DefaultTracker: Tracker {
 
 
 	internal func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
-		NSTimer.scheduledTimerWithTimeInterval(5) {
-			self.requestManager.sendAllRequests()
+		if requestManagerStartTimer == nil {
+			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
+				self.startRequestManager()
+			}
 		}
 
 		NSTimer.scheduledTimerWithTimeInterval(15) {
@@ -86,11 +101,50 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
+	private func applicationDidBecomeActive() {
+		if requestManagerStartTimer == nil {
+			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
+				self.startRequestManager()
+			}
+		}
+
+		if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
+			application.endBackgroundTask(backgroundTaskIdentifier)
+			backgroundTaskIdentifier = UIBackgroundTaskInvalid
+		}
+	}
+
+
 	private func applicationWillResignActive() {
 		defaults.set(key: DefaultsKeys.appHibernationDate, to: NSDate())
 
-		requestManager.shutDown()
-		// TODO backup
+		if backgroundTaskIdentifier == UIBackgroundTaskInvalid {
+			backgroundTaskIdentifier = application.beginBackgroundTaskWithName("Webtrekk Tracker #\(configuration.webtrekkId)") { [weak self] in
+				guard let `self` = self else {
+					return
+				}
+
+				if self.requestManager.started {
+					self.stopRequestManager()
+				}
+
+				self.application.endBackgroundTask(self.backgroundTaskIdentifier)
+				self.backgroundTaskIdentifier = UIBackgroundTaskInvalid
+			}
+		}
+
+		if let requestManagerStartTimer = requestManagerStartTimer {
+			self.requestManagerStartTimer = nil
+			requestManagerStartTimer.fire()
+		}
+
+		if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
+			saveRequestQueue()
+			requestManager.sendAllRequests()
+		}
+		else {
+			stopRequestManager()
+		}
 	}
 
 
@@ -124,10 +178,10 @@ internal final class DefaultTracker: Tracker {
 
 	internal private(set) var configuration: TrackerConfiguration {
 		didSet {
+			requestManager.queueLimit = configuration.requestQueueLimit
+
 			updateAutomaticTracking()
 			updateSampling()
-
-			requestManager.maximumNumberOfRequests = configuration.eventQueueLimit
 		}
 	}
 
@@ -141,8 +195,8 @@ internal final class DefaultTracker: Tracker {
 			userAgent:    DefaultTracker.userAgent
 		)
 
-		let screenBounds = UIScreen.mainScreen().bounds
-		requestProperties.screenSize = (width: Int(screenBounds.width), height: Int(screenBounds.height))
+		let screen = UIScreen.mainScreen()
+		requestProperties.screenSize = (width: Int(screen.bounds.width * screen.scale), height: Int(screen.bounds.height * screen.scale))
 
 		if isFirstEventAfterAppUpdate && configuration.automaticallyTracksAppUpdates {
 			requestProperties.isFirstEventAfterAppUpdate = true
@@ -190,11 +244,11 @@ internal final class DefaultTracker: Tracker {
 				requestProperties.connectionType = .offline
 			}
 		}
-		if configuration.automaticallyTracksEventQueueSize {
-			requestProperties.eventQueueSize = requestManager.requestCount
+		if configuration.automaticallyTracksRequestQueueSize {
+			requestProperties.requestQueueSize = requestManager.queueSize
 		}
 		if configuration.automaticallyTracksInterfaceOrientation {
-			requestProperties.interfaceOrientation = UIApplication.sharedApplication().statusBarOrientation
+			requestProperties.interfaceOrientation = application.statusBarOrientation
 		}
 
 		var request = TrackerRequest(
@@ -203,8 +257,6 @@ internal final class DefaultTracker: Tracker {
 			properties: requestProperties,
 			userProperties: userProperties
 		)
-		
-		logInfo("Request: \(request)")
 
 		for plugin in plugins {
 			request = plugin.tracker(self, requestForQueuingRequest: request)
@@ -280,7 +332,107 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
+	private func loadRequestQueue() {
+		guard !requestQueueLoaded else {
+			return
+		}
+
+		requestQueueLoaded = true
+
+		guard let file = requestQueueBackupFile, filePath = file.path else {
+			return
+		}
+
+		let fileManager = NSFileManager.defaultManager()
+		guard fileManager.fileExistsAtPath(filePath) else {
+			return
+		}
+
+		guard !DefaultTracker.isOptedOut else {
+			do {
+				try fileManager.removeItemAtURL(file)
+				logInfo("Ignored request queue at '\(file)': User opted out of tracking.")
+			}
+			catch let error {
+				logError("Cannot remove request queue at '\(file)': \(error)")
+			}
+
+			return
+		}
+
+		let queue: [NSURL]
+		do {
+			let data = try NSData(contentsOfURL: file, options: [])
+
+			let object: AnyObject?
+			if #available(iOS 9.0, *) {
+				object = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
+			}
+			else {
+				object = NSKeyedUnarchiver.unarchiveObjectWithData(data)
+			}
+
+			guard let _queue = object as? [NSURL] else {
+				logError("Cannot load request queue from '\(file)': Data has wrong format: \(object)")
+				return
+			}
+
+			queue = _queue
+		}
+		catch let error {
+			logError("Cannot load request queue from '\(file)': \(error)")
+			return
+		}
+
+		logInfo("Loaded \(queue.count) queued request(s) from '\(file)'.")
+		requestManager.prependRequests(queue)
+	}
+
+
+	private static func requestQueueBackupFileForWebtrekkId(webtrekkId: String) -> NSURL? {
+		let searchPathDirectory: NSSearchPathDirectory
+		#if os(iOS) || os(OSX) || os(watchOS)
+			searchPathDirectory = .ApplicationSupportDirectory
+		#elseif os(tvOS)
+			searchPathDirectory = .CachesDirectory
+		#endif
+
+		let fileManager = NSFileManager.defaultManager()
+
+		var directory: NSURL
+		do {
+			directory = try fileManager.URLForDirectory(searchPathDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: true)
+		}
+		catch let error {
+			logError("Cannot find directory for storing request queue backup file: \(error)")
+			return nil
+		}
+
+		directory = directory.URLByAppendingPathComponent("Webtrekk")
+		directory = directory.URLByAppendingPathComponent(webtrekkId)
+
+		guard let directoryPath = directory.path else {
+			logError("Cannot find directory for storing request queue backup file. Invalid path in '\(directory)'.")
+			return nil
+		}
+
+		if !fileManager.fileExistsAtPath(directoryPath) {
+			do {
+				try fileManager.createDirectoryAtURL(directory, withIntermediateDirectories: true, attributes: [NSURLIsExcludedFromBackupKey: true])
+			}
+			catch let error {
+				logError("Cannot create directory at '\(directory)' for storing request queue backup file: \(error)")
+				return nil
+			}
+		}
+
+		return directory.URLByAppendingPathComponent("requestQueue.archive")
+	}
+
+
 	internal func sendPendingEvents() {
+		startRequestManager()
+
 		requestManager.sendAllRequests()
 	}
 
@@ -295,6 +447,9 @@ internal final class DefaultTracker: Tracker {
 
 	private func setUpObservers() {
 		let notificationCenter = NSNotificationCenter.defaultCenter()
+		applicationDidBecomeActiveObserver = notificationCenter.addObserverForName(UIApplicationDidBecomeActiveNotification, object: nil, queue: nil) { [weak self] _ in
+			self?.applicationDidBecomeActive()
+		}
 		applicationWillEnterForegroundObserver = notificationCenter.addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: nil) { [weak self] _ in
 			self?.applicationWillEnterForeground()
 		}
@@ -306,6 +461,61 @@ internal final class DefaultTracker: Tracker {
 
 	private var shouldEnqueueNewEvents: Bool {
 		return isSampling && !DefaultTracker.isOptedOut
+	}
+
+
+	private func saveRequestQueue() {
+		guard let file = requestQueueBackupFile, filePath = file.path else {
+			return
+		}
+
+		let queue = requestManager.queue
+		guard !queue.isEmpty else {
+			let fileManager = NSFileManager.defaultManager()
+			if fileManager.fileExistsAtPath(filePath) {
+				do {
+					try NSFileManager.defaultManager().removeItemAtURL(file)
+					logInfo("Deleted request queue at '\(file).")
+				}
+				catch let error {
+					logError("Cannot remove request queue at '\(file)': \(error)")
+				}
+			}
+
+			return
+		}
+
+		let data = NSKeyedArchiver.archivedDataWithRootObject(queue)
+		do {
+			try data.writeToURL(file, options: .AtomicWrite)
+			logInfo("Saved \(queue.count) queued request(s) to '\(file).")
+		}
+		catch let error {
+			logError("Cannot save request queue to '\(file)': \(error)")
+		}
+	}
+
+
+	private func startRequestManager() {
+		requestManagerStartTimer?.invalidate()
+		requestManagerStartTimer = nil
+
+		guard !requestManager.started && application.applicationState == .Active else {
+			return
+		}
+
+		loadRequestQueue()
+		requestManager.start()
+	}
+
+
+	private func stopRequestManager() {
+		guard requestManager.started else {
+			return
+		}
+
+		requestManager.stop()
+		saveRequestQueue()
 	}
 
 
@@ -459,6 +669,35 @@ extension DefaultTracker: PageViewEventHandler {
 
 	internal func handleEvent(event: PageViewEvent) {
 		enqueueRequestForEvent(.pageView(event))
+	}
+}
+
+
+extension DefaultTracker: RequestManager.Delegate {
+
+	internal func requestManager(requestManager: RequestManager, didFailToSendRequest request: NSURL, error: RequestManager.Error) {
+		requestManagerDidFinishRequest()
+	}
+
+
+	internal func requestManager(requestManager: RequestManager, didSendRequest request: NSURL) {
+		requestManagerDidFinishRequest()
+	}
+
+
+	private func requestManagerDidFinishRequest() {
+		saveRequestQueue()
+
+		if requestManager.queueSize == 0 {
+			if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
+				application.endBackgroundTask(backgroundTaskIdentifier)
+				backgroundTaskIdentifier = UIBackgroundTaskInvalid
+			}
+
+			if application.applicationState != .Active {
+				stopRequestManager()
+			}
+		}
 	}
 }
 

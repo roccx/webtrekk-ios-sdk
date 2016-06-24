@@ -30,7 +30,7 @@
 		<appUpdates>false</appUpdates>
 		<appVersion>false</appVersion>
 		<connectionType>false</connectionType>
-		<eventQueueSize>false</eventQueueSize>
 		<interfaceOrientation>false</interfaceOrientation>
+		<requestQueueSize>false</requestQueueSize>
 	</automaticTracking>
 </webtrekkConfiguration>
