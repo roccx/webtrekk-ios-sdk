@@ -40,7 +40,7 @@ internal struct Migration {
 						try fileManager.removeItemAtURL(file)
 					}
 					catch let error {
-						logWarning("Cannot remove \(file) of previous library versions: \(error)")
+						logWarning("Cannot remove \(file) of previous Webtrekk Library version: \(error)")
 					}
 				}
 
