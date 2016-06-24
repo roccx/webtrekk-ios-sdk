@@ -17,10 +17,8 @@
 		495EE2AB1D19E5EC00B64698 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A41D19E5EC00B64698 /* LaunchScreen.storyboard */; };
 		495EE2AC1D19E5EC00B64698 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A51D19E5EC00B64698 /* Main.storyboard */; };
 		495EE2AD1D19E5EC00B64698 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A61D19E5EC00B64698 /* Media.xcassets */; };
-		495EE2AE1D19E5EC00B64698 /* UpdateConfig.xml in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A71D19E5EC00B64698 /* UpdateConfig.xml */; };
 		495EE2AF1D19E5EC00B64698 /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A81D19E5EC00B64698 /* Video.mp4 */; };
 		495EE3001D19EDAF00B64698 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A51D19E5EC00B64698 /* Main.storyboard */; };
-		495EE3021D19EDAF00B64698 /* UpdateConfig.xml in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A71D19E5EC00B64698 /* UpdateConfig.xml */; };
 		495EE3031D19EDAF00B64698 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A61D19E5EC00B64698 /* Media.xcassets */; };
 		495EE3041D19EDAF00B64698 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A41D19E5EC00B64698 /* LaunchScreen.storyboard */; };
 		495EE3051D19EDAF00B64698 /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A81D19E5EC00B64698 /* Video.mp4 */; };
@@ -127,7 +125,6 @@
 		495EE2A41D19E5EC00B64698 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		495EE2A51D19E5EC00B64698 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		495EE2A61D19E5EC00B64698 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
-		495EE2A71D19E5EC00B64698 /* UpdateConfig.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = UpdateConfig.xml; sourceTree = "<group>"; };
 		495EE2A81D19E5EC00B64698 /* Video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Video.mp4; sourceTree = "<group>"; };
 		495EE30B1D19EDAF00B64698 /* Webtrekk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Webtrekk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		495EE30D1D19F05700B64698 /* Webtrekk.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = Webtrekk.podspec; path = ../Webtrekk.podspec; sourceTree = "<group>"; };
@@ -285,7 +282,6 @@
 				495EE2A41D19E5EC00B64698 /* LaunchScreen.storyboard */,
 				495EE2A51D19E5EC00B64698 /* Main.storyboard */,
 				495EE2A61D19E5EC00B64698 /* Media.xcassets */,
-				495EE2A71D19E5EC00B64698 /* UpdateConfig.xml */,
 				495EE2A81D19E5EC00B64698 /* Video.mp4 */,
 			);
 			path = Resources;
@@ -540,7 +536,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				495EE3001D19EDAF00B64698 /* Main.storyboard in Resources */,
-				495EE3021D19EDAF00B64698 /* UpdateConfig.xml in Resources */,
 				495EE3031D19EDAF00B64698 /* Media.xcassets in Resources */,
 				495EE3041D19EDAF00B64698 /* LaunchScreen.storyboard in Resources */,
 				495EE3051D19EDAF00B64698 /* Video.mp4 in Resources */,
@@ -570,7 +565,6 @@
 			files = (
 				4939D74F1D1C34810090545B /* Webtrekk.xml in Resources */,
 				495EE2AC1D19E5EC00B64698 /* Main.storyboard in Resources */,
-				495EE2AE1D19E5EC00B64698 /* UpdateConfig.xml in Resources */,
 				495EE2AD1D19E5EC00B64698 /* Media.xcassets in Resources */,
 				495EE2AB1D19E5EC00B64698 /* LaunchScreen.storyboard in Resources */,
 				495EE2AF1D19E5EC00B64698 /* Video.mp4 in Resources */,
