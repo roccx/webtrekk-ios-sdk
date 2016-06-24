@@ -4,6 +4,8 @@ import Webtrekk
 
 class ProductListViewController: UITableViewController {
 
+	private let tracker = Webtrekk.sharedTracker.trackPage("Product Details")
+
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == "openProduct" {
 			guard let cell = sender as? UITableViewCell, indexPath = tableView.indexPathForCell(cell) else {
@@ -13,7 +15,7 @@ class ProductListViewController: UITableViewController {
 				return
 			}
 
-			tracker.trackAction(name: "Product tapped")
+			tracker.trackAction("Product tapped")
 
 			productViewController.productId = indexPath.row + 1
 		}
@@ -23,7 +25,7 @@ class ProductListViewController: UITableViewController {
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
 
-		Webtrekk.sharedTracker.trackPageView()
+		tracker.trackPageView()
 	}
 }
 

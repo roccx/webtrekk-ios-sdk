@@ -6,7 +6,7 @@ import Webtrekk
 
 class ProductViewController: UIViewController {
 
-	private let tracker = Webtrekk.sharedInstance.trackerForPage("Product Details")
+	private let tracker = Webtrekk.sharedTracker.trackPage("Product Details")
 
 
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -18,10 +18,10 @@ class ProductViewController: UIViewController {
 				return
 			}
 
-			tracker.trackAction(name: "Play Video tapped")
+			tracker.trackAction("Play Video tapped")
 
 			let player = AVPlayer(URL: videoUrl)
-			tracker.trackerForMedia(name: "product-video-\(productId)", player: player)
+			tracker.trackMedia("product-video-\(productId)", byAttachingToPlayer: player)
 
 			playerViewController.player = player
 

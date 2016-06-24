@@ -1,78 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <webtrekkConfiguration>
-	<!--the version number for this configuration file -->
+	<!-- configuation file version -->
 	<version>1</version>
-	<!--the webtrekk trackDomain where the requests are send -->
-	<trackDomain>http://defaulttrackingdomain.info</trackDomain>
-	<!--customers trackid -->
-	<trackId>1234567890ABCDEFGH</trackId>
-	<!-- measure only a subset of the users -->
+
+	<!-- server to send tracking events to -->
+	<trackDomain>https://q3.webtrekk.net</trackDomain>
+
+	<!-- Webtrekk customer id -->
+	<trackId>289053685367929</trackId>
+
+	<!-- measure only every Nth user (0 to disable) -->
 	<sampling>0</sampling>
-	<!-- interval between the requests are send in seconds -->
-	<sendDelay>300</sendDelay>
-	<!--maximum amoount of requests to store when the user is offline -->
+
+	<!-- maximum delay after an event occurred before sending it to the server (in seconds) -->
+	<sendDelay>30</sendDelay>
+
+	<!-- minimum duration the app has to be in the background (or terminated) before starting a new session -->
+	<sessionTimeoutInterval>1800</sessionTimeoutInterval>
+
+	<!-- maximum number of events to keep in the queue while there is no internet connection -->
 	<maxRequests>5000</maxRequests>
 
-	<!--optional settings -->
-	<!--automaticly track activities onStart method -->
-	<autoTracked>true</autoTracked>
+	<!-- automatically download updated versions of this configuration file (empty to disable updates) -->
+	<configurationUpdateUrl></configurationUpdateUrl>
 
-	<!--track if there was an application update -->
-	<autoTrackAppUpdate>true</autoTrackAppUpdate>
-	<!--track the advertiser id -->
-	<autoTrackAdvertiserId>true</autoTrackAdvertiserId>
-
-	<!--track the app versions name -->
-	<autoTrackAppVersionName>true</autoTrackAppVersionName>
-	<!--track the app versions code -->
-	<autoTrackAppVersionCode>true</autoTrackAppVersionCode>
-
-	<!--track the devices screen orientation -->
-	<autoTrackScreenOrientation>true</autoTrackScreenOrientation>
-
-	<!--track the current connection type -->
-	<autoTrackConnectionType>true</autoTrackConnectionType>
-
-	<!--sends the size of the current locally stored urls in a custom parameter -->
-	<autoTrackRequestUrlStoreSize>true</autoTrackRequestUrlStoreSize>
-
-	<!--enables the remote xml configuration -->
-	<enableRemoteConfiguration>false</enableRemoteConfiguration>
-	<!--url of the remote configuration -->
-	<trackingConfigurationUrl>http://remotetrackingconfiguration.info/configfile.xml</trackingConfigurationUrl>
-
-	<screens>
-		<screen>
-			<className>UITabBarController</className>
-			<autoTracked>false</autoTracked>
-		</screen>
-
-		<screen>
-			<className>MainTestViewController</className>
-			<mappingName>Home</mappingName>
-		</screen>
-
-		<screen>
-			<className>FirstTestViewController</className>
-			<mappingName>VideoOverview</mappingName>
-			<trackingParameter>
-				<customParameters>
-					<parameter id="1">Final Edition</parameter>
-					<parameter id="3">Racing Team</parameter>
-				</customParameters>
-				<pageParameter>
-					<page>
-						<parameter id="1">Blue Variant</parameter>
-					</page>
-					<categories>
-						<parameter id="2">Media</parameter>
-					</categories>
-					<session>
-						<parameter id="1">Viral</parameter>
-					</session>
-				</pageParameter>
-			</trackingParameter>
-		</screen>
-	</screens>
-
+	<!-- automatically track various information -->
+	<automaticTracking>
+		<advertisingIdentifier>false</advertisingIdentifier>
+		<appUpdates>false</appUpdates>
+		<appVersion>false</appVersion>
+		<connectionType>false</connectionType>
+		<eventQueueSize>false</eventQueueSize>
+		<interfaceOrientation>false</interfaceOrientation>
+		<pages></pages>
+	</automaticTracking>
 </webtrekkConfiguration>

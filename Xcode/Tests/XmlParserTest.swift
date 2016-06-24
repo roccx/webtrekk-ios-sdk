@@ -5,7 +5,9 @@ import Foundation
 
 class XmlParserTest: XCTestCase {
 
-	var parser: ConfigParser?
+	internal var fileData: NSData? {
+
+	}
 
 	override func setUp() {
 		guard let url = NSBundle(forClass: XmlParserTest.self).URLForResource("DefaultConfig", withExtension: "xml"), let xmlString = try? String(contentsOfURL: url) else {
@@ -19,47 +21,6 @@ class XmlParserTest: XCTestCase {
 	}
 
 	func testParserInit() {
-		XCTAssertNotNil(parser)
+		try XmlTrackerConfigurationParser().parse(xml: configurationData)
 	}
-
-	func testConfigParsing() {
-		XCTAssertNotNil(parser?.trackerConfiguration)
-	}
-
-
-	func testMaxRequests() {
-		XCTAssertEqual((parser?.trackerConfiguration?.maxRequests)!, 5000)
-	}
-
-
-	func testSamplingRate() {
-		XCTAssertEqual((parser?.trackerConfiguration?.samplingRate)!, 0)
-	}
-
-
-	func testSendDelay() {
-		XCTAssertEqual((parser?.trackerConfiguration?.sendDelay)!, 300)
-	}
-
-
-	func testVersionParameter() {
-		XCTAssertEqual((parser?.trackerConfiguration?.version)!, 1)
-	}
-
-	func testAutoTrackingParameters() {
-		XCTAssertTrue((parser?.trackerConfiguration?.autoTrack)!)
-		XCTAssertTrue((parser?.trackerConfiguration?.autoTrackAppUpdate)!)
-		XCTAssertTrue((parser?.trackerConfiguration?.autoTrackAppVersionName)!)
-		XCTAssertTrue((parser?.trackerConfiguration?.autoTrackAppVersionCode)!)
-		XCTAssertTrue((parser?.trackerConfiguration?.autoTrackApiLevel)!)
-		XCTAssertTrue((parser?.trackerConfiguration?.autoTrackScreenOrientation)!)
-		XCTAssertTrue((parser?.trackerConfiguration?.autoTrackConnectionType)!)
-		XCTAssertTrue((parser?.trackerConfiguration?.autoTrackRequestUrlStoreSize)!)
-	}
-
-	func testRemoteConfigurationParameters() {
-		XCTAssertFalse((parser?.trackerConfiguration?.enableRemoteConfiguration)!)
-		XCTAssertEqual((parser?.trackerConfiguration?.remoteConfigurationUrl)!, "http://remotetrackingconfiguration.info/configfile.xml")
-	}
-	
 }

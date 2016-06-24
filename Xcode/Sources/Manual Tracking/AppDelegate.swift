@@ -9,7 +9,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-		Webtrekk.sharedInstance.application(application, didFinishLaunchingWithOptions: launchOptions)
+		Webtrekk.sharedTracker.application(application, didFinishLaunchingWithOptions: launchOptions)
 
 		return true
 	}
@@ -18,18 +18,20 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 extension Webtrekk {
 
-	static let sharedInstance: Webtrekk = {
-		Webtrekk.defaultLogger.minimumLevel = .Info
+
+	static let sharedTracker: Tracker = {
+		Webtrekk.defaultLogger.minimumLevel = .info
 
 		guard let configurationFile = NSBundle.mainBundle().URLForResource("Webtrekk", withExtension: "xml") else {
 			fatalError("Cannot locate Webtrekk.xml")
 		}
 
 		do {
-			return Webtrekk.tracker(configurationFile: configurationFile)
+			return try Webtrekk.tracker(configurationFile: configurationFile)
 		}
 		catch let error {
 			fatalError("Cannot parse Webtrekk.xml: \(error)")
 		}
 	}()
+
 }
