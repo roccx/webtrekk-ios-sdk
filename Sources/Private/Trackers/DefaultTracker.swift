@@ -62,6 +62,10 @@ internal final class DefaultTracker: Tracker {
 			DefaultTracker.instances[id] = nil
 		}
 
+		if requestManager.started {
+			requestManager.stop()
+		}
+
 		let notificationCenter = NSNotificationCenter.defaultCenter()
 		if let applicationDidBecomeActiveObserver = applicationDidBecomeActiveObserver {
 			notificationCenter.removeObserver(applicationDidBecomeActiveObserver)
