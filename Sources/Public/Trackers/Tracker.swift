@@ -4,11 +4,11 @@ import UIKit
 
 public protocol Tracker: class {
 
-	static var everId: String { get }
 	static var isOptedOut: Bool { get set }
 
 	var configuration: TrackerConfiguration { get }
 	var crossDeviceProperties: CrossDeviceProperties { get set }
+	var everId: String { get }
 	var plugins: [TrackerPlugin] { get set }
 	var userProperties: UserProperties { get set }
 

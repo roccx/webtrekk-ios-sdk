@@ -18,6 +18,11 @@ extension Optional: _Optional {}
 
 internal extension _Optional {
 
+	internal var simpleDescription: String {
+		return map { String($0) } ?? "<nil>"
+	}
+
+
 	internal var value: Wrapped? {
 		return map { $0 }
 	}

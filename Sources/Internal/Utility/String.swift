@@ -32,4 +32,17 @@ internal extension String {
 
 		return self
 	}
+
+
+	internal var simpleDescription: String {
+		return "\"\(self)\""
+	}
+}
+
+
+internal extension _Optional where Wrapped == String {
+
+	internal var simpleDescription: String {
+		return value?.simpleDescription ?? "<nil>"
+	}
 }

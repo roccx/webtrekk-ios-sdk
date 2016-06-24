@@ -8,6 +8,7 @@ public enum WebtrekkTracking {
 
 	public static let defaultLogger = DefaultTrackingLogger()
 	public static var logger: TrackingLogger = WebtrekkTracking.defaultLogger
+	public static var migratesFromLibraryV3 = true
 
 	
 	public static func tracker(configurationFile configurationFile: NSURL) throws -> Tracker {

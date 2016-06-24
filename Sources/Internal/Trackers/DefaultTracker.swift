@@ -24,6 +24,7 @@ internal final class DefaultTracker: Tracker {
 	private let requestUrlBuilder: RequestUrlBuilder
 
 	internal var crossDeviceProperties = CrossDeviceProperties()
+	internal let everId: String
 	internal var plugins = [TrackerPlugin]()
 	internal var userProperties = UserProperties()
 
@@ -31,7 +32,34 @@ internal final class DefaultTracker: Tracker {
 	internal init(configuration: TrackerConfiguration) {
 		checkIsOnMainThread()
 
-		var defaults = DefaultTracker.sharedDefaults.child(namespace: configuration.webtrekkId)
+		let sharedDefaults = DefaultTracker.sharedDefaults
+		var defaults = sharedDefaults.child(namespace: configuration.webtrekkId)
+
+		var migratedRequestQueue: [NSURL]?
+		if let webtrekkId = configuration.webtrekkId.nonEmpty where !(sharedDefaults.boolForKey(DefaultsKeys.migrationCompleted) ?? false) {
+			sharedDefaults.set(key: DefaultsKeys.migrationCompleted, to: true)
+
+			if WebtrekkTracking.migratesFromLibraryV3, let migration = Migration.migrateFromLibraryV3(webtrekkId: webtrekkId) {
+				precondition(!DefaultTracker._everIdIsLoaded)
+
+				sharedDefaults.set(key: DefaultsKeys.everId, to: migration.everId)
+
+				if let appVersion = migration.appVersion {
+					defaults.set(key: DefaultsKeys.appVersion, to: appVersion)
+				}
+				if !DefaultTracker.isOptedOutWasSetManually, let isOptedOut = migration.isOptedOut {
+					sharedDefaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
+				}
+				if let samplingRate = migration.samplingRate, isSampling = migration.isSampling {
+					defaults.set(key: DefaultsKeys.isSampling, to: isSampling)
+					defaults.set(key: DefaultsKeys.samplingRate, to: samplingRate)
+				}
+
+				migratedRequestQueue = migration.requestQueue
+
+				logInfo("Migrated from Webtrekk Library v3: \(migration)")
+			}
+		}
 
 		var configuration = configuration
 		if let configurationData = defaults.dataForKey(DefaultsKeys.configuration) {
@@ -50,13 +78,14 @@ internal final class DefaultTracker: Tracker {
 		let validatedConfiguration = DefaultTracker.validatedConfiguration(configuration)
 
 		if validatedConfiguration.webtrekkId != configuration.webtrekkId {
-			defaults = DefaultTracker.sharedDefaults.child(namespace: validatedConfiguration.webtrekkId)
+			defaults = sharedDefaults.child(namespace: validatedConfiguration.webtrekkId)
 		}
 
 		configuration = validatedConfiguration
 
 		self.configuration = configuration
 		self.defaults = defaults
+		self.everId = DefaultTracker._everId
 		self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
 		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
 		self.requestManager = RequestManager(queueLimit: configuration.requestQueueLimit)
@@ -66,6 +95,10 @@ internal final class DefaultTracker: Tracker {
 		DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
 
 		requestManager.delegate = self
+
+		if let migratedRequestQueue = migratedRequestQueue where !DefaultTracker.isOptedOut {
+			requestManager.prependRequests(migratedRequestQueue)
+		}
 
 		setUp()
 	}
@@ -234,7 +267,7 @@ internal final class DefaultTracker: Tracker {
 		}
 
 		var requestProperties = TrackerRequest.Properties(
-			everId:       DefaultTracker.everId,
+			everId:       everId,
 			samplingRate: configuration.samplingRate,
 			timeZone:     NSTimeZone.defaultTimeZone(),
 			timestamp:    NSDate(),
@@ -348,7 +381,11 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	internal static let everId = DefaultTracker.loadEverId()
+	private static let _everId: String = {
+		_everIdIsLoaded = true
+		return DefaultTracker.loadEverId()
+	}()
+	private static var _everIdIsLoaded = false
 
 
 	private var isFirstEventAfterAppUpdate: Bool {
@@ -381,6 +418,8 @@ internal final class DefaultTracker: Tracker {
 		didSet {
 			checkIsOnMainThread()
 
+			isOptedOutWasSetManually = true
+
 			guard isOptedOut != oldValue else {
 				return
 			}
@@ -394,6 +433,7 @@ internal final class DefaultTracker: Tracker {
 			}
 		}
 	}
+	private static var isOptedOutWasSetManually = false
 
 
 	private static func loadEverId() -> String {
@@ -423,12 +463,12 @@ internal final class DefaultTracker: Tracker {
 
 		requestQueueLoaded = true
 
-		guard let file = requestQueueBackupFile, filePath = file.path else {
+		guard let file = requestQueueBackupFile else {
 			return
 		}
 
 		let fileManager = NSFileManager.defaultManager()
-		guard fileManager.fileExistsAtPath(filePath) else {
+		guard fileManager.itemExistsAtURL(file) else {
 			return
 		}
 
@@ -497,12 +537,7 @@ internal final class DefaultTracker: Tracker {
 		directory = directory.URLByAppendingPathComponent("Webtrekk")
 		directory = directory.URLByAppendingPathComponent(webtrekkId)
 
-		guard let directoryPath = directory.path else {
-			logError("Cannot find directory for storing request queue backup file. Invalid path in '\(directory)'.")
-			return nil
-		}
-
-		if !fileManager.fileExistsAtPath(directoryPath) {
+		if !fileManager.itemExistsAtURL(directory) {
 			do {
 				try fileManager.createDirectoryAtURL(directory, withIntermediateDirectories: true, attributes: [NSURLIsExcludedFromBackupKey: true])
 			}
@@ -561,14 +596,14 @@ internal final class DefaultTracker: Tracker {
 	private func saveRequestQueue() {
 		checkIsOnMainThread()
 
-		guard let file = requestQueueBackupFile, filePath = file.path else {
+		guard let file = requestQueueBackupFile else {
 			return
 		}
 
 		let queue = requestManager.queue
 		guard !queue.isEmpty else {
 			let fileManager = NSFileManager.defaultManager()
-			if fileManager.fileExistsAtPath(filePath) {
+			if fileManager.itemExistsAtURL(file) {
 				do {
 					try NSFileManager.defaultManager().removeItemAtURL(file)
 					logDebug("Deleted request queue at '\(file).")
@@ -974,5 +1009,6 @@ private struct DefaultsKeys {
 	private static let isFirstEventOfApp = "isFirstEventOfApp"
 	private static let isSampling = "isSampling"
 	private static let isOptedOut = "optedOut"
+	private static let migrationCompleted = "migrationCompleted"
 	private static let samplingRate = "samplingRate"
 }
