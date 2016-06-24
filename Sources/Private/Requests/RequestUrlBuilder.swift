@@ -87,6 +87,10 @@ internal final class RequestUrlBuilder {
 		switch request.event {
 		case .action(let actionEvent):
 			let actionProperties = actionEvent.actionProperties
+			guard !actionProperties.name.isEmpty else {
+				logError("Url creation could not finish because action name on an action event was not set '\(request)'.")
+				return nil
+			}
 			if let details = actionProperties.details {
 				parameters += details.map({NSURLQueryItem(name: "ck\($0.index)", value: $0.value)})
 			}
@@ -99,8 +103,11 @@ internal final class RequestUrlBuilder {
 			}
 
 		case .media(let mediaEvent):
+			guard !mediaEvent.mediaProperties.name.isEmpty else {
+				logError("Url creation could not finish because media name on an media event was not set '\(request)'.")
+				return nil
+			}
 			parameters += mediaEvent.mediaProperties.asQueryItems(properties.timestamp)
-
 			switch mediaEvent.kind {
 			case .finish: parameters.append(name: "mk", value: "eof")
 			case .pause: parameters.append(name: "mk", value: "pause")
