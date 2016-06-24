@@ -1,6 +1,10 @@
 import Foundation
 import UIKit
 
+#if os(watchOS)
+	import WatchKit
+#endif
+
 
 internal struct Environment {
 
@@ -10,13 +14,17 @@ internal struct Environment {
 
 
 	internal static let deviceModelString: String = {
-		let device = UIDevice.currentDevice()
-		if device.isSimulator {
-			return "\(operatingSystemName) Simulator"
-		}
-		else {
-			return device.modelIdentifier
-		}
+		#if os(watchOS)
+			return WKInterfaceDevice.currentDevice().model
+		#else
+			let device = UIDevice.currentDevice()
+			if device.isSimulator {
+				return "\(operatingSystemName) Simulator"
+			}
+			else {
+				return device.modelIdentifier
+			}
+		#endif
 	}()
 
 

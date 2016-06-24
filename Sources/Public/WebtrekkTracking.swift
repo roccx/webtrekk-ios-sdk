@@ -34,9 +34,11 @@ public enum WebtrekkTracking {
 	}
 
 
+	#if !os(watchOS)
 	public static func trackerForAutotrackedViewController(viewController: UIViewController) -> PageTracker {
 		checkIsOnMainThread()
 
 		return viewController.automaticTracker
 	}
+	#endif
 }

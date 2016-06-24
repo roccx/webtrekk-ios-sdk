@@ -128,7 +128,6 @@ public struct TrackerRequest {
 		public var appVersion: String?
 		public var connectionType: ConnectionType?
 		public var everId: String
-		public var interfaceOrientation: UIInterfaceOrientation?
 		public var ipAddress: String?
 		public var isFirstEventAfterAppUpdate = false
 		public var isFirstEventOfApp = false
@@ -140,6 +139,10 @@ public struct TrackerRequest {
 		public var timeZone: NSTimeZone
 		public var timestamp: NSDate
 		public var userAgent: String
+
+		#if !os(watchOS)
+		public var interfaceOrientation: UIInterfaceOrientation?
+		#endif
 
 
 		internal init(

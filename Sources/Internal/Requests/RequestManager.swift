@@ -1,5 +1,8 @@
 import Foundation
-import ReachabilitySwift
+
+#if !os(watchOS)
+	import ReachabilitySwift
+#endif
 
 
 internal final class RequestManager {
@@ -9,10 +12,13 @@ internal final class RequestManager {
 	private var currentFailureCount = 0
 	private var currentRequest: NSURL?
 	private var pendingTask: NSURLSessionDataTask?
-	private let reachability: Reachability?
 	private var sendNextRequestTimer: NSTimer?
-	private var sendingInterruptedBecauseUnreachable = false
 	private let urlSession: NSURLSession
+
+	#if !os(watchOS)
+	private let reachability: Reachability?
+	private var sendingInterruptedBecauseUnreachable = false
+	#endif
 
 	internal private(set) var queue = [NSURL]()
 	internal private(set) var started = false
@@ -26,6 +32,7 @@ internal final class RequestManager {
 		self.queueLimit = queueLimit
 		self.urlSession = RequestManager.createUrlSession()
 
+		#if !os(watchOS)
 		do {
 			reachability = try Reachability.reachabilityForInternetConnection()
 		}
@@ -40,12 +47,15 @@ internal final class RequestManager {
 			reachability.stopNotifier()
 			self?.sendNextRequest()
 		}
+		#endif
 	}
 
 
+	#if !os(watchOS)
 	deinit {
 		reachability?.stopNotifier()
 	}
+	#endif
 
 
 	private func cancelCurrentRequest() {
@@ -239,27 +249,29 @@ internal final class RequestManager {
 			return
 		}
 
-		if let reachability = reachability {
-			guard reachability.isReachable() else {
-				if !sendingInterruptedBecauseUnreachable {
-					sendingInterruptedBecauseUnreachable = true
+		#if !os(watchOS)
+			if let reachability = reachability {
+				guard reachability.isReachable() else {
+					if !sendingInterruptedBecauseUnreachable {
+						sendingInterruptedBecauseUnreachable = true
 
-					logDebug("Internet is unreachable. Pausing requests.")
+						logDebug("Internet is unreachable. Pausing requests.")
 
-					do {
-						try reachability.startNotifier()
+						do {
+							try reachability.startNotifier()
+						}
+						catch let error {
+							logError("Cannot listen for reachability events: \(error)")
+						}
 					}
-					catch let error {
-						logError("Cannot listen for reachability events: \(error)")
-					}
+
+					return
 				}
 
-				return
+				sendingInterruptedBecauseUnreachable = false
+				reachability.stopNotifier()
 			}
-
-			sendingInterruptedBecauseUnreachable = false
-			reachability.stopNotifier()
-		}
+		#endif
 
 		let url = queue[0]
 
@@ -369,8 +381,10 @@ internal final class RequestManager {
 		sendNextRequestTimer?.invalidate()
 		sendNextRequestTimer = nil
 
-		sendingInterruptedBecauseUnreachable = false
-		reachability?.stopNotifier()
+		#if !os(watchOS)
+			sendingInterruptedBecauseUnreachable = false
+			reachability?.stopNotifier()
+		#endif
 	}
 
 

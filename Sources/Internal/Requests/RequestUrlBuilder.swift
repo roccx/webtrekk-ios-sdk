@@ -58,14 +58,16 @@ internal final class RequestUrlBuilder {
 
 		parameters += request.userProperties.asQueryItems()
 
-		if let interfaceOrientation = properties.interfaceOrientation {
-			switch interfaceOrientation {
-			case .LandscapeLeft, .LandscapeRight: parameters.append(name: "cp783", value: "landscape")
-			case .Portrait, .PortraitUpsideDown: parameters.append(name: "cp783", value: "portrait")
-			default: parameters.append(name: "cp783", value: "undefined")
+		#if !os(watchOS)
+			if let interfaceOrientation = properties.interfaceOrientation {
+				switch interfaceOrientation {
+				case .LandscapeLeft, .LandscapeRight: parameters.append(name: "cp783", value: "landscape")
+				case .Portrait, .PortraitUpsideDown: parameters.append(name: "cp783", value: "portrait")
+				default: parameters.append(name: "cp783", value: "undefined")
+				}
 			}
+		#endif
 
-		}
 		if let connectionType = properties.connectionType {
 			switch connectionType {
 			case .cellular_2G: parameters.append(name: "cs807", value: "2G")

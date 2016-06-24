@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3252F6251EE9036E0C9665ED /* Pods_Automatic_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC25DF179B8C3DC06AC76A5B /* Pods_Automatic_Tracking_Example.framework */; };
 		4939D74C1D1C34810090545B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4939D7431D1C347A0090545B /* AppDelegate.swift */; };
 		4939D74D1D1C34810090545B /* ProductListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4939D7441D1C347A0090545B /* ProductListViewController.swift */; };
 		4939D74E1D1C34810090545B /* ProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4939D7451D1C347A0090545B /* ProductViewController.swift */; };
@@ -27,7 +26,17 @@
 		495EE3051D19EDAF00B64698 /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495EE2A81D19E5EC00B64698 /* Video.mp4 */; };
 		496F3BCF1D1D87E50003D800 /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496F3BCE1D1D87E50003D800 /* WebtrekkTracking.swift */; };
 		496F3BD11D1D88410003D800 /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496F3BD01D1D88410003D800 /* WebtrekkTracking.swift */; };
-		A4E337C4F01F2CD791B02438 /* Pods_Manual_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517990375DCF9362F2957A58 /* Pods_Manual_Tracking_Example.framework */; };
+		496F3BE71D1DD1630003D800 /* WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 496F3BE61D1DD1630003D800 /* WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		496F3BFC1D1DD1630003D800 /* WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 496F3BDA1D1DD1630003D800 /* WatchKit App.app */; };
+		49FCB7771D1DDE7300B6A956 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49FCB7731D1DDE7300B6A956 /* Assets.xcassets */; };
+		49FCB7781D1DDE7300B6A956 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49FCB7741D1DDE7300B6A956 /* Interface.storyboard */; };
+		49FCB7831D1DDE8100B6A956 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49FCB77B1D1DDE8100B6A956 /* Assets.xcassets */; };
+		49FCB7841D1DDE8100B6A956 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FCB77C1D1DDE8100B6A956 /* ComplicationController.swift */; };
+		49FCB7851D1DDE8100B6A956 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FCB77D1D1DDE8100B6A956 /* ExtensionDelegate.swift */; };
+		49FCB7861D1DDE8100B6A956 /* GlanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FCB77E1D1DDE8100B6A956 /* GlanceController.swift */; };
+		49FCB7881D1DDE8100B6A956 /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FCB7801D1DDE8100B6A956 /* InterfaceController.swift */; };
+		49FCB7891D1DDE8100B6A956 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FCB7811D1DDE8100B6A956 /* NotificationController.swift */; };
+		49FCB78C1D1DDEDC00B6A956 /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FCB78B1D1DDEDC00B6A956 /* WebtrekkTracking.swift */; };
 		B708D3141C90731A00FEFC37 /* BackupManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B708D3131C90731A00FEFC37 /* BackupManagerTest.swift */; };
 		B718353B1D1D4722003279C3 /* ConfigAutomatic.xml in Resources */ = {isa = PBXBuildFile; fileRef = B71835381D1D4722003279C3 /* ConfigAutomatic.xml */; };
 		B718353C1D1D4722003279C3 /* ConfigManual.xml in Resources */ = {isa = PBXBuildFile; fileRef = B71835391D1D4722003279C3 /* ConfigManual.xml */; };
@@ -37,7 +46,9 @@
 		B792C5DF1C7B53220093DF35 /* ParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B792C5DE1C7B53220093DF35 /* ParameterTest.swift */; };
 		B7957BD81C6B56A200C6161D /* ToDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7957BD71C6B56A200C6161D /* ToDo.swift */; };
 		B7B3EBD51C734F43004AA6E7 /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */; };
+		C11F26F446B4BCE755B6F8E0 /* Pods_iOS_Manual_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 470D9826A854FFFA517E77CE /* Pods_iOS_Manual_Tracking_Example.framework */; };
 		C55657C5605E402036539866 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F99E1518FB6347E94537495 /* Pods_Tests.framework */; };
+		FF8C51B72E6E08F5CCB78DBE /* Pods_iOS_Automatic_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBF8F17C115A9016AD3D3B1 /* Pods_iOS_Automatic_Tracking_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +59,20 @@
 			remoteGlobalIDString = 4986830C1BE404F7001DCBC7;
 			remoteInfo = "Automatic Tracking Example";
 		};
+		496F3BE81D1DD1630003D800 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 498683051BE404F7001DCBC7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 496F3BE51D1DD1630003D800;
+			remoteInfo = "WatchKit Extension";
+		};
+		496F3BFA1D1DD1630003D800 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 498683051BE404F7001DCBC7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 496F3BD91D1DD1630003D800;
+			remoteInfo = "WatchKit App";
+		};
 		B71835361D1D3DCC003279C3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 498683051BE404F7001DCBC7 /* Project object */;
@@ -57,12 +82,40 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		496F3C021D1DD1630003D800 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				496F3BE71D1DD1630003D800 /* WatchKit Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		496F3C041D1DD1630003D800 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				496F3BFC1D1DD1630003D800 /* WatchKit App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		07AECADF8E41AA60742531FF /* Pods-ChildTracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChildTracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ChildTracking Example/Pods-ChildTracking Example.debug.xcconfig"; sourceTree = "<group>"; };
 		0F99E1518FB6347E94537495 /* Pods_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A0EE8C2C8ED00B861D77236 /* Pods-ManualTracking Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ManualTracking Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-ManualTracking Example/Pods-ManualTracking Example.release.xcconfig"; sourceTree = "<group>"; };
+		1BBF8F17C115A9016AD3D3B1 /* Pods_iOS_Automatic_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Automatic_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		24C3BB62F52D7F0E7DFFED9B /* Pods-AutoTracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutoTracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AutoTracking Example/Pods-AutoTracking Example.debug.xcconfig"; sourceTree = "<group>"; };
+		29883807409341351EC05A66 /* Pods_watchOS_WatchKit_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_watchOS_WatchKit_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		427C688634628C71E0AF92EF /* Pods_Project.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Project.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		470D9826A854FFFA517E77CE /* Pods_iOS_Manual_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Manual_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4939D7431D1C347A0090545B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4939D7441D1C347A0090545B /* ProductListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductListViewController.swift; sourceTree = "<group>"; };
 		4939D7451D1C347A0090545B /* ProductViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductViewController.swift; sourceTree = "<group>"; };
@@ -80,14 +133,29 @@
 		495EE30D1D19F05700B64698 /* Webtrekk.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = Webtrekk.podspec; path = ../Webtrekk.podspec; sourceTree = "<group>"; };
 		496F3BCE1D1D87E50003D800 /* WebtrekkTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
 		496F3BD01D1D88410003D800 /* WebtrekkTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
+		496F3BDA1D1DD1630003D800 /* WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		496F3BE61D1DD1630003D800 /* WatchKit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "WatchKit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4986830D1BE404F7001DCBC7 /* Webtrekk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Webtrekk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		498683211BE404F7001DCBC7 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4986833C1BE410D0001DCBC7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		49FCB7731D1DDE7300B6A956 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		49FCB7751D1DDE7300B6A956 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		49FCB7761D1DDE7300B6A956 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		49FCB77B1D1DDE8100B6A956 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		49FCB77C1D1DDE8100B6A956 /* ComplicationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
+		49FCB77D1D1DDE8100B6A956 /* ExtensionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
+		49FCB77E1D1DDE8100B6A956 /* GlanceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlanceController.swift; sourceTree = "<group>"; };
+		49FCB77F1D1DDE8100B6A956 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		49FCB7801D1DDE8100B6A956 /* InterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceController.swift; sourceTree = "<group>"; };
+		49FCB7811D1DDE8100B6A956 /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
+		49FCB7821D1DDE8100B6A956 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
+		49FCB78B1D1DDEDC00B6A956 /* WebtrekkTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
 		517990375DCF9362F2957A58 /* Pods_Manual_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Manual_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B54ED196E93BE55686EE3B3 /* Pods-AutoTracking Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutoTracking Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-AutoTracking Example/Pods-AutoTracking Example.release.xcconfig"; sourceTree = "<group>"; };
 		735E3F2B7168F6FBC048ACC3 /* Pods-ManualTracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ManualTracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ManualTracking Example/Pods-ManualTracking Example.debug.xcconfig"; sourceTree = "<group>"; };
 		77BF02E53F11328526576D76 /* Pods-Automatic Tracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automatic Tracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Automatic Tracking Example/Pods-Automatic Tracking Example.debug.xcconfig"; sourceTree = "<group>"; };
 		7F48168A1817E151EA6E0426 /* Pods_ManualTracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ManualTracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F48D667D9491FEAE47F1A40 /* Pods-iOS-Automatic Tracking Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Automatic Tracking Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example.release.xcconfig"; sourceTree = "<group>"; };
 		A6670BA94EC2B953BDA20BDD /* Pods-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		AC25DF179B8C3DC06AC76A5B /* Pods_Automatic_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Automatic_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0077A92D4020D9008DFF370 /* Pods_ChildTracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChildTracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,8 +170,12 @@
 		B7957BD71C6B56A200C6161D /* ToDo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDo.swift; sourceTree = "<group>"; };
 		B7B3EBD41C734F43004AA6E7 /* XmlParserTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
 		B7FA63771CCE0EEB0051FD89 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		BC36762042406FA83B5421CF /* Pods-iOS-Automatic Tracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Automatic Tracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example.debug.xcconfig"; sourceTree = "<group>"; };
 		CBC1E52AF19266A62340DFC5 /* Pods-Automatic Tracking Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automatic Tracking Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Automatic Tracking Example/Pods-Automatic Tracking Example.release.xcconfig"; sourceTree = "<group>"; };
+		CFE82CF3DE7A3834A9084591 /* Pods-iOS-Manual Tracking Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Manual Tracking Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example.release.xcconfig"; sourceTree = "<group>"; };
+		D75B99D81640BC3B154A2043 /* Pods-iOS-Manual Tracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Manual Tracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example.debug.xcconfig"; sourceTree = "<group>"; };
 		D7A46DC0E911F3ABCA3B5312 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9A288C0644C5BBC8B2E0E31 /* Pods_watchOS_WatchKit_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_watchOS_WatchKit_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4717D26C552E1FB03DB848C /* Pods_AutoTracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AutoTracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8689F625963D93A1C592824 /* Pods-Manual Tracking Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Manual Tracking Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Manual Tracking Example/Pods-Manual Tracking Example.release.xcconfig"; sourceTree = "<group>"; };
 		EA17BE5A4187A79B879605FA /* Pods-Manual Tracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Manual Tracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Manual Tracking Example/Pods-Manual Tracking Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -115,7 +187,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4E337C4F01F2CD791B02438 /* Pods_Manual_Tracking_Example.framework in Frameworks */,
+				C11F26F446B4BCE755B6F8E0 /* Pods_iOS_Manual_Tracking_Example.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		496F3BE31D1DD1630003D800 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,7 +202,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3252F6251EE9036E0C9665ED /* Pods_Automatic_Tracking_Example.framework in Frameworks */,
+				FF8C51B72E6E08F5CCB78DBE /* Pods_iOS_Automatic_Tracking_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +211,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				C55657C5605E402036539866 /* Pods_Tests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		99504917B5826064FB6CA5D4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +236,10 @@
 				7F48168A1817E151EA6E0426 /* Pods_ManualTracking_Example.framework */,
 				AC25DF179B8C3DC06AC76A5B /* Pods_Automatic_Tracking_Example.framework */,
 				517990375DCF9362F2957A58 /* Pods_Manual_Tracking_Example.framework */,
+				1BBF8F17C115A9016AD3D3B1 /* Pods_iOS_Automatic_Tracking_Example.framework */,
+				470D9826A854FFFA517E77CE /* Pods_iOS_Manual_Tracking_Example.framework */,
+				29883807409341351EC05A66 /* Pods_watchOS_WatchKit_Example.framework */,
+				D9A288C0644C5BBC8B2E0E31 /* Pods_watchOS_WatchKit_Extension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -159,6 +249,8 @@
 			children = (
 				4939D7421D1C347A0090545B /* Automatic Tracking */,
 				4939D7471D1C347A0090545B /* Manual Tracking */,
+				49FCB7721D1DDE7300B6A956 /* WatchKit App */,
+				49FCB77A1D1DDE8100B6A956 /* WatchKit Extension */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -217,6 +309,8 @@
 				4986830D1BE404F7001DCBC7 /* Webtrekk.app */,
 				498683211BE404F7001DCBC7 /* Tests.xctest */,
 				495EE30B1D19EDAF00B64698 /* Webtrekk.app */,
+				496F3BDA1D1DD1630003D800 /* WatchKit App.app */,
+				496F3BE61D1DD1630003D800 /* WatchKit Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -238,6 +332,32 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		49FCB7721D1DDE7300B6A956 /* WatchKit App */ = {
+			isa = PBXGroup;
+			children = (
+				49FCB7731D1DDE7300B6A956 /* Assets.xcassets */,
+				49FCB7741D1DDE7300B6A956 /* Interface.storyboard */,
+				49FCB7761D1DDE7300B6A956 /* Info.plist */,
+			);
+			path = "WatchKit App";
+			sourceTree = "<group>";
+		};
+		49FCB77A1D1DDE8100B6A956 /* WatchKit Extension */ = {
+			isa = PBXGroup;
+			children = (
+				49FCB77B1D1DDE8100B6A956 /* Assets.xcassets */,
+				49FCB77C1D1DDE8100B6A956 /* ComplicationController.swift */,
+				49FCB77D1D1DDE8100B6A956 /* ExtensionDelegate.swift */,
+				49FCB77E1D1DDE8100B6A956 /* GlanceController.swift */,
+				49FCB77F1D1DDE8100B6A956 /* Info.plist */,
+				49FCB7801D1DDE8100B6A956 /* InterfaceController.swift */,
+				49FCB7811D1DDE8100B6A956 /* NotificationController.swift */,
+				49FCB7821D1DDE8100B6A956 /* PushNotificationPayload.apns */,
+				49FCB78B1D1DDEDC00B6A956 /* WebtrekkTracking.swift */,
+			);
+			path = "WatchKit Extension";
+			sourceTree = "<group>";
+		};
 		83390BAE3A01F6C5B3C4F1A8 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -254,6 +374,10 @@
 				CBC1E52AF19266A62340DFC5 /* Pods-Automatic Tracking Example.release.xcconfig */,
 				EA17BE5A4187A79B879605FA /* Pods-Manual Tracking Example.debug.xcconfig */,
 				E8689F625963D93A1C592824 /* Pods-Manual Tracking Example.release.xcconfig */,
+				BC36762042406FA83B5421CF /* Pods-iOS-Automatic Tracking Example.debug.xcconfig */,
+				8F48D667D9491FEAE47F1A40 /* Pods-iOS-Automatic Tracking Example.release.xcconfig */,
+				D75B99D81640BC3B154A2043 /* Pods-iOS-Manual Tracking Example.debug.xcconfig */,
+				CFE82CF3DE7A3834A9084591 /* Pods-iOS-Manual Tracking Example.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -281,6 +405,44 @@
 			productReference = 495EE30B1D19EDAF00B64698 /* Webtrekk.app */;
 			productType = "com.apple.product-type.application";
 		};
+		496F3BD91D1DD1630003D800 /* WatchKit App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 496F3C031D1DD1630003D800 /* Build configuration list for PBXNativeTarget "WatchKit App" */;
+			buildPhases = (
+				496F3BD81D1DD1630003D800 /* Resources */,
+				496F3C021D1DD1630003D800 /* Embed App Extensions */,
+				99504917B5826064FB6CA5D4 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				496F3BE91D1DD1630003D800 /* PBXTargetDependency */,
+			);
+			name = "WatchKit App";
+			productName = "WatchKit App";
+			productReference = 496F3BDA1D1DD1630003D800 /* WatchKit App.app */;
+			productType = "com.apple.product-type.application.watchapp2";
+		};
+		496F3BE51D1DD1630003D800 /* WatchKit Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 496F3C011D1DD1630003D800 /* Build configuration list for PBXNativeTarget "WatchKit Extension" */;
+			buildPhases = (
+				B22AA837349CDB02C1F7514C /* [CP] Check Pods Manifest.lock */,
+				496F3BE21D1DD1630003D800 /* Sources */,
+				496F3BE31D1DD1630003D800 /* Frameworks */,
+				496F3BE41D1DD1630003D800 /* Resources */,
+				64382B18B49BDDA92D72557F /* [CP] Embed Pods Frameworks */,
+				DA1551EEF2A556272F9EF90F /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "WatchKit Extension";
+			productName = "WatchKit Extension";
+			productReference = 496F3BE61D1DD1630003D800 /* WatchKit Extension.appex */;
+			productType = "com.apple.product-type.watchkit2-extension";
+		};
 		4986830C1BE404F7001DCBC7 /* Automatic Tracking Example */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4986832A1BE404F7001DCBC7 /* Build configuration list for PBXNativeTarget "Automatic Tracking Example" */;
@@ -291,10 +453,12 @@
 				4986830B1BE404F7001DCBC7 /* Resources */,
 				AC05E40BE3999D5C88023DCC /* [CP] Embed Pods Frameworks */,
 				7AA245E7FE45E8C9252D91E1 /* [CP] Copy Pods Resources */,
+				496F3C041D1DD1630003D800 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				496F3BFB1D1DD1630003D800 /* PBXTargetDependency */,
 			);
 			name = "Automatic Tracking Example";
 			productName = Xcode;
@@ -333,6 +497,12 @@
 				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = Webtrekk;
 				TargetAttributes = {
+					496F3BD91D1DD1630003D800 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					496F3BE51D1DD1630003D800 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
 					4986830C1BE404F7001DCBC7 = {
 						CreatedOnToolsVersion = 7.1;
 					};
@@ -358,6 +528,8 @@
 				4986830C1BE404F7001DCBC7 /* Automatic Tracking Example */,
 				495EE2F11D19EDAF00B64698 /* Manual Tracking Example */,
 				498683201BE404F7001DCBC7 /* Tests */,
+				496F3BD91D1DD1630003D800 /* WatchKit App */,
+				496F3BE51D1DD1630003D800 /* WatchKit Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -372,6 +544,23 @@
 				495EE3031D19EDAF00B64698 /* Media.xcassets in Resources */,
 				495EE3041D19EDAF00B64698 /* LaunchScreen.storyboard in Resources */,
 				495EE3051D19EDAF00B64698 /* Video.mp4 in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		496F3BD81D1DD1630003D800 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49FCB7781D1DDE7300B6A956 /* Interface.storyboard in Resources */,
+				49FCB7771D1DDE7300B6A956 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		496F3BE41D1DD1630003D800 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49FCB7831D1DDE8100B6A956 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,7 +647,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Manual Tracking Example/Pods-Manual Tracking Example-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		495EE3071D19EDAF00B64698 /* [CP] Copy Pods Resources */ = {
@@ -473,7 +662,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Manual Tracking Example/Pods-Manual Tracking Example-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		56DB174CCB4F07125CCDF006 /* [CP] Check Pods Manifest.lock */ = {
@@ -491,6 +680,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		64382B18B49BDDA92D72557F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-watchOS-WatchKit Extension/Pods-watchOS-WatchKit Extension-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		7AA245E7FE45E8C9252D91E1 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -503,7 +707,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Automatic Tracking Example/Pods-Automatic Tracking Example-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		AC05E40BE3999D5C88023DCC /* [CP] Embed Pods Frameworks */ = {
@@ -518,7 +722,37 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Automatic Tracking Example/Pods-Automatic Tracking Example-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B22AA837349CDB02C1F7514C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		DA1551EEF2A556272F9EF90F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-watchOS-WatchKit Extension/Pods-watchOS-WatchKit Extension-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E6E5DDF324AA8C67689405C6 /* [CP] Check Pods Manifest.lock */ = {
@@ -547,6 +781,19 @@
 				4939D7511D1C34840090545B /* ProductListViewController.swift in Sources */,
 				4939D7501D1C34840090545B /* AppDelegate.swift in Sources */,
 				496F3BD11D1D88410003D800 /* WebtrekkTracking.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		496F3BE21D1DD1630003D800 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49FCB7891D1DDE8100B6A956 /* NotificationController.swift in Sources */,
+				49FCB7851D1DDE8100B6A956 /* ExtensionDelegate.swift in Sources */,
+				49FCB7881D1DDE8100B6A956 /* InterfaceController.swift in Sources */,
+				49FCB7841D1DDE8100B6A956 /* ComplicationController.swift in Sources */,
+				49FCB7861D1DDE8100B6A956 /* GlanceController.swift in Sources */,
+				49FCB78C1D1DDEDC00B6A956 /* WebtrekkTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,6 +829,16 @@
 			target = 4986830C1BE404F7001DCBC7 /* Automatic Tracking Example */;
 			targetProxy = 4939D7541D1C351F0090545B /* PBXContainerItemProxy */;
 		};
+		496F3BE91D1DD1630003D800 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 496F3BE51D1DD1630003D800 /* WatchKit Extension */;
+			targetProxy = 496F3BE81D1DD1630003D800 /* PBXContainerItemProxy */;
+		};
+		496F3BFB1D1DD1630003D800 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 496F3BD91D1DD1630003D800 /* WatchKit App */;
+			targetProxy = 496F3BFA1D1DD1630003D800 /* PBXContainerItemProxy */;
+		};
 		B71835371D1D3DCC003279C3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 495EE2F11D19EDAF00B64698 /* Manual Tracking Example */;
@@ -589,14 +846,25 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		49FCB7741D1DDE7300B6A956 /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				49FCB7751D1DDE7300B6A956 /* Base */,
+			);
+			name = Interface.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		495EE3091D19EDAF00B64698 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EA17BE5A4187A79B879605FA /* Pods-Manual Tracking Example.debug.xcconfig */;
+			baseConfigurationReference = D75B99D81640BC3B154A2043 /* Pods-iOS-Manual Tracking Example.debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example;
 				PRODUCT_MODULE_NAME = Example;
 				PRODUCT_NAME = Webtrekk;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -605,14 +873,80 @@
 		};
 		495EE30A1D19EDAF00B64698 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E8689F625963D93A1C592824 /* Pods-Manual Tracking Example.release.xcconfig */;
+			baseConfigurationReference = CFE82CF3DE7A3834A9084591 /* Pods-iOS-Manual Tracking Example.release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example;
 				PRODUCT_MODULE_NAME = Example;
 				PRODUCT_NAME = Webtrekk;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		496F3BFD1D1DD1630003D800 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				IBSC_MODULE = WatchKit_Extension;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/WatchKit App/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example.watch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.2;
+			};
+			name = Debug;
+		};
+		496F3BFE1D1DD1630003D800 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				IBSC_MODULE = WatchKit_Extension;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/WatchKit App/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example.watch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.2;
+			};
+			name = Release;
+		};
+		496F3BFF1D1DD1630003D800 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CLANG_ANALYZER_NONNULL = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/WatchKit Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example.watch.extension;
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.2;
+			};
+			name = Debug;
+		};
+		496F3C001D1DD1630003D800 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CLANG_ANALYZER_NONNULL = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/WatchKit Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example.watch.extension;
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Release;
 		};
@@ -700,11 +1034,11 @@
 		};
 		4986832B1BE404F7001DCBC7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 77BF02E53F11328526576D76 /* Pods-Automatic Tracking Example.debug.xcconfig */;
+			baseConfigurationReference = BC36762042406FA83B5421CF /* Pods-iOS-Automatic Tracking Example.debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example;
 				PRODUCT_MODULE_NAME = Example;
 				PRODUCT_NAME = Webtrekk;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -713,11 +1047,11 @@
 		};
 		4986832C1BE404F7001DCBC7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CBC1E52AF19266A62340DFC5 /* Pods-Automatic Tracking Example.release.xcconfig */;
+			baseConfigurationReference = 8F48D667D9491FEAE47F1A40 /* Pods-iOS-Automatic Tracking Example.release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example;
 				PRODUCT_MODULE_NAME = Example;
 				PRODUCT_NAME = Webtrekk;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -731,7 +1065,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Tests;
+				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.tests;
 				PRODUCT_NAME = Tests;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Webtrekk.app/Webtrekk";
@@ -745,7 +1079,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.Tests;
+				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.tests;
 				PRODUCT_NAME = Tests;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Webtrekk.app/Webtrekk";
 			};
@@ -759,6 +1093,24 @@
 			buildConfigurations = (
 				495EE3091D19EDAF00B64698 /* Debug */,
 				495EE30A1D19EDAF00B64698 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		496F3C011D1DD1630003D800 /* Build configuration list for PBXNativeTarget "WatchKit Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				496F3BFF1D1DD1630003D800 /* Debug */,
+				496F3C001D1DD1630003D800 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		496F3C031D1DD1630003D800 /* Build configuration list for PBXNativeTarget "WatchKit App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				496F3BFD1D1DD1630003D800 /* Debug */,
+				496F3BFE1D1DD1630003D800 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

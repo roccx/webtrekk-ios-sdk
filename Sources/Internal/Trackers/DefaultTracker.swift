@@ -1,7 +1,12 @@
-import AVFoundation
-import CoreTelephony
-import ReachabilitySwift
 import UIKit
+
+#if os(watchOS)
+	import WatchKit
+#else
+	import AVFoundation
+	import CoreTelephony
+	import ReachabilitySwift
+#endif
 
 
 internal final class DefaultTracker: Tracker {
@@ -9,11 +14,14 @@ internal final class DefaultTracker: Tracker {
 	private static var instances = [ObjectIdentifier: WeakReference<DefaultTracker>]()
 	private static let sharedDefaults = UserDefaults.standardDefaults.child(namespace: "webtrekk")
 
+	#if !os(watchOS)
 	private let application = UIApplication.sharedApplication()
 	private var applicationDidBecomeActiveObserver: NSObjectProtocol?
 	private var applicationWillEnterForegroundObserver: NSObjectProtocol?
 	private var applicationWillResignActiveObserver: NSObjectProtocol?
 	private var backgroundTaskIdentifier = UIBackgroundTaskInvalid
+	#endif
+
 	private let defaults: UserDefaults
 	private var isFirstEventOfSession = true
 	private var isSampling = false
@@ -116,16 +124,18 @@ internal final class DefaultTracker: Tracker {
 			}
 		}
 
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		if let applicationDidBecomeActiveObserver = applicationDidBecomeActiveObserver {
-			notificationCenter.removeObserver(applicationDidBecomeActiveObserver)
-		}
-		if let applicationWillEnterForegroundObserver = applicationWillEnterForegroundObserver {
-			notificationCenter.removeObserver(applicationWillEnterForegroundObserver)
-		}
-		if let applicationWillResignActiveObserver = applicationWillResignActiveObserver {
-			notificationCenter.removeObserver(applicationWillResignActiveObserver)
-		}
+		#if !os(watchOS)
+			let notificationCenter = NSNotificationCenter.defaultCenter()
+			if let applicationDidBecomeActiveObserver = applicationDidBecomeActiveObserver {
+				notificationCenter.removeObserver(applicationDidBecomeActiveObserver)
+			}
+			if let applicationWillEnterForegroundObserver = applicationWillEnterForegroundObserver {
+				notificationCenter.removeObserver(applicationWillEnterForegroundObserver)
+			}
+			if let applicationWillResignActiveObserver = applicationWillResignActiveObserver {
+				notificationCenter.removeObserver(applicationWillResignActiveObserver)
+			}
+		#endif
 	}
 
 
@@ -144,6 +154,21 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
+	#if os(watchOS)
+	internal func applicationDidFinishLaunching() {
+		checkIsOnMainThread()
+
+		if requestManagerStartTimer == nil {
+			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
+				self.startRequestManager()
+			}
+		}
+
+		NSTimer.scheduledTimerWithTimeInterval(15) {
+			self.updateConfiguration()
+		}
+	}
+	#else
 	internal func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
 		checkIsOnMainThread()
 
@@ -157,8 +182,10 @@ internal final class DefaultTracker: Tracker {
 			self.updateConfiguration()
 		}
 	}
+	#endif
 
 
+	#if !os(watchOS)
 	private func applicationDidBecomeActive() {
 		checkIsOnMainThread()
 
@@ -226,6 +253,7 @@ internal final class DefaultTracker: Tracker {
 	internal static var autotrackingEventHandler: protocol<ActionEventHandler, MediaEventHandler, PageViewEventHandler> {
 		return _autotrackingEventHandler
 	}
+	#endif
 
 
 	private func checkForAppUpdate() {
@@ -253,8 +281,11 @@ internal final class DefaultTracker: Tracker {
 			requestUrlBuilder.serverUrl = configuration.serverUrl
 			requestUrlBuilder.webtrekkId = configuration.webtrekkId
 
-			updateAutomaticTracking()
 			updateSampling()
+
+			#if !os(watchOS)
+			updateAutomaticTracking()
+			#endif
 		}
 	}
 
@@ -274,8 +305,13 @@ internal final class DefaultTracker: Tracker {
 			userAgent:    DefaultTracker.userAgent
 		)
 
-		let screen = UIScreen.mainScreen()
-		requestProperties.screenSize = (width: Int(screen.bounds.width * screen.scale), height: Int(screen.bounds.height * screen.scale))
+		#if os(watchOS)
+			let device = WKInterfaceDevice.currentDevice()
+			requestProperties.screenSize = (width: Int(device.screenBounds.width * device.screenScale), height: Int(device.screenBounds.height * device.screenScale))
+		#else
+			let screen = UIScreen.mainScreen()
+			requestProperties.screenSize = (width: Int(screen.bounds.width * screen.scale), height: Int(screen.bounds.height * screen.scale))
+		#endif
 
 		if isFirstEventAfterAppUpdate && configuration.automaticallyTracksAppUpdates {
 			requestProperties.isFirstEventAfterAppUpdate = true
@@ -292,43 +328,47 @@ internal final class DefaultTracker: Tracker {
 		if configuration.automaticallyTracksAppVersion {
 			requestProperties.appVersion = Environment.appVersion
 		}
-		if configuration.automaticallyTracksConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
-			if reachability.isReachableViaWiFi() {
-				requestProperties.connectionType = .wifi
-			}
-			else if reachability.isReachableViaWWAN() {
-				if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
-					switch carrierType {
-					case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
-						requestProperties.connectionType = .cellular_2G
-
-					case CTRadioAccessTechnologyWCDMA, CTRadioAccessTechnologyHSDPA, CTRadioAccessTechnologyHSUPA, CTRadioAccessTechnologyCDMAEVDORev0, CTRadioAccessTechnologyCDMAEVDORevA, CTRadioAccessTechnologyCDMAEVDORevB, CTRadioAccessTechnologyeHRPD:
-						requestProperties.connectionType = .cellular_3G
-
-					case CTRadioAccessTechnologyLTE:
-						requestProperties.connectionType = .cellular_4G
-
-					default:
-						requestProperties.connectionType = .other
-					}
-				}
-				else {
-					requestProperties.connectionType = .other
-				}
-			}
-			else if reachability.isReachable() {
-				requestProperties.connectionType = .other
-			}
-			else {
-				requestProperties.connectionType = .offline
-			}
-		}
 		if configuration.automaticallyTracksRequestQueueSize {
 			requestProperties.requestQueueSize = requestManager.queueSize
 		}
-		if configuration.automaticallyTracksInterfaceOrientation {
-			requestProperties.interfaceOrientation = application.statusBarOrientation
-		}
+
+		#if !os(watchOS)
+			if configuration.automaticallyTracksConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
+				if reachability.isReachableViaWiFi() {
+					requestProperties.connectionType = .wifi
+				}
+				else if reachability.isReachableViaWWAN() {
+					if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
+						switch carrierType {
+						case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
+							requestProperties.connectionType = .cellular_2G
+
+						case CTRadioAccessTechnologyWCDMA, CTRadioAccessTechnologyHSDPA, CTRadioAccessTechnologyHSUPA, CTRadioAccessTechnologyCDMAEVDORev0, CTRadioAccessTechnologyCDMAEVDORevA, CTRadioAccessTechnologyCDMAEVDORevB, CTRadioAccessTechnologyeHRPD:
+							requestProperties.connectionType = .cellular_3G
+
+						case CTRadioAccessTechnologyLTE:
+							requestProperties.connectionType = .cellular_4G
+
+						default:
+							requestProperties.connectionType = .other
+						}
+					}
+					else {
+						requestProperties.connectionType = .other
+					}
+				}
+				else if reachability.isReachable() {
+					requestProperties.connectionType = .other
+				}
+				else {
+					requestProperties.connectionType = .offline
+				}
+			}
+
+			if configuration.automaticallyTracksInterfaceOrientation {
+				requestProperties.interfaceOrientation = application.statusBarOrientation
+			}
+		#endif
 
 		return TrackerRequest(
 			crossDeviceProperties: crossDeviceProperties,
@@ -342,7 +382,11 @@ internal final class DefaultTracker: Tracker {
 	internal func enqueueRequestForEvent(event: TrackerRequest.Event) {
 		checkIsOnMainThread()
 
-		guard var request = createRequestForEvent(eventByApplyingAutomaticPageTracking(to: event)) else {
+		#if !os(watchOS)
+			let event = eventByApplyingAutomaticPageTracking(to: event)
+		#endif
+
+		guard var request = createRequestForEvent(event) else {
 			return
 		}
 
@@ -364,6 +408,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
+	#if !os(watchOS)
 	private func eventByApplyingAutomaticPageTracking(to event: TrackerRequest.Event) -> TrackerRequest.Event {
 		checkIsOnMainThread()
 
@@ -379,6 +424,7 @@ internal final class DefaultTracker: Tracker {
 		event.pageProperties = event.pageProperties.merged(over: page.pageProperties)
 		return event
 	}
+	#endif
 
 
 	private static let _everId: String = {
@@ -563,13 +609,16 @@ internal final class DefaultTracker: Tracker {
 	private func setUp() {
 		checkIsOnMainThread()
 
-		setUpObservers()
+		#if !os(watchOS)
+			setUpObservers()
+			updateAutomaticTracking()
+		#endif
 
-		updateAutomaticTracking()
 		updateSampling()
 	}
 
 
+	#if !os(watchOS)
 	private func setUpObservers() {
 		checkIsOnMainThread()
 
@@ -584,6 +633,7 @@ internal final class DefaultTracker: Tracker {
 			self?.applicationWillResignActive()
 		}
 	}
+	#endif
 
 
 	private var shouldEnqueueNewEvents: Bool {
@@ -633,9 +683,15 @@ internal final class DefaultTracker: Tracker {
 		requestManagerStartTimer?.invalidate()
 		requestManagerStartTimer = nil
 
-		guard !requestManager.started && application.applicationState == .Active else {
+		guard !requestManager.started else {
 			return
 		}
+
+		#if !os(watchOS)
+			guard application.applicationState == .Active else {
+				return
+			}
+		#endif
 
 		loadRequestQueue()
 		requestManager.start()
@@ -676,6 +732,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
+	#if !os(watchOS)
 	internal func trackMedia(mediaName: String, pageName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker {
 		checkIsOnMainThread()
 
@@ -684,6 +741,7 @@ internal final class DefaultTracker: Tracker {
 
 		return tracker
 	}
+	#endif
 
 
 	@warn_unused_result
@@ -701,6 +759,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
+	#if !os(watchOS)
 	private func updateAutomaticTracking() {
 		checkIsOnMainThread()
 
@@ -719,6 +778,7 @@ internal final class DefaultTracker: Tracker {
 			UIViewController.setUpAutomaticTracking()
 		}
 	}
+	#endif
 
 
 	private func updateConfiguration() {
@@ -812,17 +872,19 @@ internal final class DefaultTracker: Tracker {
 			isError = true
 		}
 
-		var pageIndex = 0
-		configuration.automaticallyTrackedPages = configuration.automaticallyTrackedPages.filter { page in
-			defer { pageIndex += 1 }
+		#if !os(watchOS)
+			var pageIndex = 0
+			configuration.automaticallyTrackedPages = configuration.automaticallyTrackedPages.filter { page in
+				defer { pageIndex += 1 }
 
-			guard page.pageProperties.name?.nonEmpty != nil else {
-				problems.append("automaticallyTrackedPages[\(pageIndex)] must not be empty")
-				return false
+				guard page.pageProperties.name?.nonEmpty != nil else {
+					problems.append("automaticallyTrackedPages[\(pageIndex)] must not be empty")
+					return false
+				}
+
+				return true
 			}
-
-			return true
-		}
+		#endif
 
 		func checkProperty<Value: Comparable>(name: String, value: Value, allowedValues: ClosedInterval<Value>) -> Value {
 			guard !allowedValues.contains(value) else {
@@ -941,21 +1003,24 @@ extension DefaultTracker: RequestManager.Delegate {
 
 		saveRequestQueue()
 
-		if requestManager.queueSize == 0 {
-			if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
-				application.endBackgroundTask(backgroundTaskIdentifier)
-				backgroundTaskIdentifier = UIBackgroundTaskInvalid
-			}
+		#if !os(watchOS)
+			if requestManager.queueSize == 0 {
+				if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
+					application.endBackgroundTask(backgroundTaskIdentifier)
+					backgroundTaskIdentifier = UIBackgroundTaskInvalid
+				}
 
-			if application.applicationState != .Active {
-				stopRequestManager()
+				if application.applicationState != .Active {
+					stopRequestManager()
+				}
 			}
-		}
+		#endif
 	}
 }
 
 
 
+#if !os(watchOS)
 private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHandler, PageViewEventHandler {
 
 	private var trackers = [DefaultTracker]()
@@ -996,6 +1061,7 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 		broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
 	}
 }
+#endif
 
 
 

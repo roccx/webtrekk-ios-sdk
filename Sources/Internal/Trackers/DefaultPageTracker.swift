@@ -1,4 +1,6 @@
-import AVFoundation
+#if !os(watchOS)
+	import AVFoundation
+#endif
 
 
 internal final class DefaultPageTracker: PageTracker {
@@ -53,6 +55,7 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
+	#if !os(watchOS)
 	internal func trackMedia(mediaName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker {
 		checkIsOnMainThread()
 
@@ -61,6 +64,7 @@ internal final class DefaultPageTracker: PageTracker {
 
 		return tracker
 	}
+	#endif
 
 
 	internal func trackPageView() {

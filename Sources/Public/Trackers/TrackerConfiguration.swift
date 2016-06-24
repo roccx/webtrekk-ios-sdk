@@ -9,12 +9,9 @@ public struct TrackerConfiguration {
 	public static let allowedSessionTimeoutIntervals: ClosedInterval<NSTimeInterval> = 0 ... .infinity
 	public static let allowedVersions: ClosedInterval<Int> = 1 ... .max
 
-	public var automaticallyTrackedPages = [Page]()
 	public var automaticallyTracksAdvertisingId = true
 	public var automaticallyTracksAppUpdates = true
 	public var automaticallyTracksAppVersion = true
-	public var automaticallyTracksConnectionType = true
-	public var automaticallyTracksInterfaceOrientation = true
 	public var automaticallyTracksRequestQueueSize = true
 	public var configurationUpdateUrl: NSURL? = nil
 	public var maximumSendDelay = NSTimeInterval(5 * 60)
@@ -25,6 +22,12 @@ public struct TrackerConfiguration {
 	public var version = 1
 	public var webtrekkId: String
 
+	#if !os(watchOS)
+	public var automaticallyTrackedPages = [Page]()
+	public var automaticallyTracksConnectionType = true
+	public var automaticallyTracksInterfaceOrientation = true
+	#endif
+
 
 	public init(webtrekkId: String, serverUrl: NSURL) {
 		self.serverUrl = serverUrl
@@ -32,12 +35,15 @@ public struct TrackerConfiguration {
 	}
 
 
+	#if !os(watchOS)
 	internal func automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName: String) -> Page? {
 		return automaticallyTrackedPages.firstMatching({ $0.matches(viewControllerTypeName: viewControllerTypeName) })
 	}
+	#endif
 
 
-	
+
+	#if !os(watchOS)
 	public struct Page {
 
 		public var customProperties: [String : String]
@@ -60,4 +66,5 @@ public struct TrackerConfiguration {
 			return viewControllerTypeNamePattern.rangeOfFirstMatchInString(viewControllerTypeName, options: [], range: NSRange(forString: viewControllerTypeName)).location != NSNotFound
 		}
 	}
+	#endif
 }

@@ -1,16 +1,25 @@
-platform :ios, '8.0'
 use_frameworks!
 
 install! 'cocoapods', :share_schemes_for_development_pods => false
 
-target 'Automatic Tracking Example'
-target 'Manual Tracking Example'
+pod 'Webtrekk', :path => '..'
 
-target 'Tests' do
-	# workaround for https://github.com/CocoaPods/CocoaPods/issues/5562
-	pod 'Webtrekk', :path => '..'
+abstract_target 'iOS' do
+	platform :ios, '8.0'
 
-	inherit! :search_paths
+	target 'Automatic Tracking Example'
+	target 'Manual Tracking Example'
+
+	target 'Tests' do
+		inherit! :search_paths
+
+		# workaround for https://github.com/CocoaPods/CocoaPods/issues/5562
+		pod 'Webtrekk', :path => '..'
+	end
 end
 
-pod 'Webtrekk', :path => '..'
+#abstract_target 'watchOS' do
+#	platform :watchos, '2.0'
+#
+#	target 'WatchKit Extension'
+#end

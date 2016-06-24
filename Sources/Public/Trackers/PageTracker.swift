@@ -1,4 +1,6 @@
-import AVFoundation
+#if !os(watchOS)
+	import AVFoundation
+#endif
 
 
 public protocol PageTracker: class {
@@ -18,7 +20,9 @@ public protocol PageTracker: class {
 	@warn_unused_result
 	func trackMedia (mediaName: String) -> MediaTracker
 
+	#if !os(watchOS)
 	func trackMedia (mediaName: String, byAttachingToPlayer player: AVPlayer) -> MediaTracker
+	#endif
 
 	func trackPageView ()
 }
