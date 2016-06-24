@@ -122,6 +122,99 @@ The second code snippet shows the integration using the Webtrekk instace directl
 }
 ```
 
+Configuration XML
+=================
+
+A Configuration XML contains every option for a Webtrekk Tracker and offers a simple possibility to setup you Webtrekk instance. The Configuration XML is even used to integrate a remote configuation option for the Webtrekk instance
+
+Minimal
+-------
+
+A Configuration XML consist of at least three parameters: 'version', 'trackDomain' and 'trackId'
+
+```XML
+<?xml version="1.0" encoding="utf-8"?>
+<webtrekkConfiguration>
+	<!-- configuation file version -->
+	<version>1</version>
+
+	<!-- server to send tracking events to -->
+	<trackDomain>https://q3.webtrekk.net</trackDomain>
+
+	<!-- Webtrekk customer id -->
+	<trackId>289053685367929</trackId>
+</webtrekkConfiguration>
+```
+
+Optional Options
+----------------
+
+Addition to be able to configure the minimal options for a Webtrekk Tracker the Configuration XMl opens the possibility to change other options too.
+
+| Option                   | Description |
+|--------------------------|-------------|
+| `sampling`               |             |
+| `sendDelay`              |             |
+| `sessionTimeoutInterval` |             |
+| `maxRequests`            | s           |
+
+```xml
+<!-- measure only every Nth user (0 to disable) -->
+	<sampling>0</sampling>
+	<!-- maximum delay after an event occurred before sending it to the server (in seconds) -->
+	<sendDelay>300</sendDelay>
+	<!-- minimum duration the app has to be in the background (or terminated) before starting a new session -->
+	<sessionTimeoutInterval>1800</sessionTimeoutInterval>
+	<!-- maximum number of events to keep in the queue while there is no internet connection -->
+	<maxRequests>1000</maxRequests>
+	<!-- automatically download updated versions of this configuration file (empty to disable updates) -->
+	<configurationUpdateUrl>https://your.domain/webtrekk.xml</configurationUpdateUrl>
+```
+
+Remote Configuration
+--------------------
+
+The Configuration XML also yields the option to reload a newer Configuration XML from a remote Url. A remotely saved Configuration XML needs to be valid against the definition, has a higher 'version' and the same 'trackId' as the currently used Configuration XML.
+
+Automatic Tracking
+------------------
+
+To use the automatic Tracking feature the Configuration XML contains options to enable or disable different aspects for tracking.
+
+```XML
+<!-- automatically track various information -->
+<automaticTracking>
+  <advertisingIdentifier>true</advertisingIdentifier>
+  <appUpdates>true</appUpdates>
+  <appVersion>true</appVersion>
+  <connectionType>true</connectionType>
+  <interfaceOrientation>true</interfaceOrientation>
+  <requestQueueSize>true</requestQueueSize>
+</automaticTracking>
+```
+
+### Automatic Page Tracking
+
+To make use of the automatic page view tracking of the Webtrekk SDK the Configuration XML offers the possibility to configure the screens which should be tracked. The code snippet below demonstrates a simple case and a more detailed case where instead of a pure String a RegularExpression is used and some properties are set.
+
+```XML
+<automaticTracking>
+  <pages>
+    <page viewControllerType="ProductListViewController">
+      <pageProperties name="Product List"/>
+    </page>
+
+    <page viewControllerType="/.*\.ProductViewController/">
+      <pageProperties name="Product Details">
+        <details index1="Blue Variant" index2="Media"/>
+      </pageProperties>
+      <customProperties myProperty="myValue" anotherProperty="anotherValue"/>
+    </page>
+  </pages>
+</automaticTracking>
+
+```
+
 SSL Notice
 ==========
 
