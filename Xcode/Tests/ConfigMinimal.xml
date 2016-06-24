@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<webtrekkConfiguration>
+	<!-- configuation file version -->
+	<version>1</version>
+
+	<!-- server to send tracking events to -->
+	<trackDomain>https://q3.webtrekk.net</trackDomain>
+
+	<!-- Webtrekk customer id -->
+	<trackId>289053685367929</trackId>
+</webtrekkConfiguration>
