@@ -76,7 +76,11 @@ internal final class DefaultTracker: Tracker {
 
 
 	internal func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
-		NSTimer.scheduledTimerWithTimeInterval(10) {
+		NSTimer.scheduledTimerWithTimeInterval(5) {
+			self.requestManager.sendAllRequests()
+		}
+
+		NSTimer.scheduledTimerWithTimeInterval(15) {
 			self.updateConfiguration()
 		}
 	}
@@ -282,7 +286,6 @@ internal final class DefaultTracker: Tracker {
 
 	
 	private func setUp() {
-		setUpRequestManager()
 		setUpObservers()
 
 		updateAutomaticTracking()
@@ -297,13 +300,6 @@ internal final class DefaultTracker: Tracker {
 		}
 		applicationWillResignActiveObserver = notificationCenter.addObserverForName(UIApplicationWillResignActiveNotification, object: nil, queue: nil) { [weak self] _ in
 			self?.applicationWillResignActive()
-		}
-	}
-
-
-	private func setUpRequestManager() {
-		NSTimer.scheduledTimerWithTimeInterval(5) {
-			self.requestManager.sendAllRequests()
 		}
 	}
 
