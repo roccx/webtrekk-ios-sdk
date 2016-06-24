@@ -22,3 +22,11 @@ public protocol PageTracker: class {
 
 	func trackPageView ()
 }
+
+
+public extension PageTracker {
+
+	public func trackAction(actionName: String) {
+		trackAction(ActionEvent(actionProperties: ActionProperties(name: actionName), pageProperties: pageProperties))
+	}
+}

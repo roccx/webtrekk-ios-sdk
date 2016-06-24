@@ -519,11 +519,6 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	internal func trackAction(actionName: String, inPage pageName: String) {
-		trackAction(ActionEvent(actionProperties: ActionProperties(name: actionName), pageProperties: PageProperties(name: pageName)))
-	}
-
-
 	internal func trackAction(event: ActionEvent) {
 		handleEvent(event)
 	}
@@ -551,11 +546,6 @@ internal final class DefaultTracker: Tracker {
 	@warn_unused_result
 	internal func trackPage(pageName: String) -> PageTracker {
 		return DefaultPageTracker(handler: self, pageName: pageName)
-	}
-
-
-	internal func trackPageView(pageName: String) {
-		trackPageView(PageViewEvent(pageProperties: PageProperties(name: pageName)))
 	}
 
 

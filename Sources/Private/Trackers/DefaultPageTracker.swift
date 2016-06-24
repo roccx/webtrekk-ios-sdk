@@ -27,11 +27,6 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
-	internal func trackAction(actionName: String) {
-		trackAction(ActionEvent(actionProperties: ActionProperties(name: actionName), pageProperties: pageProperties))
-	}
-
-
 	internal func trackAction(event: ActionEvent) {
 		handleEvent(event)
 	}

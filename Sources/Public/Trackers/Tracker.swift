@@ -17,8 +17,6 @@ public protocol Tracker: class {
 
 	func sendPendingEvents ()
 
-	func trackAction (actionName: String, inPage pageName: String)
-
 	func trackAction (event: ActionEvent)
 
 	func trackMedia (event: MediaEvent)
@@ -31,7 +29,18 @@ public protocol Tracker: class {
 	@warn_unused_result
 	func trackPage (pageName: String) -> PageTracker
 
-	func trackPageView (pageName: String)
-
 	func trackPageView (event: PageViewEvent)
+}
+
+
+public extension Tracker {
+
+	public func trackAction (actionName: String, inPage pageName: String) {
+		trackAction(ActionEvent(actionProperties: ActionProperties(name: actionName), pageProperties: PageProperties(name: pageName)))
+	}
+
+
+	public func trackPageView (pageName: String) {
+		trackPageView(PageViewEvent(pageProperties: PageProperties(name: pageName)))
+	}
 }
