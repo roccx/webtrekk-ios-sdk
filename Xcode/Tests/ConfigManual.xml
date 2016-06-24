@@ -32,6 +32,5 @@
 		<connectionType>false</connectionType>
 		<eventQueueSize>false</eventQueueSize>
 		<interfaceOrientation>false</interfaceOrientation>
-		<pages></pages>
 	</automaticTracking>
 </webtrekkConfiguration>
