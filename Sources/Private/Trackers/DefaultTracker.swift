@@ -141,8 +141,8 @@ internal final class DefaultTracker: Tracker {
 			userAgent:    DefaultTracker.userAgent
 		)
 
-		let screenBounds = UIScreen.mainScreen().bounds
-		requestProperties.screenSize = (width: Int(screenBounds.width), height: Int(screenBounds.height))
+		let screen = UIScreen.mainScreen()
+		requestProperties.screenSize = (width: Int(screen.bounds.width * screen.scale), height: Int(screen.bounds.height * screen.scale))
 
 		if isFirstEventAfterAppUpdate && configuration.automaticallyTracksAppUpdates {
 			requestProperties.isFirstEventAfterAppUpdate = true
