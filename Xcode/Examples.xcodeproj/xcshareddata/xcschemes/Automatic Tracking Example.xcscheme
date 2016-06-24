@@ -28,7 +28,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3BBD611C4AB443F90DCD29C5A99AA953"
+               BlueprintIdentifier = "E85960DDD7612AA9A99C84D3332ED30D"
                BuildableName = "Webtrekk.framework"
                BlueprintName = "Webtrekk"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">

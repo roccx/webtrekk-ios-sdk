@@ -64,13 +64,6 @@
 			remoteGlobalIDString = 496F3BE51D1DD1630003D800;
 			remoteInfo = "WatchKit Extension";
 		};
-		496F3BFA1D1DD1630003D800 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 498683051BE404F7001DCBC7 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 496F3BD91D1DD1630003D800;
-			remoteInfo = "WatchKit App";
-		};
 		B71835361D1D3DCC003279C3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 498683051BE404F7001DCBC7 /* Project object */;
@@ -423,12 +416,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 496F3C011D1DD1630003D800 /* Build configuration list for PBXNativeTarget "WatchKit Extension" */;
 			buildPhases = (
-				B22AA837349CDB02C1F7514C /* [CP] Check Pods Manifest.lock */,
 				496F3BE21D1DD1630003D800 /* Sources */,
 				496F3BE31D1DD1630003D800 /* Frameworks */,
 				496F3BE41D1DD1630003D800 /* Resources */,
-				64382B18B49BDDA92D72557F /* [CP] Embed Pods Frameworks */,
-				DA1551EEF2A556272F9EF90F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -454,7 +444,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				496F3BFB1D1DD1630003D800 /* PBXTargetDependency */,
 			);
 			name = "Automatic Tracking Example";
 			productName = Xcode;
@@ -674,21 +663,6 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		64382B18B49BDDA92D72557F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-watchOS-WatchKit Extension/Pods-watchOS-WatchKit Extension-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7AA245E7FE45E8C9252D91E1 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -717,36 +691,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B22AA837349CDB02C1F7514C /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		DA1551EEF2A556272F9EF90F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-watchOS-WatchKit Extension/Pods-watchOS-WatchKit Extension-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E6E5DDF324AA8C67689405C6 /* [CP] Check Pods Manifest.lock */ = {
@@ -827,11 +771,6 @@
 			isa = PBXTargetDependency;
 			target = 496F3BE51D1DD1630003D800 /* WatchKit Extension */;
 			targetProxy = 496F3BE81D1DD1630003D800 /* PBXContainerItemProxy */;
-		};
-		496F3BFB1D1DD1630003D800 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 496F3BD91D1DD1630003D800 /* WatchKit App */;
-			targetProxy = 496F3BFA1D1DD1630003D800 /* PBXContainerItemProxy */;
 		};
 		B71835371D1D3DCC003279C3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
