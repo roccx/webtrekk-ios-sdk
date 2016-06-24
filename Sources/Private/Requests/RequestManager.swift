@@ -12,6 +12,7 @@ internal final class RequestManager {
 	private let reachability: Reachability?
 	private var sendNextRequestTimer: NSTimer?
 	private var sendingInterruptedBecauseUnreachable = false
+	private let urlSession: NSURLSession
 
 	internal private(set) var queue = [NSURL]()
 	internal private(set) var started = false
@@ -23,6 +24,7 @@ internal final class RequestManager {
 		checkIsOnMainThread()
 
 		self.queueLimit = queueLimit
+		self.urlSession = RequestManager.createUrlSession()
 
 		do {
 			reachability = try Reachability.reachabilityForInternetConnection()
@@ -70,6 +72,21 @@ internal final class RequestManager {
 	}
 
 
+	internal static func createUrlSession() -> NSURLSession {
+		let configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
+		configuration.HTTPCookieAcceptPolicy = .Never
+		configuration.HTTPShouldSetCookies = false
+		configuration.URLCache = nil
+		configuration.URLCredentialStorage = nil
+		configuration.requestCachePolicy = .ReloadIgnoringLocalAndRemoteCacheData
+
+		let session = NSURLSession(configuration: configuration, delegate: nil, delegateQueue: NSOperationQueue.mainQueue())
+		session.sessionDescription = "Webtrekk Tracking"
+
+		return session
+	}
+
+
 	internal func enqueueRequest(request: NSURL, maximumDelay: NSTimeInterval) {
 		checkIsOnMainThread()
 
@@ -90,7 +107,7 @@ internal final class RequestManager {
 	internal func fetch(url url: NSURL, completion: (NSData?, Error?) -> Void) -> NSURLSessionDataTask {
 		checkIsOnMainThread()
 
-		let task = NSURLSession.defaultSession().dataTaskWithURL(url) { data, response, error in
+		let task = urlSession.dataTaskWithURL(url) { data, response, error in
 			if let error = error {
 				let retryable: Bool
 				let isCompletelyOffline: Bool
