@@ -423,7 +423,7 @@ private extension MediaProperties {
 			items.append(name: "mut", value: soundIsMuted ? "1" : "0")
 		}
 		if let soundVolume = soundVolume {
-			items.append(name: "mut", value: "\(Int64(soundVolume * 100))")
+			items.append(name: "vol", value: "\(Int64(soundVolume * 100))")
 		}
 		items.append(name: "x", value: "\(Int64(timestamp.timeIntervalSince1970 * 1000))")
 		return items

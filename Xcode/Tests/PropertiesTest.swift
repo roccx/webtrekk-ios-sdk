@@ -11,6 +11,13 @@ internal class ActionPropertiesTest: XCTestCase {
 			return
 		}
 
+		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
+			XCTFail("Could not convert '\(url)' to NSURLComponents.")
+			return
+		}
+
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "ct", value: "action-test"))
+
 		XCTAssert(url.absoluteString.containsString("action-test"))
 	}
 
@@ -21,8 +28,14 @@ internal class ActionPropertiesTest: XCTestCase {
 			return
 		}
 
-		XCTAssertUrl(url, contains: "Rund")
-		XCTAssertUrl(url, contains: "leicht Braun")
+		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
+			XCTFail("Could not convert '\(url)' to NSURLComponents.")
+			return
+		}
+
+		for detail in actionProperties.details! {
+			XCTAssertUrl(urlComponents, containsIndexedProperty: detail, name: "ck")
+		}
 
 	}
 
@@ -32,7 +45,6 @@ internal class ActionPropertiesTest: XCTestCase {
 	}
 	
 }
-
 
 
 internal class AdvertisementPropertiesTest: XCTestCase {
@@ -45,10 +57,16 @@ internal class AdvertisementPropertiesTest: XCTestCase {
 			return
 		}
 
-		XCTAssertUrl(url, contains: "wt_mc=1234567")
+		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
+			XCTFail("Could not convert '\(url)' to NSURLComponents.")
+			return
+		}
 
-		XCTAssertUrl(url, contains: "Video")
-		XCTAssertUrl(url, contains: "Bräunungscreme")
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mc", value: "wt_mc=1234567"))
+
+		for detail in advertisementProperties.details! {
+			XCTAssertUrl(urlComponents, containsIndexedProperty: detail, name: "cc")
+		}
 	}
 
 
@@ -69,17 +87,14 @@ internal class CustomProperties: XCTestCase {
 			XCTFail()
 			return
 		}
+		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
+			XCTFail("Could not convert '\(url)' to NSURLComponents.")
+			return
+		}
 
-		XCTAssertUrl(url, contains: "kl1")
-		XCTAssertUrl(url, contains: "kl2")
-		XCTAssertUrl(url, contains: "kl3")
-		XCTAssertUrl(url, contains: "Tiere")
-		XCTAssertUrl(url, contains: "Hund & Katze")
-		XCTAssertUrl(url, contains: "Futter")
-
-		XCTAssertUrl(url, contains: "llv")
-		XCTAssertUrl(url, contains: "Ungültig")
-
+		for detail in customProperties {
+			XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: detail.0, value: detail.1))
+		}
 	}
 
 	internal func urlFromCustomProperties(customProperties: [String: String]) -> NSURL? {
@@ -95,6 +110,7 @@ internal class EcommercePropertiesTest: XCTestCase {
 	internal func test() {
 		let ecommerceProperties = EcommerceProperties(currencyCode: "EUR",
 		                                              details: [IndexedProperty(index: 1, value: "Video"), IndexedProperty(index: 2, value: "Rutschmitteltestverfahren XI")],
+		                                              orderNumber: "1234-ABCD",
 		                                              products: nil,
 		                                              status: .viewed,
 		                                              totalValue: "10000000",
@@ -104,12 +120,20 @@ internal class EcommercePropertiesTest: XCTestCase {
 			return
 		}
 
-		XCTAssertUrl(url, contains: "EUR")
-		XCTAssertUrl(url, contains: "view")
-		XCTAssertUrl(url, contains: "10000000")
-		XCTAssertUrl(url, contains: "0.01")
-		XCTAssertUrl(url, contains: "Video")
-		XCTAssertUrl(url, contains: "Rutschmitteltestverfahren XI")
+		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
+			XCTFail("Could not convert '\(url)' to NSURLComponents.")
+			return
+		}
+
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "cr", value: "EUR"))
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "oi", value: "1234-ABCD"))
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "st", value: "view"))
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "ov", value: "10000000"))
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "cb563", value: "0.01"))
+		
+		for detail in ecommerceProperties.details! {
+			XCTAssertUrl(urlComponents, containsIndexedProperty: detail, name: "cb")
+		}
 	}
 
 	internal func urlFromEcommerceProperties(ecommerceProperties: EcommerceProperties) -> NSURL? {
@@ -178,7 +202,12 @@ internal class MediaPropertiesTest: XCTestCase {
 			return
 		}
 
-		XCTAssertUrl(url, contains: "media-test")
+		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
+			XCTFail("Could not convert '\(url)' to NSURLComponents.")
+			return
+		}
+
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mi", value: "media-test"))
 	}
 
 	internal func testDetails() {
@@ -196,13 +225,22 @@ internal class MediaPropertiesTest: XCTestCase {
 			return
 		}
 
-		XCTAssertUrl(url, contains: "\(400000.1)")
-		XCTAssertUrl(url, contains: "\(3 * 60 + 15)")
-		XCTAssertUrl(url, contains: "Herren")
-		XCTAssertUrl(url, contains: "Schuhe und Sandalen")
-		XCTAssertUrl(url, contains: "\(2 * 60 - 15)")
-		XCTAssertUrl(url, contains: "mut=0")
-		XCTAssertUrl(url, contains: "\(75)")
+		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
+			XCTFail("Could not convert '\(url)' to NSURLComponents.")
+			return
+		}
+
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mi", value: "media-test"))
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "bw", value: "\(Int(400000.1))"))
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mt2", value: "\(3 * 60 + 15)"))
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mt1", value: "\(2 * 60 - 15)"))
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mut", value: "0"))
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "vol", value: "75"))
+		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mk", value: "play"))
+
+		for group in mediaProperties.groups! {
+			XCTAssertUrl(urlComponents, containsIndexedProperty: group, name: "mg")
+		}
 	}
 
 
@@ -233,11 +271,18 @@ internal class PagePropertiesTest: XCTestCase {
 			return
 		}
 
-		XCTAssertUrl(url, contains: "Small")
-		XCTAssertUrl(url, contains: "Schwarz Braun")
+		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
+			XCTFail("Could not convert '\(url)' to NSURLComponents.")
+			return
+		}
 
-		XCTAssertUrl(url, contains: "Herren")
-		XCTAssertUrl(url, contains: "Schuhe und Sandalen")
+		for detail in pageProperties.details! {
+			XCTAssertUrl(urlComponents, containsIndexedProperty: detail, name: "cp")
+		}
+
+		for group in pageProperties.groups! {
+			XCTAssertUrl(urlComponents, containsIndexedProperty: group, name: "cg")
+		}
 	}
 
 
@@ -312,9 +357,26 @@ private extension XCTestCase {
 	}
 }
 
-private func XCTAssertUrl(url: NSURL, contains value: String) -> Bool {
+private func XCTAssertUrl(url: NSURL, contains value: String) {
 	guard let decoded = url.absoluteString.stringByRemovingPercentEncoding else {
-		return url.absoluteString.containsString(value)
+		XCTAssertTrue(url.absoluteString.containsString(value))
+		return
 	}
-	return decoded.containsString(value)
+	XCTAssertTrue(decoded.containsString(value))
+}
+
+private func XCTAssertUrl(url: NSURLComponents, containsQueryItem queryItem: NSURLQueryItem) {
+	guard let queryItems = url.queryItems else {
+		XCTFail("The '\(url)' has no query Items to compare against.")
+		return
+	}
+	for item in queryItems where item.name == queryItem.name && item.value == queryItem.value {
+		XCTAssertTrue(true)
+		return
+	}
+	XCTFail("Could not find a NSURLQueryItem with name:'\(queryItem.name)' and value:'\(queryItem.value)' within '\(url)'")
+}
+
+private func XCTAssertUrl(url: NSURLComponents, containsIndexedProperty property: IndexedProperty, name: String) {
+	XCTAssertUrl(url, containsQueryItem: NSURLQueryItem(name: "\(name)\(property.index)", value: property.value))
 }

@@ -12,6 +12,7 @@ public struct EcommerceProperties {
 	public init(
 		currencyCode: String? = nil,
 		details: Set<IndexedProperty>? = nil,
+		orderNumber: String? = nil,
 		products: [Product]? = nil,
 		status: Status? = nil,
 		totalValue: String? = nil,
@@ -19,6 +20,7 @@ public struct EcommerceProperties {
 	) {
 		self.currencyCode = currencyCode
 		self.details = details
+		self.orderNumber = orderNumber
 		self.products = products
 		self.status = status
 		self.totalValue = totalValue
