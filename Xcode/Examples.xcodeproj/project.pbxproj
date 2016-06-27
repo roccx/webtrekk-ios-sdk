@@ -18,7 +18,6 @@
 		4951621E1D1DFBE80006A82D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495161E71D1DFB9C0006A82D /* Main.storyboard */; };
 		495162201D1DFBE80006A82D /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495161E91D1DFB9C0006A82D /* Video.mp4 */; };
 		495162211D1DFBE80006A82D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495161E61D1DFB9C0006A82D /* LaunchScreen.storyboard */; };
-		4951622E1D1DFC1E0006A82D /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951622D1D1DFC1E0006A82D /* Tests.swift */; };
 		495162351D1DFC590006A82D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161F21D1DFB9C0006A82D /* AppDelegate.swift */; };
 		495162361D1DFC590006A82D /* ProductListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161F31D1DFB9C0006A82D /* ProductListViewController.swift */; };
 		495162371D1DFC590006A82D /* ProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161F41D1DFB9C0006A82D /* ProductViewController.swift */; };
@@ -84,8 +83,6 @@
 		4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
 		495162251D1DFBE80006A82D /* Manual Tracking Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Manual Tracking Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4951622B1D1DFC1E0006A82D /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		4951622D1D1DFC1E0006A82D /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		4951622F1D1DFC1E0006A82D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Manual_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Automatic_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,7 +121,6 @@
 		495161AE1D1DFB0F0006A82D = {
 			isa = PBXGroup;
 			children = (
-				4951622C1D1DFC1E0006A82D /* Tests */,
 				495161B81D1DFB0F0006A82D /* Products */,
 				495161E41D1DFB9C0006A82D /* Resources */,
 				495161EA1D1DFB9C0006A82D /* Sources */,
@@ -225,15 +221,6 @@
 				4951620A1D1DFB9C0006A82D /* Info.plist */,
 				4951620B1D1DFB9C0006A82D /* PropertiesTest.swift */,
 				4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
-		4951622C1D1DFC1E0006A82D /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				4951622D1D1DFC1E0006A82D /* Tests.swift */,
-				4951622F1D1DFC1E0006A82D /* Info.plist */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -566,7 +553,6 @@
 				4951623E1D1DFC5F0006A82D /* XmlParserTest.swift in Sources */,
 				4951623D1D1DFC5F0006A82D /* PropertiesTest.swift in Sources */,
 				4951623C1D1DFC5F0006A82D /* EventTest.swift in Sources */,
-				4951622E1D1DFC1E0006A82D /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
