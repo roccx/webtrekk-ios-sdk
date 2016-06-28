@@ -27,6 +27,7 @@
 	<!-- automatically track various information -->
 	<automaticTracking>
 		<advertisingIdentifier>false</advertisingIdentifier>
+		<advertisingOptOut>false</advertisingOptOut>
 		<appUpdates>false</appUpdates>
 		<appVersion>false</appVersion>
 		<connectionType>false</connectionType>

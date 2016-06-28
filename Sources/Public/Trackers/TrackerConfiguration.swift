@@ -10,6 +10,7 @@ public struct TrackerConfiguration {
 	public static let allowedVersions: ClosedInterval<Int> = 1 ... .max
 
 	public var automaticallyTracksAdvertisingId = true
+	public var automaticallyTracksAdvertisingOptOut = true
 	public var automaticallyTracksAppUpdates = true
 	public var automaticallyTracksAppVersion = true
 	public var automaticallyTracksRequestQueueSize = true

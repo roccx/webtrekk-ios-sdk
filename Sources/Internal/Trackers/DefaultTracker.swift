@@ -144,13 +144,27 @@ internal final class DefaultTracker: Tracker {
 
 		guard
 			let identifierManagerClass = unsafeBitCast(NSClassFromString("ASIdentifierManager"), Optional<ASIdentifierManager.Type>.self),
-			let manager = identifierManagerClass.sharedManager() where manager.advertisingTrackingEnabled,
+			let manager = identifierManagerClass.sharedManager(),
 			let advertisingIdentifier = manager.advertisingIdentifier
 		else {
 			return nil
 		}
 
 		return advertisingIdentifier
+	}
+
+
+	private var advertisingOptOut: Bool? {
+		checkIsOnMainThread()
+
+		guard
+			let identifierManagerClass = unsafeBitCast(NSClassFromString("ASIdentifierManager"), Optional<ASIdentifierManager.Type>.self),
+			let manager = identifierManagerClass.sharedManager()
+			else {
+				return nil
+		}
+
+		return !manager.advertisingTrackingEnabled
 	}
 
 
@@ -324,6 +338,9 @@ internal final class DefaultTracker: Tracker {
 		}
 		if configuration.automaticallyTracksAdvertisingId {
 			requestProperties.advertisingId = advertisingIdentifier
+		}
+		if configuration.automaticallyTracksAdvertisingOptOut {
+			requestProperties.advertisingOptOut = advertisingOptOut
 		}
 		if configuration.automaticallyTracksAppVersion {
 			requestProperties.appVersion = Environment.appVersion

@@ -45,6 +45,7 @@ internal class XmlParserAutomaticTest: XCTestCase {
 			XCTAssertEqual(url.absoluteString, "https://your.domain/webtrekk.xml")
 		}
 		XCTAssertEqual(config.automaticallyTracksAdvertisingId, true)
+		XCTAssertEqual(config.automaticallyTracksAdvertisingOptOut, true)
 		XCTAssertEqual(config.automaticallyTracksAppUpdates, true)
 		XCTAssertEqual(config.automaticallyTracksAppVersion, true)
 		XCTAssertEqual(config.automaticallyTracksConnectionType, true)
@@ -109,6 +110,7 @@ internal class XmlParserManualTest: XCTestCase {
 		XCTAssertNil(config.configurationUpdateUrl)
 		XCTAssert(config.automaticallyTrackedPages.isEmpty)
 		XCTAssertEqual(config.automaticallyTracksAdvertisingId, false)
+		XCTAssertEqual(config.automaticallyTracksAdvertisingOptOut, false)
 		XCTAssertEqual(config.automaticallyTracksAppUpdates, false)
 		XCTAssertEqual(config.automaticallyTracksAppVersion, false)
 		XCTAssertEqual(config.automaticallyTracksConnectionType, false)
@@ -158,6 +160,7 @@ internal class XmlParserMinimalTest: XCTestCase {
 		XCTAssertNil(config.configurationUpdateUrl)
 		XCTAssert(config.automaticallyTrackedPages.isEmpty)
 		XCTAssertEqual(config.automaticallyTracksAdvertisingId, true)
+		XCTAssertEqual(config.automaticallyTracksAdvertisingOptOut, true)
 		XCTAssertEqual(config.automaticallyTracksAppUpdates, true)
 		XCTAssertEqual(config.automaticallyTracksAppVersion, true)
 		XCTAssertEqual(config.automaticallyTracksConnectionType, true)

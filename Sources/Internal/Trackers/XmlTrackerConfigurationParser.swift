@@ -15,6 +15,7 @@ private class Parser: NSObject {
 	private lazy var indexedPropertyAttributeNamePattern = try! NSRegularExpression(pattern: "^index(\\d+)$", options: [])
 
 	private var automaticallyTracksAdvertisingId: Bool?
+	private var automaticallyTracksAdvertisingOptOut: Bool?
 	private var automaticallyTracksAppUpdates: Bool?
 	private var automaticallyTracksAppVersion: Bool?
 	private var automaticallyTracksRequestQueueSize: Bool?
@@ -73,6 +74,9 @@ private class Parser: NSObject {
 
 		if let automaticallyTracksAdvertisingId = automaticallyTracksAdvertisingId {
 			configuration.automaticallyTracksAdvertisingId = automaticallyTracksAdvertisingId
+		}
+		if let automaticallyTracksAdvertisingOptOut = automaticallyTracksAdvertisingOptOut {
+			configuration.automaticallyTracksAdvertisingOptOut = automaticallyTracksAdvertisingOptOut
 		}
 		if let automaticallyTracksAppUpdates = automaticallyTracksAppUpdates {
 			configuration.automaticallyTracksAppUpdates = automaticallyTracksAppUpdates
@@ -297,6 +301,7 @@ private class Parser: NSObject {
 	private func stateAfterStartingElementForAutomaticTracking(elementName elementName: String, attributes: [String: String]) -> State {
 		switch (elementName) {
 		case "advertisingIdentifier": return buildSimpleElementState(automaticallyTracksAdvertisingId)        { value in self.automaticallyTracksAdvertisingId = self.parseBool(value) }
+		case "advertisingOptOut":     return buildSimpleElementState(automaticallyTracksAdvertisingOptOut)    { value in self.automaticallyTracksAdvertisingOptOut = self.parseBool(value) }
 		case "appUpdates":            return buildSimpleElementState(automaticallyTracksAppUpdates)           { value in self.automaticallyTracksAppUpdates = self.parseBool(value) }
 		case "appVersion":            return buildSimpleElementState(automaticallyTracksAppVersion)           { value in self.automaticallyTracksAppVersion = self.parseBool(value) }
 		case "requestQueueSize":      return buildSimpleElementState(automaticallyTracksRequestQueueSize)     { value in self.automaticallyTracksRequestQueueSize = self.parseBool(value) }
