@@ -83,6 +83,8 @@
 		4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
 		495162251D1DFBE80006A82D /* Manual Tracking Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Manual Tracking Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4951622B1D1DFC1E0006A82D /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		497AAE311D22D2780094B8B4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		497AAE321D22D28A0094B8B4 /* Webtrekk.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = Webtrekk.podspec; path = ../Webtrekk.podspec; sourceTree = "<group>"; };
 		BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Manual_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Automatic_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,12 +123,14 @@
 		495161AE1D1DFB0F0006A82D = {
 			isa = PBXGroup;
 			children = (
+				A3DFB00630AF1B828E7E41A9 /* Frameworks */,
+				F6D5AB716B904C7CC4FFDE6C /* Pods */,
 				495161B81D1DFB0F0006A82D /* Products */,
 				495161E41D1DFB9C0006A82D /* Resources */,
 				495161EA1D1DFB9C0006A82D /* Sources */,
 				495162051D1DFB9C0006A82D /* Tests */,
-				F6D5AB716B904C7CC4FFDE6C /* Pods */,
-				A3DFB00630AF1B828E7E41A9 /* Frameworks */,
+				497AAE311D22D2780094B8B4 /* README.md */,
+				497AAE321D22D28A0094B8B4 /* Webtrekk.podspec */,
 			);
 			sourceTree = "<group>";
 		};

@@ -1,7 +1,8 @@
-About
-=====
+Webtrekk Tracking Library for Swift
+===================================
 
 The Webtrekk SDK allows you to track user activities, screen flow and media usage for an App. All data is send to the Webtrekk tracking system for further analysis.
+
 
 Requirements
 ============
@@ -14,6 +15,7 @@ Requirements
 
 Xcode 7.3+
 
+
 Installation
 ============
 
@@ -23,14 +25,9 @@ Using [CocoaPods](htttp://cocoapods.org) the installation of the Webtrekk SDK is
 pod 'Webtrekk'
 ```
 
-or for the newest version
 
-```ruby
-pod 'Webtrekk', :git => 'https://github.com/webtrekk/Webtrekk.git'
-```
-
-Usage - Basic
-=============
+Basic Usage
+===========
 
 ```swift
 import Webtrekk
@@ -48,6 +45,7 @@ let webtrekkTracker: Tracker = {
 	return WebtrekkTracking.tracker(configuration: configuration)
 }()
 ```
+
 
 Page View Tracking
 ------------------
@@ -213,7 +211,35 @@ Following properties are part of the migration.
 | `samplingState`  | previously stored samplingState                                   |
 | `unsentRequests` | previously saved unsent requests                                  |
 
+
 SSL
 ===
 
 As of iOS 9 Apple is more strictly enforcing the usage of the SSL for network connections. Webtrekk highly recommend and offers the usage of a valid serverUrl with SSL support. In case there is a need to circumvent this the App needs an exception entry within the `Info.plist` this and the regulation Apple bestows upon that are well documented within the [iOS Developer Library](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33)
+
+
+Examples & Unit Tests
+=====================
+
+The `Xcode` directory contains all files necessary to
+
+- manually build the library
+- run unit test
+- run examples
+
+```shell
+# install CocoaPods 1.0.1 or newer (unless you already did)
+sudo gem install cocoapods
+
+# clone this repository
+git clone https://bitbucket.org/widgetlabs/webtrekk-library.git && cd webtrekk-library
+
+# examples & tests are located in the directory 'Xcode' …
+cd Xcode
+
+# … and are set up with CocoaPods
+pod update
+
+# 'Examples.xcworkspace' is the file you'll use from now on
+open Examples.xcworkspace
+```
