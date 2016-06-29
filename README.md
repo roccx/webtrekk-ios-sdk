@@ -243,3 +243,29 @@ pod update
 # 'Examples.xcworkspace' is the file you'll use from now on
 open Examples.xcworkspace
 ```
+
+Project structur
+================
+
+```
+|_Module
+|_Sources                  [Webtrekk SDK]
+| |_Internal
+| | |_Event Handlers       [Handler Protocols]
+| | |_Requests             [URL Handling]
+| | |_Trackers             [Tracker Implementations]
+| | |_Utility              [Utils&Extensions]
+| |_Public
+| | |_Events               [Tracking Events]
+| | |_Properties           [Properties of Tracking Events]
+| | |_Trackers             [Tracker Protocols]
+| | |_Utility              [e.g Logger]
+|_Xcode                    [Demo/Tests]
+| |_Resources              [Storyboards, Media, Info.plist]
+| |_Sources                
+| | |_Automatic Tracking   
+| | |_Manual Tracking
+| | |_WatchKit App
+| | |_WatchKit Extension
+| |_Tests
+```
