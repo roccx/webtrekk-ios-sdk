@@ -40,13 +40,10 @@ internal final class RequestUrlBuilder {
 		parameters.append(name: "tz", value: "\(properties.timeZone.daylightSavingTimeOffset / 60 / 60)")
 		parameters.append(name: "X-WT-UA", value: properties.userAgent)
 
-		if properties.isFirstEventOfApp {
-			parameters.append(name: "one", value: "1")
-		}
 
-		if properties.isFirstEventOfSession {
-			parameters.append(name: "fns", value: "1")
-		}
+		parameters.append(name: "one", value: properties.isFirstEventOfApp ? "1" : "0")
+		parameters.append(name: "fns", value: properties.isFirstEventOfSession ? "1" : "0")
+
 
 		if let ipAddress = properties.ipAddress {
 			parameters.append(name: "X-WT-IP", value: ipAddress)
@@ -165,7 +162,7 @@ internal final class RequestUrlBuilder {
 
 		let p = "400,\(pageName),0,\(request.properties.screenSize?.width ?? 0)x\(request.properties.screenSize?.height ?? 0),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
 		parameters = [NSURLQueryItem(name: "p", value: p)] + parameters
-		parameters += [NSURLQueryItem(name: "eor", value: nil)]
+		parameters += [NSURLQueryItem(name: "eor", value: "1")]
 
 		guard let urlComponents = NSURLComponents(URL: baseUrl, resolvingAgainstBaseURL: true) else {
 			logError("Url could not be created from ServerUrl '\(serverUrl)' and WebtrekkId '\(webtrekkId)'.")
