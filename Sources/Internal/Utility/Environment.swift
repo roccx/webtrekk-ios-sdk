@@ -9,10 +9,7 @@ import UIKit
 internal struct Environment {
 
 	internal static let appVersion: String? = {
-		guard let shortVersion = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String, version = NSBundle.mainBundle().infoDictionary?["CFBundleVersion"] as? String else {
-			return nil
-		}
-		return "\(shortVersion).\(version)"
+		return NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
 	}()
 
 
