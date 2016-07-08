@@ -33,7 +33,7 @@ public struct TrackerConfiguration {
 	public var sessionTimeoutInterval = NSTimeInterval(30 * 60)
 	/** The version is used to compare the current configuration with a remote configuration and to decide whether there is an update for the configuration available. */
 	public var version = 1
-	/** */
+	/** The unique identifier of your webtrekk account. */
 	public var webtrekkId: String
 
 	#if !os(watchOS)

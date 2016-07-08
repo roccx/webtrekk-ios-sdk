@@ -76,6 +76,10 @@ internal final class RequestUrlBuilder {
 			}
 		}
 
+		if let appVersion = properties.appVersion {
+			parameters.append(name: "cs804", value: appVersion)
+		}
+
 		if let sessionDetails = properties.sessionDetails {
 			parameters += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
 		}
