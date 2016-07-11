@@ -132,7 +132,7 @@ Addition to be able to configure the minimal options for a Webtrekk Tracker the 
 |--------------------------|-------------|
 | `sampling`               |             |
 | `sendDelay`              |             |
-| `sessionTimeoutInterval` |             |
+| `resendOnStartEventTime` |             |
 | `maxRequests`            | s           |
 
 ```xml
@@ -141,7 +141,7 @@ Addition to be able to configure the minimal options for a Webtrekk Tracker the 
 	<!-- maximum delay after an event occurred before sending it to the server (in seconds) -->
 	<sendDelay>300</sendDelay>
 	<!-- minimum duration the app has to be in the background (or terminated) before starting a new session -->
-	<sessionTimeoutInterval>1800</sessionTimeoutInterval>
+	<resendOnStartEventTime>1800</resendOnStartEventTime>
 	<!-- maximum number of events to keep in the queue while there is no internet connection -->
 	<maxRequests>1000</maxRequests>
 	<!-- automatically download updated versions of this configuration file (empty to disable updates) -->

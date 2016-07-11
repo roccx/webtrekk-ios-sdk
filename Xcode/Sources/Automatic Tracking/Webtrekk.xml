@@ -16,7 +16,7 @@
 	<sendDelay>30</sendDelay>
 
 	<!-- minimum duration the app has to be in the background (or terminated) before starting a new session -->
-	<sessionTimeoutInterval>1800</sessionTimeoutInterval>
+	<resendOnStartEventTime>1800</resendOnStartEventTime>
 
 	<!-- maximum number of events to keep in the queue while there is no internet connection -->
 	<maxRequests>5000</maxRequests>

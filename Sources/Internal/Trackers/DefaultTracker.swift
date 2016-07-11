@@ -254,7 +254,7 @@ internal final class DefaultTracker: Tracker {
 	private func applicationWillEnterForeground() {
 		checkIsOnMainThread()
 
-		if let hibernationDate = defaults.dateForKey(DefaultsKeys.appHibernationDate) where -hibernationDate.timeIntervalSinceNow < configuration.sessionTimeoutInterval {
+		if let hibernationDate = defaults.dateForKey(DefaultsKeys.appHibernationDate) where -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
 			isFirstEventOfSession = false
 		}
 		else {
@@ -916,7 +916,7 @@ internal final class DefaultTracker: Tracker {
 		configuration.maximumSendDelay       = checkProperty("maximumSendDelay",       value: configuration.maximumSendDelay,       allowedValues: TrackerConfiguration.allowedMaximumSendDelays)
 		configuration.requestQueueLimit      = checkProperty("requestQueueLimit",      value: configuration.requestQueueLimit,      allowedValues: TrackerConfiguration.allowedRequestQueueLimits)
 		configuration.samplingRate           = checkProperty("samplingRate",           value: configuration.samplingRate,           allowedValues: TrackerConfiguration.allowedSamplingRates)
-		configuration.sessionTimeoutInterval = checkProperty("sessionTimeoutInterval", value: configuration.sessionTimeoutInterval, allowedValues: TrackerConfiguration.allowedSessionTimeoutIntervals)
+		configuration.resendOnStartEventTime = checkProperty("resendOnStartEventTime", value: configuration.resendOnStartEventTime, allowedValues: TrackerConfiguration.allowedResendOnStartEventTimes)
 		configuration.version                = checkProperty("version",                value: configuration.version,                allowedValues: TrackerConfiguration.allowedVersions)
 
 		if !problems.isEmpty {

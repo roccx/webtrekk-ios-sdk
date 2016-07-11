@@ -22,9 +22,9 @@ private class Parser: NSObject {
 	private var configurationUpdateUrl: NSURL?
 	private var maximumSendDelay: NSTimeInterval?
 	private var requestQueueLimit: Int?
+	private var resendOnStartEventTime: NSTimeInterval?
 	private var samplingRate: Int?
 	private var serverUrl: NSURL?
-	private var sessionTimeoutInterval: NSTimeInterval?
 	private var version: Int?
 	private var webtrekkId: String?
 
@@ -99,8 +99,8 @@ private class Parser: NSObject {
 		if let samplingRate = samplingRate {
 			configuration.samplingRate = samplingRate
 		}
-		if let sessionTimeoutInterval = sessionTimeoutInterval {
-			configuration.sessionTimeoutInterval = sessionTimeoutInterval
+		if let resendOnStartEventTime = resendOnStartEventTime {
+			configuration.resendOnStartEventTime = resendOnStartEventTime
 		}
 
 		#if !os(watchOS)
@@ -430,8 +430,14 @@ private class Parser: NSObject {
 		case "maxRequests":
 			return buildSimpleElementState(requestQueueLimit) { value in self.requestQueueLimit = self.parseInt(value, allowedRange: TrackerConfiguration.allowedRequestQueueLimits) }
 
+		case "resendOnStartEventTime":
+			return buildSimpleElementState(resendOnStartEventTime) { value in self.resendOnStartEventTime = self.parseDouble(value, allowedRange: TrackerConfiguration.allowedResendOnStartEventTimes) }
+
 		case "sampling":
 			return buildSimpleElementState(samplingRate) { value in self.samplingRate = self.parseInt(value, allowedRange: TrackerConfiguration.allowedSamplingRates) }
+
+		case "sendDelay":
+			return buildSimpleElementState(maximumSendDelay) { value in self.maximumSendDelay = self.parseDouble(value, allowedRange: TrackerConfiguration.allowedMaximumSendDelays) }
 
 		case "trackDomain":
 			return buildSimpleElementState(serverUrl) { value in self.serverUrl = self.parseUrl(value, emptyAllowed: false) }
@@ -441,12 +447,6 @@ private class Parser: NSObject {
 
 		case "version":
 			return buildSimpleElementState(version) { value in self.version = self.parseInt(value, allowedRange: TrackerConfiguration.allowedVersions) }
-
-		case "sendDelay":
-			return buildSimpleElementState(maximumSendDelay) { value in self.maximumSendDelay = self.parseDouble(value, allowedRange: TrackerConfiguration.allowedMaximumSendDelays) }
-
-		case "sessionTimeoutInterval":
-			return buildSimpleElementState(sessionTimeoutInterval) { value in self.sessionTimeoutInterval = self.parseDouble(value, allowedRange: TrackerConfiguration.allowedSessionTimeoutIntervals) }
 
 		default:
 			warn(message: "unknown element")
