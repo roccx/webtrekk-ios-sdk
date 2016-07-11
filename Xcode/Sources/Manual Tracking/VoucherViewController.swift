@@ -11,7 +11,7 @@ class VoucherViewController: UIViewController {
 
 	@IBAction func activateVoucher(sender: AnyObject) {
 		tracker.ecommerceProperties.voucherValue = "\(voucherId)"
-		tracker.trackAction("Activate Voucher Tapped")
+		tracker.trackAction("Activate Voucher tapped")
 		dismissViewControllerAnimated(true, completion: nil)
 	}
 

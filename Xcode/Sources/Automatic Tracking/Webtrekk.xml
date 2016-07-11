@@ -43,6 +43,9 @@
 				</pageProperties>
 				<customProperties myProperty="myValue" anotherProperty="anotherValue"/>
 			</page>
+			<page viewControllerType="SettingsViewController">
+				<pageProperties name="Settings"/>
+			</page>
 			<page viewControllerType="VoucherListViewController">
 				<pageProperties name="Voucher List"/>
 			</page>

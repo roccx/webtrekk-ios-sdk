@@ -24,6 +24,10 @@ class ProductViewController: UIViewController {
 
 			player.play()
 		}
+
+		if segue.identifier == "openVouchers" {
+			autoTracker.trackAction("Choose Voucher tapped")
+		}
 	}
 
 
