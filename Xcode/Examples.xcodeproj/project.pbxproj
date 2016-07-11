@@ -29,6 +29,10 @@
 		4951623D1D1DFC5F0006A82D /* PropertiesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620B1D1DFB9C0006A82D /* PropertiesTest.swift */; };
 		4951623E1D1DFC5F0006A82D /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */; };
 		52B4475E2A22B8D281F1C4BB /* Pods_iOS_Automatic_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */; };
+		B76E298E1D33C5B7006F3F71 /* VoucherListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E298D1D33C5B7006F3F71 /* VoucherListViewController.swift */; };
+		B76E29901D33C5F6006F3F71 /* VoucherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E298F1D33C5F6006F3F71 /* VoucherViewController.swift */; };
+		B76E29921D33CF1A006F3F71 /* VoucherListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E29911D33CF1A006F3F71 /* VoucherListViewController.swift */; };
+		B76E29941D33CF9B006F3F71 /* VoucherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E29931D33CF9B006F3F71 /* VoucherViewController.swift */; };
 		D9F19E56282C75668E84DE07 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */; };
 		FB9C2289089B9F4C07AF791D /* Pods_iOS_Manual_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */; };
 /* End PBXBuildFile section */
@@ -85,6 +89,10 @@
 		4951622B1D1DFC1E0006A82D /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		497AAE311D22D2780094B8B4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		497AAE321D22D28A0094B8B4 /* Webtrekk.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = Webtrekk.podspec; path = ../Webtrekk.podspec; sourceTree = "<group>"; };
+		B76E298D1D33C5B7006F3F71 /* VoucherListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherListViewController.swift; sourceTree = "<group>"; };
+		B76E298F1D33C5F6006F3F71 /* VoucherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherViewController.swift; sourceTree = "<group>"; };
+		B76E29911D33CF1A006F3F71 /* VoucherListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherListViewController.swift; sourceTree = "<group>"; };
+		B76E29931D33CF9B006F3F71 /* VoucherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherViewController.swift; sourceTree = "<group>"; };
 		BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Manual_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Automatic_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -172,6 +180,8 @@
 				495161EC1D1DFB9C0006A82D /* AppDelegate.swift */,
 				495161ED1D1DFB9C0006A82D /* ProductListViewController.swift */,
 				495161EE1D1DFB9C0006A82D /* ProductViewController.swift */,
+				B76E298D1D33C5B7006F3F71 /* VoucherListViewController.swift */,
+				B76E298F1D33C5F6006F3F71 /* VoucherViewController.swift */,
 				495161EF1D1DFB9C0006A82D /* Webtrekk.xml */,
 				495161F01D1DFB9C0006A82D /* WebtrekkTracking.swift */,
 			);
@@ -184,6 +194,8 @@
 				495161F21D1DFB9C0006A82D /* AppDelegate.swift */,
 				495161F31D1DFB9C0006A82D /* ProductListViewController.swift */,
 				495161F41D1DFB9C0006A82D /* ProductViewController.swift */,
+				B76E29911D33CF1A006F3F71 /* VoucherListViewController.swift */,
+				B76E29931D33CF9B006F3F71 /* VoucherViewController.swift */,
 				495161F51D1DFB9C0006A82D /* WebtrekkTracking.swift */,
 			);
 			path = "Manual Tracking";
@@ -533,7 +545,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4951620F1D1DFBBD0006A82D /* ProductViewController.swift in Sources */,
+				B76E298E1D33C5B7006F3F71 /* VoucherListViewController.swift in Sources */,
 				4951620E1D1DFBBD0006A82D /* ProductListViewController.swift in Sources */,
+				B76E29901D33C5F6006F3F71 /* VoucherViewController.swift in Sources */,
 				4951620D1D1DFBBD0006A82D /* AppDelegate.swift in Sources */,
 				495162111D1DFBBD0006A82D /* WebtrekkTracking.swift in Sources */,
 			);
@@ -544,7 +558,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				495162371D1DFC590006A82D /* ProductViewController.swift in Sources */,
+				B76E29921D33CF1A006F3F71 /* VoucherListViewController.swift in Sources */,
 				495162361D1DFC590006A82D /* ProductListViewController.swift in Sources */,
+				B76E29941D33CF9B006F3F71 /* VoucherViewController.swift in Sources */,
 				495162351D1DFC590006A82D /* AppDelegate.swift in Sources */,
 				495162381D1DFC590006A82D /* WebtrekkTracking.swift in Sources */,
 			);

@@ -2,23 +2,23 @@ import UIKit
 import Webtrekk
 
 
-class ProductListViewController: UITableViewController {
+class VoucherListViewController: UITableViewController {
 
-	private let tracker = WebtrekkTracking.sharedTracker.trackerForPage("Product List")
+	private let tracker = WebtrekkTracking.sharedTracker.trackerForPage("Voucher List")
 
 
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-		if segue.identifier == "openProduct" {
+		if segue.identifier == "openVoucher" {
 			guard let cell = sender as? UITableViewCell, indexPath = tableView.indexPathForCell(cell) else {
 				return
 			}
-			guard let productViewController = segue.destinationViewController as? ProductViewController else {
+			guard let voucherViewController = segue.destinationViewController as? VoucherViewController else {
 				return
 			}
 
-			tracker.trackAction("Product tapped")
+			tracker.trackAction("Voucher tapped")
 
-			productViewController.productId = indexPath.row + 1
+			voucherViewController.voucherId = indexPath.row + 1
 		}
 	}
 
@@ -31,11 +31,11 @@ class ProductListViewController: UITableViewController {
 }
 
 
-extension ProductListViewController { // UITableViewDataSource
+extension VoucherListViewController { // UITableViewDataSource
 
 	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("product", forIndexPath: indexPath)
-		cell.textLabel?.text = "Product \(indexPath.row + 1)"
+		let cell = tableView.dequeueReusableCellWithIdentifier("voucher", forIndexPath: indexPath)
+		cell.textLabel?.text = "Voucher \(indexPath.row + 1)"
 
 		return cell
 	}

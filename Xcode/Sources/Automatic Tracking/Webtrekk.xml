@@ -43,6 +43,15 @@
 				</pageProperties>
 				<customProperties myProperty="myValue" anotherProperty="anotherValue"/>
 			</page>
+			<page viewControllerType="VoucherListViewController">
+				<pageProperties name="Voucher List"/>
+			</page>
+			<page viewControllerType="/.*\.VoucherViewController/">
+				<pageProperties name="Voucher Details">
+					<details index1="Percentage" index2="OneTime"/>
+				</pageProperties>
+				<customProperties myProperty="myValue" anotherProperty="anotherValue"/>
+			</page>
 		</pages>
 	</automaticTracking>
 </webtrekkConfiguration>
