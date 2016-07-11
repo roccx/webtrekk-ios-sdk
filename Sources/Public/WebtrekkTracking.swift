@@ -10,6 +10,12 @@ public enum WebtrekkTracking {
 	public static var logger: TrackingLogger = WebtrekkTracking.defaultLogger
 	public static var migratesFromLibraryV3 = true
 
+
+	public static var isOptedOut: Bool {
+		get { return DefaultTracker.isOptedOut }
+		set { DefaultTracker.isOptedOut = newValue }
+	}
+
 	
 	public static func tracker(configurationFile configurationFile: NSURL) throws -> Tracker {
 		checkIsOnMainThread()

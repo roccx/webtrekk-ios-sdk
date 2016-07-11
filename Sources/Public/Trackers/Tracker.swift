@@ -7,8 +7,6 @@ import UIKit
 
 public protocol Tracker: class {
 
-	static var isOptedOut: Bool { get set }
-
 	var configuration: TrackerConfiguration { get }
 	var crossDeviceProperties: CrossDeviceProperties { get set }
 	var everId: String { get }
