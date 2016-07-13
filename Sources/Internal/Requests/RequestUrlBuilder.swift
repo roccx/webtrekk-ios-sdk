@@ -34,6 +34,103 @@ internal final class RequestUrlBuilder {
 		let properties = request.properties
 
 		var parameters = [NSURLQueryItem]()
+		var pageName: String = ""
+		switch request.event {
+		case .action(let actionEvent):
+			let actionProperties = actionEvent.actionProperties
+			guard !actionProperties.name.isEmpty else {
+				logError("Url creation could not finish because action name on an action event was not set '\(request)'.")
+				return nil
+			}
+			if let details = actionProperties.details {
+				parameters += details.map({NSURLQueryItem(name: "ck\($0.index)", value: $0.value)})
+			}
+			parameters.append(name: "ct", value: actionProperties.name)
+
+			parameters += actionEvent.ecommerceProperties.asQueryItems()
+			parameters += actionEvent.pageProperties.asQueryItems()
+			if let name = actionEvent.pageProperties.name {
+				pageName = name
+			}
+			if !actionEvent.customProperties.isEmpty {
+				parameters += actionEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
+			}
+
+		case .media(let mediaEvent):
+			guard !mediaEvent.mediaProperties.name.isEmpty else {
+				logError("Url creation could not finish because media name on an media event was not set '\(request)'.")
+				return nil
+			}
+			parameters += mediaEvent.mediaProperties.asQueryItems(properties.timestamp)
+
+			let actionId: String
+			switch mediaEvent.action {
+			case .finish:           actionId = "finish"
+			case .pause:            actionId = "pause"
+			case .play:             actionId = "play"
+			case .position:         actionId = "pos"
+			case .seek:             actionId = "seek"
+			case .stop:             actionId = "stop"
+			case let .custom(name): actionId = name
+			}
+			parameters.append(name: "mk", value: actionId)
+
+			//parameters += mediaEvent.ecommerceProperties.asQueryItems()
+
+			//parameters += mediaEvent.pageProperties.asQueryItems()
+			if let name = mediaEvent.pageProperties.name {
+				pageName = name
+			}
+
+//			if !mediaEvent.customProperties.isEmpty {
+//				parameters += mediaEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
+//			}
+
+		case .pageView(let pageViewEvent):
+			parameters += pageViewEvent.pageProperties.asQueryItems()
+			if let name = pageViewEvent.pageProperties.name {
+				pageName = name
+			}
+
+
+			if let id = pageViewEvent.advertisementProperties.id {
+				parameters.append(name: "mc", value: id)
+			}
+			if let details = pageViewEvent.advertisementProperties.details {
+				parameters += details.map({NSURLQueryItem(name: "cc\($0.index)", value: $0.value)})
+			}
+
+			parameters += pageViewEvent.ecommerceProperties.asQueryItems()
+
+			if !pageViewEvent.customProperties.isEmpty {
+				parameters += pageViewEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
+			}
+
+		}
+		guard !pageName.isEmpty else {
+			logError("Url creation could not finish because page name was not set in event '\(request)'.")
+			return nil
+		}
+
+		let p = "400,\(pageName),0,\(request.properties.screenSize?.width ?? 0)x\(request.properties.screenSize?.height ?? 0),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
+		parameters = [NSURLQueryItem(name: "p", value: p)] + parameters
+
+		if case .media = request.event {
+			guard let urlComponents = NSURLComponents(URL: baseUrl, resolvingAgainstBaseURL: true) else {
+				logError("Url could not be created from ServerUrl '\(serverUrl)' and WebtrekkId '\(webtrekkId)'.")
+				return nil
+			}
+
+			urlComponents.queryItems = parameters
+
+			guard let url = urlComponents.URL else {
+				logError("Cannot build URL from components: \(urlComponents)")
+				return nil
+			}
+			
+			return url
+		}
+
 		parameters.append(name: "eid", value: properties.everId)
 		parameters.append(name: "ps", value: "\(properties.samplingRate)")
 		parameters.append(name: "mts", value: "\(Int64(properties.timestamp.timeIntervalSince1970 * 1000))")
@@ -86,86 +183,6 @@ internal final class RequestUrlBuilder {
 
 		parameters += request.crossDeviceProperties.asQueryItems()
 
-		var pageName: String = ""
-		switch request.event {
-		case .action(let actionEvent):
-			let actionProperties = actionEvent.actionProperties
-			guard !actionProperties.name.isEmpty else {
-				logError("Url creation could not finish because action name on an action event was not set '\(request)'.")
-				return nil
-			}
-			if let details = actionProperties.details {
-				parameters += details.map({NSURLQueryItem(name: "ck\($0.index)", value: $0.value)})
-			}
-			parameters.append(name: "ct", value: actionProperties.name)
-
-			parameters += actionEvent.ecommerceProperties.asQueryItems()
-			parameters += actionEvent.pageProperties.asQueryItems()
-			if let name = actionEvent.pageProperties.name {
-				pageName = name
-			}
-			if !actionEvent.customProperties.isEmpty {
-				parameters += actionEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
-			}
-
-		case .media(let mediaEvent):
-			guard !mediaEvent.mediaProperties.name.isEmpty else {
-				logError("Url creation could not finish because media name on an media event was not set '\(request)'.")
-				return nil
-			}
-			parameters += mediaEvent.mediaProperties.asQueryItems(properties.timestamp)
-
-			let actionId: String
-			switch mediaEvent.action {
-			case .finish:           actionId = "finish"
-			case .pause:            actionId = "pause"
-			case .play:             actionId = "play"
-			case .position:         actionId = "pos"
-			case .seek:             actionId = "seek"
-			case .stop:             actionId = "stop"
-			case let .custom(name): actionId = name
-			}
-			parameters.append(name: "mk", value: actionId)
-
-			parameters += mediaEvent.ecommerceProperties.asQueryItems()
-
-			parameters += mediaEvent.pageProperties.asQueryItems()
-			if let name = mediaEvent.pageProperties.name {
-				pageName = name
-			}
-
-			if !mediaEvent.customProperties.isEmpty {
-				parameters += mediaEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
-			}
-
-		case .pageView(let pageViewEvent):
-			parameters += pageViewEvent.pageProperties.asQueryItems()
-			if let name = pageViewEvent.pageProperties.name {
-				pageName = name
-			}
-
-
-			if let id = pageViewEvent.advertisementProperties.id {
-				parameters.append(name: "mc", value: id)
-			}
-			if let details = pageViewEvent.advertisementProperties.details {
-				parameters += details.map({NSURLQueryItem(name: "cc\($0.index)", value: $0.value)})
-			}
-
-			parameters += pageViewEvent.ecommerceProperties.asQueryItems()
-
-			if !pageViewEvent.customProperties.isEmpty {
-				parameters += pageViewEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
-			}
-
-		}
-		guard !pageName.isEmpty else {
-			logError("Url creation could not finish because page name was not set in event '\(request)'.")
-			return nil
-		}
-
-		let p = "400,\(pageName),0,\(request.properties.screenSize?.width ?? 0)x\(request.properties.screenSize?.height ?? 0),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
-		parameters = [NSURLQueryItem(name: "p", value: p)] + parameters
 		parameters += [NSURLQueryItem(name: "eor", value: "1")]
 
 		guard let urlComponents = NSURLComponents(URL: baseUrl, resolvingAgainstBaseURL: true) else {
