@@ -173,6 +173,10 @@ internal final class RequestUrlBuilder {
 			}
 		}
 
+		if let requestQueueSize = properties.requestQueueSize {
+			parameters.append(name: "cp784", value: "\(requestQueueSize)")
+		}
+
 		if let appVersion = properties.appVersion {
 			parameters.append(name: "cs804", value: appVersion)
 		}
