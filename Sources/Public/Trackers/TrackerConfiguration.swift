@@ -14,11 +14,17 @@ public struct TrackerConfiguration {
 	/** Allowed values for version */
 	public static let allowedVersions: ClosedInterval<Int> = 1 ... .max
 
+	/** If enabled automatically tries to attach the Advertising Identifier to each request. */
 	public var automaticallyTracksAdvertisingId = true
+	/** If enabled automatically tries to attach the Advertising Opt Out state to each request. */
 	public var automaticallyTracksAdvertisingOptOut = true
+	/** If enabled automatically trackes app updates. */
 	public var automaticallyTracksAppUpdates = true
+	/** If enabled automatically attaches the app version to each request. */
 	public var automaticallyTracksAppVersion = true
+	/** If enabled automatically attaches the current request queue size to each request. */
 	public var automaticallyTracksRequestQueueSize = true
+
 	/** Url of the remote configuration. */
 	public var configurationUpdateUrl: NSURL? = nil
 	/** Delay after which the event request is send to the server. */
@@ -37,12 +43,23 @@ public struct TrackerConfiguration {
 	public var webtrekkId: String
 
 	#if !os(watchOS)
+	/** Automatically attaches tracker instances to the corresponding view controller if possible. */
 	public var automaticallyTrackedPages = [Page]()
+	/** If enabled automatically attaches the connection type to each request. */
 	public var automaticallyTracksConnectionType = true
+	/** If enabled automatically attaches the interface orientation to each request. */
 	public var automaticallyTracksInterfaceOrientation = true
 	#endif
 
 
+	/** 
+	Configuration for a Tracker
+
+	Enable or disable various automatically tracked features or customize options to fit your requirement.
+
+	- Parameter webtrekkId: The unique identifier of your webtrekk account
+	- Parameter serverUrl: Url of the tracking server
+	*/
 	public init(webtrekkId: String, serverUrl: NSURL) {
 		self.serverUrl = serverUrl
 		self.webtrekkId = webtrekkId
@@ -58,13 +75,23 @@ public struct TrackerConfiguration {
 
 
 	#if !os(watchOS)
+	/**
+	Representation of an automatically tracked page.
+	*/
 	public struct Page {
 
+		/** Custom Properties that should be tracked if not overwritten manually. */
 		public var customProperties: [String : String]
+		/** Page Properties that should be tracked if not overwritten manually. */
 		public var pageProperties: PageProperties
+		/** A Regular Expression to determine a view controller for automatic tracking. */
 		public var viewControllerTypeNamePattern: NSRegularExpression
 
-
+		/**
+		- Parameter viewControllerTypeNamePattern: A Regular Expression to determine a view controller for automatic tracking.
+		- Parameter pageProperties: Page Properties that should be tracked if not overwritten manually.
+		- Parameter customProperties: Custom Properties that should be tracked if not overwritten manually.
+		*/
 		public init(
 			viewControllerTypeNamePattern: NSRegularExpression,
 			pageProperties: PageProperties,

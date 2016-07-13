@@ -50,6 +50,9 @@ internal final class RequestUrlBuilder {
 		parameters.append(name: "tz", value: String(properties.timeZone.daylightSavingTimeOffset / 60 / 60))
 		parameters.append(name: "X-WT-UA", value: properties.userAgent)
 
+		if let requestQueueSize = properties.requestQueueSize {
+			parameters.append(name: "cp784", value: String(requestQueueSize))
+		}
 		if let sessionDetails = properties.sessionDetails {
 			parameters += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
 		}
