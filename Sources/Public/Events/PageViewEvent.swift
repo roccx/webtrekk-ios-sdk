@@ -1,4 +1,9 @@
-public struct PageViewEvent: TrackingEvent {
+public struct PageViewEvent:
+	TrackingEventWithAdvertisementProperties,
+	TrackingEventWithCustomProperties,
+	TrackingEventWithEcommerceProperties,
+	TrackingEventWithPageProperties
+{
 
 	public var advertisementProperties: AdvertisementProperties
 	public var customProperties: [String : String]

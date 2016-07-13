@@ -1,4 +1,10 @@
-public struct ActionEvent: TrackingEvent {
+public struct ActionEvent:
+	TrackingEventWithActionProperties,
+	TrackingEventWithAdvertisementProperties,
+	TrackingEventWithCustomProperties,
+	TrackingEventWithEcommerceProperties,
+	TrackingEventWithPageProperties
+{
 
 	public var actionProperties: ActionProperties
 	public var advertisementProperties: AdvertisementProperties

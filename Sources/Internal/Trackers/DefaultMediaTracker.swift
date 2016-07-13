@@ -2,11 +2,9 @@ internal final class DefaultMediaTracker: MediaTracker {
 
 	private let handler: MediaEventHandler
 
-	internal var advertisementProperties = AdvertisementProperties(id: nil)
-	internal var customProperties = [String : String]()
-	internal var ecommerceProperties = EcommerceProperties()
 	internal var mediaProperties: MediaProperties
-	internal var pageProperties: PageProperties
+	internal var pageName: String?
+	internal var viewControllerTypeName: String?
 
 
 	internal init(handler: MediaEventHandler, mediaName: String, pageName: String?) {
@@ -14,20 +12,20 @@ internal final class DefaultMediaTracker: MediaTracker {
 
 		self.handler = handler
 		self.mediaProperties = MediaProperties(name: mediaName)
-		self.pageProperties = PageProperties(name: pageName)
+		self.pageName = pageName
 	}
 
 
 	internal func trackAction(action: MediaEvent.Action) {
 		checkIsOnMainThread()
 
-		handler.handleEvent(MediaEvent(
-			action:                   action,
-			mediaProperties:          mediaProperties,
-			pageProperties:           pageProperties,
-			customProperties:         customProperties,
-			advertisementProperties:  advertisementProperties,
-			ecommerceProperties:      ecommerceProperties
-		))
+		var event = MediaEvent(
+			action:          action,
+			mediaProperties: mediaProperties,
+			pageName:        pageName
+		)
+		event.viewControllerTypeName = viewControllerTypeName
+
+		handler.handleEvent(event)
 	}
 }

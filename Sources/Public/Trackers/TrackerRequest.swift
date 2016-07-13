@@ -5,14 +5,14 @@ import UIKit
 public struct TrackerRequest {
 
 	public var crossDeviceProperties: CrossDeviceProperties
-	public let event: Event
-	public let properties: Properties
+	public var event: TrackingEvent
+	public var properties: Properties
 	public var userProperties: UserProperties
 
 
 	internal init(
 		crossDeviceProperties: CrossDeviceProperties,
-		event: Event,
+		event: TrackingEvent,
 		properties: Properties,
 		userProperties: UserProperties
 	) {
@@ -20,104 +20,6 @@ public struct TrackerRequest {
 		self.event = event
 		self.properties = properties
 		self.userProperties = userProperties
-	}
-
-
-
-	public enum Event: TrackingEvent {
-
-		case action(ActionEvent)
-		case media(MediaEvent)
-		case pageView(PageViewEvent)
-
-
-		internal var advertisementProperties: AdvertisementProperties {
-			get { return wrapped.advertisementProperties }
-			mutating set {
-				switch self {
-				case .action(var event):
-					event.advertisementProperties = newValue
-					self = .action(event)
-
-				case .media(var event):
-					event.advertisementProperties = newValue
-					self = .media(event)
-
-				case .pageView(var event):
-					event.advertisementProperties = newValue
-					self = .pageView(event)
-				}
-			}
-		}
-
-
-		internal var customProperties: [String : String] {
-			get { return wrapped.customProperties }
-			mutating set {
-				switch self {
-				case .action(var event):
-					event.customProperties = newValue
-					self = .action(event)
-
-				case .media(var event):
-					event.customProperties = newValue
-					self = .media(event)
-
-				case .pageView(var event):
-					event.customProperties = newValue
-					self = .pageView(event)
-				}
-			}
-		}
-
-
-		internal var ecommerceProperties: EcommerceProperties {
-			get { return wrapped.ecommerceProperties }
-			mutating set {
-				switch self {
-				case .action(var event):
-					event.ecommerceProperties = newValue
-					self = .action(event)
-
-				case .media(var event):
-					event.ecommerceProperties = newValue
-					self = .media(event)
-
-				case .pageView(var event):
-					event.ecommerceProperties = newValue
-					self = .pageView(event)
-				}
-			}
-		}
-
-
-		internal var pageProperties: PageProperties {
-			get { return wrapped.pageProperties }
-			mutating set {
-				switch self {
-				case .action(var event):
-					event.pageProperties = newValue
-					self = .action(event)
-
-				case .media(var event):
-					event.pageProperties = newValue
-					self = .media(event)
-
-				case .pageView(var event):
-					event.pageProperties = newValue
-					self = .pageView(event)
-				}
-			}
-		}
-
-
-		internal var wrapped: TrackingEvent {
-			switch self {
-			case let .action(event):   return event
-			case let .media(event):    return event
-			case let .pageView(event): return event
-			}
-		}
 	}
 
 

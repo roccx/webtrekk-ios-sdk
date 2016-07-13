@@ -41,7 +41,7 @@ internal class ActionPropertiesTest: XCTestCase {
 
 
 	internal func urlFromActionProperties(actionProperties: ActionProperties) -> NSURL? {
-		return urlFromActionEvent(ActionEvent(actionProperties: actionProperties, pageProperties: PageProperties(name: "page-test")))
+		return urlForEvent(ActionEvent(actionProperties: actionProperties, pageProperties: PageProperties(name: "page-test")))
 	}
 	
 }
@@ -73,7 +73,7 @@ internal class AdvertisementPropertiesTest: XCTestCase {
 	internal func urlFromAdvertisementProperties(advertisementProperties: AdvertisementProperties) -> NSURL? {
 		var pageViewEvent = PageViewEvent(pageProperties: PageProperties(name: "page-test"))
 		pageViewEvent.advertisementProperties = advertisementProperties
-		return urlFromPageViewEvent(pageViewEvent)
+		return urlForEvent(pageViewEvent)
 	}
 
 }
@@ -100,7 +100,7 @@ internal class CustomProperties: XCTestCase {
 	internal func urlFromCustomProperties(customProperties: [String: String]) -> NSURL? {
 		var pageViewEvent = PageViewEvent(pageProperties: PageProperties(name: "page-test"))
 		pageViewEvent.customProperties = customProperties
-		return urlFromPageViewEvent(pageViewEvent)
+		return urlForEvent(pageViewEvent)
 	}
 }
 
@@ -139,7 +139,7 @@ internal class EcommercePropertiesTest: XCTestCase {
 	internal func urlFromEcommerceProperties(ecommerceProperties: EcommerceProperties) -> NSURL? {
 		var pageViewEvent = PageViewEvent(pageProperties: PageProperties(name: "page-test"))
 		pageViewEvent.ecommerceProperties = ecommerceProperties
-		return urlFromPageViewEvent(pageViewEvent)
+		return urlForEvent(pageViewEvent)
 	}
 }
 
@@ -188,7 +188,7 @@ internal class EcommercePropertiesProductTest: XCTestCase {
 	internal func urlFromEcommerceProperties(ecommerceProperties: EcommerceProperties) -> NSURL? {
 		var pageViewEvent = PageViewEvent(pageProperties: PageProperties(name: "page-test"))
 		pageViewEvent.ecommerceProperties = ecommerceProperties
-		return urlFromPageViewEvent(pageViewEvent)
+		return urlForEvent(pageViewEvent)
 	}
 }
 
@@ -245,7 +245,7 @@ internal class MediaPropertiesTest: XCTestCase {
 
 
 	internal func urlFromMediaProperties(mediaProperties: MediaProperties) -> NSURL? {
-		return urlFromMediaEvent(MediaEvent(action: .play, mediaProperties: mediaProperties, pageProperties: PageProperties(name: "page-test")))
+		return urlForEvent(MediaEvent(action: .play, mediaProperties: mediaProperties, pageName: "page-test"))
 	}
 }
 
@@ -287,7 +287,7 @@ internal class PagePropertiesTest: XCTestCase {
 
 
 	internal func urlFromPageProperties(pageProperties: PageProperties) -> NSURL? {
-		return urlFromPageViewEvent(PageViewEvent(pageProperties: pageProperties))
+		return urlForEvent(PageViewEvent(pageProperties: pageProperties))
 	}
 }
 
@@ -296,7 +296,7 @@ internal class PixelEorPropertiesTest: XCTestCase {
 
 	internal func testPageName() {
 		let pageProperties = PageProperties(name: "page-test")
-		guard let url = urlFromPageViewEvent(PageViewEvent(pageProperties: pageProperties)) else {
+		guard let url = urlForEvent(PageViewEvent(pageProperties: pageProperties)) else {
 			XCTFail()
 			return
 		}
@@ -327,28 +327,7 @@ private extension XCTestCase {
 	}
 
 
-	private func urlFromActionEvent(actionEvent: ActionEvent) -> NSURL? {
-		let event = TrackerRequest.Event.action(actionEvent)
-		let crossDeviceProperites = CrossDeviceProperties()
-		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
-		return requestBuilder.urlForRequest(request)
-	}
-
-
-	private func urlFromMediaEvent(mediaEvent: MediaEvent) -> NSURL? {
-		let event = TrackerRequest.Event.media(mediaEvent)
-		let crossDeviceProperites = CrossDeviceProperties()
-		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
-		return requestBuilder.urlForRequest(request)
-	}
-
-
-	private func urlFromPageViewEvent(pageViewEvent: PageViewEvent) -> NSURL? {
-		let event = TrackerRequest.Event.pageView(pageViewEvent)
+	private func urlForEvent(event: TrackingEvent) -> NSURL? {
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
 		let userProperties = UserProperties()

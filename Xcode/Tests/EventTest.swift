@@ -13,8 +13,7 @@ internal class ActionEventTest: XCTestCase {
 	internal func testActionEvent() {
 		let actionProperties = ActionProperties(name: "action-test")
 		let pageProperties = PageProperties(name: "page-test")
-		let actionEvent = ActionEvent(actionProperties: actionProperties, pageProperties: pageProperties)
-		let event = TrackerRequest.Event.action(actionEvent)
+		let event = ActionEvent(actionProperties: actionProperties, pageProperties: pageProperties)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
 		let userProperties = UserProperties()
@@ -33,8 +32,7 @@ internal class ActionEventTest: XCTestCase {
 	internal func testActionEventEmptyActionName() {
 		let actionProperties = ActionProperties(name: "")
 		let pageProperties = PageProperties(name: "page-test")
-		let actionEvent = ActionEvent(actionProperties: actionProperties, pageProperties: pageProperties)
-		let event = TrackerRequest.Event.action(actionEvent)
+		let event = ActionEvent(actionProperties: actionProperties, pageProperties: pageProperties)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
 		let userProperties = UserProperties()
@@ -46,8 +44,7 @@ internal class ActionEventTest: XCTestCase {
 	internal func testActionEventEmptyPageName() {
 		let actionProperties = ActionProperties(name: "")
 		let pageProperties = PageProperties(name: "")
-		let actionEvent = ActionEvent(actionProperties: actionProperties, pageProperties: pageProperties)
-		let event = TrackerRequest.Event.action(actionEvent)
+		let event = ActionEvent(actionProperties: actionProperties, pageProperties: pageProperties)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
 		let userProperties = UserProperties()
@@ -66,9 +63,7 @@ internal class MediaEventTest: XCTestCase {
 
 	internal func testMediaEvent() {
 		let mediaProperties = MediaProperties(name: "media-test")
-		let pageProperties = PageProperties(name: "page-test")
-		let mediaEvent = MediaEvent(action: .play, mediaProperties: mediaProperties, pageProperties: pageProperties)
-		let event = TrackerRequest.Event.media(mediaEvent)
+		let event = MediaEvent(action: .play, mediaProperties: mediaProperties, pageName: "page-test")
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
 		let userProperties = UserProperties()
@@ -86,9 +81,7 @@ internal class MediaEventTest: XCTestCase {
 
 	internal func testMediaEventEmptyMediaName() {
 		let mediaProperties = MediaProperties(name: "")
-		let pageProperties = PageProperties(name: "page-test")
-		let mediaEvent = MediaEvent(action: .play, mediaProperties: mediaProperties, pageProperties: pageProperties)
-		let event = TrackerRequest.Event.media(mediaEvent)
+		let event = MediaEvent(action: .play, mediaProperties: mediaProperties, pageName: "page-test")
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
 		let userProperties = UserProperties()
@@ -99,9 +92,7 @@ internal class MediaEventTest: XCTestCase {
 
 	internal func testMediaEventEmptyPageName() {
 		let mediaProperties = MediaProperties(name: "")
-		let pageProperties = PageProperties(name: "")
-		let mediaEvent = MediaEvent(action: .play, mediaProperties: mediaProperties, pageProperties: pageProperties)
-		let event = TrackerRequest.Event.media(mediaEvent)
+		let event = MediaEvent(action: .play, mediaProperties: mediaProperties, pageName: "")
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
 		let userProperties = UserProperties()
@@ -119,8 +110,7 @@ internal class PageViewEventTest: XCTestCase {
 
 	internal func testPageViewEvent() {
 		let pageProperties = PageProperties(name: "page-test")
-		let pageViewEvent = PageViewEvent(pageProperties: pageProperties)
-		let event = TrackerRequest.Event.pageView(pageViewEvent)
+		let event = PageViewEvent(pageProperties: pageProperties)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
 		let userProperties = UserProperties()
@@ -138,8 +128,7 @@ internal class PageViewEventTest: XCTestCase {
 
 	internal func testPageViewEventEmptyPageName() {
 		let pageProperties = PageProperties(name: "")
-		let pageViewEvent = PageViewEvent(pageProperties: pageProperties)
-		let event = TrackerRequest.Event.pageView(pageViewEvent)
+		let event = PageViewEvent(pageProperties: pageProperties)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
 		let userProperties = UserProperties()

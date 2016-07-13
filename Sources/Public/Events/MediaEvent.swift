@@ -1,27 +1,30 @@
-public struct MediaEvent: TrackingEvent {
+public struct MediaEvent: TrackingEventWithMediaProperties {
 
 	public var action: Action
-	public var advertisementProperties: AdvertisementProperties
-	public var customProperties: [String : String]
-	public var ecommerceProperties: EcommerceProperties
 	public var mediaProperties: MediaProperties
-	public var pageProperties: PageProperties
+	public var pageName: String?
+	public var viewControllerTypeName: String?
 
 
 	public init(
 		action: Action,
 		mediaProperties: MediaProperties,
-		pageProperties: PageProperties,
-		customProperties: [String : String] = [:],
-		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
-		ecommerceProperties: EcommerceProperties = EcommerceProperties()
+		pageName: String?
 	) {
 		self.action = action
-		self.advertisementProperties = advertisementProperties
-		self.customProperties = customProperties
-		self.ecommerceProperties = ecommerceProperties
 		self.mediaProperties = mediaProperties
-		self.pageProperties = pageProperties
+		self.pageName = pageName
+	}
+
+
+	public init(
+		action: Action,
+		mediaProperties: MediaProperties,
+		viewControllerTypeName: String?
+	) {
+		self.action = action
+		self.mediaProperties = mediaProperties
+		self.viewControllerTypeName = viewControllerTypeName
 	}
 
 

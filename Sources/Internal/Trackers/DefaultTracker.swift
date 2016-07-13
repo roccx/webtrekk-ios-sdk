@@ -304,7 +304,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	private func createRequestForEvent(event: TrackerRequest.Event) -> TrackerRequest? {
+	private func createRequestForEvent(event: TrackingEvent) -> TrackerRequest? {
 		checkIsOnMainThread()
 
 		guard validateEvent(event) else {
@@ -396,7 +396,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	internal func enqueueRequestForEvent(event: TrackerRequest.Event) {
+	internal func enqueueRequestForEvent(event: TrackingEvent) {
 		checkIsOnMainThread()
 
 		#if !os(watchOS)
@@ -426,19 +426,28 @@ internal final class DefaultTracker: Tracker {
 
 
 	#if !os(watchOS)
-	private func eventByApplyingAutomaticPageTracking(to event: TrackerRequest.Event) -> TrackerRequest.Event {
+	private func eventByApplyingAutomaticPageTracking(to event: TrackingEvent) -> TrackingEvent {
 		checkIsOnMainThread()
 
 		guard let
-			viewControllerTypeName = event.pageProperties.viewControllerTypeName,
+			viewControllerTypeName = event.viewControllerTypeName,
 			page = configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName)
 		else {
 			return event
 		}
 
 		var event = event
-		event.customProperties = event.customProperties.merged(over: page.customProperties)
-		event.pageProperties = event.pageProperties.merged(over: page.pageProperties)
+		event.pageName = event.pageName ?? page.pageProperties.name
+
+		if var eventWithCustomProperties = event as? TrackingEventWithCustomProperties {
+			eventWithCustomProperties.customProperties = eventWithCustomProperties.customProperties.merged(over: page.customProperties)
+			event = eventWithCustomProperties
+		}
+		if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
+			eventWithPageProperties.pageProperties = eventWithPageProperties.pageProperties.merged(over: page.pageProperties)
+			event = eventWithPageProperties
+		}
+
 		return event
 	}
 	#endif
@@ -927,42 +936,29 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	private func validateEvent(event: TrackerRequest.Event) -> Bool {
+	private func validateEvent(event: TrackingEvent) -> Bool {
 		checkIsOnMainThread()
 
-		switch event {
-		case let .action(event):
-			guard event.actionProperties.name.nonEmpty != nil else {
-				logError("Cannot track action event without action name (actionProperties.name) set: \(event)")
-				return false
-			}
-			guard event.pageProperties.name?.nonEmpty != nil else {
-				logError("Cannot track action event without page name (pageProperties.name) set: \(event)")
-				return false
-			}
-
-			return true
-
-		case let .media(event):
-			guard event.mediaProperties.name.nonEmpty != nil else {
-				logError("Cannot track media event without media name (mediaProperties.name) set: \(event)")
-				return false
-			}
-			guard event.pageProperties.name?.nonEmpty != nil else {
-				logError("Cannot track media event without page name (pageProperties.name) set: \(event)")
-				return false
-			}
-
-			return true
-
-		case let .pageView(event):
-			guard event.pageProperties.name?.nonEmpty != nil else {
-				logError("Cannot track page view event without page name (pageProperties.name) set: \(event)")
-				return false
-			}
-
-			return true
+		guard event.pageName?.nonEmpty != nil else {
+			logError("Cannot track event without .pageName set: \(event)")
+			return false
 		}
+
+		if let event = event as? TrackingEventWithActionProperties {
+			guard event.actionProperties.name.nonEmpty != nil else {
+				logError("Cannot track event without .actionProperties.name set: \(event)")
+				return false
+			}
+		}
+
+		if let event = event as? TrackingEventWithMediaProperties {
+			guard event.mediaProperties.name.nonEmpty != nil else {
+				logError("Cannot track event without .mediaProperties.name set: \(event)")
+				return false
+			}
+		}
+
+		return true
 	}
 }
 
@@ -972,9 +968,8 @@ extension DefaultTracker: ActionEventHandler {
 	internal func handleEvent(event: ActionEvent) {
 		checkIsOnMainThread()
 
-		enqueueRequestForEvent(.action(event))
+		enqueueRequestForEvent(event)
 	}
-
 }
 
 
@@ -983,9 +978,8 @@ extension DefaultTracker: MediaEventHandler {
 	internal func handleEvent(event: MediaEvent) {
 		checkIsOnMainThread()
 
-		enqueueRequestForEvent(.media(event))
+		enqueueRequestForEvent(event)
 	}
-
 }
 
 
@@ -994,7 +988,7 @@ extension DefaultTracker: PageViewEventHandler {
 	internal func handleEvent(event: PageViewEvent) {
 		checkIsOnMainThread()
 
-		enqueueRequestForEvent(.pageView(event))
+		enqueueRequestForEvent(event)
 	}
 }
 
@@ -1047,7 +1041,7 @@ private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHand
 		var event = event
 
 		for tracker in trackers {
-			guard let viewControllerTypeName = event.pageProperties.viewControllerTypeName
+			guard let viewControllerTypeName = event.viewControllerTypeName
 				where tracker.configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName) != nil
 			else {
 				continue

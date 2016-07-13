@@ -102,10 +102,8 @@ extension DefaultPageTracker: MediaEventHandler {
 		checkIsOnMainThread()
 
 		var event = event
-		event.advertisementProperties = event.advertisementProperties.merged(over: advertisementProperties)
-		event.customProperties = event.customProperties.merged(over: customProperties)
-		event.ecommerceProperties = event.ecommerceProperties.merged(over: ecommerceProperties)
-		event.pageProperties = event.pageProperties.merged(over: pageProperties)
+		event.pageName = event.pageName ?? pageProperties.name
+		event.viewControllerTypeName = event.viewControllerTypeName ?? pageProperties.viewControllerTypeName
 
 		handler.handleEvent(event)
 	}

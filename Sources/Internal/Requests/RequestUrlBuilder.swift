@@ -31,28 +31,49 @@ internal final class RequestUrlBuilder {
 
 
 	internal func urlForRequest(request: TrackerRequest) -> NSURL? {
+		let event = request.event
+		guard let pageName = event.pageName?.nonEmpty else {
+			logError("Tracking event must contain a page name: \(request)")
+			return nil
+		}
+
 		let properties = request.properties
+		let screenSize = "\(properties.screenSize?.width ?? 0)x\(properties.screenSize?.height ?? 0)"
 
 		var parameters = [NSURLQueryItem]()
+		parameters.append(name: "p", value: "400,\(pageName),0,\(screenSize),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0")
 		parameters.append(name: "eid", value: properties.everId)
-		parameters.append(name: "ps", value: "\(properties.samplingRate)")
-		parameters.append(name: "mts", value: "\(Int64(properties.timestamp.timeIntervalSince1970 * 1000))")
-		parameters.append(name: "tz", value: "\(properties.timeZone.daylightSavingTimeOffset / 60 / 60)")
+		parameters.append(name: "fns", value: properties.isFirstEventOfSession ? "1" : "0")
+		parameters.append(name: "mts", value: String(Int64(properties.timestamp.timeIntervalSince1970 * 1000)))
+		parameters.append(name: "one", value: properties.isFirstEventOfApp ? "1" : "0")
+		parameters.append(name: "ps", value: String(properties.samplingRate))
+		parameters.append(name: "tz", value: String(properties.timeZone.daylightSavingTimeOffset / 60 / 60))
 		parameters.append(name: "X-WT-UA", value: properties.userAgent)
 
-
-		parameters.append(name: "one", value: properties.isFirstEventOfApp ? "1" : "0")
-		parameters.append(name: "fns", value: properties.isFirstEventOfSession ? "1" : "0")
-
-
+		if let sessionDetails = properties.sessionDetails {
+			parameters += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
+		}
+		if let appVersion = properties.appVersion {
+			parameters.append(name: "cs804", value: appVersion)
+		}
+		if let connectionType = properties.connectionType {
+			switch connectionType {
+			case .cellular_2G: parameters.append(name: "cs807", value: "2G")
+			case .cellular_3G: parameters.append(name: "cs807", value: "3G")
+			case .cellular_4G: parameters.append(name: "cs807", value: "LTE")
+			case .offline:     parameters.append(name: "cs807", value: "offline")
+			case .other:       parameters.append(name: "cs807", value: "unknown")
+			case .wifi:        parameters.append(name: "cs807", value: "WIFI")
+			}
+		}
+		if let language = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as? String {
+			parameters.append(name: "la", value: language)
+		}
 		if let ipAddress = properties.ipAddress {
 			parameters.append(name: "X-WT-IP", value: ipAddress)
 		}
 
-		if let language = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as? String {
-			parameters.append(name: "la", value: language)
-		}
-
+		parameters += request.crossDeviceProperties.asQueryItems()
 		parameters += request.userProperties.asQueryItems()
 
 		#if !os(watchOS)
@@ -65,58 +86,47 @@ internal final class RequestUrlBuilder {
 			}
 		#endif
 
-		if let connectionType = properties.connectionType {
-			switch connectionType {
-			case .cellular_2G: parameters.append(name: "cs807", value: "2G")
-			case .cellular_3G: parameters.append(name: "cs807", value: "3G")
-			case .cellular_4G: parameters.append(name: "cs807", value: "LTE")
-			case .offline:     parameters.append(name: "cs807", value: "offline")
-			case .other:       parameters.append(name: "cs807", value: "unknown")
-			case .wifi:        parameters.append(name: "cs807", value: "WIFI")
-			}
-		}
-
-		if let appVersion = properties.appVersion {
-			parameters.append(name: "cs804", value: appVersion)
-		}
-
-		if let sessionDetails = properties.sessionDetails {
-			parameters += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
-		}
-
-		parameters += request.crossDeviceProperties.asQueryItems()
-
-		var pageName: String = ""
-		switch request.event {
-		case .action(let actionEvent):
-			let actionProperties = actionEvent.actionProperties
+		if let actionProperties = (event as? TrackingEventWithActionProperties)?.actionProperties {
 			guard !actionProperties.name.isEmpty else {
-				logError("Url creation could not finish because action name on an action event was not set '\(request)'.")
+				logError("Tracking event must contain an action name: \(request)")
 				return nil
 			}
-			if let details = actionProperties.details {
-				parameters += details.map({NSURLQueryItem(name: "ck\($0.index)", value: $0.value)})
-			}
+
 			parameters.append(name: "ct", value: actionProperties.name)
 
-			parameters += actionEvent.ecommerceProperties.asQueryItems()
-			parameters += actionEvent.pageProperties.asQueryItems()
-			if let name = actionEvent.pageProperties.name {
-				pageName = name
+			if let details = actionProperties.details {
+				parameters += details.map { NSURLQueryItem(name: "ck\($0.index)", value: $0.value) }
 			}
-			if !actionEvent.customProperties.isEmpty {
-				parameters += actionEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
+		}
+		if let advertisementProperties = (event as? TrackingEventWithAdvertisementProperties)?.advertisementProperties {
+			if let id = advertisementProperties.id {
+				parameters.append(name: "mc", value: id)
 			}
-
-		case .media(let mediaEvent):
-			guard !mediaEvent.mediaProperties.name.isEmpty else {
-				logError("Url creation could not finish because media name on an media event was not set '\(request)'.")
+			if let details = advertisementProperties.details {
+				parameters += details.map { NSURLQueryItem(name: "cc\($0.index)", value: $0.value) }
+			}
+		}
+		if let customProperties = (event as? TrackingEventWithCustomProperties)?.customProperties {
+			parameters += customProperties.map { NSURLQueryItem(name: $0, value: $1) }
+		}
+		if let ecommerceProperties = (event as? TrackingEventWithEcommerceProperties)?.ecommerceProperties {
+			parameters += ecommerceProperties.asQueryItems()
+		}
+		if let mediaProperties = (event as? TrackingEventWithMediaProperties)?.mediaProperties {
+			guard !mediaProperties.name.isEmpty else {
+				logError("Tracking event must contain a media name: \(request)")
 				return nil
 			}
-			parameters += mediaEvent.mediaProperties.asQueryItems(properties.timestamp)
 
+			parameters += mediaProperties.asQueryItems(properties.timestamp)
+		}
+		if let pageProperties = (event as? TrackingEventWithPageProperties)?.pageProperties {
+			parameters += pageProperties.asQueryItems()
+		}
+
+		if let event = event as? MediaEvent {
 			let actionId: String
-			switch mediaEvent.action {
+			switch event.action {
 			case .finish:           actionId = "finish"
 			case .pause:            actionId = "pause"
 			case .play:             actionId = "play"
@@ -126,50 +136,12 @@ internal final class RequestUrlBuilder {
 			case let .custom(name): actionId = name
 			}
 			parameters.append(name: "mk", value: actionId)
-
-			parameters += mediaEvent.ecommerceProperties.asQueryItems()
-
-			parameters += mediaEvent.pageProperties.asQueryItems()
-			if let name = mediaEvent.pageProperties.name {
-				pageName = name
-			}
-
-			if !mediaEvent.customProperties.isEmpty {
-				parameters += mediaEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
-			}
-
-		case .pageView(let pageViewEvent):
-			parameters += pageViewEvent.pageProperties.asQueryItems()
-			if let name = pageViewEvent.pageProperties.name {
-				pageName = name
-			}
-
-
-			if let id = pageViewEvent.advertisementProperties.id {
-				parameters.append(name: "mc", value: id)
-			}
-			if let details = pageViewEvent.advertisementProperties.details {
-				parameters += details.map({NSURLQueryItem(name: "cc\($0.index)", value: $0.value)})
-			}
-
-			parameters += pageViewEvent.ecommerceProperties.asQueryItems()
-
-			if !pageViewEvent.customProperties.isEmpty {
-				parameters += pageViewEvent.customProperties.map({NSURLQueryItem(name: $0, value: $1)})
-			}
-
-		}
-		guard !pageName.isEmpty else {
-			logError("Url creation could not finish because page name was not set in event '\(request)'.")
-			return nil
 		}
 
-		let p = "400,\(pageName),0,\(request.properties.screenSize?.width ?? 0)x\(request.properties.screenSize?.height ?? 0),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0"
-		parameters = [NSURLQueryItem(name: "p", value: p)] + parameters
-		parameters += [NSURLQueryItem(name: "eor", value: "1")]
+		parameters.append(name: "eor", value: "1")
 
 		guard let urlComponents = NSURLComponents(URL: baseUrl, resolvingAgainstBaseURL: true) else {
-			logError("Url could not be created from ServerUrl '\(serverUrl)' and WebtrekkId '\(webtrekkId)'.")
+			logError("Could not parse baseUrl: \(baseUrl)")
 			return nil
 		}
 
