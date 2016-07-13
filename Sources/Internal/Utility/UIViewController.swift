@@ -27,7 +27,7 @@ internal extension UIViewController {
 
 	internal var applicationWillEnterForegroundObserver: NSObjectProtocol? {
 		get { return objc_getAssociatedObject(self, &AssociatedKeys.applicationWillEnterForeground) as? NSObjectProtocol ?? {
-			var observer = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: nil) { [weak self] _ in
+			let observer = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: nil) { [weak self] _ in
 				self?.applicationWillEnterForeground()
 			}
 			objc_setAssociatedObject(self, &AssociatedKeys.applicationWillEnterForeground, observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
