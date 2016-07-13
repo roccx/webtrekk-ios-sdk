@@ -7,9 +7,8 @@ internal extension UIViewController {
 
 	private struct AssociatedKeys {
 
+		private static var applicationDidBecomeActiveObserver = UInt8()
 		private static var automaticTracker = UInt8()
-		private static var didAppearBefore = UInt8()
-		private static var applicationWillEnterForeground = UInt8()
 	}
 
 
@@ -17,24 +16,15 @@ internal extension UIViewController {
 	private static var swizzled = false
 
 
-	private func applicationWillEnterForeground() {
-		guard didAppearBefore else {
-			return
-		}
-		automaticTracker.trackPageView()
+	@nonobjc
+	internal var applicationDidBecomeActiveObserver: NSObjectProtocol? {
+		get { return objc_getAssociatedObject(self, &AssociatedKeys.applicationDidBecomeActiveObserver) as? NSObjectProtocol }
+		set { objc_setAssociatedObject(self, &AssociatedKeys.applicationDidBecomeActiveObserver, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
 	}
 
 
-	internal var applicationWillEnterForegroundObserver: NSObjectProtocol? {
-		get { return objc_getAssociatedObject(self, &AssociatedKeys.applicationWillEnterForeground) as? NSObjectProtocol ?? {
-			let observer = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: nil) { [weak self] _ in
-				self?.applicationWillEnterForeground()
-			}
-			objc_setAssociatedObject(self, &AssociatedKeys.applicationWillEnterForeground, observer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-			return observer
-			}()
-		}
-		set { objc_setAssociatedObject(self, &AssociatedKeys.applicationWillEnterForeground, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+	private func applicationDidBecomeActiveWhileAppeared() {
+		automaticTracker.trackPageView()
 	}
 
 
@@ -48,12 +38,6 @@ internal extension UIViewController {
 	}
 
 
-	internal var didAppearBefore: Bool {
-		get { return objc_getAssociatedObject(self, &AssociatedKeys.didAppearBefore) as? Bool ?? false }
-		set { objc_setAssociatedObject(self, &AssociatedKeys.didAppearBefore, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
-	}
-
-
 	@nonobjc
 	internal static func setUpAutomaticTracking() {
 		guard !swizzled else {
@@ -63,7 +47,7 @@ internal extension UIViewController {
 		swizzled = true
 
 		swizzleMethod(ofType: UIViewController.self, fromSelector: #selector(viewDidAppear(_:)), toSelector: #selector(swizzled_viewDidAppear(_:)))
-		swizzleMethod(ofType: UIViewController.self, fromSelector: #selector(viewDidDisappear(_:)), toSelector: #selector(swizzled_viewWillDisappear(_:)))
+		swizzleMethod(ofType: UIViewController.self, fromSelector: #selector(viewWillDisappear(_:)), toSelector: #selector(swizzled_viewWillDisappear(_:)))
 	}
 
 
@@ -72,9 +56,11 @@ internal extension UIViewController {
 		self.swizzled_viewDidAppear(animated)
 
 		automaticTracker.trackPageView()
-		didAppearBefore = true
-		guard let _ = applicationWillEnterForegroundObserver else {
-			return
+
+		if applicationDidBecomeActiveObserver == nil {
+			applicationDidBecomeActiveObserver = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationDidBecomeActiveNotification, object: nil, queue: nil) { [weak self] _ in
+				self?.applicationDidBecomeActiveWhileAppeared()
+			}
 		}
 	}
 
@@ -82,11 +68,10 @@ internal extension UIViewController {
 	@objc(Webtrekk_viewWillDisappear:)
 	private dynamic func swizzled_viewWillDisappear(animated: Bool) {
 		self.swizzled_viewWillDisappear(animated)
-		guard let observer = applicationWillEnterForegroundObserver else {
-			return
+
+		if let applicationDidBecomeActiveObserver = applicationDidBecomeActiveObserver {
+			NSNotificationCenter.defaultCenter().removeObserver(applicationDidBecomeActiveObserver)
+			self.applicationDidBecomeActiveObserver = nil
 		}
-		NSNotificationCenter.defaultCenter().removeObserver(observer)
-		applicationWillEnterForegroundObserver = nil
-		didAppearBefore = false
 	}
 }
