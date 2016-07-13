@@ -23,6 +23,7 @@ internal extension UIViewController {
 	}
 
 
+	@nonobjc
 	private func applicationDidBecomeActiveWhileAppeared() {
 		automaticTracker.trackPageView()
 	}
