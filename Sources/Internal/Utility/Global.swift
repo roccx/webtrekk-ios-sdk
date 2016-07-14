@@ -18,8 +18,8 @@ internal func checkIsOnMainThread(function function: StaticString = #function, f
 }
 
 
-internal func lazyPlaceholder<T>() -> T {
-	fatalError("Lazy variable accessed before being initialized.")
+internal func lazyPlaceholder<T>(file: StaticString = #file, line: UInt = #line) -> T {
+	fatalError("Lazy variable accessed before being initialized.", file: file, line: line)
 }
 
 
