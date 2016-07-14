@@ -5,8 +5,8 @@ internal struct XmlElement {
 
 	internal var attributes: [String : String]
 	internal var children: [XmlElement]
-	internal var content: String
 	internal var path: [String]
+	internal var text: String
 
 
 	internal var name: String {
@@ -14,11 +14,11 @@ internal struct XmlElement {
 	}
 
 
-	internal init(attributes: [String : String], children: [XmlElement], content: String, path: [String]) {
+	internal init(attributes: [String : String], children: [XmlElement], path: [String], text: String) {
 		self.attributes = attributes
 		self.children = children
-		self.content = content
 		self.path = path
+		self.text = text
 	}
 }
 
@@ -33,7 +33,7 @@ internal final class XmlParser {
 
 private final class ActualParser: NSObject {
 
-	private var currentString = ""
+	private var currentText = ""
 	private var elementBuilder: ElementBuilder?
 	private var elementBuilderStack = [ElementBuilder]()
 	private var elementPath = [String]()
@@ -62,8 +62,8 @@ private final class ActualParser: NSObject {
 
 		private let attributes: [String : String]
 		private var children = [XmlElement]()
-		private var content = ""
 		private let path: [String]
+		private var text = ""
 
 
 		private init(attributes: [String : String], path: [String]) {
@@ -73,7 +73,7 @@ private final class ActualParser: NSObject {
 
 
 		private func build() -> XmlElement {
-			return XmlElement(attributes: attributes, children: children, content: content, path: path)
+			return XmlElement(attributes: attributes, children: children, path: path, text: text)
 		}
 	}
 }
@@ -87,9 +87,9 @@ extension ActualParser: NSXMLParserDelegate {
 			fatalError()
 		}
 
-		currentString = currentString.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+		currentText = currentText.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
 
-		elementBuilder.content = currentString
+		elementBuilder.text = currentText
 
 		let element = elementBuilder.build()
 
@@ -104,14 +104,14 @@ extension ActualParser: NSXMLParserDelegate {
 			self.elementBuilder = nil
 		}
 
-		currentString = ""
+		currentText = ""
 		elementPath.removeLast()
 	}
 
 
 	@objc
 	private func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName: String?, attributes: [String : String]) {
-		currentString = ""
+		currentText = ""
 		elementPath.append(elementName)
 
 		if let elementBuilder = elementBuilder {
@@ -124,7 +124,7 @@ extension ActualParser: NSXMLParserDelegate {
 
 	@objc
 	private func parser(parser: NSXMLParser, foundCharacters string: String) {
-		currentString += string
+		currentText += string
 	}
 
 
