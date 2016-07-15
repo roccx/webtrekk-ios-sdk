@@ -6,7 +6,7 @@ import XCTest
 internal class XmlParserAutomaticTest: XCTestCase {
 
 	internal var configurationData: NSData = {
-		guard let configurationFile = NSBundle(forClass: XmlParserManualTest.self).URLForResource("ConfigAutomatic", withExtension: "xml") else {
+		guard let configurationFile = NSBundle(forClass: XmlParserManualTest.self).URLForResource("Comp", withExtension: "xml") else {
 			fatalError("Cannot locate ConfigAutomatic.xml")
 		}
 		guard let configurationData = NSData(contentsOfURL: configurationFile) else {
@@ -17,12 +17,15 @@ internal class XmlParserAutomaticTest: XCTestCase {
 
 
 	internal func testParserInit() {
+		let config: TrackerConfiguration
 		do {
-			try XmlTrackerConfigurationParser().parse(xml: configurationData)
+			config = try XmlTrackerConfigurationParser().parse(xml: configurationData)
+
 		}
 		catch let error {
 			fatalError("Cannot Read Webtrekk configuration: \(error)")
 		}
+		XCTAssertEqual(config.version, 1)
 	}
 
 	internal func testParserConfig() {

@@ -35,6 +35,7 @@
 		B76E29941D33CF9B006F3F71 /* VoucherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E29931D33CF9B006F3F71 /* VoucherViewController.swift */; };
 		B76E29961D33DFC1006F3F71 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E29951D33DFC1006F3F71 /* SettingsViewController.swift */; };
 		B76E29981D33E6B7006F3F71 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E29971D33E6B7006F3F71 /* SettingsViewController.swift */; };
+		B76E299C1D37DF5D006F3F71 /* Comp.xml in Resources */ = {isa = PBXBuildFile; fileRef = B76E299B1D37DF5D006F3F71 /* Comp.xml */; };
 		D9F19E56282C75668E84DE07 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */; };
 		FB9C2289089B9F4C07AF791D /* Pods_iOS_Manual_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */; };
 /* End PBXBuildFile section */
@@ -97,6 +98,7 @@
 		B76E29931D33CF9B006F3F71 /* VoucherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherViewController.swift; sourceTree = "<group>"; };
 		B76E29951D33DFC1006F3F71 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		B76E29971D33E6B7006F3F71 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		B76E299B1D37DF5D006F3F71 /* Comp.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Comp.xml; sourceTree = "<group>"; };
 		BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Manual_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Automatic_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -240,6 +242,7 @@
 				495162071D1DFB9C0006A82D /* ConfigManual.xml */,
 				495162081D1DFB9C0006A82D /* ConfigMinimal.xml */,
 				495162091D1DFB9C0006A82D /* EventTest.swift */,
+				B76E299B1D37DF5D006F3F71 /* Comp.xml */,
 				4951620A1D1DFB9C0006A82D /* Info.plist */,
 				4951620B1D1DFB9C0006A82D /* PropertiesTest.swift */,
 				4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */,
@@ -401,6 +404,7 @@
 			files = (
 				495162391D1DFC5F0006A82D /* ConfigAutomatic.xml in Resources */,
 				4951623A1D1DFC5F0006A82D /* ConfigManual.xml in Resources */,
+				B76E299C1D37DF5D006F3F71 /* Comp.xml in Resources */,
 				4951623B1D1DFC5F0006A82D /* ConfigMinimal.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

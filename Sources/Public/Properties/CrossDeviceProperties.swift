@@ -1,3 +1,4 @@
+/** Enhance tracking by adding properties to track users across different devices. */
 public struct CrossDeviceProperties {
 
 	public var address: HashableTrackingValue<Address>?
