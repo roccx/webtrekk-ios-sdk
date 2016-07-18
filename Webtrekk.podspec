@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
 
 	s.author   = { 'Webtrekk' => 'support@webtrekk.com' }
 	s.homepage = 'https://www.webtrekk.com/en/solutions/mobile-analytics/'
-	s.license  = 'MIT'
+	s.license  = { :type => 'MIT', :file => 'LICENSE.MD' }
 	s.platform = :ios, '8.0'
 	s.source   = { :git => 'https://github.com/Webtrekk/webtrekk-ios.git', :tag => s.version }
 	s.summary  = 'The Webtrekk SDK allows you to track user activities, screen flow and media usage for an App.'

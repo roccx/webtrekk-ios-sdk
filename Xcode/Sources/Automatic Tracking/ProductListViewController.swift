@@ -18,6 +18,12 @@ class ProductListViewController: UITableViewController {
 			productViewController.productId = indexPath.row + 1
 		}
 	}
+
+	override func viewDidLoad() {
+		autoTracker.customProperties["Found"] = "1234567890-ertzuiop"
+		super.viewDidLoad()
+
+	}
 }
 
 

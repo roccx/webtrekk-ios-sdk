@@ -146,8 +146,8 @@ internal final class DefaultTracker: Tracker {
 			let identifierManagerClass = unsafeBitCast(NSClassFromString("ASIdentifierManager"), Optional<ASIdentifierManager.Type>.self),
 			let manager = identifierManagerClass.sharedManager(),
 			let advertisingIdentifier = manager.advertisingIdentifier
-		else {
-			return nil
+			else {
+				return nil
 		}
 
 		return advertisingIdentifier
@@ -170,17 +170,17 @@ internal final class DefaultTracker: Tracker {
 
 	#if os(watchOS)
 	internal func applicationDidFinishLaunching() {
-		checkIsOnMainThread()
+	checkIsOnMainThread()
 
-		if requestManagerStartTimer == nil {
-			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
-				self.startRequestManager()
-			}
-		}
+	if requestManagerStartTimer == nil {
+	requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
+	self.startRequestManager()
+	}
+	}
 
-		NSTimer.scheduledTimerWithTimeInterval(15) {
-			self.updateConfiguration()
-		}
+	NSTimer.scheduledTimerWithTimeInterval(15) {
+	self.updateConfiguration()
+	}
 	}
 	#else
 	internal func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
@@ -298,7 +298,7 @@ internal final class DefaultTracker: Tracker {
 			updateSampling()
 
 			#if !os(watchOS)
-			updateAutomaticTracking()
+				updateAutomaticTracking()
 			#endif
 		}
 	}
@@ -363,7 +363,7 @@ internal final class DefaultTracker: Tracker {
 			var customProperties = customEvent.customProperties
 			customProperties["appVersion"] = Environment.appVersion != nil ? Environment.appVersion! : nil
 			customProperties["appUpdated"] = "\(isFirstEventAfterAppUpdate)"
-//			customProperties["appVersionCode"] = Environment.appVersion
+			//			customProperties["appVersionCode"] = Environment.appVersion
 			customProperties["requestUrlStoreSize"] = "\(requestManager.queueSize)"
 			customProperties["advertiserId"] = advertisingIdentifier != nil ? advertisingIdentifier!.UUIDString : nil
 			customProperties["advertisingOptOut"] = advertisingOptOut != nil ? "\(advertisingOptOut!)" : nil
@@ -434,8 +434,8 @@ internal final class DefaultTracker: Tracker {
 		guard let
 			viewControllerTypeName = event.viewControllerTypeName,
 			page = configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName)
-		else {
-			return event
+			else {
+				return event
 		}
 
 		var event = event
@@ -517,7 +517,7 @@ internal final class DefaultTracker: Tracker {
 			let everId = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
 			sharedDefaults.set(key: DefaultsKeys.everId, to: everId)
 			return everId
-		}()
+			}()
 	}
 
 
@@ -763,7 +763,7 @@ internal final class DefaultTracker: Tracker {
 		requestManager.sendAllRequests()
 	}
 
-	
+
 	private func setUp() {
 		checkIsOnMainThread()
 
@@ -1010,7 +1010,7 @@ internal final class DefaultTracker: Tracker {
 			Environment.operatingSystemVersionString,
 			Environment.deviceModelString,
 			NSLocale.currentLocale().localeIdentifier
-		].joinWithSeparator("; ")
+			].joinWithSeparator("; ")
 
 		return "Tracking Library \(WebtrekkTracking.version) (\(properties))"
 	}()
@@ -1164,46 +1164,46 @@ extension DefaultTracker: RequestManager.Delegate {
 
 
 #if !os(watchOS)
-private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHandler, PageViewEventHandler {
+	private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHandler, PageViewEventHandler {
 
-	private var trackers = [DefaultTracker]()
+		private var trackers = [DefaultTracker]()
 
 
-	private func broadcastEvent<Event: TrackingEvent>(event: Event, handler: (DefaultTracker) -> (Event) -> Void) {
-		var event = event
+		private func broadcastEvent<Event: TrackingEvent>(event: Event, handler: (DefaultTracker) -> (Event) -> Void) {
+			var event = event
 
-		for tracker in trackers {
-			guard let viewControllerTypeName = event.viewControllerTypeName
-				where tracker.configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName) != nil
-			else {
-				continue
+			for tracker in trackers {
+				guard let viewControllerTypeName = event.viewControllerTypeName
+					where tracker.configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName) != nil
+					else {
+						continue
+				}
+
+				handler(tracker)(event)
 			}
+		}
 
-			handler(tracker)(event)
+
+		private func handleEvent(event: ActionEvent) {
+			checkIsOnMainThread()
+
+			broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
+		}
+
+
+		private func handleEvent(event: MediaEvent) {
+			checkIsOnMainThread()
+
+			broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
+		}
+
+
+		private func handleEvent(event: PageViewEvent) {
+			checkIsOnMainThread()
+
+			broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
 		}
 	}
-
-
-	private func handleEvent(event: ActionEvent) {
-		checkIsOnMainThread()
-
-		broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
-	}
-
-
-	private func handleEvent(event: MediaEvent) {
-		checkIsOnMainThread()
-
-		broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
-	}
-
-
-	private func handleEvent(event: PageViewEvent) {
-		checkIsOnMainThread()
-
-		broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
-	}
-}
 #endif
 
 
@@ -1301,9 +1301,9 @@ private extension EcommerceProperties {
 			if case .productStatus = parameter.name {
 				if let key = parameter.key, let value = customProperties[key] {
 					switch value {
-						case "conf":
+					case "conf":
 						status = .purchased
-						case "add":
+					case "add":
 						status = .addedToBasket
 					default:
 						status = .viewed
@@ -1378,21 +1378,21 @@ private extension TrackerRequest.Properties {
 		for parameter in screenTrackingParameter.parameters {
 			if case .advertisingId = parameter.name {
 				if let key = parameter.key, let value = customProperties[key] {
-					advertisingId = self.advertisingId ?? NSUUID(UUIDString: value)
+					advertisingId = NSUUID(UUIDString: value) ?? self.advertisingId
 				}
-				advertisingId = self.advertisingId ?? NSUUID(UUIDString: parameter.value)
+				advertisingId = NSUUID(UUIDString: parameter.value) ?? self.advertisingId
 			}
 			if case .everId = parameter.name {
 				if let key = parameter.key, let value = customProperties[key] {
-					everId = self.everId ?? value
+					everId = value
 				}
-				everId = self.everId ?? parameter.value
+				everId = parameter.value ?? self.everId
 			}
 			if case .ipAddress = parameter.name {
 				if let key = parameter.key, let value = customProperties[key] {
-					ipAddress = self.ipAddress ?? value
+					ipAddress = value
 				}
-				ipAddress = self.ipAddress ?? parameter.value
+				ipAddress = parameter.value ?? self.ipAddress
 			}
 			if case .firstStart = parameter.name {
 				if let key = parameter.key, let valueString = customProperties[key] {
@@ -1401,38 +1401,46 @@ private extension TrackerRequest.Properties {
 					case "true":  value = true
 					default: value = false
 					}
-					isFirstEventOfApp = self.isFirstEventOfApp ?? value
+					isFirstEventOfApp = value
 				}
 				var value: Bool
 				switch parameter.value {
 				case "true":  value = true
 				default: value = false
 				}
-				isFirstEventOfApp = self.isFirstEventOfApp ?? value
+				isFirstEventOfApp = value
 			}
 			if case .samplingRate = parameter.name {
 				if let key = parameter.key, valueString = customProperties[key], value = Int(valueString) {
-					samplingRate = self.samplingRate ?? value
+					samplingRate = value
 				}
 				if let value = Int(parameter.value) {
-					samplingRate = self.samplingRate ?? value
+					samplingRate = value
 				}
 			}
 			if case .timestamp = parameter.name {
 				if let key = parameter.key, valueString = customProperties[key], value = Int64(valueString) {
-					timestamp = self.timestamp ?? NSDate(timeIntervalSince1970: Double(value) / 1000)
+					timestamp = NSDate(timeIntervalSince1970: Double(value) / 1000)
 				}
 				if let value = Int64(parameter.value) {
-					timestamp = self.timestamp ?? NSDate(timeIntervalSince1970: Double(value) / 1000)
+					timestamp = NSDate(timeIntervalSince1970: Double(value) / 1000)
 				}
 
 			}
 			if case .timeZone = parameter.name {
 				if let key = parameter.key, valueString = customProperties[key], value = Double(valueString) {
-					timeZone = self.timeZone ?? NSTimeZone(forSecondsFromGMT: Int(60 * 60 * value))
+					timeZone = NSTimeZone(forSecondsFromGMT: Int(60 * 60 * value))
 				}
 				if let value = Double(parameter.value) {
-					timeZone = self.timeZone ?? NSTimeZone(forSecondsFromGMT: Int(60 * 60 * value))
+					timeZone = NSTimeZone(forSecondsFromGMT: Int(60 * 60 * value))
+				}
+			}
+			if case .userAgent = parameter.name {
+				if let key = parameter.key, value = customProperties[key]{
+					userAgent = value
+				}
+				else {
+					userAgent = parameter.value
 				}
 			}
 		}
@@ -1592,5 +1600,5 @@ internal extension IndexedProperty {
 		}
 		return result.isEmpty ? nil : result
 	}
-
+	
 }
