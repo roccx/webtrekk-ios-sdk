@@ -1,60 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
 <webtrekkConfiguration>
-	<!-- configuration file version -->
+	<!--the version number for this configuration file -->
 	<version>1</version>
-
-	<!-- server to send tracking events to -->
+	<!--the webtrekk trackDomain where the requests are send -->
 	<trackDomain>https://q3.webtrekk.net</trackDomain>
 
-	<!-- Webtrekk customer id -->
+	<!--customers trackid-->
 	<trackId>289053685367929</trackId>
 
-	<!-- measure only every Nth user (0 to disable) -->
+	<!-- measure only a subset of the users -->
 	<sampling>0</sampling>
+	<!-- interval between the requests are send in seconds -->
+	<sendDelay>5</sendDelay>
+	<!--maximum amoount of requests to store when the user is offline -->
+	<maxRequests>100</maxRequests>
 
-	<!-- maximum delay after an event occurred before sending it to the server (in seconds) -->
-	<sendDelay>30</sendDelay>
+	<!--optional settings -->
+	<!--enables the remote xml configuration -->
+	<enableRemoteConfiguration>false</enableRemoteConfiguration>
+	<!--url of the remote configuration -->
+	<trackingConfigurationUrl>https://d1r27qvpjiaqj3.cloudfront.net/238713152098253/34629.xml</trackingConfigurationUrl>
+	<!--resend onStart time, this is the timeout for auto tracked sessions in case an screen was paused -->
+	<resendOnStartEventTime>30</resendOnStartEventTime>
 
-	<!-- minimum duration the app has to be in the background (or terminated) before starting a new session -->
-	<resendOnStartEventTime>1800</resendOnStartEventTime>
+	<!--automaticly track activities onStart method -->
+	<autoTracked>true</autoTracked>
 
-	<!-- maximum number of events to keep in the queue while there is no internet connection -->
-	<maxRequests>5000</maxRequests>
 
-	<!-- automatically download updated versions of this configuration file (empty to disable updates) -->
-	<configurationUpdateUrl>https://your.domain/webtrekk.xml</configurationUpdateUrl>
+	<!--track if there was an application update -->
+	<autoTrackAppUpdate>true</autoTrackAppUpdate>
+	<!--track the advertiser id -->
+	<autoTrackAdvertiserId>true</autoTrackAdvertiserId>
+	<!--track the app versions name -->
+	<autoTrackAppVersionName>true</autoTrackAppVersionName>
+	<!--track the app versions code -->
+	<autoTrackAppVersionCode>true</autoTrackAppVersionCode>
+	<!--track the devices screen orientation -->
+	<autoTrackScreenOrientation>true</autoTrackScreenOrientation>
+	<!--track the current connection type -->
+	<autoTrackConnectionType>true</autoTrackConnectionType>
+	<!--track if the user has opted out for advertisement on google plays -->
+	<autoTrackAdvertisementOptOut>true</autoTrackAdvertisementOptOut>
+	<!--sends the size of the current locally stored urls in a custom parameter -->
+	<autoTrackRequestUrlStoreSize>true</autoTrackRequestUrlStoreSize>
 
-	<!-- automatically track various information -->
-	<automaticTracking>
-		<advertisingIdentifier>true</advertisingIdentifier>
-		<appUpdates>true</appUpdates>
-		<appVersion>true</appVersion>
-		<connectionType>true</connectionType>
-		<interfaceOrientation>true</interfaceOrientation>
-		<requestQueueSize>true</requestQueueSize>
-		<pages>
-			<page viewControllerType="ProductListViewController">
-				<pageProperties name="Product List"/>
-			</page>
+	<!--global tracking parameter -->
+	<globalTrackingParameter>
+		<!--define global tracking parameter which are send with every request, the key has to match a valid parameter name!
+		 entries made here are available as default parameters in the trackingparameter instance -->
+		<parameter id="CURRENCY">EUR</parameter>
 
-			<page viewControllerType="/.*\.ProductViewController/">
-				<pageProperties name="Product Details">
-					<details index1="Blue Variant" index2="Media"/>
-				</pageProperties>
-				<customProperties myProperty="myValue" anotherProperty="anotherValue"/>
-			</page>
-			<page viewControllerType="SettingsViewController">
-				<pageProperties name="Settings"/>
-			</page>
-			<page viewControllerType="VoucherListViewController">
-				<pageProperties name="Voucher List"/>
-			</page>
-			<page viewControllerType="/.*\.VoucherViewController/">
-				<pageProperties name="Voucher Details">
-					<details index1="Percentage" index2="OneTime"/>
-				</pageProperties>
-				<customProperties myProperty="myValue" anotherProperty="anotherValue"/>
-			</page>
-		</pages>
-	</automaticTracking>
+
+		<!--define the global page parameter, the key is the index,  -->
+		<pageParameter>
+			<parameter id="1" key="appPreinstalled"></parameter>
+			<parameter id="2" key="appVersion"></parameter>
+			<parameter id="3" key="appUpdated"></parameter>
+			<parameter id="4" key="apiLevel"></parameter>
+			<parameter id="5" key="appVersionCode"></parameter>
+			<parameter id="6" key="screenOrientation"></parameter>
+			<parameter id="7" key="connectionType"></parameter>
+			<parameter id="8" key="requestUrlStoreSize"></parameter>
+			<parameter id="9" key="playstoreMail"></parameter>
+			<parameter id="10" key="playstoreGivenname"></parameter>
+			<parameter id="11" key="playstoreFamilyname"></parameter>
+			<parameter id="12" key="advertiserId"></parameter>
+			<parameter id="13" key="advertisingOptOut"></parameter>
+
+			<parameter id="20">test_pageparam2</parameter>
+			<parameter id="21">test_pageparam3</parameter>
+		</pageParameter>
+		<sessionParameter>
+			<parameter id="1">test_sessionparam1</parameter>
+		</sessionParameter>
+		<ecomParameter>
+			<parameter id="1">test_ecomparam1</parameter>
+		</ecomParameter>
+		<userCategories>
+			<parameter key="1">test_usercategory1</parameter>
+		</userCategories>
+		<pageCategories>
+			<parameter id="1">test_pagecategory1</parameter>
+		</pageCategories>
+		<adParameter>
+			<parameter id="1">test_adparam1</parameter>
+		</adParameter>
+		<actionParameter>
+			<parameter id="1">test_actionparam1</parameter>
+		</actionParameter>
+		<productCategories>
+			<parameter id="1">test_productcategory1</parameter>
+		</productCategories>
+		<mediaCategories>
+			<parameter id="1">test_mediacategory1</parameter>
+		</mediaCategories>
+
+	</globalTrackingParameter>
+
+
+	<!--screen configurations -->
+	<screen>
+		<classname>ProductListViewController</classname>
+		<mappingname>Product List</mappingname>
+
+		<!--screen tracking parameter -->
+		<screenTrackingParameter>
+			<!--define global tracking parameter which are send with every request, the key has to match a valid parameter name!
+			 entries made here are available as default parameters in the trackingparameter instance -->
+			<parameter id="CURRENCY">EUR</parameter>
+
+			<!--define the global page parameter, the key is the index,  -->
+			<!--<pageParameter>-->
+			<!--<parameter id="4">test_pageparam4</parameter>-->
+			<!--<parameter id="5">test_pageparam5</parameter>-->
+			<!--<parameter id="6">test_pageparam6</parameter>-->
+			<!--</pageParameter>-->
+			<sessionParameter>
+				<parameter id="2">test_sessionparam2</parameter>
+			</sessionParameter>
+			<ecomParameter>
+				<parameter id="2">test_ecomparam2</parameter>
+			</ecomParameter>
+			<userCategories>
+				<parameter id="2">test_usercategory2</parameter>
+			</userCategories>
+			<pageCategories>
+				<parameter id="2">test_pagecategory2</parameter>
+			</pageCategories>
+			<adParameter>
+				<parameter id="2">test_adparam2</parameter>
+			</adParameter>
+			<actionParameter>
+				<parameter id="2">test_actionparam2</parameter>
+			</actionParameter>
+			<productCategories>
+				<parameter id="2">test_productcategory2</parameter>
+			</productCategories>
+			<mediaCategories>
+				<parameter id="2">test_mediacategory2</parameter>
+			</mediaCategories>
+
+		</screenTrackingParameter>
+	</screen>
+	<screen>
+		<classname>/.*\.ProductViewController/</classname>
+		<mappingname>Product Details</mappingname>
+	</screen>
+	<screen>
+		<classname>SettingsViewController</classname>
+		<mappingname>Settings</mappingname>
+	</screen>
+	<screen>
+		<classname>VoucherListViewController</classname>
+		<mappingname>Voucher List</mappingname>
+	</screen>
+	<screen>
+		<classname>/.*\.VoucherViewController/</classname>
+		<mappingname>Voucher Details</mappingname>
+	</screen>
 </webtrekkConfiguration>

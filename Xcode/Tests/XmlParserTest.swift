@@ -6,7 +6,7 @@ import XCTest
 internal class XmlParserAutomaticTest: XCTestCase {
 
 	internal var configurationData: NSData = {
-		guard let configurationFile = NSBundle(forClass: XmlParserManualTest.self).URLForResource("Comp", withExtension: "xml") else {
+		guard let configurationFile = NSBundle(forClass: XmlParserManualTest.self).URLForResource("ConfigAutomatic", withExtension: "xml") else {
 			fatalError("Cannot locate ConfigAutomatic.xml")
 		}
 		guard let configurationData = NSData(contentsOfURL: configurationFile) else {
@@ -36,11 +36,11 @@ internal class XmlParserAutomaticTest: XCTestCase {
 		catch let error {
 			fatalError("Cannot Read Webtrekk configuration: \(error)")
 		}
-		XCTAssertEqual(config.maximumSendDelay, 30)
-		XCTAssertEqual(config.requestQueueLimit, 5000)
+		XCTAssertEqual(config.maximumSendDelay, 5)
+		XCTAssertEqual(config.requestQueueLimit, 100)
 		XCTAssertEqual(config.samplingRate, 0)
 		XCTAssertEqual(config.serverUrl.absoluteString, "https://q3.webtrekk.net")
-		XCTAssertEqual(config.resendOnStartEventTime, 1800)
+		XCTAssertEqual(config.resendOnStartEventTime, 30)
 		XCTAssertEqual(config.version, 1)
 		XCTAssertEqual(config.webtrekkId, "289053685367929")
 		XCTAssertNotNil(config.configurationUpdateUrl)
@@ -103,11 +103,11 @@ internal class XmlParserManualTest: XCTestCase {
 		catch let error {
 			fatalError("Cannot Read Webtrekk configuration: \(error)")
 		}
-		XCTAssertEqual(config.maximumSendDelay, 30)
-		XCTAssertEqual(config.requestQueueLimit, 5000)
+		XCTAssertEqual(config.maximumSendDelay, 5)
+		XCTAssertEqual(config.requestQueueLimit, 100)
 		XCTAssertEqual(config.samplingRate, 0)
 		XCTAssertEqual(config.serverUrl.absoluteString, "https://q3.webtrekk.net")
-		XCTAssertEqual(config.resendOnStartEventTime, 1200)
+		XCTAssertEqual(config.resendOnStartEventTime, 30)
 		XCTAssertEqual(config.version, 1)
 		XCTAssertEqual(config.webtrekkId, "289053685367929")
 		XCTAssertNil(config.configurationUpdateUrl)
@@ -153,9 +153,9 @@ internal class XmlParserMinimalTest: XCTestCase {
 		catch let error {
 			fatalError("Cannot Read Webtrekk configuration: \(error)")
 		}
-		XCTAssertEqual(config.maximumSendDelay, 5 * 60)
-		XCTAssertEqual(config.requestQueueLimit, 1000)
-		XCTAssertEqual(config.samplingRate, 0)
+		XCTAssertEqual(config.maximumSendDelay, 5)
+		XCTAssertEqual(config.requestQueueLimit, 100)
+		XCTAssertEqual(config.samplingRate, 10)
 		XCTAssertEqual(config.serverUrl.absoluteString, "https://q3.webtrekk.net")
 		XCTAssertEqual(config.resendOnStartEventTime, 30 * 60)
 		XCTAssertEqual(config.version, 1)

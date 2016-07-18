@@ -51,7 +51,6 @@ public struct TrackerConfiguration {
 	public var automaticallyTracksInterfaceOrientation = true
 	#endif
 
-
 	/** 
 	Configuration for a Tracker
 
@@ -86,7 +85,7 @@ public struct TrackerConfiguration {
 		public var pageProperties: PageProperties
 		/** A Regular Expression to determine a view controller for automatic tracking. */
 		public var viewControllerTypeNamePattern: NSRegularExpression
-
+		internal var screenTrackingParameter: ScreenTrackingParameter?
 		/**
 		- Parameter viewControllerTypeNamePattern: A Regular Expression to determine a view controller for automatic tracking.
 		- Parameter pageProperties: Page Properties that should be tracked if not overwritten manually.

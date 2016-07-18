@@ -26,23 +26,59 @@ internal class XmlTrackerConfigurationParser {
 	private var automaticallyTracksInterfaceOrientation: Bool?
 	#endif
 
+	private var globalScreenTrackingParameter: ScreenTrackingParameter?
+
 
 	internal func parse(xml data: NSData) throws -> TrackerConfiguration {
 		return try readFromRootElement(XmlParser().parse(xml: data))
 	}
 
 
+	private func parseScreenTrackingParameter(xmlElement: XmlElement) -> ScreenTrackingParameter {
+		var categories = [String: [CategoryElement]]()
+
+		var parameters = [PropertyElement]()
+		for child in xmlElement.children {
+			switch child.name {
+			case "parameter":
+				guard let element = readFromParameterElement(child) else {
+					break
+				}
+				parameters.append(element)
+
+			case "actionParameter":   categories["actionParameter"] = readFromCategoryElement(child)
+			case "adParameter":       categories["adParameter"] = readFromCategoryElement(child)
+			case "ecomParameter":     categories["ecomParameter"] = readFromCategoryElement(child)
+			case "mediaCategories":   categories["mediaCategories"] = readFromCategoryElement(child)
+			case "pageCategories":    categories["pageCategories"] = readFromCategoryElement(child)
+			case "productCategories": categories["productCategories"] = readFromCategoryElement(child)
+			case "sessionParameter":  categories["sessionParameter"] = readFromCategoryElement(child)
+			case "userCategories":    categories["userCategories"] = readFromCategoryElement(child)
+
+			default: break
+			}
+		}
+		return ScreenTrackingParameter(categories: categories, parameters: parameters)
+	}
+
+
 	private func readFromGlobalElement(xmlElement: XmlElement) throws {
-		// TODO: do
+		guard xmlElement.name == "globalTrackingParameter" else {
+			throw Error(message: "\(xmlElement.path.joinWithSeparator(".")) needs to be globalTrackingParameter")
+		}
+		guard !xmlElement.children.isEmpty else {
+			return
+		}
+		globalScreenTrackingParameter = parseScreenTrackingParameter(xmlElement)
 	}
 
 
 	private func readFromRootElement(xmlElement: XmlElement) throws -> TrackerConfiguration {
 		guard xmlElement.name == "webtrekkConfiguration" else {
-			throw Error(message: "root node needs to be webtrekkConfiguration")
+			throw Error(message: "\(xmlElement.path.joinWithSeparator(".")) root node needs to be webtrekkConfiguration")
 		}
 		guard !xmlElement.children.isEmpty else {
-			throw Error(message: "webtrekkConfiguration can not be empty")
+			throw Error(message: "\(xmlElement.path.joinWithSeparator(".")) webtrekkConfiguration can not be empty")
 		}
 		for child in xmlElement.children {
 			do {
@@ -82,7 +118,7 @@ internal class XmlTrackerConfigurationParser {
 				guard let error = generalError as? Error else {
 					throw generalError
 				}
-				throw Error(message: "\(child.name): \(error.message)")
+				throw Error(message: "\(xmlElement.path.joinWithSeparator(".")): \(error.message)")
 			}
 		}
 
@@ -139,16 +175,6 @@ internal class XmlTrackerConfigurationParser {
 		if let automaticallyTracksRequestQueueSize = automaticallyTracksRequestQueueSize {
 			trackerConfiguration.automaticallyTracksRequestQueueSize = automaticallyTracksRequestQueueSize
 		}
-
-		// if autotracked is disabled every other property is overwritten
-		if let autoTracked = autoTracked where !autoTracked {
-			trackerConfiguration.automaticallyTracksAdvertisingId = autoTracked
-			trackerConfiguration.automaticallyTracksAdvertisingOptOut = autoTracked
-			trackerConfiguration.automaticallyTracksAppUpdates = autoTracked
-			trackerConfiguration.automaticallyTracksAppVersion = autoTracked
-			trackerConfiguration.automaticallyTracksRequestQueueSize = autoTracked
-		}
-
 		#if !os(watchOS)
 			if let automaticallyTracksConnectionType = automaticallyTracksConnectionType {
 				trackerConfiguration.automaticallyTracksConnectionType = automaticallyTracksConnectionType
@@ -159,6 +185,21 @@ internal class XmlTrackerConfigurationParser {
 			}
 			trackerConfiguration.automaticallyTrackedPages = automaticallyTrackedPages
 		#endif
+		
+		// if autotracked is disabled every other property is overwritten
+		if let autoTracked = autoTracked where !autoTracked {
+			trackerConfiguration.automaticallyTracksAdvertisingId = autoTracked
+			trackerConfiguration.automaticallyTracksAdvertisingOptOut = autoTracked
+			trackerConfiguration.automaticallyTracksAppUpdates = autoTracked
+			trackerConfiguration.automaticallyTracksAppVersion = autoTracked
+			trackerConfiguration.automaticallyTracksRequestQueueSize = autoTracked
+			#if !os(watchOS)
+				trackerConfiguration.automaticallyTracksConnectionType = autoTracked
+				trackerConfiguration.automaticallyTracksInterfaceOrientation = autoTracked
+			#endif
+		}
+
+		trackerConfiguration.globalScreenTrackingParameter = globalScreenTrackingParameter
 
 		return trackerConfiguration
 	}
@@ -167,22 +208,22 @@ internal class XmlTrackerConfigurationParser {
 	#if !os(watchOS)
 	private func readFromScreenElement(xmlElement: XmlElement) throws {
 		guard xmlElement.name == "screen" else {
-			throw Error(message: "screen nodes needs to be screen")
+			throw Error(message: "\(xmlElement.path.joinWithSeparator(".")) nodes needs to be screen")
 		}
 		guard !xmlElement.children.isEmpty else {
-			throw Error(message: "screen node can not be empty")
+			throw Error(message: "\(xmlElement.path.joinWithSeparator(".")) node can not be empty")
 		}
 		// TODO: create screen here and append afterwards to array of screens
 		var viewControllerType: String?
 		var pageName: String?
 		var autoTracked: Bool?
-		var screenTrackingParameterValue: ScreenTrackingParameter?
+		var screenTrackingParameter: ScreenTrackingParameter?
 		for child in xmlElement.children {
 			switch child.name {
 			case "classname": viewControllerType = try parseString(child.text, emptyAllowed: false)
 			case "mappingname": pageName = try parseString(child.text, emptyAllowed: false)
 			case "autoTracked": autoTracked = try parseBool(child.text)
-			case "screenTrackingParameter": screenTrackingParameterValue = try readFromScreenTrackingParameterElement(child)
+			case "screenTrackingParameter": screenTrackingParameter = try readFromScreenTrackingParameterElement(child)
 			default: break // TODO: handle not covered cases
 			}
 		}
@@ -220,10 +261,7 @@ internal class XmlTrackerConfigurationParser {
 		if let pageName = pageName {
 			page.pageProperties.name = pageName
 		}
-		guard let screenTrackingParameter = screenTrackingParameterValue else {
-			return
-		}
-		page.pageProperties.fillFromScreenTrackingParameter(screenTrackingParameter)
+		page.screenTrackingParameter = screenTrackingParameter
 		automaticallyTrackedPages.append(page)
 	}
 
@@ -236,30 +274,7 @@ internal class XmlTrackerConfigurationParser {
 			return nil
 		}
 
-		var categories = [String: [CategoryElement]]()
-
-		var parameters = [PropertyElement]()
-		for child in xmlElement.children {
-			switch child.name {
-			case "parameter":
-				guard let element = readFromParameterElement(child) else {
-					break
-				}
-				parameters.append(element)
-
-			case "actionParameter":   categories["actionParameter"] = readFromCategoryElement(child)
-			case "adParameter":       categories["adParameter"] = readFromCategoryElement(child)
-			case "ecomParameter":     categories["ecomParameter"] = readFromCategoryElement(child)
-			case "mediaCategories":   categories["mediaCategories"] = readFromCategoryElement(child)
-			case "pageCategories":    categories["pageCategories"] = readFromCategoryElement(child)
-			case "productCategories": categories["productCategories"] = readFromCategoryElement(child)
-			case "sessionParameter":  categories["sessionParameter"] = readFromCategoryElement(child)
-			case "userCategories":    categories["userCategories"] = readFromCategoryElement(child)
-
-			default: break
-			}
-		}
-		return ScreenTrackingParameter(categories: categories, parameters: parameters)
+		return parseScreenTrackingParameter(xmlElement)
 	}
 	#endif
 
@@ -286,7 +301,7 @@ internal class XmlTrackerConfigurationParser {
 			return nil
 		}
 		if let propertyName = PropertyName(rawValue: parameterName) {
-			return PropertyElement(name: propertyName, value: xmlElement.text)
+			return PropertyElement(name: propertyName, key: xmlElement.attributes["id"], value: xmlElement.text)
 		}
 		else {
 			// TODO: PropertyName is not defined yet, log or throw?
@@ -383,86 +398,84 @@ internal class XmlTrackerConfigurationParser {
 			return message
 		}
 	}
+}
 
+public struct PropertyElement {
+	var name: PropertyName
+	var key: String?
+	var value: String
+}
 
-	private struct PropertyElement {
-		var name: PropertyName
-		var value: String
-	}
+public enum PropertyName:String {
+	case actionName = "ACTION_NAME"
+	case advertisementId = "ADVERTISEMENT"
+	case advertisementAction = "ADVERTISEMENT_ACTION"
+	case advertisingId = "ADVERTISER_ID"
+	case birthday = "BIRTHDAY"
+	case city = "CITY"
+	case country = "COUNTRY"
+	case currencyCode = "CURRENCY"
+	case currentTime = "CURRENT_TIME"
+	case customerId = "CUSTOMER_ID"
+	case emailAddress = "EMAIL"
+	case emailReceiverId = "EMAIL_RID"
+	case everId = "EVERID"
+	case gender = "GENDER"
+	case firstName = "GNAME"
+	case firstStart = "APP_FIRST_START"
+	case internalSearch = "INTERN_SEARCH"
+	case ipAddress = "IP_ADDRESS"
+	case language = "DEV_LANG"
+	case lastName = "SNAME"
+	case newsletterSubscribed = "NEWSLETTER"
+	case orderNumber = "ORDER_NUMBER"
+	case pageUrl = "PAGE_URL"
+	case phoneNumber = "PHONE"
+	case productName = "PRODUCT"
+	case productPrice = "PRODUCT_COST"
+	case productQuantity = "PRODUCT_COUNT"
+	case productStatus = "PRODUCT_STATUS"
+	case samplingRate = "SAMPLING"
+	case screenDepth = "SCREEN_DEPTH"
+	case screenSize = "SCREEN_RESOLUTION"
+	case street = "STREET"
+	case streetNumber = "STREETNUMBER"
+	case timestamp = "TIMESTAMP"
+	case timeZone = "TIMEZONE"
+	case totalValue = "ORDER_TOTAL"
+	case userAgent = "USERAGENT"
+	case voucherValue = "VOUCHER_VALUE"
+	case zipCode = "ZIP"
+}
 
-	private enum PropertyName:String {
-		case actionName = "ACTION_NAME"
-		case advertisementId = "ADVERTISEMENT"
-		case advertisementAction = "ADVERTISEMENT_ACTION"
-		case advertisingId = "ADVERTISER_ID"
-		case birthday = "BIRTHDAY"
-		case city = "CITY"
-		case country = "COUNTRY"
-		case currencyCode = "CURRENCY"
-		case currentTime = "CURRENT_TIME"
-		case customerId = "CUSTOMER_ID"
-		case emailAddress = "EMAIL"
-		case emailReceiverId = "EMAIL_RID"
-		case everId = "EVERID"
-		case gender = "GENDER"
-		case firstName = "GNAME"
-		case firstStart = "APP_FIRST_START"
-		case internalSearch = "INTERN_SEARCH"
-		case ipAddress = "IP_ADDRESS"
-		case language = "DEV_LANG"
-		case lastName = "SNAME"
-		case newsletterSubscribed = "NEWSLETTER"
-		case orderNumber = "ORDER_NUMBER"
-		case pageUrl = "PAGE_URL"
-		case phoneNumber = "PHONE"
-		case productName = "PRODUCT"
-		case productPrice = "PRODUCT_COST"
-		case productQuantity = "PRODUCT_COUNT"
-		case productStatus = "PRODUCT_STATUS"
-		case samplingRate = "SAMPLING"
-		case screenDepth = "SCREEN_DEPTH"
-		case screenSize = "SCREEN_RESOLUTION"
-		case street = "STREET"
-		case streetNumber = "STREETNUMBER"
-		case timestamp = "TIMESTAMP"
-		case timeZone = "TIMEZONE"
-		case totalValue = "ORDER_TOTAL"
-		case useragent = "USERAGENT"
-		case voucherValue = "VOUCHER_VALUE"
-		case zipCode = "ZIP"
-	}
+public class ScreenTrackingParameter {
+	let categories: [String: [CategoryElement]]
+	let parameters: [PropertyElement]
 
-	private struct ScreenTrackingParameter {
-		let categories: [String: [CategoryElement]]
-		let parameters: [PropertyElement]
-	}
-
-
-
-	private struct CategoryElement {
-		private var index: Int
-		private var key: String?
-		private var value: String
+	init(categories: [String: [CategoryElement]], parameters: [PropertyElement]) {
+		self.categories = categories
+		self.parameters = parameters
 	}
 }
 
 
-#if !os(watchOS)
-private extension PageProperties {
 
-	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: XmlTrackerConfigurationParser.ScreenTrackingParameter) {
-		guard let pageParameters = screenTrackingParameter.categories["pageCategories"] where !pageParameters.isEmpty else {
-			return
-		}
-		self.details = Set<IndexedProperty>()
-		
-		for pageParameter in pageParameters {
-			guard let key = pageParameter.key else {
-				self.details?.insert(IndexedProperty(index: pageParameter.index, value: pageParameter.value))
-				continue
-			}
-			// FIXME: reference Parameter with key for custom usage
-		}
+public struct CategoryElement {
+	internal var index: Int
+	internal var key: String?
+	internal var value: String
+}
+
+internal extension TrackerConfiguration {
+	private struct AssociatedKeys {
+
+		private static var globalScreenTrackingParameter = UInt8()
+		private static var automaticTracker = UInt8()
+	}
+
+	@nonobjc
+	internal var globalScreenTrackingParameter: ScreenTrackingParameter? {
+		get { return objc_getAssociatedObject(self.webtrekkId, &AssociatedKeys.globalScreenTrackingParameter) as? ScreenTrackingParameter }
+		set { objc_setAssociatedObject(self.webtrekkId, &AssociatedKeys.globalScreenTrackingParameter, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
 	}
 }
-#endif

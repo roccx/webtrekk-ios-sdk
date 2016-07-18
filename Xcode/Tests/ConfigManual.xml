@@ -1,37 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <webtrekkConfiguration>
-	<!-- configuration file version -->
+	<!--the version number for this configuration file -->
 	<version>1</version>
-
-	<!-- server to send tracking events to -->
+	<!--the webtrekk trackDomain where the requests are send -->
 	<trackDomain>https://q3.webtrekk.net</trackDomain>
 
-	<!-- Webtrekk customer id -->
+	<!--customers trackid-->
 	<trackId>289053685367929</trackId>
 
-	<!-- measure only every Nth user (0 to disable) -->
+	<!-- measure only a subset of the users -->
 	<sampling>0</sampling>
+	<!-- interval between the requests are send in seconds -->
+	<sendDelay>5</sendDelay>
+	<!--maximum amoount of requests to store when the user is offline -->
+	<maxRequests>100</maxRequests>
 
-	<!-- maximum delay after an event occurred before sending it to the server (in seconds) -->
-	<sendDelay>30</sendDelay>
+	<!--optional settings -->
+	<!--enables the remote xml configuration -->
+	<enableRemoteConfiguration>false</enableRemoteConfiguration>
+	<!--url of the remote configuration -->
+	<trackingConfigurationUrl>https://d1r27qvpjiaqj3.cloudfront.net/238713152098253/34629.xml</trackingConfigurationUrl>
+	<!--resend onStart time, this is the timeout for auto tracked sessions in case an screen was paused -->
+	<resendOnStartEventTime>30</resendOnStartEventTime>
 
-	<!-- minimum duration the app has to be in the background (or terminated) before starting a new session -->
-	<resendOnStartEventTime>1200</resendOnStartEventTime>
+	<!--automaticly track activities onStart method -->
+	<autoTracked>false</autoTracked>
 
-	<!-- maximum number of events to keep in the queue while there is no internet connection -->
-	<maxRequests>5000</maxRequests>
+	<!--global tracking parameter -->
+	<globalTrackingParameter>
+		<!--define global tracking parameter which are send with every request, the key has to match a valid parameter name!
+		 entries made here are available as default parameters in the trackingparameter instance -->
+		<parameter id="CURRENCY">EUR</parameter>
 
-	<!-- automatically download updated versions of this configuration file (empty to disable updates) -->
-	<configurationUpdateUrl></configurationUpdateUrl>
 
-	<!-- automatically track various information -->
-	<automaticTracking>
-		<advertisingIdentifier>false</advertisingIdentifier>
-		<advertisingOptOut>false</advertisingOptOut>
-		<appUpdates>false</appUpdates>
-		<appVersion>false</appVersion>
-		<connectionType>false</connectionType>
-		<interfaceOrientation>false</interfaceOrientation>
-		<requestQueueSize>false</requestQueueSize>
-	</automaticTracking>
+		<!--define the global page parameter, the key is the index,  -->
+		<pageParameter>
+			<parameter id="1" key="appPreinstalled"></parameter>
+			<parameter id="2" key="appVersion"></parameter>
+			<parameter id="3" key="appUpdated"></parameter>
+			<parameter id="4" key="apiLevel"></parameter>
+			<parameter id="5" key="appVersionCode"></parameter>
+			<parameter id="6" key="screenOrientation"></parameter>
+			<parameter id="7" key="connectionType"></parameter>
+			<parameter id="8" key="requestUrlStoreSize"></parameter>
+			<parameter id="9" key="playstoreMail"></parameter>
+			<parameter id="10" key="playstoreGivenname"></parameter>
+			<parameter id="11" key="playstoreFamilyname"></parameter>
+			<parameter id="12" key="advertiserId"></parameter>
+			<parameter id="13" key="advertisingOptOut"></parameter>
+
+			<parameter id="20">test_pageparam2</parameter>
+			<parameter id="21">test_pageparam3</parameter>
+		</pageParameter>
+		<sessionParameter>
+			<parameter id="1">test_sessionparam1</parameter>
+		</sessionParameter>
+		<ecomParameter>
+			<parameter id="1">test_ecomparam1</parameter>
+		</ecomParameter>
+		<userCategories>
+			<parameter key="1">test_usercategory1</parameter>
+		</userCategories>
+		<pageCategories>
+			<parameter id="1">test_pagecategory1</parameter>
+		</pageCategories>
+		<adParameter>
+			<parameter id="1">test_adparam1</parameter>
+		</adParameter>
+		<actionParameter>
+			<parameter id="1">test_actionparam1</parameter>
+		</actionParameter>
+		<productCategories>
+			<parameter id="1">test_productcategory1</parameter>
+		</productCategories>
+		<mediaCategories>
+			<parameter id="1">test_mediacategory1</parameter>
+		</mediaCategories>
+
+	</globalTrackingParameter>
 </webtrekkConfiguration>
