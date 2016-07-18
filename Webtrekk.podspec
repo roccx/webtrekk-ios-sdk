@@ -3,12 +3,12 @@ Pod::Spec.new do |s|
 	s.name    = 'Webtrekk'
 	s.version = '1.0.0'
 
-	s.author   = { 'Benjamin Werker' => 'benjamin@widgetlabs.eu' }
-	s.homepage = 'https://github.com/Webtrekk/webtrekk-ios'
+	s.author   = { 'Webtrekk' => 'support@webtrekk.com' }
+	s.homepage = 'https://www.webtrekk.com/en/solutions/mobile-analytics/'
 	s.license  = 'MIT'
 	s.platform = :ios, '8.0'
-	s.source   = { :git => 'https://github.com/Webtrekk/webtrekk-ios' }
-	s.summary  = 'The Webtrekk SDK allows you to track user activities, screen flow and media usage for an App. All data is send to the Webtrekk tracking system for further analysis.'
+	s.source   = { :git => 'https://github.com/Webtrekk/webtrekk-ios.git', :tag => s.version }
+	s.summary  = 'The Webtrekk SDK allows you to track user activities, screen flow and media usage for an App.'
 
 	s.module_map = 'Module/Module.modulemap'
 
