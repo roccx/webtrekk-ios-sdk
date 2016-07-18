@@ -53,17 +53,11 @@
 
 		<!--define the global page parameter, the key is the index,  -->
 		<pageParameter>
-			<parameter id="1" key="appPreinstalled"></parameter>
 			<parameter id="2" key="appVersion"></parameter>
 			<parameter id="3" key="appUpdated"></parameter>
-			<parameter id="4" key="apiLevel"></parameter>
-			<parameter id="5" key="appVersionCode"></parameter>
 			<parameter id="6" key="screenOrientation"></parameter>
 			<parameter id="7" key="connectionType"></parameter>
 			<parameter id="8" key="requestUrlStoreSize"></parameter>
-			<parameter id="9" key="playstoreMail"></parameter>
-			<parameter id="10" key="playstoreGivenname"></parameter>
-			<parameter id="11" key="playstoreFamilyname"></parameter>
 			<parameter id="12" key="advertiserId"></parameter>
 			<parameter id="13" key="advertisingOptOut"></parameter>
 

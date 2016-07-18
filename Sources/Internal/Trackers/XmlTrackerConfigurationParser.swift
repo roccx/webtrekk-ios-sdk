@@ -51,6 +51,7 @@ internal class XmlTrackerConfigurationParser {
 			case "ecomParameter":     categories["ecomParameter"] = readFromCategoryElement(child)
 			case "mediaCategories":   categories["mediaCategories"] = readFromCategoryElement(child)
 			case "pageCategories":    categories["pageCategories"] = readFromCategoryElement(child)
+			case "pageParameter":     categories["pageParameter"] = readFromCategoryElement(child)
 			case "productCategories": categories["productCategories"] = readFromCategoryElement(child)
 			case "sessionParameter":  categories["sessionParameter"] = readFromCategoryElement(child)
 			case "userCategories":    categories["userCategories"] = readFromCategoryElement(child)

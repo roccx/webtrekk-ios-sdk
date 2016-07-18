@@ -110,16 +110,21 @@ Minimal
 A Configuration XML consist of at least three parameters: 'version', 'trackDomain' and 'trackId'
 
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
 <webtrekkConfiguration>
-	<!-- configuration file version -->
+	<!--the version number for this configuration file -->
 	<version>1</version>
-
-	<!-- server to send tracking events to -->
+	<!--the webtrekk trackDomain where the requests are send -->
 	<trackDomain>https://q3.webtrekk.net</trackDomain>
 
-	<!-- Webtrekk customer id -->
+	<!--customers trackid-->
 	<trackId>289053685367929</trackId>
+
+	<!-- measure only a subset of the users -->
+	<sampling>10</sampling>
+	<!-- interval between the requests are send in seconds -->
+	<sendDelay>5</sendDelay>
+	<!--maximum amoount of requests to store when the user is offline -->
+	<maxRequests>100</maxRequests>
 </webtrekkConfiguration>
 ```
 
@@ -159,15 +164,26 @@ Automatic Tracking
 To use the automatic Tracking feature the Configuration XML contains options to enable or disable different aspects for tracking.
 
 ```xml
-<!-- automatically track various information -->
-<automaticTracking>
-    <advertisingIdentifier>true</advertisingIdentifier>
-    <appUpdates>true</appUpdates>
-    <appVersion>true</appVersion>
-    <connectionType>true</connectionType>
-    <interfaceOrientation>true</interfaceOrientation>
-    <requestQueueSize>true</requestQueueSize>
-</automaticTracking>
+<!--automaticly track activities onStart method -->
+<autoTracked>true</autoTracked>
+
+
+<!--track if there was an application update -->
+<autoTrackAppUpdate>true</autoTrackAppUpdate>
+<!--track the advertiser id -->
+<autoTrackAdvertiserId>true</autoTrackAdvertiserId>
+<!--track the app versions name -->
+<autoTrackAppVersionName>true</autoTrackAppVersionName>
+<!--track the app versions code -->
+<autoTrackAppVersionCode>true</autoTrackAppVersionCode>
+<!--track the devices screen orientation -->
+<autoTrackScreenOrientation>true</autoTrackScreenOrientation>
+<!--track the current connection type -->
+<autoTrackConnectionType>true</autoTrackConnectionType>
+<!--track if the user has opted out for advertisement on google plays -->
+<autoTrackAdvertisementOptOut>true</autoTrackAdvertisementOptOut>
+<!--sends the size of the current locally stored urls in a custom parameter -->
+<autoTrackRequestUrlStoreSize>true</autoTrackRequestUrlStoreSize>
 ```
 
 ### Automatic Page Tracking
@@ -175,20 +191,45 @@ To use the automatic Tracking feature the Configuration XML contains options to 
 To make use of the automatic page view tracking of the Webtrekk SDK the Configuration XML offers the possibility to configure the screens which should be tracked. The code snippet below demonstrates a simple case and a more detailed case where instead of a pure String a RegularExpression is used and some properties are set.
 
 ```xml
-<automaticTracking>
-  <pages>
-    <page viewControllerType="ProductListViewController">
-      <pageProperties name="Product List"/>
-    </page>
+<screen>
+	<classname>/.*\.ProductViewController/</classname>
+	<mappingname>Product Details</mappingname>
+</screen>
+<screen>
+	<classname>ProductListViewController</classname>
+	<mappingname>Product List</mappingname>
 
-    <page viewControllerType="/.*\.ProductViewController/">
-      <pageProperties name="Product Details">
-        <details index1="Blue Variant" index2="Media"/>
-      </pageProperties>
-      <customProperties myProperty="myValue" anotherProperty="anotherValue"/>
-    </page>
-  </pages>
-</automaticTracking>
+	<!--screen tracking parameter -->
+	<screenTrackingParameter>
+		<parameter id="CURRENCY">EUR</parameter>
+
+		<sessionParameter>
+			<parameter id="2">test_sessionparam2</parameter>
+		</sessionParameter>
+		<ecomParameter>
+			<parameter id="2">test_ecomparam2</parameter>
+		</ecomParameter>
+		<userCategories>
+			<parameter id="2">test_usercategory2</parameter>
+		</userCategories>
+		<pageCategories>
+			<parameter id="2">test_pagecategory2</parameter>
+		</pageCategories>
+		<adParameter>
+			<parameter id="2">test_adparam2</parameter>
+		</adParameter>
+		<actionParameter>
+			<parameter id="2">test_actionparam2</parameter>
+		</actionParameter>
+		<productCategories>
+			<parameter id="2">test_productcategory2</parameter>
+		</productCategories>
+		<mediaCategories>
+			<parameter id="2">test_mediacategory2</parameter>
+		</mediaCategories>
+
+	</screenTrackingParameter>
+</screen>
 
 ```
 

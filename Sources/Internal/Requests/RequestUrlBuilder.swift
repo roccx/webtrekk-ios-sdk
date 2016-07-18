@@ -109,9 +109,6 @@ internal final class RequestUrlBuilder {
 				parameters += details.map { NSURLQueryItem(name: "cc\($0.index)", value: $0.value) }
 			}
 		}
-		if let customProperties = (event as? TrackingEventWithCustomProperties)?.customProperties {
-			parameters += customProperties.map { NSURLQueryItem(name: $0, value: $1) }
-		}
 		if let ecommerceProperties = (event as? TrackingEventWithEcommerceProperties)?.ecommerceProperties {
 			parameters += ecommerceProperties.asQueryItems()
 		}

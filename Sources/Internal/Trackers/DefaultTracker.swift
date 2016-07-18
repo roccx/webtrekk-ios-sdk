@@ -304,97 +304,6 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	private func parseScreenTrackingParameter(event: TrackingEvent) -> TrackingEvent {
-		var result = event
-		var customProperties: [String: String]
-		if let custom = result as? TrackingEventWithCustomProperties {
-			customProperties = custom.customProperties
-		}
-		else {
-			customProperties = [:]
-		}
-		if let page = configuration.automaticallyTrackedPages.firstMatching({page in
-			guard let pageName = result.pageName else {
-				return false
-			}
-			return page.pageProperties.name == pageName
-		}), screenTrackingParameter = page.screenTrackingParameter {
-
-			if var event = result as? TrackingEventWithPageProperties {
-				event.pageProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithMediaProperties {
-				event.mediaProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithActionProperties {
-				event.actionProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithEcommerceProperties {
-				event.ecommerceProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithAdvertisementProperties {
-				event.advertisementProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-				result = event
-			}
-			userProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-		}
-
-		if let global = configuration.globalScreenTrackingParameter {
-			if var event = result as? TrackingEventWithPageProperties {
-				event.pageProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithMediaProperties {
-				event.mediaProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithActionProperties {
-				event.actionProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithEcommerceProperties {
-				event.ecommerceProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithAdvertisementProperties {
-				event.advertisementProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-				result = event
-			}
-			userProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-		}
-
-		return result
-	}
-
-
-	private func parseScreenTrackingParameter(properties: TrackerRequest.Properties, event: TrackingEvent) -> TrackerRequest.Properties {
-		var properties = properties
-		var customProperties: [String: String]
-		if let custom = event as? TrackingEventWithCustomProperties {
-			customProperties = custom.customProperties
-		}
-		else {
-			customProperties = [:]
-		}
-		if let page = configuration.automaticallyTrackedPages.firstMatching({page in
-			guard let pageName = event.pageName else {
-				return false
-			}
-			return page.pageProperties.name == pageName
-		}), screenTrackingParameter = page.screenTrackingParameter {
-			properties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-		}
-		if let global = configuration.globalScreenTrackingParameter {
-			properties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-		}
-
-		return properties
-	}
-
 	private func createRequestForEvent(event: TrackingEvent) -> TrackerRequest? {
 		checkIsOnMainThread()
 
@@ -441,44 +350,44 @@ internal final class DefaultTracker: Tracker {
 		}
 
 		#if !os(watchOS)
-			if configuration.automaticallyTracksConnectionType, let reachability = try? Reachability.reachabilityForInternetConnection() {
-				if reachability.isReachableViaWiFi() {
-					requestProperties.connectionType = .wifi
-				}
-				else if reachability.isReachableViaWWAN() {
-					if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
-						switch carrierType {
-						case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
-							requestProperties.connectionType = .cellular_2G
-
-						case CTRadioAccessTechnologyWCDMA, CTRadioAccessTechnologyHSDPA, CTRadioAccessTechnologyHSUPA, CTRadioAccessTechnologyCDMAEVDORev0, CTRadioAccessTechnologyCDMAEVDORevA, CTRadioAccessTechnologyCDMAEVDORevB, CTRadioAccessTechnologyeHRPD:
-							requestProperties.connectionType = .cellular_3G
-
-						case CTRadioAccessTechnologyLTE:
-							requestProperties.connectionType = .cellular_4G
-
-						default:
-							requestProperties.connectionType = .other
-						}
-					}
-					else {
-						requestProperties.connectionType = .other
-					}
-				}
-				else if reachability.isReachable() {
-					requestProperties.connectionType = .other
-				}
-				else {
-					requestProperties.connectionType = .offline
-				}
+			if configuration.automaticallyTracksConnectionType, let connectionType = retrieveConnectionType(){
+				requestProperties.connectionType = connectionType
 			}
 
 			if configuration.automaticallyTracksInterfaceOrientation {
 				requestProperties.interfaceOrientation = application.statusBarOrientation
 			}
 		#endif
-
-		let event = parseScreenTrackingParameter(event)
+		var event: TrackingEvent = event
+		if var customEvent = event as? TrackingEventWithCustomProperties {
+			var customProperties = customEvent.customProperties
+			customProperties["appVersion"] = Environment.appVersion != nil ? Environment.appVersion! : nil
+			customProperties["appUpdated"] = "\(isFirstEventAfterAppUpdate)"
+//			customProperties["appVersionCode"] = Environment.appVersion
+			customProperties["requestUrlStoreSize"] = "\(requestManager.queueSize)"
+			customProperties["advertiserId"] = advertisingIdentifier != nil ? advertisingIdentifier!.UUIDString : nil
+			customProperties["advertisingOptOut"] = advertisingOptOut != nil ? "\(advertisingOptOut!)" : nil
+			#if !os(watchOS)
+				switch application.statusBarOrientation {
+				case .LandscapeLeft, .LandscapeRight: customProperties["screenOrientation"] =  "landscape"
+				case .Portrait, .PortraitUpsideDown: customProperties["screenOrientation"] = "portrait"
+				default: customProperties["screenOrientation"] = "undefined"
+				}
+				if let connectionType = retrieveConnectionType() {
+					switch connectionType {
+					case .cellular_2G: customProperties["connectionType"] = "2G"
+					case .cellular_3G: customProperties["connectionType"] = "3G"
+					case .cellular_4G: customProperties["connectionType"] = "LTE"
+					case .offline:     customProperties["connectionType"] = "offline"
+					case .other:       customProperties["connectionType"] = "unknown"
+					case .wifi:        customProperties["connectionType"] = "WIFI"
+					}
+				}
+			#endif
+			customEvent.customProperties = customProperties
+			event = customEvent
+		}
+		event = parseScreenTrackingParameter(event)
 		requestProperties = parseScreenTrackingParameter(requestProperties, event: event)
 		return TrackerRequest(
 			crossDeviceProperties: crossDeviceProperties,
@@ -676,6 +585,136 @@ internal final class DefaultTracker: Tracker {
 		logDebug("Loaded \(queue.count) queued request(s) from '\(file)'.")
 		requestManager.prependRequests(queue)
 	}
+
+
+	private func parseScreenTrackingParameter(event: TrackingEvent) -> TrackingEvent {
+		var result = event
+		var customProperties: [String: String]
+		if let custom = result as? TrackingEventWithCustomProperties {
+			customProperties = custom.customProperties
+		}
+		else {
+			customProperties = [:]
+		}
+		if let page = configuration.automaticallyTrackedPages.firstMatching({page in
+			guard let pageName = result.pageName else {
+				return false
+			}
+			return page.pageProperties.name == pageName
+		}), screenTrackingParameter = page.screenTrackingParameter {
+
+			if var event = result as? TrackingEventWithPageProperties {
+				event.pageProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
+				result = event
+			}
+			if var event = result as? TrackingEventWithMediaProperties {
+				event.mediaProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
+				result = event
+			}
+			if var event = result as? TrackingEventWithActionProperties {
+				event.actionProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
+				result = event
+			}
+			if var event = result as? TrackingEventWithEcommerceProperties {
+				event.ecommerceProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
+				result = event
+			}
+			if var event = result as? TrackingEventWithAdvertisementProperties {
+				event.advertisementProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
+				result = event
+			}
+			userProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
+		}
+
+		if let global = configuration.globalScreenTrackingParameter {
+			if var event = result as? TrackingEventWithPageProperties {
+				event.pageProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
+				result = event
+			}
+			if var event = result as? TrackingEventWithMediaProperties {
+				event.mediaProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
+				result = event
+			}
+			if var event = result as? TrackingEventWithActionProperties {
+				event.actionProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
+				result = event
+			}
+			if var event = result as? TrackingEventWithEcommerceProperties {
+				event.ecommerceProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
+				result = event
+			}
+			if var event = result as? TrackingEventWithAdvertisementProperties {
+				event.advertisementProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
+				result = event
+			}
+			userProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
+		}
+
+		return result
+	}
+
+
+	private func parseScreenTrackingParameter(properties: TrackerRequest.Properties, event: TrackingEvent) -> TrackerRequest.Properties {
+		var properties = properties
+		var customProperties: [String: String]
+		if let custom = event as? TrackingEventWithCustomProperties {
+			customProperties = custom.customProperties
+		}
+		else {
+			customProperties = [:]
+		}
+		if let page = configuration.automaticallyTrackedPages.firstMatching({page in
+			guard let pageName = event.pageName else {
+				return false
+			}
+			return page.pageProperties.name == pageName
+		}), screenTrackingParameter = page.screenTrackingParameter {
+			properties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
+		}
+		if let global = configuration.globalScreenTrackingParameter {
+			properties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
+		}
+
+		return properties
+	}
+
+
+	#if !os(watchOS)
+	private func retrieveConnectionType() -> TrackerRequest.Properties.ConnectionType? {
+		guard let reachability = try? Reachability.reachabilityForInternetConnection() else {
+			return nil
+		}
+		if reachability.isReachableViaWiFi() {
+			return .wifi
+		}
+		else if reachability.isReachableViaWWAN() {
+			if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
+				switch carrierType {
+				case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
+					return .cellular_2G
+
+				case CTRadioAccessTechnologyWCDMA, CTRadioAccessTechnologyHSDPA, CTRadioAccessTechnologyHSUPA, CTRadioAccessTechnologyCDMAEVDORev0, CTRadioAccessTechnologyCDMAEVDORevA, CTRadioAccessTechnologyCDMAEVDORevB, CTRadioAccessTechnologyeHRPD:
+					return .cellular_3G
+
+				case CTRadioAccessTechnologyLTE:
+					return .cellular_4G
+
+				default:
+					return .other
+				}
+			}
+			else {
+				return .other
+			}
+		}
+		else if reachability.isReachable() {
+			return .other
+		}
+		else {
+			return .offline
+		}
+	}
+	#endif
 
 
 	private static func requestQueueBackupFileForWebtrekkId(webtrekkId: String) -> NSURL? {
@@ -1313,12 +1352,13 @@ private extension MediaProperties {
 private extension PageProperties {
 
 	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: ScreenTrackingParameter, customProperties: [String : String]) {
-		guard let pageParameters = screenTrackingParameter.categories["pageCategories"] where !pageParameters.isEmpty else {
-			return
-		}
-		if var details = IndexedProperty.categoriesToIndexedProperties(pageParameters, customProperties: customProperties) {
+		if let pageParameters = screenTrackingParameter.categories["pageParameter"] where !pageParameters.isEmpty, var details = IndexedProperty.categoriesToIndexedProperties(pageParameters, customProperties: customProperties) {
 			details.unionInPlace(self.details ?? [])
 			self.details = details
+		}
+		if let pageParameters = screenTrackingParameter.categories["pageCategories"] where !pageParameters.isEmpty, var groups = IndexedProperty.categoriesToIndexedProperties(pageParameters, customProperties: customProperties) {
+			groups.unionInPlace(self.groups ?? [])
+			self.groups = groups
 		}
 	}
 }
