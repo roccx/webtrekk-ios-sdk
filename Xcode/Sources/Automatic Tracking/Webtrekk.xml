@@ -24,7 +24,7 @@
 	<resendOnStartEventTime>30</resendOnStartEventTime>
 
 	<!--automaticly track activities onStart method -->
-	<autoTracked>true</autoTracked>
+	<autoTracked>false</autoTracked>
 
 
 	<!--track if there was an application update -->
@@ -143,6 +143,7 @@
 	<screen>
 		<classname>/.*\.ProductViewController/</classname>
 		<mappingname>Product Details</mappingname>
+		<autoTracked>true</autoTracked>
 	</screen>
 	<screen>
 		<classname>SettingsViewController</classname>

@@ -187,19 +187,6 @@ internal class XmlTrackerConfigurationParser {
 			trackerConfiguration.automaticallyTrackedPages = automaticallyTrackedPages
 		#endif
 		
-		// if autotracked is disabled every other property is overwritten
-		if let autoTracked = autoTracked where !autoTracked {
-			trackerConfiguration.automaticallyTracksAdvertisingId = autoTracked
-			trackerConfiguration.automaticallyTracksAdvertisingOptOut = autoTracked
-			trackerConfiguration.automaticallyTracksAppUpdates = autoTracked
-			trackerConfiguration.automaticallyTracksAppVersion = autoTracked
-			trackerConfiguration.automaticallyTracksRequestQueueSize = autoTracked
-			#if !os(watchOS)
-				trackerConfiguration.automaticallyTracksConnectionType = autoTracked
-				trackerConfiguration.automaticallyTracksInterfaceOrientation = autoTracked
-			#endif
-		}
-
 		trackerConfiguration.globalScreenTrackingParameter = globalScreenTrackingParameter
 
 		return trackerConfiguration
@@ -230,6 +217,14 @@ internal class XmlTrackerConfigurationParser {
 		}
 
 		// if autotracked is not set it is assumed enabled
+		if let globalAutoTracked = self.autoTracked where !globalAutoTracked {
+			if let screenAutoTracked = autoTracked where screenAutoTracked {
+				autoTracked = true
+			}
+			else {
+				autoTracked = false
+			}
+		}
 		autoTracked = autoTracked ?? true
 
 		guard let isTrackingEnabled = autoTracked where isTrackingEnabled else {
