@@ -197,6 +197,10 @@ private extension CrossDeviceProperties {
 			}
 		}
 
+		if let androidId = androidId {
+			items.append(name: "cdb7", value: androidId.lowercaseString)
+		}
+
 		if let email = emailAddress {
 			switch email {
 			case let .plain(value):
@@ -222,6 +226,10 @@ private extension CrossDeviceProperties {
 			items.append(name: "cdb12", value: googlePlusId.lowercaseString)
 		}
 
+		if let iOsId = iOsId {
+			items.append(name: "cdb8", value: iOsId.lowercaseString)
+		}
+
 		if let linkedInId = linkedInId {
 			items.append(name: "cdb13", value: linkedInId.lowercaseString)
 		}
@@ -245,6 +253,10 @@ private extension CrossDeviceProperties {
 
 		if let twitterId = twitterId {
 			items.append(name: "cdb11", value: twitterId.lowercaseString)
+		}
+
+		if let winId = winId {
+			items.append(name: "cdb9", value: winId.lowercaseString)
 		}
 		
 		return items

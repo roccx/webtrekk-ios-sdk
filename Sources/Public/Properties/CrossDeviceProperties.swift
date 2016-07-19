@@ -2,12 +2,15 @@
 public struct CrossDeviceProperties {
 
 	public var address: HashableTrackingValue<Address>?
+	public var androidId: String?
 	public var emailAddress: HashableTrackingValue<String>?
 	public var facebookId: String?
 	public var googlePlusId: String?
+	public var iOsId: String?
 	public var linkedInId: String?
 	public var phoneNumber: HashableTrackingValue<String>?
 	public var twitterId: String?
+	public var winId: String?
 
 
 	public init(
