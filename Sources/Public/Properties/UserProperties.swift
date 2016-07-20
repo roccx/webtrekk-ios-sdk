@@ -3,7 +3,7 @@ import Foundation
 
 public struct UserProperties {
 
-	public var birthday: NSDate?
+	public var birthday: Birthday?
 	public var city: String?
 	public var country: String?
 	public var details: [Int: TrackingValue]?
@@ -21,7 +21,7 @@ public struct UserProperties {
 
 
 	public init(
-		birthday: NSDate? = nil,
+		birthday: Birthday? = nil,
 		city: String? = nil,
 		country: String? = nil,
 		details: [Int: TrackingValue]? = nil,
@@ -82,5 +82,13 @@ public struct UserProperties {
 
 		case female
 		case male
+	}
+
+
+
+	public struct Birthday {
+		public var day: Int
+		public var month: Int
+		public var year: Int
 	}
 }

@@ -386,7 +386,7 @@ private extension UserProperties {
 		}
 		if let birthday = birthday {
 			items = items.filter({$0.name != "uc707"})
-			items.append(name: "uc707", value: UserProperties.birthdayFormatter.stringFromDate(birthday))
+			items.append(name: "uc707", value: birthday.serialized)
 		}
 		if let city = city {
 			items = items.filter({$0.name != "uc708"})
@@ -442,13 +442,6 @@ private extension UserProperties {
 
 		return items
 	}
-
-
-	private static let birthdayFormatter: NSDateFormatter = {
-		let formatter = NSDateFormatter()
-		formatter.dateFormat = "yyyyMMdd"
-		return formatter
-	}()
 }
 
 
@@ -527,3 +520,9 @@ private extension UIInterfaceOrientation {
 	}
 }
 #endif
+
+private extension UserProperties.Birthday {
+	private var serialized: String {
+		return String(format: "%04d%02d%02d", arguments: [year,month,day])
+	}
+}
