@@ -35,16 +35,16 @@ internal class XmlTrackerConfigurationParser {
 
 
 	private func parseScreenTrackingParameter(xmlElement: XmlElement) -> ScreenTrackingParameter {
-		var categories = [String: [CategoryElement]]()
+		var categories = [String: [Int: CategoryElement]]()
 
-		var parameters = [PropertyElement]()
+		var parameters = [PropertyName: String]()
 		for child in xmlElement.children {
 			switch child.name {
 			case "parameter":
 				guard let element = readFromParameterElement(child) else {
 					break
 				}
-				parameters.append(element)
+				parameters[element.0] = element.1
 
 			case "actionParameter":   categories["actionParameter"] = readFromCategoryElement(child)
 			case "adParameter":       categories["adParameter"] = readFromCategoryElement(child)
@@ -185,8 +185,18 @@ internal class XmlTrackerConfigurationParser {
 			}
 			trackerConfiguration.automaticallyTrackedPages = automaticallyTrackedPages
 		#endif
-		
-		trackerConfiguration.globalScreenTrackingParameter = globalScreenTrackingParameter
+
+		if let globalParameter =  globalScreenTrackingParameter {
+			trackerConfiguration.globalProperties = TrackerConfiguration.GlobalProperties(
+				actionProperties: globalParameter.actionProperties(),
+				advertisementProperties: globalParameter.advertisementProperties(),
+				ecommerceProperties: globalParameter.ecommerceProperties(),
+				mediaProperties: globalParameter.mediaProperties(),
+				pageProperties: globalParameter.pageProperties(),
+				sessionDetails: globalParameter.sessionDetails(),
+				userProperties: globalParameter.userProperties()
+			)
+		}
 
 		return trackerConfiguration
 	}
@@ -211,7 +221,7 @@ internal class XmlTrackerConfigurationParser {
 			case "mappingname": pageName = try parseString(child.text, emptyAllowed: false)
 			case "autoTracked": autoTracked = try parseBool(child.text)
 			case "screenTrackingParameter": screenTrackingParameter = try readFromScreenTrackingParameterElement(child)
-			default: break // TODO: handle not covered cases
+			default: break
 			}
 		}
 
@@ -244,6 +254,22 @@ internal class XmlTrackerConfigurationParser {
 		else {
 			patternString = "\\b\(NSRegularExpression.escapedPatternForString(viewControllerTypeName))\\b"
 		}
+
+		var actionProperties: ActionProperties?
+
+		var advertisementProperties: AdvertisementProperties?
+
+		var ecommerceProperties: EcommerceProperties?
+
+		var mediaProperties: MediaProperties?
+
+		/** Page Properties that should be tracked if not overwritten manually. */
+		var pageProperties: PageProperties
+
+		var sessionDetails: [Int: TrackingValue]?
+
+		var userProperties: UserProperties?
+
 		var page: TrackerConfiguration.Page
 		do {
 			let pattern = try NSRegularExpression(pattern: patternString, options: [])
@@ -255,6 +281,15 @@ internal class XmlTrackerConfigurationParser {
 
 		if let pageName = pageName {
 			page.pageProperties.name = pageName
+		}
+		if let screenParameter = screenTrackingParameter {
+			page.actionProperties = screenParameter.actionProperties()
+			page.advertisementProperties = screenParameter.advertisementProperties()
+			page.ecommerceProperties = screenParameter.ecommerceProperties()
+			page.mediaProperties = screenParameter.mediaProperties()
+			page.pageProperties = page.pageProperties.merged(over: screenParameter.pageProperties())
+			page.sessionDetails = screenParameter.sessionDetails()
+			page.userProperties = screenParameter.userProperties()
 		}
 
 		automaticallyTrackedPages.append(page)
@@ -274,21 +309,21 @@ internal class XmlTrackerConfigurationParser {
 	#endif
 
 
-	private func readFromCategoryElement(xmlElement: XmlElement) -> [CategoryElement]? {
+	private func readFromCategoryElement(xmlElement: XmlElement) -> [Int: CategoryElement]? {
 		guard !xmlElement.children.isEmpty else {
 			return nil
 		}
-		var xmlCategoryElements = [CategoryElement]()
+		var xmlCategoryElements = [Int: CategoryElement]()
 		for child in xmlElement.children where child.name == "parameter" {
 			guard let indexString = child.attributes["id"], index = Int(indexString) else {
 				continue
 			}
-			xmlCategoryElements.append(CategoryElement(index: index, key: child.attributes["key"], value: child.text))
+			xmlCategoryElements[index] = CategoryElement(key: child.attributes["key"], value: child.text)
 		}
 		return xmlCategoryElements
 	}
 
-	private func readFromParameterElement(xmlElement: XmlElement) -> PropertyElement? {
+	private func readFromParameterElement(xmlElement: XmlElement) -> (PropertyName, String)? {
 		guard xmlElement.name == "parameter" else {
 			return nil
 		}
@@ -296,7 +331,7 @@ internal class XmlTrackerConfigurationParser {
 			return nil
 		}
 		if let propertyName = PropertyName(rawValue: parameterName) {
-			return PropertyElement(name: propertyName, key: xmlElement.attributes["id"], value: xmlElement.text)
+			return (propertyName, value: xmlElement.text)
 		}
 		else {
 			// TODO: PropertyName is not defined yet, log or throw?
@@ -393,72 +428,268 @@ internal class XmlTrackerConfigurationParser {
 			return message
 		}
 	}
-}
-
-public struct PropertyElement {
-	var name: PropertyName
-	var key: String?
-	var value: String
-}
-
-public enum PropertyName:String {
-	case advertisementId = "ADVERTISEMENT"
-	case advertisementAction = "ADVERTISEMENT_ACTION"
-	case birthday = "BIRTHDAY"
-	case city = "CITY"
-	case country = "COUNTRY"
-	case currencyCode = "CURRENCY"
-	case customerId = "CUSTOMER_ID"
-	case emailAddress = "EMAIL"
-	case emailReceiverId = "EMAIL_RID"
-	case gender = "GENDER"
-	case firstName = "GNAME"
-	case internalSearch = "INTERN_SEARCH"
-	case ipAddress = "IP_ADDRESS"
-	case lastName = "SNAME"
-	case newsletterSubscribed = "NEWSLETTER"
-	case orderNumber = "ORDER_NUMBER"
-	case pageUrl = "PAGE_URL"
-	case phoneNumber = "PHONE"
-	case productName = "PRODUCT"
-	case productPrice = "PRODUCT_COST"
-	case productQuantity = "PRODUCT_COUNT"
-	case productStatus = "PRODUCT_STATUS"
-	case street = "STREET"
-	case streetNumber = "STREETNUMBER"
-	case totalValue = "ORDER_TOTAL"
-	case voucherValue = "VOUCHER_VALUE"
-	case zipCode = "ZIP"
-}
-
-public class ScreenTrackingParameter {
-	let categories: [String: [CategoryElement]]
-	let parameters: [PropertyElement]
-
-	init(categories: [String: [CategoryElement]], parameters: [PropertyElement]) {
-		self.categories = categories
-		self.parameters = parameters
-	}
-}
 
 
-
-public struct CategoryElement {
-	internal var index: Int
-	internal var key: String?
-	internal var value: String
-}
-
-internal extension TrackerConfiguration {
-	private struct AssociatedKeys {
-
-		private static var globalScreenTrackingParameter = UInt8()
-		private static var automaticTracker = UInt8()
+	private enum PropertyName:String {
+		case advertisementId = "ADVERTISEMENT"
+		case advertisementAction = "ADVERTISEMENT_ACTION"
+		case birthday = "BIRTHDAY"
+		case city = "CITY"
+		case country = "COUNTRY"
+		case currencyCode = "CURRENCY"
+		case customerId = "CUSTOMER_ID"
+		case emailAddress = "EMAIL"
+		case emailReceiverId = "EMAIL_RID"
+		case gender = "GENDER"
+		case firstName = "GNAME"
+		case internalSearch = "INTERN_SEARCH"
+		case ipAddress = "IP_ADDRESS"
+		case lastName = "SNAME"
+		case newsletterSubscribed = "NEWSLETTER"
+		case orderNumber = "ORDER_NUMBER"
+		case pageUrl = "PAGE_URL"
+		case phoneNumber = "PHONE"
+		case productName = "PRODUCT"
+		case productPrice = "PRODUCT_COST"
+		case productQuantity = "PRODUCT_COUNT"
+		case productStatus = "PRODUCT_STATUS"
+		case street = "STREET"
+		case streetNumber = "STREETNUMBER"
+		case totalValue = "ORDER_TOTAL"
+		case voucherValue = "VOUCHER_VALUE"
+		case zipCode = "ZIP"
 	}
 
-	@nonobjc
-	internal var globalScreenTrackingParameter: ScreenTrackingParameter? {
-		get { return objc_getAssociatedObject(self.webtrekkId, &AssociatedKeys.globalScreenTrackingParameter) as? ScreenTrackingParameter }
-		set { objc_setAssociatedObject(self.webtrekkId, &AssociatedKeys.globalScreenTrackingParameter, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+
+	private class ScreenTrackingParameter {
+		var categories: [String: [Int: CategoryElement]]
+		var parameters: [PropertyName: String]
+
+		init(categories: [String: [Int: CategoryElement]], parameters: [PropertyName: String]) {
+			self.categories = categories
+			self.parameters = parameters
+		}
+
+		private func resolved(elements: [Int: CategoryElement]) -> [Int: TrackingValue]? {
+			var result = [Int: TrackingValue]()
+			for (index, element) in elements {
+				if let key = element.key {
+					result[index] = .customVariable(name: key)
+				}
+				else {
+					result[index] = .constant(element.value)
+				}
+			}
+			return result.isEmpty ? nil : result
+		}
+
+		private func actionProperties() -> ActionProperties? {
+			guard let categoryElements = categories["actionParameter"] else {
+				return nil
+			}
+
+			guard let details = resolved(categoryElements) else {
+				return nil
+			}
+
+			return ActionProperties(name: "", details: details)
+		}
+
+
+		private func advertisementProperties () -> AdvertisementProperties? {
+			var advertisementId: String? = nil
+			if let id = parameters[.advertisementId] {
+				advertisementId = id
+			}
+			var advertisementAction: String? = nil
+			if let action = parameters[.advertisementAction] {
+				advertisementAction = action
+			}
+			var details: [Int: TrackingValue]? = nil
+			if let elements = categories["adParameter"], advertisementDetails = resolved(elements) {
+				details = advertisementDetails
+			}
+
+			guard advertisementId != nil || advertisementAction != nil || details != nil else {
+				return nil
+			}
+
+			return AdvertisementProperties(action: advertisementAction, id: advertisementId, details: details)
+		}
+
+		
+		private func ecommerceProperties() -> EcommerceProperties? {
+			var currencyCode: String? = nil
+			if let code = parameters[.currencyCode] {
+				currencyCode = code
+			}
+			var orderNumber: String? = nil
+			if let number = parameters[.orderNumber] {
+				orderNumber = number
+			}
+			var product: EcommerceProperties.Product? = nil
+			if let productProperties = productProperties() {
+				product = productProperties
+			}
+			var status: EcommerceProperties.Status? = nil
+			if let statusString = parameters[.productStatus] {
+				switch statusString {
+				case "conf": status = .purchased
+				case "add":  status = .addedToBasket
+				case "view": status = .viewed
+				default:         break
+				}
+			}
+
+			var totalValue: String? = nil
+			if let value = parameters[.totalValue] {
+				totalValue = value
+			}
+			var voucherValue: String? = nil
+			if let value = parameters[.voucherValue] {
+				voucherValue = value
+			}
+			var details: [Int: TrackingValue]? = nil
+			if let elements = categories["ecomParameter"], ecommerceDetails = resolved(elements) {
+				details = ecommerceDetails
+			}
+
+			guard currencyCode != nil || details != nil || orderNumber != nil || status != nil || totalValue != nil || voucherValue != nil || product != nil else {
+				return nil
+			}
+			var ecommerceProperties = EcommerceProperties(currencyCode: currencyCode, details: details, orderNumber: orderNumber, status: status, totalValue: totalValue, voucherValue: voucherValue)
+			guard let productToAdd = product else {
+				return ecommerceProperties
+			}
+			ecommerceProperties.products = [productToAdd]
+			return ecommerceProperties
+		}
+
+
+		private func mediaProperties() -> MediaProperties? {
+			guard let categoryElements = categories["mediaCategories"] else {
+				return nil
+			}
+
+			guard let groups = resolved(categoryElements) else {
+				return nil
+			}
+
+			return MediaProperties(name: "", groups: groups)
+		}
+
+
+		private func pageProperties() -> PageProperties {
+			var pageProperties = PageProperties(name: "")
+			if let url = parameters[.pageUrl] {
+				pageProperties.url = url
+			}
+			if let elements = categories["pageParameter"], pageDetails = resolved(elements) {
+				pageProperties.details = pageDetails
+			}
+			if let elements = categories["pageCategories"], pageGroups = resolved(elements) {
+				pageProperties.groups = pageGroups
+			}
+			return pageProperties
+		}
+
+
+		private func productProperties() -> EcommerceProperties.Product? {
+			var productName: String? = nil
+			if let name = parameters[.productName] {
+				productName = name
+			}
+			var productPrice: String? = nil
+			if let price = parameters[.productPrice] {
+				productPrice = price
+			}
+			var productQuantity: Int? = nil
+			if let quantityString = parameters[.productQuantity], quantity = Int(quantityString) {
+				productQuantity = quantity
+			}
+			var productCategories: [Int: TrackingValue]? = nil
+			if let elements = categories["productCategories"], productCategoriesElements = resolved(elements) {
+				productCategories = productCategoriesElements
+			}
+
+			guard productName != nil || productPrice != nil || productQuantity != nil || productCategories != nil else {
+				return nil
+			}
+
+			return EcommerceProperties.Product(name: productName ?? "", categories: productCategories, price: productPrice, quantity: productQuantity)
+		}
+
+
+		private func sessionDetails() -> [Int: TrackingValue]? {
+			guard let categoryElements = categories["sessionParameter"], details = resolved(categoryElements) else {
+				return nil
+			}
+			return details
+		}
+
+
+		private func userProperties() -> UserProperties? {
+			var userProperties = UserProperties()
+			if let categoryElements = categories["userCategories"], details = resolved(categoryElements) {
+				userProperties.details = details
+			}
+			if let str = parameters[.birthday] where str.characters.count == 8,
+			   let year = Int(str.substringWithRange(str.startIndex...str.startIndex.advancedBy(3))),
+			   let month = Int(str.substringWithRange(str.startIndex.advancedBy(4)...str.startIndex.advancedBy(5))),
+			   let day = Int(str.substringWithRange(str.startIndex.advancedBy(6)..<str.endIndex)) {
+				userProperties.birthday = UserProperties.Birthday(day: day, month: month, year: year)
+			}
+			if let city = parameters[.city] {
+				userProperties.city = city
+			}
+			if let country = parameters[.country] {
+				userProperties.country = country
+			}
+			if let customerId = parameters[.customerId] {
+				userProperties.id = customerId
+			}
+			if let emailAddress = parameters[.emailAddress] {
+				userProperties.emailAddress = emailAddress
+			}
+			if let emailReceiverId = parameters[.emailReceiverId] {
+				userProperties.emailReceiverId = emailReceiverId
+			}
+			if let gender = parameters[.gender] {
+				switch gender.lowercaseString {
+				case "male": userProperties.gender = .male
+				case "femal": userProperties.gender = .female
+				default: break
+				}
+			}
+			if let firstName = parameters[.firstName] {
+				userProperties.city = firstName
+			}
+			if let lastName = parameters[.lastName] {
+				userProperties.city = lastName
+			}
+			if let newsletterSubscribed = parameters[.newsletterSubscribed] {
+				userProperties.city = newsletterSubscribed
+			}
+			if let phoneNumber = parameters[.phoneNumber] {
+				userProperties.city = phoneNumber
+			}
+			if let street = parameters[.street] {
+				userProperties.city = street
+			}
+			if let streetNumber = parameters[.streetNumber] {
+				userProperties.city = streetNumber
+			}
+			if let zipCode = parameters[.zipCode] {
+				userProperties.city = zipCode
+			}
+			return userProperties
+		}
+	}
+
+
+
+	struct CategoryElement {
+		internal var key: String?
+		internal var value: String
 	}
 }

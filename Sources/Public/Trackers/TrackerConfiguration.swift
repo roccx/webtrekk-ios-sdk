@@ -36,6 +36,8 @@ public struct TrackerConfiguration {
 	/** Url of the remote configuration. */
 	public var configurationUpdateUrl: NSURL? = nil
 
+	public var globalProperties: GlobalProperties?
+
 	/** Delay after which the event request is send to the server. */
 	public var maximumSendDelay = NSTimeInterval(5 * 60)
 
@@ -88,6 +90,18 @@ public struct TrackerConfiguration {
 		return automaticallyTrackedPages.firstMatching({ $0.matches(viewControllerTypeName: viewControllerTypeName) })
 	}
 	#endif
+
+
+
+	public struct GlobalProperties {
+		public var actionProperties: ActionProperties?
+		public var advertisementProperties: AdvertisementProperties?
+		public var ecommerceProperties: EcommerceProperties?
+		public var mediaProperties: MediaProperties?
+		public var pageProperties: PageProperties
+		public var sessionDetails: [Int: TrackingValue]?
+		public var userProperties: UserProperties?
+	}
 
 
 
