@@ -47,7 +47,7 @@ internal final class RequestUrlBuilder {
 		parameters.append(name: "mts", value: String(Int64(properties.timestamp.timeIntervalSince1970 * 1000)))
 		parameters.append(name: "one", value: properties.isFirstEventOfApp ? "1" : "0")
 		parameters.append(name: "ps", value: String(properties.samplingRate))
-		parameters.append(name: "tz", value: String(properties.timeZone.daylightSavingTimeOffset / 60 / 60))
+		parameters.append(name: "tz", value: String(properties.timeZone.secondsFromGMT / 60 / 60))
 		parameters.append(name: "X-WT-UA", value: properties.userAgent)
 
 		if let requestQueueSize = properties.requestQueueSize {
