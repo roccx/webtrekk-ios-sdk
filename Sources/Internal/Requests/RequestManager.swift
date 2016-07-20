@@ -210,13 +210,6 @@ internal final class RequestManager {
 	}
 
 
-	internal var queueSize: Int {
-		checkIsOnMainThread()
-
-		return queue.count
-	}
-
-
 	private func removeRequestsExceedingQueueLimit() {
 		checkIsOnMainThread()
 

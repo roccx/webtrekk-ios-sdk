@@ -144,7 +144,7 @@ internal final class DefaultTracker: Tracker {
 		checkIsOnMainThread()
 
 		if requestManagerStartTimer == nil {
-			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
+			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(configuration.maximumSendDelay) {
 				self.startRequestManager()
 			}
 		}
@@ -158,7 +158,7 @@ internal final class DefaultTracker: Tracker {
 		checkIsOnMainThread()
 
 		if requestManagerStartTimer == nil {
-			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
+			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(configuration.maximumSendDelay) {
 				self.startRequestManager()
 			}
 		}
@@ -167,15 +167,13 @@ internal final class DefaultTracker: Tracker {
 			self.updateConfiguration()
 		}
 	}
-	#endif
 
 
-	#if !os(watchOS)
 	private func applicationDidBecomeActive() {
 		checkIsOnMainThread()
 
 		if requestManagerStartTimer == nil {
-			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
+			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(configuration.maximumSendDelay) {
 				self.startRequestManager()
 			}
 		}
@@ -232,8 +230,10 @@ internal final class DefaultTracker: Tracker {
 			isFirstEventOfSession = true
 		}
 	}
+	#endif
 
 
+	#if !os(watchOS)
 	private static let _autotrackingEventHandler = AutotrackingEventHandler()
 	internal static var autotrackingEventHandler: protocol<ActionEventHandler, MediaEventHandler, PageViewEventHandler> {
 		return _autotrackingEventHandler
@@ -317,7 +317,7 @@ internal final class DefaultTracker: Tracker {
 			requestProperties.appVersion = Environment.appVersion
 		}
 		if configuration.automaticallyTracksRequestQueueSize {
-			requestProperties.requestQueueSize = requestManager.queueSize
+			requestProperties.requestQueueSize = requestManager.queue.count
 		}
 
 		#if !os(watchOS)
@@ -674,6 +674,12 @@ internal final class DefaultTracker: Tracker {
 		guard let file = requestQueueBackupFile else {
 			return
 		}
+		guard requestQueueLoaded || !requestManager.queue.isEmpty else {
+			return
+		}
+
+		// make sure backup is loaded before overwriting it
+		loadRequestQueue()
 
 		let queue = requestManager.queue
 		guard !queue.isEmpty else {
@@ -1014,7 +1020,7 @@ extension DefaultTracker: RequestManager.Delegate {
 		saveRequestQueue()
 
 		#if !os(watchOS)
-			if requestManager.queueSize == 0 {
+			if requestManager.queue.isEmpty {
 				if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
 					application.endBackgroundTask(backgroundTaskIdentifier)
 					backgroundTaskIdentifier = UIBackgroundTaskInvalid
