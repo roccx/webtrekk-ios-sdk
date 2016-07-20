@@ -384,6 +384,10 @@ internal final class DefaultTracker: Tracker {
 		var event = event
 		event.pageName = event.pageName ?? page.pageProperties.name
 
+		guard !(event is ActionEvent) else {
+			return event
+		}
+
 		if let userProperties = page.userProperties {
 			event.userProperties = event.userProperties.merged(over: userProperties)
 		}
@@ -423,6 +427,11 @@ internal final class DefaultTracker: Tracker {
 
 		var event = event
 		event.pageName = event.pageName ?? global.pageProperties.name
+
+		guard !(event is ActionEvent) else {
+			return event
+		}
+
 		event.userProperties = event.userProperties.merged(over: global.userProperties)
 
 		if var eventWithActionProperties = event as? TrackingEventWithActionProperties {
