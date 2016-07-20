@@ -97,6 +97,9 @@ internal final class RequestUrlBuilder {
 			}
 		}
 		if let advertisementProperties = (event as? TrackingEventWithAdvertisementProperties)?.advertisementProperties {
+			if let action = advertisementProperties.action {
+				parameters.append(name: "mca", value: action)
+			}
 			if let id = advertisementProperties.id {
 				parameters.append(name: "mc", value: id)
 			}

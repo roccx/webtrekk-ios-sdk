@@ -7,27 +7,32 @@ public struct PageProperties {
 	public var groups: [Int: TrackingValue]?
 	public var name: String?
 	public var viewControllerTypeName: String?
+	public var url: String?
 
 
 	public init(
 		name: String?,
 		details: [Int: TrackingValue]? = nil,
-		groups: [Int: TrackingValue]? = nil
+		groups: [Int: TrackingValue]? = nil,
+		url: String? = nil
 	) {
 		self.details = details
 		self.groups = groups
 		self.name = name
+		self.url = url
 	}
 
 
 	public init(
 		viewControllerTypeName: String?,
 		details: [Int: TrackingValue]? = nil,
-		groups: [Int: TrackingValue]? = nil
+		groups: [Int: TrackingValue]? = nil,
+		url: String? = nil
 	) {
 		self.details = details
 		self.groups = groups
 		self.viewControllerTypeName = viewControllerTypeName
+		self.url = url
 	}
 
 	
@@ -38,6 +43,7 @@ public struct PageProperties {
 		new.groups = groups.merged(over: other.groups)
 		new.name = name ?? other.name
 		new.viewControllerTypeName = viewControllerTypeName ?? other.viewControllerTypeName
+		new.url = url ?? other.url
 		return new
 	}
 }
