@@ -376,7 +376,7 @@ private extension PageProperties {
 		if let groups = groups {
 			items += groups.mapNotNil { NSURLQueryItem(name: "cg", property: $0, for: request) }
 		}
-		if let pageUrl = url {
+		if let url = url {
 			items.append(name: "pu", value: url)
 		}
 		return items

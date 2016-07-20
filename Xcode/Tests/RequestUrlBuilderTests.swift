@@ -72,13 +72,15 @@ class RequestUrlBuilderTest: XCTestCase {
 			assert(url: url, doesNotContain: "cc1")
 			assert(url: url, doesNotContain: "cc2")
 			assert(url: url, doesNotContain: "mc")
+			assert(url: url, doesNotContain: "mca")
 		}
 
-		event.advertisementProperties = AdvertisementProperties(id: "Advertisement&Id", details: [1: "Detail&1", 2: "Detail&2"])
+		event.advertisementProperties = AdvertisementProperties(id: "Advertisement&Id", action: "Action&Name", details: [1: "Detail&1", 2: "Detail&2"])
 		if let url = urlForEvent(event) {
 			assert(url: url, contains: "cc1", with: "Detail&1")
 			assert(url: url, contains: "cc2", with: "Detail&2")
-			assert(url: url, contains: "mc", with: "Advertisement&Id")
+			assert(url: url, contains: "mc",  with: "Advertisement&Id")
+			assert(url: url, contains: "mca", with: "Action&Name")
 		}
 	}
 
@@ -492,15 +494,17 @@ class RequestUrlBuilderTest: XCTestCase {
 			assert(url: url, doesNotContain: "cg2")
 			assert(url: url, doesNotContain: "cp1")
 			assert(url: url, doesNotContain: "cp2")
+			assert(url: url, doesNotContain: "pu")
 		}
 
-		event.pageProperties = PageProperties(name: "Page&Name", details: [1: "Detail&1", 2: "Detail&2"], groups: [1: "Group&1", 2: "Group&2"])
+		event.pageProperties = PageProperties(name: "Page&Name", details: [1: "Detail&1", 2: "Detail&2"], groups: [1: "Group&1", 2: "Group&2"], url: "Page&Url")
 		if let url = urlForEvent(event) {
-			assert(url: url, contains: "p", with: "400,Page&Name,0,0x0,32,0,1234567890000,0,0,0")
+			assert(url: url, contains: "p",   with: "400,Page&Name,0,0x0,32,0,1234567890000,0,0,0")
 			assert(url: url, contains: "cg1", with: "Group&1")
 			assert(url: url, contains: "cg2", with: "Group&2")
 			assert(url: url, contains: "cp1", with: "Detail&1")
 			assert(url: url, contains: "cp2", with: "Detail&2")
+			assert(url: url, contains: "pu",  with: "Page&Url")
 		}
 	}
 

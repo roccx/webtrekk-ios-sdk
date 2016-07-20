@@ -6,8 +6,8 @@ public struct AdvertisementProperties {
 
 
 	public init(
-		action: String? = nil,
 		id: String?,
+		action: String? = nil,
 		details: [Int: TrackingValue]? = nil
 	) {
 		self.action = action
@@ -19,8 +19,8 @@ public struct AdvertisementProperties {
 	@warn_unused_result
 	internal func merged(over other: AdvertisementProperties) -> AdvertisementProperties {
 		return AdvertisementProperties(
-			action: action ?? other.action,
 			id:      id ?? other.id,
+			action:  action ?? other.action,
 			details: details.merged(over: other.details)
 		)
 	}

@@ -255,21 +255,6 @@ internal class XmlTrackerConfigurationParser {
 			patternString = "\\b\(NSRegularExpression.escapedPatternForString(viewControllerTypeName))\\b"
 		}
 
-		var actionProperties: ActionProperties?
-
-		var advertisementProperties: AdvertisementProperties?
-
-		var ecommerceProperties: EcommerceProperties?
-
-		var mediaProperties: MediaProperties?
-
-		/** Page Properties that should be tracked if not overwritten manually. */
-		var pageProperties: PageProperties
-
-		var sessionDetails: [Int: TrackingValue]?
-
-		var userProperties: UserProperties?
-
 		var page: TrackerConfiguration.Page
 		do {
 			let pattern = try NSRegularExpression(pattern: patternString, options: [])
@@ -514,7 +499,7 @@ internal class XmlTrackerConfigurationParser {
 				return nil
 			}
 
-			return AdvertisementProperties(action: advertisementAction, id: advertisementId, details: details)
+			return AdvertisementProperties(id: advertisementId, action: advertisementAction, details: details)
 		}
 
 		
