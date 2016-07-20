@@ -73,7 +73,6 @@ internal final class RequestUrlBuilder {
 		}
 
 		parameters += request.crossDeviceProperties.asQueryItems()
-		parameters += event.sessionDetails.mapNotNil { NSURLQueryItem(name: "cs", property: $0, for: request) }
 		parameters += event.userProperties.asQueryItems(for: request)
 
 		#if !os(watchOS)
@@ -119,6 +118,9 @@ internal final class RequestUrlBuilder {
 		}
 		if let pageProperties = (event as? TrackingEventWithPageProperties)?.pageProperties {
 			parameters += pageProperties.asQueryItems(for: request)
+		}
+		if let sessionDetails = (event as? TrackingEventWithSessionDetails)?.sessionDetails {
+			parameters += sessionDetails.mapNotNil { NSURLQueryItem(name: "cs", property: $0, for: request) }
 		}
 
 		if let event = event as? MediaEvent {

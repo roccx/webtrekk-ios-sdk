@@ -2,7 +2,8 @@ public struct ActionEvent:
 	TrackingEventWithActionProperties,
 	TrackingEventWithAdvertisementProperties,
 	TrackingEventWithEcommerceProperties,
-	TrackingEventWithPageProperties
+	TrackingEventWithPageProperties,
+	TrackingEventWithSessionDetails
 {
 
 	public var actionProperties: ActionProperties

@@ -1,7 +1,8 @@
 public struct PageViewEvent:
 	TrackingEventWithAdvertisementProperties,
 	TrackingEventWithEcommerceProperties,
-	TrackingEventWithPageProperties
+	TrackingEventWithPageProperties,
+	TrackingEventWithSessionDetails
 {
 
 	public var advertisementProperties: AdvertisementProperties
