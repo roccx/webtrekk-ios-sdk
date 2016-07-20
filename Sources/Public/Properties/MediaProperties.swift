@@ -5,7 +5,7 @@ public struct MediaProperties {
 
 	public var bandwidth: Double?    // bit/s
 	public var duration: NSTimeInterval?
-	public var groups: Set<IndexedProperty>?
+	public var groups: [Int: TrackingValue]?
 	public var name: String
 	public var position: NSTimeInterval?
 	public var soundIsMuted: Bool?
@@ -16,7 +16,7 @@ public struct MediaProperties {
 		name: String,
 		bandwidth: Double? = nil,
 		duration: NSTimeInterval? = nil,
-		groups: Set<IndexedProperty>? = nil,
+		groups: [Int: TrackingValue]? = nil,
 		position: NSTimeInterval? = nil,
 		soundIsMuted: Bool? = nil,
 		soundVolume: Double? = nil
@@ -37,7 +37,7 @@ public struct MediaProperties {
 			name:         name,
 			bandwidth:    bandwidth ?? other.bandwidth,
 			duration:     duration ?? other.duration,
-			groups:       groups ?? other.groups,
+			groups:       groups.merged(over: other.groups),
 			position:     position ?? other.position,
 			soundIsMuted: soundIsMuted ?? other.soundIsMuted,
 			soundVolume:  soundVolume ?? other.soundVolume

@@ -11,39 +11,26 @@ internal class ActionPropertiesTest: XCTestCase {
 			return
 		}
 
-		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
-			XCTFail("Could not convert '\(url)' to NSURLComponents.")
-			return
-		}
-
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "ct", value: "action-test"))
-
+		XCTAssertUrl(url, contains: "ct", with: "action-test")
 		XCTAssert(url.absoluteString.containsString("action-test"))
 	}
 
 	internal func testDetails() {
-		let actionProperties = ActionProperties(name: "action-test", details: [IndexedProperty(index: 1, value: "leicht Braun"), IndexedProperty(index: 2, value: "Rund")])
+		let actionProperties = ActionProperties(name: "action-test", details: [1: "leicht Braun", 2: "Rund"])
+
 		guard let url = urlFromActionProperties(actionProperties) else {
 			XCTFail()
 			return
 		}
 
-		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
-			XCTFail("Could not convert '\(url)' to NSURLComponents.")
-			return
-		}
-
-		for detail in actionProperties.details! {
-			XCTAssertUrl(urlComponents, containsIndexedProperty: detail, name: "ck")
-		}
-
+		XCTAssertUrl(url, contains: "ck1", with: "leicht Braun")
+		XCTAssertUrl(url, contains: "ck2", with: "Rund")
 	}
 
 
 	internal func urlFromActionProperties(actionProperties: ActionProperties) -> NSURL? {
 		return urlForEvent(ActionEvent(actionProperties: actionProperties, pageProperties: PageProperties(name: "page-test")))
 	}
-	
 }
 
 
@@ -51,22 +38,16 @@ internal class AdvertisementPropertiesTest: XCTestCase {
 
 	internal func test() {
 		var advertisementProperties = AdvertisementProperties(id: "wt_mc=1234567")
-		advertisementProperties.details = [IndexedProperty(index: 1, value: "Video"), IndexedProperty(index: 2, value: "Bräunungscreme")]
+		advertisementProperties.details = [1: "Video", 2: "Bräunungscreme"]
+
 		guard let url = urlFromAdvertisementProperties(advertisementProperties) else {
 			XCTFail()
 			return
 		}
 
-		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
-			XCTFail("Could not convert '\(url)' to NSURLComponents.")
-			return
-		}
-
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mc", value: "wt_mc=1234567"))
-
-		for detail in advertisementProperties.details! {
-			XCTAssertUrl(urlComponents, containsIndexedProperty: detail, name: "cc")
-		}
+		XCTAssertUrl(url, contains: "cc1", with: "Video")
+		XCTAssertUrl(url, contains: "cc2", with: "Bräunungscreme")
+		XCTAssertUrl(url, contains: "mc", with: "wt_mc=1234567")
 	}
 
 
@@ -79,37 +60,11 @@ internal class AdvertisementPropertiesTest: XCTestCase {
 }
 
 
-internal class CustomProperties: XCTestCase {
-
-	internal func test() {
-		let customProperties = ["kl1": "Tiere", "kl2": "Hund & Katze", "kl3": "Futter", "llv": "Ungültig"]
-		guard let url = urlFromCustomProperties(customProperties) else {
-			XCTFail()
-			return
-		}
-		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
-			XCTFail("Could not convert '\(url)' to NSURLComponents.")
-			return
-		}
-
-		for detail in customProperties {
-			XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: detail.0, value: detail.1))
-		}
-	}
-
-	internal func urlFromCustomProperties(customProperties: [String: String]) -> NSURL? {
-		var pageViewEvent = PageViewEvent(pageProperties: PageProperties(name: "page-test"))
-		pageViewEvent.customProperties = customProperties
-		return urlForEvent(pageViewEvent)
-	}
-}
-
-
 internal class EcommercePropertiesTest: XCTestCase {
 
 	internal func test() {
 		let ecommerceProperties = EcommerceProperties(currencyCode: "EUR",
-		                                              details: [IndexedProperty(index: 1, value: "Video"), IndexedProperty(index: 2, value: "Rutschmitteltestverfahren XI")],
+		                                              details: [1: "Video", 2: "Rutschmitteltestverfahren XI"],
 		                                              orderNumber: "1234-ABCD",
 		                                              products: nil,
 		                                              status: .viewed,
@@ -120,20 +75,13 @@ internal class EcommercePropertiesTest: XCTestCase {
 			return
 		}
 
-		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
-			XCTFail("Could not convert '\(url)' to NSURLComponents.")
-			return
-		}
-
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "cr", value: "EUR"))
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "oi", value: "1234-ABCD"))
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "st", value: "view"))
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "ov", value: "10000000"))
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "cb563", value: "0.01"))
-		
-		for detail in ecommerceProperties.details! {
-			XCTAssertUrl(urlComponents, containsIndexedProperty: detail, name: "cb")
-		}
+		XCTAssertUrl(url, contains: "cb1", with: "Video")
+		XCTAssertUrl(url, contains: "cb2", with: "Rutschmitteltestverfahren XI")
+		XCTAssertUrl(url, contains: "cr", with: "EUR")
+		XCTAssertUrl(url, contains: "oi", with: "1234-ABCD")
+		XCTAssertUrl(url, contains: "st", with: "view")
+		XCTAssertUrl(url, contains: "ov", with: "10000000")
+		XCTAssertUrl(url, contains: "cb563", with: "0.01")
 	}
 
 	internal func urlFromEcommerceProperties(ecommerceProperties: EcommerceProperties) -> NSURL? {
@@ -149,7 +97,7 @@ internal class EcommercePropertiesProductTest: XCTestCase {
 	internal func testSingleProduct() {
 		var ecommerceProperties = EcommerceProperties()
 		ecommerceProperties.products = [EcommerceProperties.Product(name: "Nussmischung",
-																	categories: [IndexedProperty(index: 1, value: "Schwarz Braun"), IndexedProperty(index: 2, value: "Klein")],
+																	categories: [1: "Schwarz Braun", 2: "Klein"],
 																	price: "105.99",
 																	quantity: 12)]
 		guard let url = urlFromEcommerceProperties(ecommerceProperties) else {
@@ -168,9 +116,9 @@ internal class EcommercePropertiesProductTest: XCTestCase {
 	internal func testMultiProduct() {
 		var ecommerceProperties = EcommerceProperties()
 		ecommerceProperties.products = [
-			EcommerceProperties.Product(name: "Marzipankartoffeln", categories: [IndexedProperty(index: 1, value: "Gefüllt")], price: "0.99", quantity: 1),
-			EcommerceProperties.Product(name: "Nussmischung", categories: [IndexedProperty(index: 1, value: "Schwarz Braun"), IndexedProperty(index: 2, value: "Klein")], price: "105.99", quantity: 12),
-			EcommerceProperties.Product(name: "Waffeln", categories: [IndexedProperty(index: 1, value: "Belgisch"), IndexedProperty(index: 2, value: "Karamell"), IndexedProperty(index: 3, value: "Glasiert")], price: "35.61", quantity: 6),
+			EcommerceProperties.Product(name: "Marzipankartoffeln", categories: [1: "Gefüllt"], price: "0.99", quantity: 1),
+			EcommerceProperties.Product(name: "Nussmischung", categories: [1: "Schwarz Braun", 2: "Klein"], price: "105.99", quantity: 12),
+			EcommerceProperties.Product(name: "Waffeln", categories: [1: "Belgisch", 2: "Karamell", 3: "Glasiert"], price: "35.61", quantity: 6),
 		]
 		guard let url = urlFromEcommerceProperties(ecommerceProperties) else {
 			XCTFail()
@@ -202,12 +150,7 @@ internal class MediaPropertiesTest: XCTestCase {
 			return
 		}
 
-		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
-			XCTFail("Could not convert '\(url)' to NSURLComponents.")
-			return
-		}
-
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mi", value: "media-test"))
+		XCTAssertUrl(url, contains: "mi", with: "media-test")
 	}
 
 	internal func testDetails() {
@@ -215,7 +158,7 @@ internal class MediaPropertiesTest: XCTestCase {
 			name: "media-test",
 			bandwidth: 400000.1,
 			duration: NSTimeInterval(3 * 60 + 15),
-			groups: [IndexedProperty(index: 1, value: "Herren"), IndexedProperty(index: 2, value: "Schuhe und Sandalen")],
+			groups: [1: "Herren", 2: "Schuhe und Sandalen"],
 			position: NSTimeInterval(2 * 60 - 15),
 			soundIsMuted: false,
 			soundVolume: 0.75)
@@ -225,22 +168,15 @@ internal class MediaPropertiesTest: XCTestCase {
 			return
 		}
 
-		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
-			XCTFail("Could not convert '\(url)' to NSURLComponents.")
-			return
-		}
-
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mi", value: "media-test"))
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "bw", value: "\(Int(400000.1))"))
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mt2", value: "\(3 * 60 + 15)"))
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mt1", value: "\(2 * 60 - 15)"))
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mut", value: "0"))
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "vol", value: "75"))
-		XCTAssertUrl(urlComponents, containsQueryItem: NSURLQueryItem(name: "mk", value: "play"))
-
-		for group in mediaProperties.groups! {
-			XCTAssertUrl(urlComponents, containsIndexedProperty: group, name: "mg")
-		}
+		XCTAssertUrl(url, contains: "mg1", with: "Herren")
+		XCTAssertUrl(url, contains: "mg2", with: "Schuhe und Sandalen")
+		XCTAssertUrl(url, contains: "mi", with: "media-test")
+		XCTAssertUrl(url, contains: "bw", with: "\(Int(400000.1))")
+		XCTAssertUrl(url, contains: "mt2", with: "\(3 * 60 + 15)")
+		XCTAssertUrl(url, contains: "mt1", with: "\(2 * 60 - 15)")
+		XCTAssertUrl(url, contains: "mut", with: "0")
+		XCTAssertUrl(url, contains: "vol", with: "75")
+		XCTAssertUrl(url, contains: "mk", with: "play")
 	}
 
 
@@ -264,25 +200,18 @@ internal class PagePropertiesTest: XCTestCase {
 
 	internal func testDetails() {
 		var pageProperties = PageProperties(name: "page-test")
-		pageProperties.details = [IndexedProperty(index: 1, value: "Schwarz Braun"), IndexedProperty(index: 2, value: "Small")]
-		pageProperties.groups = [IndexedProperty(index: 1, value: "Herren"), IndexedProperty(index: 2, value: "Schuhe und Sandalen")]
+		pageProperties.details = [1: "Schwarz Braun", 2: "Small"]
+		pageProperties.groups = [1: "Herren", 2: "Schuhe und Sandalen"]
+
 		guard let url = urlFromPageProperties(pageProperties) else {
 			XCTFail("Page Name should be enough")
 			return
 		}
 
-		guard let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else{
-			XCTFail("Could not convert '\(url)' to NSURLComponents.")
-			return
-		}
-
-		for detail in pageProperties.details! {
-			XCTAssertUrl(urlComponents, containsIndexedProperty: detail, name: "cp")
-		}
-
-		for group in pageProperties.groups! {
-			XCTAssertUrl(urlComponents, containsIndexedProperty: group, name: "cg")
-		}
+		XCTAssertUrl(url, contains: "cg1", with: "Herren")
+		XCTAssertUrl(url, contains: "cg2", with: "Schuhe und Sandalen")
+		XCTAssertUrl(url, contains: "cp1", with: "Schwarz Braun")
+		XCTAssertUrl(url, contains: "cp2", with: "Small")
 	}
 
 
@@ -330,11 +259,11 @@ private extension XCTestCase {
 	private func urlForEvent(event: TrackingEvent) -> NSURL? {
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
+		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties)
 		return requestBuilder.urlForRequest(request)
 	}
 }
+
 
 private func XCTAssertUrl(url: NSURL, contains value: String) {
 	guard let decoded = url.absoluteString.stringByRemovingPercentEncoding else {
@@ -344,18 +273,10 @@ private func XCTAssertUrl(url: NSURL, contains value: String) {
 	XCTAssertTrue(decoded.containsString(value))
 }
 
-private func XCTAssertUrl(url: NSURLComponents, containsQueryItem queryItem: NSURLQueryItem) {
-	guard let queryItems = url.queryItems else {
-		XCTFail("The '\(url)' has no query Items to compare against.")
-		return
-	}
-	for item in queryItems where item.name == queryItem.name && item.value == queryItem.value {
-		XCTAssertTrue(true)
-		return
-	}
-	XCTFail("Could not find a NSURLQueryItem with name:'\(queryItem.name)' and value:'\(queryItem.value)' within '\(url)'")
-}
 
-private func XCTAssertUrl(url: NSURLComponents, containsIndexedProperty property: IndexedProperty, name: String) {
-	XCTAssertUrl(url, containsQueryItem: NSURLQueryItem(name: "\(name)\(property.index)", value: property.value))
+private func XCTAssertUrl(url: NSURL, contains name: String, with value: String, file: StaticString = #file, line: UInt = #line) {
+	let queryItems = NSURLComponents(URL: url, resolvingAgainstBaseURL: true)?.queryItems ?? []
+	let containsExpectedItem = queryItems.contains(NSURLQueryItem(name: name, value: value))
+
+	XCTAssertTrue(containsExpectedItem, "Expected URL '\(url) to contain query parameter '\(name)' with value '\(value)'.", file: file, line: line)
 }

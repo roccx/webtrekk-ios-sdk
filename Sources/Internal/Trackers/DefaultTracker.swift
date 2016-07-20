@@ -330,44 +330,10 @@ internal final class DefaultTracker: Tracker {
 			}
 		#endif
 
-		var event: TrackingEvent = event
-		if var customEvent = event as? TrackingEventWithCustomProperties {
-			var customProperties = customEvent.customProperties
-			customProperties["appVersion"] = Environment.appVersion
-			customProperties["appUpdated"] = String(isFirstEventAfterAppUpdate)
-			customProperties["requestUrlStoreSize"] = String(requestManager.queueSize)
-			customProperties["advertiserId"] = requestProperties.advertisingId?.UUIDString
-			// customProperties["advertisingOptOut"] = advertisingOptOut != nil ? "\(advertisingOptOut!)" : nil // FIXME
-
-			#if !os(watchOS)
-				switch application.statusBarOrientation {
-				case .LandscapeLeft, .LandscapeRight: customProperties["screenOrientation"] =  "landscape"
-				case .Portrait, .PortraitUpsideDown: customProperties["screenOrientation"] = "portrait"
-				default: customProperties["screenOrientation"] = "undefined"
-				}
-
-				if let connectionType = retrieveConnectionType() {
-					switch connectionType {
-					case .cellular_2G: customProperties["connectionType"] = "2G"
-					case .cellular_3G: customProperties["connectionType"] = "3G"
-					case .cellular_4G: customProperties["connectionType"] = "LTE"
-					case .offline:     customProperties["connectionType"] = "offline"
-					case .other:       customProperties["connectionType"] = "unknown"
-					case .wifi:        customProperties["connectionType"] = "WIFI"
-					}
-				}
-			#endif
-			customEvent.customProperties = customProperties
-			event = customEvent
-		}
-
-		event = parseScreenTrackingParameter(event)
-		requestProperties = parseScreenTrackingParameter(requestProperties, event: event)
 		return TrackerRequest(
 			crossDeviceProperties: crossDeviceProperties,
 			event: event,
-			properties: requestProperties,
-			userProperties: userProperties
+			properties: requestProperties
 		)
 	}
 
@@ -408,16 +374,35 @@ internal final class DefaultTracker: Tracker {
 		guard let
 			viewControllerTypeName = event.viewControllerTypeName,
 			page = configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName)
-			else {
-				return event
+		else {
+			return event
 		}
 
 		var event = event
 		event.pageName = event.pageName ?? page.pageProperties.name
 
-		if var eventWithCustomProperties = event as? TrackingEventWithCustomProperties {
-			eventWithCustomProperties.customProperties = eventWithCustomProperties.customProperties.merged(over: page.customProperties)
-			event = eventWithCustomProperties
+		if let sessionDetails = page.sessionDetails {
+			event.sessionDetails = event.sessionDetails.merged(over: sessionDetails)
+		}
+		if let userProperties = page.userProperties {
+			event.userProperties = event.userProperties.merged(over: userProperties)
+		}
+
+		if var eventWithActionProperties = event as? TrackingEventWithActionProperties, let actionProperties = page.actionProperties {
+			eventWithActionProperties.actionProperties = eventWithActionProperties.actionProperties.merged(over: actionProperties)
+			event = eventWithActionProperties
+		}
+		if var eventWithAdvertisementProperties = event as? TrackingEventWithAdvertisementProperties, let advertisementProperties = page.advertisementProperties {
+			eventWithAdvertisementProperties.advertisementProperties = eventWithAdvertisementProperties.advertisementProperties.merged(over: advertisementProperties)
+			event = eventWithAdvertisementProperties
+		}
+		if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties, let ecommerceProperties = page.ecommerceProperties {
+			eventWithEcommerceProperties.ecommerceProperties = eventWithEcommerceProperties.ecommerceProperties.merged(over: ecommerceProperties)
+			event = eventWithEcommerceProperties
+		}
+		if var eventWithMediaProperties = event as? TrackingEventWithMediaProperties, let mediaProperties = page.mediaProperties {
+			eventWithMediaProperties.mediaProperties = eventWithMediaProperties.mediaProperties.merged(over: mediaProperties)
+			event = eventWithMediaProperties
 		}
 		if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
 			eventWithPageProperties.pageProperties = eventWithPageProperties.pageProperties.merged(over: page.pageProperties)
@@ -558,98 +543,6 @@ internal final class DefaultTracker: Tracker {
 
 		logDebug("Loaded \(queue.count) queued request(s) from '\(file)'.")
 		requestManager.prependRequests(queue)
-	}
-
-
-	private func parseScreenTrackingParameter(event: TrackingEvent) -> TrackingEvent {
-		var result = event
-		var customProperties: [String: String]
-		if let custom = result as? TrackingEventWithCustomProperties {
-			customProperties = custom.customProperties
-		}
-		else {
-			customProperties = [:]
-		}
-		if let page = configuration.automaticallyTrackedPages.firstMatching({page in
-			guard let pageName = result.pageName else {
-				return false
-			}
-			return page.pageProperties.name == pageName
-		}), screenTrackingParameter = page.screenTrackingParameter {
-
-			if var event = result as? TrackingEventWithPageProperties {
-				event.pageProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithMediaProperties {
-				event.mediaProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithActionProperties {
-				event.actionProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithEcommerceProperties {
-				event.ecommerceProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithAdvertisementProperties {
-				event.advertisementProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-				result = event
-			}
-			userProperties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-		}
-
-		if let global = configuration.globalScreenTrackingParameter {
-			if var event = result as? TrackingEventWithPageProperties {
-				event.pageProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithMediaProperties {
-				event.mediaProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithActionProperties {
-				event.actionProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithEcommerceProperties {
-				event.ecommerceProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-				result = event
-			}
-			if var event = result as? TrackingEventWithAdvertisementProperties {
-				event.advertisementProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-				result = event
-			}
-			userProperties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-		}
-
-		return result
-	}
-
-
-	private func parseScreenTrackingParameter(properties: TrackerRequest.Properties, event: TrackingEvent) -> TrackerRequest.Properties {
-		var properties = properties
-		var customProperties: [String: String]
-		if let custom = event as? TrackingEventWithCustomProperties {
-			customProperties = custom.customProperties
-		}
-		else {
-			customProperties = [:]
-		}
-		if let page = configuration.automaticallyTrackedPages.firstMatching({page in
-			guard let pageName = event.pageName else {
-				return false
-			}
-			return page.pageProperties.name == pageName
-		}), screenTrackingParameter = page.screenTrackingParameter {
-			properties.fillFromScreenTrackingParameter(screenTrackingParameter, customProperties: customProperties)
-		}
-		if let global = configuration.globalScreenTrackingParameter {
-			properties.fillFromScreenTrackingParameter(global, customProperties: customProperties)
-		}
-
-		return properties
 	}
 
 
@@ -1149,8 +1042,8 @@ extension DefaultTracker: RequestManager.Delegate {
 			for tracker in trackers {
 				guard let viewControllerTypeName = event.viewControllerTypeName
 					where tracker.configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName) != nil
-					else {
-						continue
+				else {
+					continue
 				}
 
 				handler(tracker)(event)
@@ -1194,311 +1087,4 @@ private struct DefaultsKeys {
 	private static let isOptedOut = "optedOut"
 	private static let migrationCompleted = "migrationCompleted"
 	private static let samplingRate = "samplingRate"
-}
-
-private extension ActionProperties {
-
-	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: ScreenTrackingParameter, customProperties: [String : String]) {
-		guard let actionCategories = screenTrackingParameter.categories["actionParameter"] where !actionCategories.isEmpty else {
-			return
-		}
-		if var details = IndexedProperty.categoriesToIndexedProperties(actionCategories, customProperties: customProperties) {
-			details.unionInPlace(self.details ?? [])
-			self.details = details
-		}
-	}
-}
-
-
-private extension AdvertisementProperties {
-	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: ScreenTrackingParameter, customProperties: [String : String]) {
-		guard let actionCategories = screenTrackingParameter.categories["adParameter"] where !actionCategories.isEmpty else {
-			return
-		}
-		if var details = IndexedProperty.categoriesToIndexedProperties(actionCategories, customProperties: customProperties) {
-			details.unionInPlace(self.details ?? [])
-			self.details = details
-		}
-		if let advertisementId = screenTrackingParameter.parameters.firstMatching({parameter in
-			if case .advertisementId = parameter.name {
-				return true
-			}
-			return false
-		}) {
-			if let key = advertisementId.key, value = customProperties[key]{
-				self.id = id ?? value
-			}
-			else {
-				self.id = id ?? advertisementId.value
-			}
-		}
-	}
-}
-
-
-private extension EcommerceProperties {
-
-	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: ScreenTrackingParameter, customProperties: [String : String]) {
-		guard let ecommerceCategories = screenTrackingParameter.categories["ecomParameter"] where !ecommerceCategories.isEmpty else {
-			return
-		}
-		if var details = IndexedProperty.categoriesToIndexedProperties(ecommerceCategories, customProperties: customProperties) {
-			details.unionInPlace(self.details ?? [])
-			self.details = details
-		}
-		for parameter in screenTrackingParameter.parameters {
-			if case .currencyCode = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					currencyCode = self.currencyCode ?? value
-				}
-				currencyCode = self.currencyCode ?? parameter.value
-			}
-			if case .orderNumber = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					orderNumber = self.orderNumber ?? value
-				}
-				orderNumber = self.orderNumber ?? parameter.value
-			}
-			if case .productStatus = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					switch value {
-					case "conf":
-						status = .purchased
-					case "add":
-						status = .addedToBasket
-					default:
-						status = .viewed
-					}
-				}
-				switch parameter.value {
-				case "conf":
-					status = .purchased
-				case "add":
-					status = .addedToBasket
-				default:
-					status = .viewed
-				}
-			}
-			if case .totalValue = parameter.name {
-				if let key = parameter.key, value = customProperties[key] {
-					totalValue = self.totalValue ?? value
-				}
-				totalValue = self.totalValue ?? parameter.value
-			}
-			if case .voucherValue = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					voucherValue = self.voucherValue ?? value
-				}
-				voucherValue = self.voucherValue ?? parameter.value
-			}
-		}
-	}
-}
-
-
-private extension MediaProperties {
-
-	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: ScreenTrackingParameter, customProperties: [String : String]) {
-		guard let mediaCategories = screenTrackingParameter.categories["mediaCategories"] where !mediaCategories.isEmpty else {
-			return
-		}
-		if var groups = IndexedProperty.categoriesToIndexedProperties(mediaCategories, customProperties: customProperties) {
-			groups.unionInPlace(self.groups ?? [])
-			self.groups = groups
-		}
-	}
-}
-
-
-private extension PageProperties {
-
-	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: ScreenTrackingParameter, customProperties: [String : String]) {
-		if let pageParameters = screenTrackingParameter.categories["pageParameter"] where !pageParameters.isEmpty, var details = IndexedProperty.categoriesToIndexedProperties(pageParameters, customProperties: customProperties) {
-			details.unionInPlace(self.details ?? [])
-			self.details = details
-		}
-		if let pageParameters = screenTrackingParameter.categories["pageCategories"] where !pageParameters.isEmpty, var groups = IndexedProperty.categoriesToIndexedProperties(pageParameters, customProperties: customProperties) {
-			groups.unionInPlace(self.groups ?? [])
-			self.groups = groups
-		}
-	}
-}
-
-
-private extension TrackerRequest.Properties {
-
-	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: ScreenTrackingParameter, customProperties: [String : String]) {
-		guard let pageParameters = screenTrackingParameter.categories["sessionParameter"] where !pageParameters.isEmpty else {
-			return
-		}
-		if var details = IndexedProperty.categoriesToIndexedProperties(pageParameters, customProperties: customProperties) where !details.isEmpty {
-			details.unionInPlace(self.sessionDetails ?? [])
-			self.sessionDetails = details
-		}
-
-		for parameter in screenTrackingParameter.parameters {
-			if case .ipAddress = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					ipAddress = value
-				}
-				ipAddress = parameter.value ?? self.ipAddress
-			}
-		}
-	}
-}
-
-
-private extension UserProperties {
-	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: ScreenTrackingParameter, customProperties: [String : String]) {
-		guard let pageParameters = screenTrackingParameter.categories["userCategories"] where !pageParameters.isEmpty else {
-			return
-		}
-		if var details = IndexedProperty.categoriesToIndexedProperties(pageParameters, customProperties: customProperties) {
-			details.unionInPlace(self.details ?? [])
-			self.details = details
-		}
-		for parameter in screenTrackingParameter.parameters {
-			if case .birthday = parameter.name {
-				if let key = parameter.key, valueString = customProperties[key], value = UserProperties.birthdayFormatter.dateFromString(valueString){
-					birthday = self.birthday ?? value
-				}
-				if let value = UserProperties.birthdayFormatter.dateFromString(parameter.value) {
-					birthday = self.birthday ?? value
-				}
-			}
-			if case .city = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					city = self.city ?? value
-				}
-				city = self.city ?? parameter.value
-			}
-			if case .country = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					country = self.country ?? value
-				}
-				country = self.country ?? parameter.value
-			}
-			if case .emailAddress = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					emailAddress = self.emailAddress ?? value
-				}
-				emailAddress = self.emailAddress ?? parameter.value
-			}
-			if case .emailReceiverId = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					emailReceiverId = self.emailReceiverId ?? value
-				}
-				emailReceiverId = self.emailReceiverId ?? parameter.value
-			}
-			if case .firstName = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					firstName = self.firstName ?? value
-				}
-				firstName = self.firstName ?? parameter.value
-			}
-			if case .gender = parameter.name {
-				if let key = parameter.key, valueString = customProperties[key] {
-					var value: Gender?
-					switch valueString {
-					case "0":
-						value = .female
-					case "1":
-						value = .male
-					default:
-						value = nil
-					}
-					gender = self.gender ?? value
-				}
-				var value: Gender?
-				switch parameter.value {
-				case "0":
-					value = .female
-				case "1":
-					value = .male
-				default:
-					value = nil
-				}
-				gender = self.gender ?? value
-			}
-			if case .customerId = parameter.name {
-				if let key = parameter.key, value = customProperties[key] {
-					id = self.id ?? value
-				}
-				id = self.id ?? parameter.value
-			}
-			if case .lastName = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					lastName = self.lastName ?? value
-				}
-				lastName = self.lastName ?? parameter.value
-			}
-			if case .newsletterSubscribed = parameter.name {
-				if let key = parameter.key, let valueString = customProperties[key] {
-					var value: Bool?
-					switch valueString {
-					case "true":  value = true
-					case "false": value = false
-					default: value = nil
-					}
-					newsletterSubscribed = self.newsletterSubscribed ?? value
-				}
-				var value: Bool?
-				switch parameter.value {
-				case "true":  value = true
-				case "false": value = false
-				default: value = nil
-				}
-				newsletterSubscribed = self.newsletterSubscribed ?? value
-			}
-			if case .phoneNumber = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					phoneNumber = self.phoneNumber ?? value
-				}
-				phoneNumber = self.phoneNumber ?? parameter.value
-			}
-			if case .street = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					street = self.street ?? value
-				}
-				street = self.street ?? parameter.value
-			}
-			if case .streetNumber = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					streetNumber = self.streetNumber ?? value
-				}
-				streetNumber = self.streetNumber ?? parameter.value
-			}
-			if case .zipCode = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					zipCode = self.zipCode ?? value
-				}
-				zipCode = self.zipCode ?? parameter.value
-			}
-		}
-	}
-
-
-	private static let birthdayFormatter: NSDateFormatter = {
-		let formatter = NSDateFormatter()
-		formatter.dateFormat = "yyyyMMdd"
-		return formatter
-	}()
-}
-
-
-internal extension IndexedProperty {
-	internal static func categoriesToIndexedProperties(categories: [CategoryElement], customProperties: [String: String]) -> Set<IndexedProperty>? {
-		var result = Set<IndexedProperty>()
-		for parameter in categories {
-			guard let key = parameter.key else {
-				result.insert(IndexedProperty(index: parameter.index, value: parameter.value))
-				continue
-			}
-			if let value = customProperties[key] {
-				result.insert(IndexedProperty(index: parameter.index, value: value))
-			}
-		}
-		return result.isEmpty ? nil : result
-	}
-	
 }

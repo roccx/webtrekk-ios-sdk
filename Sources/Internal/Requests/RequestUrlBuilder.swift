@@ -53,21 +53,11 @@ internal final class RequestUrlBuilder {
 		if let requestQueueSize = properties.requestQueueSize {
 			parameters.append(name: "cp784", value: String(requestQueueSize))
 		}
-		if let sessionDetails = properties.sessionDetails {
-			parameters += sessionDetails.map({NSURLQueryItem(name: "cs\($0.index)", value: $0.value)})
-		}
 		if let appVersion = properties.appVersion {
 			parameters.append(name: "cs804", value: appVersion)
 		}
 		if let connectionType = properties.connectionType {
-			switch connectionType {
-			case .cellular_2G: parameters.append(name: "cs807", value: "2G")
-			case .cellular_3G: parameters.append(name: "cs807", value: "3G")
-			case .cellular_4G: parameters.append(name: "cs807", value: "LTE")
-			case .offline:     parameters.append(name: "cs807", value: "offline")
-			case .other:       parameters.append(name: "cs807", value: "unknown")
-			case .wifi:        parameters.append(name: "cs807", value: "WIFI")
-			}
+			parameters.append(name: "cs807", value: connectionType.serialized)
 		}
 		if let advertisingId = properties.advertisingId {
 			parameters.append(name: "cs809", value: advertisingId.UUIDString)
@@ -83,7 +73,8 @@ internal final class RequestUrlBuilder {
 		}
 
 		parameters += request.crossDeviceProperties.asQueryItems()
-		parameters += request.userProperties.asQueryItems()
+		parameters += event.sessionDetails.mapNotNil { NSURLQueryItem(name: "cs", property: $0, for: request) }
+		parameters += event.userProperties.asQueryItems(for: request)
 
 		#if !os(watchOS)
 			if let interfaceOrientation = properties.interfaceOrientation {
@@ -104,7 +95,7 @@ internal final class RequestUrlBuilder {
 			parameters.append(name: "ct", value: actionProperties.name)
 
 			if let details = actionProperties.details {
-				parameters += details.map { NSURLQueryItem(name: "ck\($0.index)", value: $0.value) }
+				parameters += details.mapNotNil { NSURLQueryItem(name: "ck", property: $0, for: request) }
 			}
 		}
 		if let advertisementProperties = (event as? TrackingEventWithAdvertisementProperties)?.advertisementProperties {
@@ -112,11 +103,11 @@ internal final class RequestUrlBuilder {
 				parameters.append(name: "mc", value: id)
 			}
 			if let details = advertisementProperties.details {
-				parameters += details.map { NSURLQueryItem(name: "cc\($0.index)", value: $0.value) }
+				parameters += details.mapNotNil { NSURLQueryItem(name: "cc", property: $0, for: request) }
 			}
 		}
 		if let ecommerceProperties = (event as? TrackingEventWithEcommerceProperties)?.ecommerceProperties {
-			parameters += ecommerceProperties.asQueryItems()
+			parameters += ecommerceProperties.asQueryItems(for: request)
 		}
 		if let mediaProperties = (event as? TrackingEventWithMediaProperties)?.mediaProperties {
 			guard !mediaProperties.name.isEmpty else {
@@ -124,10 +115,10 @@ internal final class RequestUrlBuilder {
 				return nil
 			}
 
-			parameters += mediaProperties.asQueryItems(properties.timestamp)
+			parameters += mediaProperties.asQueryItems(for: request)
 		}
 		if let pageProperties = (event as? TrackingEventWithPageProperties)?.pageProperties {
-			parameters += pageProperties.asQueryItems()
+			parameters += pageProperties.asQueryItems(for: request)
 		}
 
 		if let event = event as? MediaEvent {
@@ -224,23 +215,18 @@ private extension CrossDeviceProperties {
 				}
 			}
 		}
-
 		if let facebookId = facebookId {
 			items.append(name: "cdb10", value: facebookId.lowercaseString)
 		}
-
 		if let googlePlusId = googlePlusId {
 			items.append(name: "cdb12", value: googlePlusId.lowercaseString)
 		}
-
-		if let iOsId = iOsId {
-			items.append(name: "cdb8", value: iOsId.lowercaseString)
+		if let iosId = iosId {
+			items.append(name: "cdb8", value: iosId.lowercaseString)
 		}
-
 		if let linkedInId = linkedInId {
 			items.append(name: "cdb13", value: linkedInId.lowercaseString)
 		}
-
 		if let phoneNumber = phoneNumber {
 			switch phoneNumber {
 			case let .plain(value):
@@ -257,13 +243,11 @@ private extension CrossDeviceProperties {
 				}
 			}
 		}
-
 		if let twitterId = twitterId {
 			items.append(name: "cdb11", value: twitterId.lowercaseString)
 		}
-
-		if let winId = winId {
-			items.append(name: "cdb9", value: winId.lowercaseString)
+		if let windowsId = windowsId {
+			items.append(name: "cdb9", value: windowsId.lowercaseString)
 		}
 		
 		return items
@@ -272,6 +256,7 @@ private extension CrossDeviceProperties {
 
 
 private extension CrossDeviceProperties.Address {
+
 	private func isEmpty() -> Bool {
 		if firstName != nil || lastName != nil || street != nil || streetNumber != nil || zipCode != nil {
 			return false
@@ -288,18 +273,18 @@ private extension CrossDeviceProperties.Address {
 
 private extension EcommerceProperties {
 
-	private func asQueryItems() ->  [NSURLQueryItem] {
+	private func asQueryItems(for request: TrackerRequest) ->  [NSURLQueryItem] {
 		var items = [NSURLQueryItem]()
 		if let currencyCode = currencyCode {
 			items.append(name: "cr", value: currencyCode)
 		}
 		if let details = details {
-			items += details.map({NSURLQueryItem(name: "cb\($0.index)", value: $0.value)})
+			items += details.mapNotNil { NSURLQueryItem(name: "cb", property: $0, for: request) }
 		}
 		if let orderNumber = orderNumber {
 			items.append(name: "oi", value: orderNumber)
 		}
-		items += mergeProductQueryItems()
+		items += mergeProductQueryItems(for: request)
 		if let status = status {
 			switch status {
 			case .addedToBasket:
@@ -319,69 +304,23 @@ private extension EcommerceProperties {
 		return items
 	}
 
-	private func mergeProductQueryItems() -> [NSURLQueryItem] {
-		guard let products = products else {
+
+	private func mergeProductQueryItems(for request: TrackerRequest) -> [NSURLQueryItem] {
+		guard let products = products where !products.isEmpty else {
 			return []
 		}
 
-		guard products.count > 0 && products.count != 1 else {
-			return products.map({$0.asQueryItems()})[0]
-		}
-		var items = [NSURLQueryItem] ()
-
-		var names = [String]()
-		var prices = [String]()
-		var quantities =  [String]()
-		var categoryKeys = Set<Int>()
-		for product in products {
-			names.append(product.name)
-			prices.append(product.price ?? "")
-			quantities.append("\(product.quantity != nil ? "\(product.quantity!)" : "" )")
-			if let categories = product.categories {
-				for category in categories {
-					categoryKeys.insert(category.index)
-				}
-			}
-		}
-
-		var categories = Set<IndexedProperty>()
-
-		for key in categoryKeys {
-			var categoryValues = [String]()
-			for product in products {
-				var value = ""
-				if let categories = product.categories {
-					for category in categories where category.index == key {
-						value = category.value
-					}
-				}
-				categoryValues.append(value)
-			}
-			categories.insert(IndexedProperty(index: key, value: categoryValues.joinWithSeparator(";")))
-		}
-
-		items.append(name: "ba", value: names.joinWithSeparator(";"))
-		items.append(name: "co", value: prices.joinWithSeparator(";"))
-		items.append(name: "qn", value: quantities.joinWithSeparator(";"))
-		items += categories.map({NSURLQueryItem(name: "ca\($0.index)", value: $0.value)})
-		return items
-	}
-}
-
-
-private extension EcommerceProperties.Product {
-	private func asQueryItems() -> [NSURLQueryItem] {
 		var items = [NSURLQueryItem]()
-		if let categories = categories {
-			items += categories.map({NSURLQueryItem(name: "ca\($0.index)", value: $0.value)})
+		items.append(name: "ba", value: products.map({ $0.name }).joinWithSeparator(";"))
+		items.append(name: "co", value: products.map({ $0.price ?? "" }).joinWithSeparator(";"))
+		items.append(name: "qn", value: products.map({ $0.quantity.map { String($0) } ?? "" }).joinWithSeparator(";"))
+
+		let categoryIndexes = Set(products.flatMap { $0.categories.map { Array($0.keys) } ?? [] })
+		for categoryIndex in categoryIndexes {
+			let value = products.map({ $0.categories?[categoryIndex]?.serialized(for: request) ?? "" }).joinWithSeparator(";")
+			items.append(name: "ca\(categoryIndex)", value: value)
 		}
-		items.append(name: "ba", value: name)
-		if let price = price {
-			items.append(name: "co", value: "\(price)")
-		}
-		if let quantity = quantity {
-			items.append(name: "qn", value: "\(quantity)")
-		}
+
 		return items
 	}
 }
@@ -389,13 +328,13 @@ private extension EcommerceProperties.Product {
 
 private extension MediaProperties {
 
-	private func asQueryItems(timestamp: NSDate) -> [NSURLQueryItem] {
+	private func asQueryItems(for request: TrackerRequest) -> [NSURLQueryItem] {
 		var items = [NSURLQueryItem]()
 		if let bandwidth = bandwidth {
 			items.append(name: "bw", value: "\(Int64(bandwidth))")
 		}
 		if let groups = groups {
-			items += groups.map({NSURLQueryItem(name: "mg\($0.index)", value: $0.value)})
+			items += groups.mapNotNil { NSURLQueryItem(name: "mg", property: $0, for: request) }
 		}
 		if let duration = duration {
 			items.append(name: "mt2", value: "\(Int64(duration))")
@@ -417,7 +356,7 @@ private extension MediaProperties {
 		if let soundVolume = soundVolume {
 			items.append(name: "vol", value: "\(Int64(soundVolume * 100))")
 		}
-		items.append(name: "x", value: "\(Int64(timestamp.timeIntervalSince1970 * 1000))")
+		items.append(name: "x", value: "\(Int64(request.properties.timestamp.timeIntervalSince1970 * 1000))")
 		return items
 	}
 }
@@ -425,13 +364,13 @@ private extension MediaProperties {
 
 private extension PageProperties {
 
-	private func asQueryItems() -> [NSURLQueryItem] {
+	private func asQueryItems(for request: TrackerRequest) -> [NSURLQueryItem] {
 		var items = [NSURLQueryItem]()
 		if let details = details {
-			items += details.map({NSURLQueryItem(name: "cp\($0.index)", value: $0.value)})
+			items += details.mapNotNil { NSURLQueryItem(name: "cp", property: $0, for: request) }
 		}
 		if let groups = groups {
-			items += groups.map({NSURLQueryItem(name: "cg\($0.index)", value: $0.value)})
+			items += groups.mapNotNil { NSURLQueryItem(name: "cg", property: $0, for: request) }
 		}
 		return items
 	}
@@ -440,10 +379,10 @@ private extension PageProperties {
 
 private extension UserProperties {
 
-	private func asQueryItems() -> [NSURLQueryItem] {
+	private func asQueryItems(for request: TrackerRequest) -> [NSURLQueryItem] {
 		var items = [NSURLQueryItem]()
 		if let details = details {
-			items += details.map({NSURLQueryItem(name: "uc\($0.index)", value: $0.value)})
+			items += details.mapNotNil { NSURLQueryItem(name: "uc", property: $0, for: request) }
 		}
 		if let birthday = birthday {
 			items = items.filter({$0.name != "uc707"})
@@ -514,9 +453,77 @@ private extension UserProperties {
 
 
 
+private extension TrackerRequest.Properties.ConnectionType {
+
+	private var serialized: String {
+		switch self {
+		case .cellular_2G: return "2G"
+		case .cellular_3G: return "3G"
+		case .cellular_4G: return "LTE"
+		case .offline:     return "offline"
+		case .other:       return "unknown"
+		case .wifi:        return "WIFI"
+		}
+	}
+}
+
+
+
 private extension Array where Element: NSURLQueryItem {
 
 	private mutating func append(name name: String, value: String?) {
 		append(Element.init(name: name, value: value))
 	}
 }
+
+
+
+private extension TrackingValue {
+
+	private func serialized(for request: TrackerRequest) -> String? {
+		switch self {
+		case let .constant(value):
+			return value
+
+		case let .defaultVariable(variable):
+			switch variable {
+			case .advertisingId:              return request.properties.advertisingId?.UUIDString
+			case .advertisingTrackingEnabled: return request.properties.advertisingTrackingEnabled.map { $0 ? "1" : "0" }
+			case .appVersion:                 return request.properties.appVersion
+			case .connectionType:             return request.properties.connectionType?.serialized
+			case .interfaceOrientation:       return request.properties.interfaceOrientation?.serialized
+			case .isFirstEventAfterAppUpdate: return request.properties.isFirstEventAfterAppUpdate ? "1" : "0"
+			case .requestQueueSize:           return request.properties.requestQueueSize.map { String($0) }
+			}
+
+		case let .customVariable(name):
+			return request.event.variables[name]
+		}
+	}
+}
+
+
+private extension NSURLQueryItem {
+
+	private convenience init?(name: String, property: (Int, TrackingValue), for request: TrackerRequest) {
+		guard let value = property.1.serialized(for: request) else {
+			return nil
+		}
+
+		self.init(name: "\(name)\(property.0)", value: value)
+	}
+}
+
+
+#if !os(watchOS)
+private extension UIInterfaceOrientation {
+
+	private var serialized: String {
+		switch self {
+		case .LandscapeLeft, .LandscapeRight: return "landscape"
+		case .Portrait, .PortraitUpsideDown:  return "portrait"
+		case .Unknown:                        return "undefined"
+		}
+	}
+}
+#endif

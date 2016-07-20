@@ -6,7 +6,7 @@ public struct UserProperties {
 	public var birthday: NSDate?
 	public var city: String?
 	public var country: String?
-	public var details: Set<IndexedProperty>?
+	public var details: [Int: TrackingValue]?
 	public var emailAddress: String?
 	public var emailReceiverId: String?
 	public var firstName: String?
@@ -24,7 +24,7 @@ public struct UserProperties {
 		birthday: NSDate? = nil,
 		city: String? = nil,
 		country: String? = nil,
-		details: Set<IndexedProperty>? = nil,
+		details: [Int: TrackingValue]? = nil,
 		emailAddress: String? = nil,
 		emailReceiverId: String? = nil,
 		firstName: String? = nil,
@@ -61,7 +61,7 @@ public struct UserProperties {
 			birthday:             birthday ?? other.birthday,
 			city:                 city ?? other.city,
 			country:              country ?? other.country,
-			details:              details ?? other.details,
+			details:              details.merged(over: other.details),
 			emailAddress:         emailAddress ?? other.emailAddress,
 			emailReceiverId:      emailReceiverId ?? other.emailReceiverId,
 			firstName:            firstName ?? other.firstName,

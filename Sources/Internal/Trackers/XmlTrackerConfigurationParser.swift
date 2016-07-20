@@ -256,7 +256,7 @@ internal class XmlTrackerConfigurationParser {
 		if let pageName = pageName {
 			page.pageProperties.name = pageName
 		}
-		page.screenTrackingParameter = screenTrackingParameter
+
 		automaticallyTrackedPages.append(page)
 	}
 

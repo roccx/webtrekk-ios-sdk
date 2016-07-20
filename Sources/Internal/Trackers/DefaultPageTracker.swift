@@ -10,9 +10,9 @@ internal final class DefaultPageTracker: PageTracker {
 	private let handler: Handler
 	
 	internal var advertisementProperties = AdvertisementProperties(id: nil)
-	internal var customProperties = [String : String]()
 	internal var ecommerceProperties = EcommerceProperties()
 	internal var pageProperties: PageProperties
+	internal var variables = [String : String]()
 
 
 	internal init(handler: Handler, pageName: String) {
@@ -53,8 +53,8 @@ internal final class DefaultPageTracker: PageTracker {
 		handler.handleEvent(PageViewEvent(
 			pageProperties:          pageProperties,
 			advertisementProperties: advertisementProperties,
-			customProperties:        customProperties,
-			ecommerceProperties:     ecommerceProperties
+			ecommerceProperties:     ecommerceProperties,
+			variables:               variables
 		))
 	}
 
@@ -87,9 +87,9 @@ extension DefaultPageTracker: ActionEventHandler {
 
 		var event = event
 		event.advertisementProperties = event.advertisementProperties.merged(over: advertisementProperties)
-		event.customProperties = event.customProperties.merged(over: customProperties)
 		event.ecommerceProperties = event.ecommerceProperties.merged(over: ecommerceProperties)
 		event.pageProperties = event.pageProperties.merged(over: pageProperties)
+		event.variables = event.variables.merged(over: variables)
 
 		handler.handleEvent(event)
 	}

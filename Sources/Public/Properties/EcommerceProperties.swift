@@ -1,7 +1,7 @@
 public struct EcommerceProperties {
 
 	public var currencyCode: String?
-	public var details: Set<IndexedProperty>?
+	public var details: [Int: TrackingValue]?
 	public var orderNumber: String?
 	public var products: [Product]?
 	public var status: Status?
@@ -11,7 +11,7 @@ public struct EcommerceProperties {
 
 	public init(
 		currencyCode: String? = nil,
-		details: Set<IndexedProperty>? = nil,
+		details: [Int: TrackingValue]? = nil,
 		orderNumber: String? = nil,
 		products: [Product]? = nil,
 		status: Status? = nil,
@@ -32,7 +32,7 @@ public struct EcommerceProperties {
 	internal func merged(over other: EcommerceProperties) -> EcommerceProperties {
 		return EcommerceProperties(
 			currencyCode: currencyCode ?? other.currencyCode,
-			details:      details ?? other.details,
+			details:      details.merged(over: other.details),
 			products:     products ?? other.products,
 			status:       status ?? other.status,
 			totalValue:   totalValue ?? other.totalValue,
@@ -44,14 +44,14 @@ public struct EcommerceProperties {
 
 	public struct Product {
 
-		public var categories: Set<IndexedProperty>?
+		public var categories: [Int: TrackingValue]?
 		public var name: String
 		public var price: String?
 		public var quantity: Int?
 
 		public init(
 			name: String,
-			categories: Set<IndexedProperty>? = nil,
+			categories: [Int: TrackingValue]? = nil,
 		    price: String? = nil,
 			quantity: Int? = nil
 		) {

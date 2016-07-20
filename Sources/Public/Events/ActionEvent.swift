@@ -1,29 +1,34 @@
 public struct ActionEvent:
 	TrackingEventWithActionProperties,
 	TrackingEventWithAdvertisementProperties,
-	TrackingEventWithCustomProperties,
 	TrackingEventWithEcommerceProperties,
 	TrackingEventWithPageProperties
 {
 
 	public var actionProperties: ActionProperties
 	public var advertisementProperties: AdvertisementProperties
-	public var customProperties: [String : String]
 	public var ecommerceProperties: EcommerceProperties
 	public var pageProperties: PageProperties
+	public var sessionDetails: [Int: TrackingValue]
+	public var userProperties: UserProperties
+	public var variables: [String : String]
 
 
 	public init(
 		actionProperties: ActionProperties,
 		pageProperties: PageProperties,
-		customProperties: [String : String] = [:],
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
-		ecommerceProperties: EcommerceProperties = EcommerceProperties()
+		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
+		sessionDetails: [Int: TrackingValue] = [:],
+		userProperties: UserProperties = UserProperties(),
+		variables: [String : String] = [:]
 	) {
 		self.actionProperties = actionProperties
 		self.advertisementProperties = advertisementProperties
-		self.customProperties = customProperties
 		self.ecommerceProperties = ecommerceProperties
 		self.pageProperties = pageProperties
+		self.sessionDetails = sessionDetails
+		self.userProperties = userProperties
+		self.variables = variables
 	}
 }

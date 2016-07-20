@@ -1,33 +1,39 @@
 /** Enhance tracking by adding properties to track users across different devices. */
 public struct CrossDeviceProperties {
 
-	public var address: HashableTrackingValue<Address>?
+	public var address: AnonymizableValue<Address>?
 	public var androidId: String?
-	public var emailAddress: HashableTrackingValue<String>?
+	public var emailAddress: AnonymizableValue<String>?
 	public var facebookId: String?
 	public var googlePlusId: String?
-	public var iOsId: String?
+	public var iosId: String?
 	public var linkedInId: String?
-	public var phoneNumber: HashableTrackingValue<String>?
+	public var phoneNumber: AnonymizableValue<String>?
 	public var twitterId: String?
-	public var winId: String?
+	public var windowsId: String?
 
 
 	public init(
-		address: HashableTrackingValue<Address>? = nil,
-		emailAddress: HashableTrackingValue<String>? = nil,
+		address: AnonymizableValue<Address>? = nil,
+		androidId: String? = nil,
+		emailAddress: AnonymizableValue<String>? = nil,
 		facebookId: String? = nil,
 		googlePlusId: String? = nil,
+		iosId: String? = nil,
 		linkedInId: String? = nil,
-		phoneNumber: HashableTrackingValue<String>? = nil,
-		twitterId: String? = nil
+		phoneNumber: AnonymizableValue<String>? = nil,
+		twitterId: String? = nil,
+		windowsId: String? = nil
 	) {
 		self.address = address
+		self.androidId = androidId
 		self.emailAddress = emailAddress
 		self.facebookId = facebookId
 		self.googlePlusId = googlePlusId
+		self.iosId = iosId
 		self.linkedInId = linkedInId
 		self.twitterId = twitterId
+		self.windowsId = windowsId
 	}
 
 

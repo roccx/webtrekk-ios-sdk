@@ -7,19 +7,16 @@ public struct TrackerRequest {
 	public var crossDeviceProperties: CrossDeviceProperties
 	public var event: TrackingEvent
 	public var properties: Properties
-	public var userProperties: UserProperties
 
 
 	internal init(
 		crossDeviceProperties: CrossDeviceProperties,
 		event: TrackingEvent,
-		properties: Properties,
-		userProperties: UserProperties
+		properties: Properties
 	) {
 		self.crossDeviceProperties = crossDeviceProperties
 		self.event = event
 		self.properties = properties
-		self.userProperties = userProperties
 	}
 
 
@@ -38,7 +35,6 @@ public struct TrackerRequest {
 		public var requestQueueSize: Int?
 		public var screenSize: (width: Int, height: Int)?
 		public var samplingRate: Int
-		public var sessionDetails: Set<IndexedProperty>?
 		public var timeZone: NSTimeZone
 		public var timestamp: NSDate
 		public var userAgent: String

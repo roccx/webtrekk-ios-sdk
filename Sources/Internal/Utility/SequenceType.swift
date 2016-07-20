@@ -11,6 +11,21 @@ internal extension SequenceType {
 
 		return nil
 	}
+
+
+	@warn_unused_result
+	internal func mapNotNil<T>(@noescape transform: (Generator.Element) throws -> T?) rethrows -> [T] {
+		var result = [T]()
+		for element in self {
+			guard let mappedElement = try transform(element) else {
+				continue
+			}
+
+			result.append(mappedElement)
+		}
+
+		return result
+	}
 }
 
 

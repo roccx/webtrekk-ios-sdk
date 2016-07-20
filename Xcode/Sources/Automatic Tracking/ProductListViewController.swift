@@ -21,10 +21,11 @@ class ProductListViewController: UITableViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		autoTracker.customProperties["Key2"] = "value2"
-		autoTracker.customProperties["Key3"] = "value3"
-		autoTracker.customProperties["Key4"] = "value4"
-		autoTracker.customProperties["KeyOverride"] = "valueOverride"
+
+		autoTracker.variables["Key2"] = "value2"
+		autoTracker.variables["Key3"] = "value3"
+		autoTracker.variables["Key4"] = "value4"
+		autoTracker.variables["KeyOverride"] = "valueOverride"
 	}
 }
 

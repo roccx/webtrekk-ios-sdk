@@ -16,8 +16,7 @@ internal class ActionEventTest: XCTestCase {
 		let event = ActionEvent(actionProperties: actionProperties, pageProperties: pageProperties)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
+		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties)
 		let url = requestBuilder.urlForRequest(request)
 		XCTAssertNotNil(url, "Page Name needs to be set for a valid Event")
 		guard let urlString = url?.absoluteString else {
@@ -35,8 +34,7 @@ internal class ActionEventTest: XCTestCase {
 		let event = ActionEvent(actionProperties: actionProperties, pageProperties: pageProperties)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
+		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties)
 		XCTAssertNil(requestBuilder.urlForRequest(request))
 	}
 
@@ -47,8 +45,7 @@ internal class ActionEventTest: XCTestCase {
 		let event = ActionEvent(actionProperties: actionProperties, pageProperties: pageProperties)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
+		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties)
 		XCTAssertNil(requestBuilder.urlForRequest(request))
 	}
 }
@@ -66,8 +63,7 @@ internal class MediaEventTest: XCTestCase {
 		let event = MediaEvent(action: .play, mediaProperties: mediaProperties, pageName: "page-test")
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
+		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties)
 		let url = requestBuilder.urlForRequest(request)
 		XCTAssertNotNil(url, "Page Name needs to be set for a valid Event")
 		guard let urlString = url?.absoluteString else {
@@ -84,8 +80,7 @@ internal class MediaEventTest: XCTestCase {
 		let event = MediaEvent(action: .play, mediaProperties: mediaProperties, pageName: "page-test")
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
+		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties)
 		XCTAssertNil(requestBuilder.urlForRequest(request))
 	}
 
@@ -95,8 +90,7 @@ internal class MediaEventTest: XCTestCase {
 		let event = MediaEvent(action: .play, mediaProperties: mediaProperties, pageName: "")
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
+		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties)
 		XCTAssertNil(requestBuilder.urlForRequest(request))
 	}
 }
@@ -113,8 +107,7 @@ internal class PageViewEventTest: XCTestCase {
 		let event = PageViewEvent(pageProperties: pageProperties)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
+		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties)
 		let url = requestBuilder.urlForRequest(request)
 		XCTAssertNotNil(url, "Page Name needs to be set for a valid Event")
 		guard let urlString = url?.absoluteString else {
@@ -131,8 +124,7 @@ internal class PageViewEventTest: XCTestCase {
 		let event = PageViewEvent(pageProperties: pageProperties)
 		let crossDeviceProperites = CrossDeviceProperties()
 		let trackerRequestProperties = TrackerRequest.Properties(everId: "", samplingRate: 1, timeZone: NSTimeZone.defaultTimeZone(), timestamp: NSDate(), userAgent: "")
-		let userProperties = UserProperties()
-		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties, userProperties: userProperties)
+		let request = TrackerRequest(crossDeviceProperties: crossDeviceProperites, event: event, properties: trackerRequestProperties)
 
 		XCTAssertNil(requestBuilder.urlForRequest(request))
 	}

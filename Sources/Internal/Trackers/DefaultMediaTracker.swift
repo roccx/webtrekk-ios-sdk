@@ -4,6 +4,7 @@ internal final class DefaultMediaTracker: MediaTracker {
 
 	internal var mediaProperties: MediaProperties
 	internal var pageName: String?
+	internal var variables = [String : String]()
 	internal var viewControllerTypeName: String?
 
 
@@ -22,7 +23,8 @@ internal final class DefaultMediaTracker: MediaTracker {
 		var event = MediaEvent(
 			action:          action,
 			mediaProperties: mediaProperties,
-			pageName:        pageName
+			pageName:        pageName,
+			variables:       variables
 		)
 		event.viewControllerTypeName = viewControllerTypeName
 

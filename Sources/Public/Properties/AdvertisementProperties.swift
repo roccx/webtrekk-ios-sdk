@@ -1,12 +1,12 @@
 public struct AdvertisementProperties {
 
-	public var details: Set<IndexedProperty>?
+	public var details: [Int: TrackingValue]?
 	public var id: String?
 
 
 	public init(
 		id: String?,
-		details: Set<IndexedProperty>? = nil
+		details: [Int: TrackingValue]? = nil
 	) {
 		self.details = details
 		self.id = id
@@ -17,7 +17,7 @@ public struct AdvertisementProperties {
 	internal func merged(over other: AdvertisementProperties) -> AdvertisementProperties {
 		return AdvertisementProperties(
 			id:      id ?? other.id,
-			details: details ?? other.details
+			details: details.merged(over: other.details)
 		)
 	}
 }

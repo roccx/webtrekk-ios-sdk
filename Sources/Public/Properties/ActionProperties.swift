@@ -1,12 +1,12 @@
 public struct ActionProperties {
 
-	public var details: Set<IndexedProperty>?
+	public var details: [Int: TrackingValue]?
 	public var name: String
 
 
 	public init(
 		name: String,
-		details: Set<IndexedProperty>? = nil)
+		details: [Int: TrackingValue]? = nil)
 	{
 		self.details = details
 		self.name = name
@@ -17,7 +17,7 @@ public struct ActionProperties {
 	internal func merged(over other: ActionProperties) -> ActionProperties {
 		return ActionProperties(
 			name:    name,
-			details: details ?? other.details
+			details: details.merged(over: other.details)
 		)
 	}
 }
