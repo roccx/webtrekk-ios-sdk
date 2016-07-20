@@ -32,6 +32,7 @@ public struct TrackerRequest {
 		public var isFirstEventAfterAppUpdate = false
 		public var isFirstEventOfApp = false
 		public var isFirstEventOfSession = false
+		public var locale: NSLocale?
 		public var requestQueueSize: Int?
 		public var screenSize: (width: Int, height: Int)?
 		public var samplingRate: Int

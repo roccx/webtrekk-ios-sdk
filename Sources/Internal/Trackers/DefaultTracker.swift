@@ -289,6 +289,7 @@ internal final class DefaultTracker: Tracker {
 			timestamp:    NSDate(),
 			userAgent:    DefaultTracker.userAgent
 		)
+		requestProperties.locale = NSLocale.currentLocale()
 
 		#if os(watchOS)
 			let device = WKInterfaceDevice.currentDevice()
@@ -406,7 +407,7 @@ internal final class DefaultTracker: Tracker {
 			event = eventWithPageProperties
 		}
 		if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails, let sessionDetails = page.sessionDetails {
-			eventWithSessionDetails.sessionDetails = eventWithSessionDetails.sessionDetails.merged(over: page.sessionDetails)
+			eventWithSessionDetails.sessionDetails = eventWithSessionDetails.sessionDetails.merged(over: sessionDetails)
 			event = eventWithSessionDetails
 		}
 

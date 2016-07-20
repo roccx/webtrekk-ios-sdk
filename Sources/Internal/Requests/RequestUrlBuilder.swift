@@ -47,7 +47,7 @@ internal final class RequestUrlBuilder {
 		parameters.append(name: "mts", value: String(Int64(properties.timestamp.timeIntervalSince1970 * 1000)))
 		parameters.append(name: "one", value: properties.isFirstEventOfApp ? "1" : "0")
 		parameters.append(name: "ps", value: String(properties.samplingRate))
-		parameters.append(name: "tz", value: String(properties.timeZone.secondsFromGMT / 60 / 60))
+		parameters.append(name: "tz", value: String(Double(properties.timeZone.secondsFromGMT) / 60 / 60))
 		parameters.append(name: "X-WT-UA", value: properties.userAgent)
 
 		if let requestQueueSize = properties.requestQueueSize {
@@ -65,25 +65,24 @@ internal final class RequestUrlBuilder {
 		if let advertisingTrackingEnabled = properties.advertisingTrackingEnabled {
 			parameters.append(name: "cs813", value: advertisingTrackingEnabled ? "1" : "0")
 		}
-		if let language = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as? String {
+		if properties.isFirstEventAfterAppUpdate {
+			parameters.append(name: "cs815", value: "1")
+		}
+		if let language = properties.locale?.objectForKey(NSLocaleLanguageCode) as? String {
 			parameters.append(name: "la", value: language)
 		}
 		if let ipAddress = properties.ipAddress {
 			parameters.append(name: "X-WT-IP", value: ipAddress)
 		}
 
-		parameters += request.crossDeviceProperties.asQueryItems()
-		parameters += event.userProperties.asQueryItems(for: request)
-
 		#if !os(watchOS)
 			if let interfaceOrientation = properties.interfaceOrientation {
-				switch interfaceOrientation {
-				case .LandscapeLeft, .LandscapeRight: parameters.append(name: "cp783", value: "landscape")
-				case .Portrait, .PortraitUpsideDown: parameters.append(name: "cp783", value: "portrait")
-				default: parameters.append(name: "cp783", value: "undefined")
-				}
+				parameters.append(name: "cp783", value: interfaceOrientation.serialized)
 			}
 		#endif
+
+		parameters += request.crossDeviceProperties.asQueryItems()
+		parameters += event.userProperties.asQueryItems(for: request)
 
 		if let actionProperties = (event as? TrackingEventWithActionProperties)?.actionProperties {
 			guard !actionProperties.name.isEmpty else {
@@ -126,8 +125,8 @@ internal final class RequestUrlBuilder {
 		if let event = event as? MediaEvent {
 			let actionId: String
 			switch event.action {
-			case .created:          actionId = "init"
 			case .finish:           actionId = "finish"
+			case .initialize:       actionId = "init"
 			case .pause:            actionId = "pause"
 			case .play:             actionId = "play"
 			case .position:         actionId = "pos"
@@ -178,8 +177,8 @@ private extension CrossDeviceProperties {
 					break
 				}
 				var result = ""
-				if let regex = try? NSRegularExpression(pattern: "str(\\.)?(|){1,}", options: NSRegularExpressionOptions.CaseInsensitive) {
-					result = regex.stringByReplacingMatchesInString(value.toLine() , options: .WithTransparentBounds, range: NSMakeRange(0, value.toLine() .characters.count), withTemplate: "strasse")
+				if let regex = try? NSRegularExpression(pattern: "str\\.?\\s*\\|", options: NSRegularExpressionOptions.CaseInsensitive) {
+					result = regex.stringByReplacingMatchesInString(value.toLine() , options: .WithTransparentBounds, range: NSMakeRange(0, value.toLine() .characters.count), withTemplate: "strasse|")
 				}
 				if result.isEmpty {
 					break
@@ -523,8 +522,10 @@ private extension UIInterfaceOrientation {
 }
 #endif
 
+
 private extension UserProperties.Birthday {
+
 	private var serialized: String {
-		return String(format: "%04d%02d%02d", arguments: [year,month,day])
+		return String(format: "%04d%02d%02d", year, month, day)
 	}
 }

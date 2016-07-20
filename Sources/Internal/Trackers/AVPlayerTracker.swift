@@ -24,7 +24,7 @@ internal final class AVPlayerTracker: NSObject {
 
 		setUpObservers(player: player)
 
-		parent.trackAction(.created)
+		parent.trackAction(.initialize)
 		updatePlaybackState()
 	}
 

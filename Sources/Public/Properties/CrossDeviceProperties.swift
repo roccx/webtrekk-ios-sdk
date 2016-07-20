@@ -32,6 +32,7 @@ public struct CrossDeviceProperties {
 		self.googlePlusId = googlePlusId
 		self.iosId = iosId
 		self.linkedInId = linkedInId
+		self.phoneNumber = phoneNumber
 		self.twitterId = twitterId
 		self.windowsId = windowsId
 	}

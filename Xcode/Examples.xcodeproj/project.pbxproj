@@ -26,7 +26,7 @@
 		4951623A1D1DFC5F0006A82D /* ConfigManual.xml in Resources */ = {isa = PBXBuildFile; fileRef = 495162071D1DFB9C0006A82D /* ConfigManual.xml */; };
 		4951623B1D1DFC5F0006A82D /* ConfigMinimal.xml in Resources */ = {isa = PBXBuildFile; fileRef = 495162081D1DFB9C0006A82D /* ConfigMinimal.xml */; };
 		4951623C1D1DFC5F0006A82D /* EventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495162091D1DFB9C0006A82D /* EventTest.swift */; };
-		4951623D1D1DFC5F0006A82D /* PropertiesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620B1D1DFB9C0006A82D /* PropertiesTest.swift */; };
+		4951623D1D1DFC5F0006A82D /* RequestUrlBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620B1D1DFB9C0006A82D /* RequestUrlBuilderTests.swift */; };
 		4951623E1D1DFC5F0006A82D /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */; };
 		52B4475E2A22B8D281F1C4BB /* Pods_iOS_Automatic_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */; };
 		B72368BB1D3F643100D64C63 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72368BA1D3F643100D64C63 /* AdSupport.framework */; };
@@ -86,7 +86,7 @@
 		495162081D1DFB9C0006A82D /* ConfigMinimal.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConfigMinimal.xml; sourceTree = "<group>"; };
 		495162091D1DFB9C0006A82D /* EventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTest.swift; sourceTree = "<group>"; };
 		4951620A1D1DFB9C0006A82D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4951620B1D1DFB9C0006A82D /* PropertiesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertiesTest.swift; sourceTree = "<group>"; };
+		4951620B1D1DFB9C0006A82D /* RequestUrlBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestUrlBuilderTests.swift; sourceTree = "<group>"; };
 		4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
 		495162251D1DFBE80006A82D /* Manual Tracking Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Manual Tracking Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4951622B1D1DFC1E0006A82D /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -244,7 +244,7 @@
 				495162081D1DFB9C0006A82D /* ConfigMinimal.xml */,
 				495162091D1DFB9C0006A82D /* EventTest.swift */,
 				4951620A1D1DFB9C0006A82D /* Info.plist */,
-				4951620B1D1DFB9C0006A82D /* PropertiesTest.swift */,
+				4951620B1D1DFB9C0006A82D /* RequestUrlBuilderTests.swift */,
 				4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */,
 			);
 			path = Tests;
@@ -584,7 +584,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4951623E1D1DFC5F0006A82D /* XmlParserTest.swift in Sources */,
-				4951623D1D1DFC5F0006A82D /* PropertiesTest.swift in Sources */,
+				4951623D1D1DFC5F0006A82D /* RequestUrlBuilderTests.swift in Sources */,
 				4951623C1D1DFC5F0006A82D /* EventTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
