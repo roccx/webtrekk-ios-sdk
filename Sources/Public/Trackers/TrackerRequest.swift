@@ -28,7 +28,6 @@ public struct TrackerRequest {
 		public var appVersion: String?
 		public var connectionType: ConnectionType?
 		public var everId: String
-		public var ipAddress: String?
 		public var isFirstEventAfterAppUpdate = false
 		public var isFirstEventOfApp = false
 		public var isFirstEventOfSession = false

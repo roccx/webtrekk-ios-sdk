@@ -71,9 +71,6 @@ internal final class RequestUrlBuilder {
 		if let language = properties.locale?.objectForKey(NSLocaleLanguageCode) as? String {
 			parameters.append(name: "la", value: language)
 		}
-		if let ipAddress = properties.ipAddress {
-			parameters.append(name: "X-WT-IP", value: ipAddress)
-		}
 
 		#if !os(watchOS)
 			if let interfaceOrientation = properties.interfaceOrientation {
@@ -421,6 +418,9 @@ private extension UserProperties {
 		}
 		if let id = id {
 			items.append(name: "cd", value: id)
+		}
+		if let ipAddress = ipAddress {
+			items.append(name: "X-WT-IP", value: ipAddress)
 		}
 		if let lastName = lastName {
 			items = items.filter({$0.name != "uc704"})
