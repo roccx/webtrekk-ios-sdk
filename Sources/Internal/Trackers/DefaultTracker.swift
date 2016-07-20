@@ -142,13 +142,15 @@ internal final class DefaultTracker: Tracker {
 	private var advertisingIdentifier: NSUUID? {
 		checkIsOnMainThread()
 
-		guard
-			let identifierManagerClass = unsafeBitCast(NSClassFromString("ASIdentifierManager"), Optional<ASIdentifierManager.Type>.self),
-			let manager = identifierManagerClass.sharedManager(),
-			let advertisingIdentifier = manager.advertisingIdentifier
-			else {
-				return nil
-		}
+		do {
+			guard
+				let identifierManagerClass = unsafeBitCast(NSClassFromString("ASIdentifierManager"), Optional<ASIdentifierManager.Type>.self),
+				let manager = identifierManagerClass.sharedManager(),
+				let advertisingIdentifier = manager.advertisingIdentifier
+				else {
+					return nil
+			}
+		} catch { return nil}
 
 		return advertisingIdentifier
 	}
@@ -336,12 +338,12 @@ internal final class DefaultTracker: Tracker {
 		if isFirstEventOfSession {
 			requestProperties.isFirstEventOfSession = true
 		}
-		if configuration.automaticallyTracksAdvertisingId {
-			requestProperties.advertisingId = advertisingIdentifier
-		}
-		if configuration.automaticallyTracksAdvertisingOptOut {
-			requestProperties.advertisingOptOut = advertisingOptOut
-		}
+//		if configuration.automaticallyTracksAdvertisingId {
+//			requestProperties.advertisingId = advertisingIdentifier
+//		}
+//		if configuration.automaticallyTracksAdvertisingOptOut {
+//			requestProperties.advertisingOptOut = advertisingOptOut
+//		}
 		if configuration.automaticallyTracksAppVersion {
 			requestProperties.appVersion = Environment.appVersion
 		}
@@ -365,8 +367,8 @@ internal final class DefaultTracker: Tracker {
 			customProperties["appUpdated"] = "\(isFirstEventAfterAppUpdate)"
 			//			customProperties["appVersionCode"] = Environment.appVersion
 			customProperties["requestUrlStoreSize"] = "\(requestManager.queueSize)"
-			customProperties["advertiserId"] = advertisingIdentifier != nil ? advertisingIdentifier!.UUIDString : nil
-			customProperties["advertisingOptOut"] = advertisingOptOut != nil ? "\(advertisingOptOut!)" : nil
+			//customProperties["advertiserId"] = advertisingIdentifier != nil ? advertisingIdentifier!.UUIDString : nil
+			//customProperties["advertisingOptOut"] = advertisingOptOut != nil ? "\(advertisingOptOut!)" : nil
 			#if !os(watchOS)
 				switch application.statusBarOrientation {
 				case .LandscapeLeft, .LandscapeRight: customProperties["screenOrientation"] =  "landscape"
@@ -1225,25 +1227,12 @@ private struct DefaultsKeys {
 private extension ActionProperties {
 
 	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: ScreenTrackingParameter, customProperties: [String : String]) {
-		guard let actionCategories = screenTrackingParameter.categories["actionCategories"] where !actionCategories.isEmpty else {
+		guard let actionCategories = screenTrackingParameter.categories["actionParameter"] where !actionCategories.isEmpty else {
 			return
 		}
 		if var details = IndexedProperty.categoriesToIndexedProperties(actionCategories, customProperties: customProperties) {
 			details.unionInPlace(self.details ?? [])
 			self.details = details
-		}
-		if let actionName = screenTrackingParameter.parameters.firstMatching({parameter in
-			if case .actionName = parameter.name {
-				return true
-			}
-			return false
-		}) {
-			if let key = actionName.key, value = customProperties[key]{
-				self.name = name.isEmpty ? value : name
-			}
-			else {
-				self.name = name.isEmpty ? actionName.value : name
-			}
 		}
 	}
 }
@@ -1251,7 +1240,7 @@ private extension ActionProperties {
 
 private extension AdvertisementProperties {
 	private mutating func fillFromScreenTrackingParameter(screenTrackingParameter: ScreenTrackingParameter, customProperties: [String : String]) {
-		guard let actionCategories = screenTrackingParameter.categories["adCategories"] where !actionCategories.isEmpty else {
+		guard let actionCategories = screenTrackingParameter.categories["adParameter"] where !actionCategories.isEmpty else {
 			return
 		}
 		if var details = IndexedProperty.categoriesToIndexedProperties(actionCategories, customProperties: customProperties) {
@@ -1376,72 +1365,11 @@ private extension TrackerRequest.Properties {
 		}
 
 		for parameter in screenTrackingParameter.parameters {
-			if case .advertisingId = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					advertisingId = NSUUID(UUIDString: value) ?? self.advertisingId
-				}
-				advertisingId = NSUUID(UUIDString: parameter.value) ?? self.advertisingId
-			}
-			if case .everId = parameter.name {
-				if let key = parameter.key, let value = customProperties[key] {
-					everId = value
-				}
-				everId = parameter.value ?? self.everId
-			}
 			if case .ipAddress = parameter.name {
 				if let key = parameter.key, let value = customProperties[key] {
 					ipAddress = value
 				}
 				ipAddress = parameter.value ?? self.ipAddress
-			}
-			if case .firstStart = parameter.name {
-				if let key = parameter.key, let valueString = customProperties[key] {
-					var value: Bool
-					switch valueString {
-					case "true":  value = true
-					default: value = false
-					}
-					isFirstEventOfApp = value
-				}
-				var value: Bool
-				switch parameter.value {
-				case "true":  value = true
-				default: value = false
-				}
-				isFirstEventOfApp = value
-			}
-			if case .samplingRate = parameter.name {
-				if let key = parameter.key, valueString = customProperties[key], value = Int(valueString) {
-					samplingRate = value
-				}
-				if let value = Int(parameter.value) {
-					samplingRate = value
-				}
-			}
-			if case .timestamp = parameter.name {
-				if let key = parameter.key, valueString = customProperties[key], value = Int64(valueString) {
-					timestamp = NSDate(timeIntervalSince1970: Double(value) / 1000)
-				}
-				if let value = Int64(parameter.value) {
-					timestamp = NSDate(timeIntervalSince1970: Double(value) / 1000)
-				}
-
-			}
-			if case .timeZone = parameter.name {
-				if let key = parameter.key, valueString = customProperties[key], value = Double(valueString) {
-					timeZone = NSTimeZone(forSecondsFromGMT: Int(60 * 60 * value))
-				}
-				if let value = Double(parameter.value) {
-					timeZone = NSTimeZone(forSecondsFromGMT: Int(60 * 60 * value))
-				}
-			}
-			if case .userAgent = parameter.name {
-				if let key = parameter.key, value = customProperties[key]{
-					userAgent = value
-				}
-				else {
-					userAgent = parameter.value
-				}
 			}
 		}
 	}

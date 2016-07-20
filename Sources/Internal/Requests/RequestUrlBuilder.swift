@@ -50,6 +50,12 @@ internal final class RequestUrlBuilder {
 		parameters.append(name: "tz", value: String(properties.timeZone.daylightSavingTimeOffset / 60 / 60))
 		parameters.append(name: "X-WT-UA", value: properties.userAgent)
 
+		if let advertisingId = properties.advertisingId {
+			parameters.append(name: "cs809", value: advertisingId.UUIDString)
+		}
+		if let advertisingOptOut = properties.advertisingOptOut {
+			parameters.append(name: "cs813", value: advertisingOptOut ? "0" : "1")
+		}
 		if let requestQueueSize = properties.requestQueueSize {
 			parameters.append(name: "cp784", value: String(requestQueueSize))
 		}
@@ -127,6 +133,7 @@ internal final class RequestUrlBuilder {
 		if let event = event as? MediaEvent {
 			let actionId: String
 			switch event.action {
+			case .created:          actionId = "init"
 			case .finish:           actionId = "finish"
 			case .pause:            actionId = "pause"
 			case .play:             actionId = "play"

@@ -1,5 +1,6 @@
 import UIKit
 import Webtrekk
+import AdSupport
 
 
 class ProductListViewController: UITableViewController {
@@ -12,7 +13,6 @@ class ProductListViewController: UITableViewController {
 			guard let productViewController = segue.destinationViewController as? ProductViewController else {
 				return
 			}
-
 			autoTracker.trackAction("Product tapped")
 
 			productViewController.productId = indexPath.row + 1
@@ -20,9 +20,11 @@ class ProductListViewController: UITableViewController {
 	}
 
 	override func viewDidLoad() {
-		autoTracker.customProperties["Found"] = "1234567890-ertzuiop"
 		super.viewDidLoad()
-
+		autoTracker.customProperties["Key2"] = "value2"
+		autoTracker.customProperties["Key3"] = "value3"
+		autoTracker.customProperties["Key4"] = "value4"
+		autoTracker.customProperties["KeyOverride"] = "valueOverride"
 	}
 }
 

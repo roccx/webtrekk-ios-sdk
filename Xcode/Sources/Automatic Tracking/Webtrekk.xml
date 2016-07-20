@@ -53,40 +53,65 @@
 
 		<!--define the global page parameter, the key is the index,  -->
 		<pageParameter>
-			<parameter id="2" key="appVersion"></parameter>
-			<parameter id="3" key="appUpdated"></parameter>
-			<parameter id="6" key="screenOrientation"></parameter>
-			<parameter id="7" key="connectionType"></parameter>
-			<parameter id="8" key="requestUrlStoreSize"></parameter>
-			<parameter id="12" key="advertiserId"></parameter>
-			<parameter id="13" key="advertisingOptOut"></parameter>
-
-			<parameter id="20">test_pageparam2</parameter>
-			<parameter id="21">test_pageparam3</parameter>
+			<parameter id="1">test_global_pageparam1</parameter>
+			<parameter id="2" key="Key2"></parameter>
+			<parameter id="3" key="Key3"></parameter>
+			<parameter id="4" key="Key4"></parameter>
+			<parameter id="5" key="appVersion"></parameter>
+			<parameter id="6" key="appUpdated"></parameter>
+			<parameter id="7" key="screenOrientation"></parameter>
+			<parameter id="8" key="connectionType"></parameter>
+			<parameter id="9" key="requestUrlStoreSize"></parameter>
+			<parameter id="10" key="advertiserId"></parameter>
+			<parameter id="11" key="advertisingOptOut"></parameter>
 		</pageParameter>
 		<sessionParameter>
-			<parameter id="1">test_sessionparam1</parameter>
+			<parameter id="1">test_global_sessionparam1</parameter>
+			<parameter id="2" key="Key2"></parameter>
+			<parameter id="3" key="Key3"></parameter>
+			<parameter id="4" key="Key4"></parameter>
 		</sessionParameter>
 		<ecomParameter>
-			<parameter id="1">test_ecomparam1</parameter>
+			<parameter id="1">test_global_ecomparam1</parameter>
+			<parameter id="2" key="Key2"></parameter>
+			<parameter id="3" key="Key3"></parameter>
+			<parameter id="4" key="Key4"></parameter>
 		</ecomParameter>
 		<userCategories>
-			<parameter key="1">test_usercategory1</parameter>
+			<parameter id="1">test_global_usercategory1</parameter>
+			<parameter id="2" key="Key2"></parameter>
+			<parameter id="3" key="Key3"></parameter>
+			<parameter id="4" key="Key4"></parameter>
 		</userCategories>
 		<pageCategories>
-			<parameter id="1">test_pagecategory1</parameter>
+			<parameter id="1">test_global_pagecategory1</parameter>
+			<parameter id="2" key="Key2"></parameter>
+			<parameter id="3" key="Key3"></parameter>
+			<parameter id="4" key="Key4"></parameter>
 		</pageCategories>
 		<adParameter>
-			<parameter id="1">test_adparam1</parameter>
+			<parameter id="1">test_global_adparam1</parameter>
+			<parameter id="2" key="Key2"></parameter>
+			<parameter id="3" key="Key3"></parameter>
+			<parameter id="4" key="Key4"></parameter>
 		</adParameter>
 		<actionParameter>
-			<parameter id="1">test_actionparam1</parameter>
+			<parameter id="1">test_global_actionparam1</parameter>
+			<parameter id="2" key="Key2"></parameter>
+			<parameter id="3" key="Key3"></parameter>
+			<parameter id="4" key="Key4"></parameter>
 		</actionParameter>
 		<productCategories>
-			<parameter id="1">test_productcategory1</parameter>
+			<parameter id="1">test_global_productcategory1</parameter>
+			<parameter id="2" key="Key2"></parameter>
+			<parameter id="3" key="Key3"></parameter>
+			<parameter id="4" key="Key4"></parameter>
 		</productCategories>
 		<mediaCategories>
-			<parameter id="1">test_mediacategory1</parameter>
+			<parameter id="1">test_global_mediacategory1</parameter>
+			<parameter id="2" key="Key2"></parameter>
+			<parameter id="3" key="Key3"></parameter>
+			<parameter id="4" key="Key4"></parameter>
 		</mediaCategories>
 
 	</globalTrackingParameter>
@@ -96,6 +121,7 @@
 	<screen>
 		<classname>ProductListViewController</classname>
 		<mappingname>Product List</mappingname>
+		<autoTracked>true</autoTracked>
 
 		<!--screen tracking parameter -->
 		<screenTrackingParameter>
@@ -103,39 +129,41 @@
 			 entries made here are available as default parameters in the trackingparameter instance -->
 			<parameter id="CURRENCY">EUR</parameter>
 
-			<!--define the global page parameter, the key is the index,  -->
-			<!--<pageParameter>-->
-			<!--<parameter id="4">test_pageparam4</parameter>-->
-			<!--<parameter id="5">test_pageparam5</parameter>-->
-			<!--<parameter id="6">test_pageparam6</parameter>-->
-			<!--</pageParameter>-->
+			<pageParameter>
+				<parameter id="2">test_screen_pageparam2</parameter>
+				<parameter id="3" key="KeyOverride"></parameter>
+			</pageParameter>
 			<sessionParameter>
-				<parameter id="2">test_sessionparam2</parameter>
-				<parameter id="30" key="Found"></parameter>
+				<parameter id="2">test_screen_sessionparam2</parameter>
+				<parameter id="3" key="KeyOverride"></parameter>
 			</sessionParameter>
 			<ecomParameter>
-				<parameter id="2">test_ecomparam2</parameter>
-				<parameter id="30" key="Found"></parameter>
+				<parameter id="2">test_screen_ecomparam2</parameter>
+				<parameter id="3" key="KeyOverride"></parameter>
 			</ecomParameter>
 			<userCategories>
-				<parameter id="2">test_usercategory2</parameter>
-				<parameter id="30" key="Found"></parameter>
+				<parameter id="2">test_screen_usercategory2</parameter>
+				<parameter id="3" key="KeyOverride"></parameter>
 			</userCategories>
 			<pageCategories>
-				<parameter id="2">test_pagecategory2</parameter>
-				<parameter id="30" key="Found"></parameter>
+				<parameter id="2">test_screen_pagecategory2</parameter>
+				<parameter id="3" key="KeyOverride"></parameter>
 			</pageCategories>
 			<adParameter>
-				<parameter id="2">test_adparam2</parameter>
+				<parameter id="2">test_screen_adparam2</parameter>
+				<parameter id="3" key="KeyOverride"></parameter>
 			</adParameter>
 			<actionParameter>
-				<parameter id="2">test_actionparam2</parameter>
+				<parameter id="2">test_screen_actionparam2</parameter>
+				<parameter id="3" key="KeyOverride"></parameter>
 			</actionParameter>
 			<productCategories>
-				<parameter id="2">test_productcategory2</parameter>
+				<parameter id="2">test_screen_productcategory2</parameter>
+				<parameter id="3" key="KeyOverride"></parameter>
 			</productCategories>
 			<mediaCategories>
-				<parameter id="2">test_mediacategory2</parameter>
+				<parameter id="2">test_screen_mediacategory2</parameter>
+				<parameter id="3" key="KeyOverride"></parameter>
 			</mediaCategories>
 
 		</screenTrackingParameter>
@@ -148,13 +176,16 @@
 	<screen>
 		<classname>SettingsViewController</classname>
 		<mappingname>Settings</mappingname>
+		<autoTracked>true</autoTracked>
 	</screen>
 	<screen>
 		<classname>VoucherListViewController</classname>
 		<mappingname>Voucher List</mappingname>
+		<autoTracked>true</autoTracked>
 	</screen>
 	<screen>
 		<classname>/.*\.VoucherViewController/</classname>
 		<mappingname>Voucher Details</mappingname>
+		<autoTracked>true</autoTracked>
 	</screen>
 </webtrekkConfiguration>

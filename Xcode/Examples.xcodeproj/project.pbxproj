@@ -29,6 +29,7 @@
 		4951623D1D1DFC5F0006A82D /* PropertiesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620B1D1DFB9C0006A82D /* PropertiesTest.swift */; };
 		4951623E1D1DFC5F0006A82D /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */; };
 		52B4475E2A22B8D281F1C4BB /* Pods_iOS_Automatic_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */; };
+		B72368BB1D3F643100D64C63 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72368BA1D3F643100D64C63 /* AdSupport.framework */; };
 		B76E298E1D33C5B7006F3F71 /* VoucherListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E298D1D33C5B7006F3F71 /* VoucherListViewController.swift */; };
 		B76E29901D33C5F6006F3F71 /* VoucherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E298F1D33C5F6006F3F71 /* VoucherViewController.swift */; };
 		B76E29921D33CF1A006F3F71 /* VoucherListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E29911D33CF1A006F3F71 /* VoucherListViewController.swift */; };
@@ -91,6 +92,7 @@
 		4951622B1D1DFC1E0006A82D /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		497AAE311D22D2780094B8B4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		497AAE321D22D28A0094B8B4 /* Webtrekk.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = Webtrekk.podspec; path = ../Webtrekk.podspec; sourceTree = "<group>"; };
+		B72368BA1D3F643100D64C63 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		B76E298D1D33C5B7006F3F71 /* VoucherListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherListViewController.swift; sourceTree = "<group>"; };
 		B76E298F1D33C5F6006F3F71 /* VoucherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherViewController.swift; sourceTree = "<group>"; };
 		B76E29911D33CF1A006F3F71 /* VoucherListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherListViewController.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B72368BB1D3F643100D64C63 /* AdSupport.framework in Frameworks */,
 				52B4475E2A22B8D281F1C4BB /* Pods_iOS_Automatic_Tracking_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -250,6 +253,7 @@
 		A3DFB00630AF1B828E7E41A9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B72368BA1D3F643100D64C63 /* AdSupport.framework */,
 				CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */,
 				CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */,
 				BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */,
@@ -346,6 +350,7 @@
 				TargetAttributes = {
 					495161D11D1DFB500006A82D = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = DRAR2MAV6X;
 					};
 					4951622A1D1DFC1E0006A82D = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -694,11 +699,14 @@
 			baseConfigurationReference = 3AF10C6A88059CEC573259C5 /* Pods-iOS-Automatic Tracking Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example;
 				PRODUCT_MODULE_NAME = Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -707,11 +715,14 @@
 			baseConfigurationReference = 1B23DA1EADCD8C1FBB06B5FB /* Pods-iOS-Automatic Tracking Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example;
 				PRODUCT_MODULE_NAME = Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

@@ -31,6 +31,7 @@ public struct MediaEvent: TrackingEventWithMediaProperties {
 
 	public enum Action {
 
+		case created
 		case finish
 		case pause
 		case play
