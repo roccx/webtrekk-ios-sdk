@@ -139,50 +139,19 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	private var advertisingIdentifier: NSUUID? {
-		checkIsOnMainThread()
-
-		do {
-			guard
-				let identifierManagerClass = unsafeBitCast(NSClassFromString("ASIdentifierManager"), Optional<ASIdentifierManager.Type>.self),
-				let manager = identifierManagerClass.sharedManager(),
-				let advertisingIdentifier = manager.advertisingIdentifier
-				else {
-					return nil
-			}
-		} catch { return nil}
-
-		return advertisingIdentifier
-	}
-
-
-	private var advertisingOptOut: Bool? {
-		checkIsOnMainThread()
-
-		guard
-			let identifierManagerClass = unsafeBitCast(NSClassFromString("ASIdentifierManager"), Optional<ASIdentifierManager.Type>.self),
-			let manager = identifierManagerClass.sharedManager()
-			else {
-				return nil
-		}
-
-		return !manager.advertisingTrackingEnabled
-	}
-
-
 	#if os(watchOS)
 	internal func applicationDidFinishLaunching() {
-	checkIsOnMainThread()
+		checkIsOnMainThread()
 
-	if requestManagerStartTimer == nil {
-	requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
-	self.startRequestManager()
-	}
-	}
+		if requestManagerStartTimer == nil {
+			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(5) {
+				self.startRequestManager()
+			}
+		}
 
-	NSTimer.scheduledTimerWithTimeInterval(15) {
-	self.updateConfiguration()
-	}
+		NSTimer.scheduledTimerWithTimeInterval(15) {
+			self.updateConfiguration()
+		}
 	}
 	#else
 	internal func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
@@ -338,12 +307,12 @@ internal final class DefaultTracker: Tracker {
 		if isFirstEventOfSession {
 			requestProperties.isFirstEventOfSession = true
 		}
-//		if configuration.automaticallyTracksAdvertisingId {
-//			requestProperties.advertisingId = advertisingIdentifier
-//		}
-//		if configuration.automaticallyTracksAdvertisingOptOut {
-//			requestProperties.advertisingOptOut = advertisingOptOut
-//		}
+		if configuration.automaticallyTracksAdvertisingId {
+			requestProperties.advertisingId = Environment.advertisingIdentifierManager?.advertisingIdentifier
+		}
+		if configuration.automaticallyTracksAdvertisingOptOut {
+			requestProperties.advertisingTrackingEnabled = Environment.advertisingIdentifierManager?.advertisingTrackingEnabled
+		}
 		if configuration.automaticallyTracksAppVersion {
 			requestProperties.appVersion = Environment.appVersion
 		}
@@ -360,21 +329,23 @@ internal final class DefaultTracker: Tracker {
 				requestProperties.interfaceOrientation = application.statusBarOrientation
 			}
 		#endif
+
 		var event: TrackingEvent = event
 		if var customEvent = event as? TrackingEventWithCustomProperties {
 			var customProperties = customEvent.customProperties
-			customProperties["appVersion"] = Environment.appVersion != nil ? Environment.appVersion! : nil
-			customProperties["appUpdated"] = "\(isFirstEventAfterAppUpdate)"
-			//			customProperties["appVersionCode"] = Environment.appVersion
-			customProperties["requestUrlStoreSize"] = "\(requestManager.queueSize)"
-			//customProperties["advertiserId"] = advertisingIdentifier != nil ? advertisingIdentifier!.UUIDString : nil
-			//customProperties["advertisingOptOut"] = advertisingOptOut != nil ? "\(advertisingOptOut!)" : nil
+			customProperties["appVersion"] = Environment.appVersion
+			customProperties["appUpdated"] = String(isFirstEventAfterAppUpdate)
+			customProperties["requestUrlStoreSize"] = String(requestManager.queueSize)
+			customProperties["advertiserId"] = requestProperties.advertisingId?.UUIDString
+			// customProperties["advertisingOptOut"] = advertisingOptOut != nil ? "\(advertisingOptOut!)" : nil // FIXME
+
 			#if !os(watchOS)
 				switch application.statusBarOrientation {
 				case .LandscapeLeft, .LandscapeRight: customProperties["screenOrientation"] =  "landscape"
 				case .Portrait, .PortraitUpsideDown: customProperties["screenOrientation"] = "portrait"
 				default: customProperties["screenOrientation"] = "undefined"
 				}
+
 				if let connectionType = retrieveConnectionType() {
 					switch connectionType {
 					case .cellular_2G: customProperties["connectionType"] = "2G"
@@ -389,6 +360,7 @@ internal final class DefaultTracker: Tracker {
 			customEvent.customProperties = customProperties
 			event = customEvent
 		}
+
 		event = parseScreenTrackingParameter(event)
 		requestProperties = parseScreenTrackingParameter(requestProperties, event: event)
 		return TrackerRequest(

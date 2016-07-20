@@ -8,6 +8,18 @@ import UIKit
 
 internal struct Environment {
 
+	internal static var advertisingIdentifierManager: ASIdentifierManager? = {
+		let selector = #selector(ASIdentifierManager.sharedManager)
+
+		guard let identifierManagerClass = NSClassFromString("ASIdentifierManager") as? NSObjectProtocol where identifierManagerClass.respondsToSelector(selector) else {
+			return nil
+		}
+
+		let sharedManager = identifierManagerClass.performSelector(selector).takeUnretainedValue()
+		return unsafeBitCast(sharedManager, ASIdentifierManager.self)
+	}()
+
+
 	internal static let appVersion: String? = {
 		return NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
 	}()

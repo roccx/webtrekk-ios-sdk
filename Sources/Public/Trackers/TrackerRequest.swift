@@ -27,7 +27,7 @@ public struct TrackerRequest {
 	public struct Properties {
 
 		public var advertisingId: NSUUID?
-		public var advertisingOptOut: Bool?
+		public var advertisingTrackingEnabled: Bool?
 		public var appVersion: String?
 		public var connectionType: ConnectionType?
 		public var everId: String

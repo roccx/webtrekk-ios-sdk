@@ -50,12 +50,6 @@ internal final class RequestUrlBuilder {
 		parameters.append(name: "tz", value: String(properties.timeZone.daylightSavingTimeOffset / 60 / 60))
 		parameters.append(name: "X-WT-UA", value: properties.userAgent)
 
-		if let advertisingId = properties.advertisingId {
-			parameters.append(name: "cs809", value: advertisingId.UUIDString)
-		}
-		if let advertisingOptOut = properties.advertisingOptOut {
-			parameters.append(name: "cs813", value: advertisingOptOut ? "0" : "1")
-		}
 		if let requestQueueSize = properties.requestQueueSize {
 			parameters.append(name: "cp784", value: String(requestQueueSize))
 		}
@@ -74,6 +68,12 @@ internal final class RequestUrlBuilder {
 			case .other:       parameters.append(name: "cs807", value: "unknown")
 			case .wifi:        parameters.append(name: "cs807", value: "WIFI")
 			}
+		}
+		if let advertisingId = properties.advertisingId {
+			parameters.append(name: "cs809", value: advertisingId.UUIDString)
+		}
+		if let advertisingTrackingEnabled = properties.advertisingTrackingEnabled {
+			parameters.append(name: "cs813", value: advertisingTrackingEnabled ? "1" : "0")
 		}
 		if let language = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as? String {
 			parameters.append(name: "la", value: language)

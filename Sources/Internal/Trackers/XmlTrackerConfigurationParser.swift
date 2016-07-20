@@ -99,7 +99,6 @@ internal class XmlTrackerConfigurationParser {
 				case "autoTrackAdvertisementOptOut": automaticallyTracksAdvertisingOptOut = try parseBool(child.text)
 				case "autoTrackAppUpdate":           automaticallyTracksAppUpdates = try parseBool(child.text)
 				case "autoTrackAppVersionName":      automaticallyTracksAppVersion = try parseBool(child.text)
-//				case "autoTrackAppVersionCode":      automaticallyTracksAppCode = try parseBool(child.text)
 				case "autoTrackRequestUrlStoreSize": automaticallyTracksRequestQueueSize = try parseBool(child.text)
 
 				case "globalTrackingParameter" : try readFromGlobalElement(child)
