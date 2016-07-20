@@ -36,8 +36,6 @@ public struct TrackerConfiguration {
 	/** Url of the remote configuration. */
 	public var configurationUpdateUrl: NSURL? = nil
 
-	public var globalProperties: GlobalProperties?
-
 	/** Delay after which the event request is send to the server. */
 	public var maximumSendDelay = NSTimeInterval(5 * 60)
 
@@ -70,6 +68,8 @@ public struct TrackerConfiguration {
 	public var automaticallyTracksInterfaceOrientation = true
 	#endif
 
+	internal var globalProperties = GlobalProperties()
+
 
 	/** 
 	Configuration for a Tracker
@@ -92,19 +92,7 @@ public struct TrackerConfiguration {
 	#endif
 
 
-
-	public struct GlobalProperties {
-		public var actionProperties: ActionProperties?
-		public var advertisementProperties: AdvertisementProperties?
-		public var ecommerceProperties: EcommerceProperties?
-		public var mediaProperties: MediaProperties?
-		public var pageProperties: PageProperties
-		public var sessionDetails: [Int: TrackingValue]?
-		public var userProperties: UserProperties?
-	}
-
-
-
+	
 	#if !os(watchOS)
 	/**
 	Representation of an automatically tracked page.

@@ -186,8 +186,8 @@ internal class XmlTrackerConfigurationParser {
 			trackerConfiguration.automaticallyTrackedPages = automaticallyTrackedPages
 		#endif
 
-		if let globalParameter =  globalScreenTrackingParameter {
-			trackerConfiguration.globalProperties = TrackerConfiguration.GlobalProperties(
+		if let globalParameter = globalScreenTrackingParameter {
+			trackerConfiguration.globalProperties = GlobalProperties(
 				actionProperties: globalParameter.actionProperties(),
 				advertisementProperties: globalParameter.advertisementProperties(),
 				ecommerceProperties: globalParameter.ecommerceProperties(),
@@ -468,20 +468,13 @@ internal class XmlTrackerConfigurationParser {
 			return result.isEmpty ? nil : result
 		}
 
-		private func actionProperties() -> ActionProperties? {
-			guard let categoryElements = categories["actionParameter"] else {
-				return nil
-			}
 
-			guard let details = resolved(categoryElements) else {
-				return nil
-			}
-
-			return ActionProperties(name: "", details: details)
+		private func actionProperties() -> ActionProperties {
+			return ActionProperties(name: nil, details: categories["actionParameter"].flatMap { resolved($0) })
 		}
 
 
-		private func advertisementProperties () -> AdvertisementProperties? {
+		private func advertisementProperties() -> AdvertisementProperties {
 			var advertisementId: String? = nil
 			if let id = parameters[.advertisementId] {
 				advertisementId = id
@@ -495,15 +488,11 @@ internal class XmlTrackerConfigurationParser {
 				details = advertisementDetails
 			}
 
-			guard advertisementId != nil || advertisementAction != nil || details != nil else {
-				return nil
-			}
-
 			return AdvertisementProperties(id: advertisementId, action: advertisementAction, details: details)
 		}
 
 		
-		private func ecommerceProperties() -> EcommerceProperties? {
+		private func ecommerceProperties() -> EcommerceProperties {
 			var currencyCode: String? = nil
 			if let code = parameters[.currencyCode] {
 				currencyCode = code
@@ -539,33 +528,23 @@ internal class XmlTrackerConfigurationParser {
 				details = ecommerceDetails
 			}
 
-			guard currencyCode != nil || details != nil || orderNumber != nil || status != nil || totalValue != nil || voucherValue != nil || product != nil else {
-				return nil
-			}
 			var ecommerceProperties = EcommerceProperties(currencyCode: currencyCode, details: details, orderNumber: orderNumber, status: status, totalValue: totalValue, voucherValue: voucherValue)
 			guard let productToAdd = product else {
 				return ecommerceProperties
 			}
 			ecommerceProperties.products = [productToAdd]
+
 			return ecommerceProperties
 		}
 
 
-		private func mediaProperties() -> MediaProperties? {
-			guard let categoryElements = categories["mediaCategories"] else {
-				return nil
-			}
-
-			guard let groups = resolved(categoryElements) else {
-				return nil
-			}
-
-			return MediaProperties(name: "", groups: groups)
+		private func mediaProperties() -> MediaProperties {
+			return MediaProperties(name: nil, groups: categories["mediaCategories"].flatMap { resolved($0) })
 		}
 
 
 		private func pageProperties() -> PageProperties {
-			var pageProperties = PageProperties(name: "")
+			var pageProperties = PageProperties(name: nil)
 			if let url = parameters[.pageUrl] {
 				pageProperties.url = url
 			}
@@ -575,6 +554,7 @@ internal class XmlTrackerConfigurationParser {
 			if let elements = categories["pageCategories"], pageGroups = resolved(elements) {
 				pageProperties.groups = pageGroups
 			}
+
 			return pageProperties
 		}
 
@@ -605,15 +585,12 @@ internal class XmlTrackerConfigurationParser {
 		}
 
 
-		private func sessionDetails() -> [Int: TrackingValue]? {
-			guard let categoryElements = categories["sessionParameter"], details = resolved(categoryElements) else {
-				return nil
-			}
-			return details
+		private func sessionDetails() -> [Int: TrackingValue] {
+			return categories["sessionParameter"].flatMap { resolved($0) } ?? [:]
 		}
 
 
-		private func userProperties() -> UserProperties? {
+		private func userProperties() -> UserProperties {
 			var userProperties = UserProperties()
 			if let categoryElements = categories["userCategories"], details = resolved(categoryElements) {
 				userProperties.details = details

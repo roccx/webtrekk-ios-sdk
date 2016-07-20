@@ -8,10 +8,9 @@ import UIKit
 public protocol Tracker: class {
 
 	var configuration: TrackerConfiguration { get }
-	var crossDeviceProperties: CrossDeviceProperties { get set }
 	var everId: String { get }
+	var global: GlobalProperties { get set }
 	var plugins: [TrackerPlugin] { get set }
-	var userProperties: UserProperties { get set }
 
 
 	#if os(watchOS)

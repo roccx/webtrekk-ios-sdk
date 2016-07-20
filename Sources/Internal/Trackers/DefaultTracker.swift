@@ -31,10 +31,9 @@ internal final class DefaultTracker: Tracker {
 	private var requestQueueLoaded = false
 	private let requestUrlBuilder: RequestUrlBuilder
 
-	internal var crossDeviceProperties = CrossDeviceProperties()
 	internal let everId: String
+	internal var global = GlobalProperties()
 	internal var plugins = [TrackerPlugin]()
-	internal var userProperties = UserProperties()
 
 
 	internal init(configuration: TrackerConfiguration) {
@@ -94,6 +93,7 @@ internal final class DefaultTracker: Tracker {
 		self.configuration = configuration
 		self.defaults = defaults
 		self.everId = DefaultTracker._everId
+		self.global = configuration.globalProperties
 		self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
 		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
 		self.requestManager = RequestManager(queueLimit: configuration.requestQueueLimit)
@@ -332,7 +332,7 @@ internal final class DefaultTracker: Tracker {
 		#endif
 
 		return TrackerRequest(
-			crossDeviceProperties: crossDeviceProperties,
+			crossDeviceProperties: global.crossDeviceProperties,
 			event: event,
 			properties: requestProperties
 		)
@@ -342,9 +342,11 @@ internal final class DefaultTracker: Tracker {
 	internal func enqueueRequestForEvent(event: TrackingEvent) {
 		checkIsOnMainThread()
 
+		var event = event
 		#if !os(watchOS)
-			let event = eventByApplyingAutomaticPageTracking(to: event)
+			event = eventByApplyingAutomaticPageTracking(to: event)
 		#endif
+		event = eventByApplyingGlobalProperties(to: event)
 
 		guard var request = createRequestForEvent(event) else {
 			return
@@ -414,6 +416,42 @@ internal final class DefaultTracker: Tracker {
 		return event
 	}
 	#endif
+
+
+	private func eventByApplyingGlobalProperties(to event: TrackingEvent) -> TrackingEvent {
+		checkIsOnMainThread()
+
+		var event = event
+		event.pageName = event.pageName ?? global.pageProperties.name
+		event.userProperties = event.userProperties.merged(over: global.userProperties)
+
+		if var eventWithActionProperties = event as? TrackingEventWithActionProperties {
+			eventWithActionProperties.actionProperties = eventWithActionProperties.actionProperties.merged(over: global.actionProperties)
+			event = eventWithActionProperties
+		}
+		if var eventWithAdvertisementProperties = event as? TrackingEventWithAdvertisementProperties {
+			eventWithAdvertisementProperties.advertisementProperties = eventWithAdvertisementProperties.advertisementProperties.merged(over: global.advertisementProperties)
+			event = eventWithAdvertisementProperties
+		}
+		if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties {
+			eventWithEcommerceProperties.ecommerceProperties = eventWithEcommerceProperties.ecommerceProperties.merged(over: global.ecommerceProperties)
+			event = eventWithEcommerceProperties
+		}
+		if var eventWithMediaProperties = event as? TrackingEventWithMediaProperties {
+			eventWithMediaProperties.mediaProperties = eventWithMediaProperties.mediaProperties.merged(over: global.mediaProperties)
+			event = eventWithMediaProperties
+		}
+		if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
+			eventWithPageProperties.pageProperties = eventWithPageProperties.pageProperties.merged(over: global.pageProperties)
+			event = eventWithPageProperties
+		}
+		if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails {
+			eventWithSessionDetails.sessionDetails = eventWithSessionDetails.sessionDetails.merged(over: global.sessionDetails)
+			event = eventWithSessionDetails
+		}
+
+		return event
+	}
 
 
 	private static let _everId: String = {
@@ -952,14 +990,14 @@ internal final class DefaultTracker: Tracker {
 		}
 
 		if let event = event as? TrackingEventWithActionProperties {
-			guard event.actionProperties.name.nonEmpty != nil else {
+			guard event.actionProperties.name?.nonEmpty != nil else {
 				logError("Cannot track event without .actionProperties.name set: \(event)")
 				return false
 			}
 		}
 
 		if let event = event as? TrackingEventWithMediaProperties {
-			guard event.mediaProperties.name.nonEmpty != nil else {
+			guard event.mediaProperties.name?.nonEmpty != nil else {
 				logError("Cannot track event without .mediaProperties.name set: \(event)")
 				return false
 			}

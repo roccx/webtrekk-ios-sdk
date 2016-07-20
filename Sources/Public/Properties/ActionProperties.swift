@@ -1,11 +1,11 @@
 public struct ActionProperties {
 
 	public var details: [Int: TrackingValue]?
-	public var name: String
+	public var name: String?
 
 
 	public init(
-		name: String,
+		name: String?,
 		details: [Int: TrackingValue]? = nil)
 	{
 		self.details = details
@@ -16,7 +16,7 @@ public struct ActionProperties {
 	@warn_unused_result
 	internal func merged(over other: ActionProperties) -> ActionProperties {
 		return ActionProperties(
-			name:    name,
+			name:    name ?? other.name,
 			details: details.merged(over: other.details)
 		)
 	}

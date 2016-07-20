@@ -6,14 +6,14 @@ public struct MediaProperties {
 	public var bandwidth: Double?    // bit/s
 	public var duration: NSTimeInterval?
 	public var groups: [Int: TrackingValue]?
-	public var name: String
+	public var name: String?
 	public var position: NSTimeInterval?
 	public var soundIsMuted: Bool?
 	public var soundVolume: Double?  // 0 ... 1
 
 
 	public init(
-		name: String,
+		name: String?,
 		bandwidth: Double? = nil,
 		duration: NSTimeInterval? = nil,
 		groups: [Int: TrackingValue]? = nil,
@@ -34,7 +34,7 @@ public struct MediaProperties {
 	@warn_unused_result
 	internal func merged(over other: MediaProperties) -> MediaProperties {
 		return MediaProperties(
-			name:         name,
+			name:         name ?? other.name,
 			bandwidth:    bandwidth ?? other.bandwidth,
 			duration:     duration ?? other.duration,
 			groups:       groups.merged(over: other.groups),

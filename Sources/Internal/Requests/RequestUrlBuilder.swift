@@ -85,12 +85,12 @@ internal final class RequestUrlBuilder {
 		parameters += event.userProperties.asQueryItems(for: request)
 
 		if let actionProperties = (event as? TrackingEventWithActionProperties)?.actionProperties {
-			guard !actionProperties.name.isEmpty else {
+			guard let name = actionProperties.name?.nonEmpty else {
 				logError("Tracking event must contain an action name: \(request)")
 				return nil
 			}
 
-			parameters.append(name: "ct", value: actionProperties.name)
+			parameters.append(name: "ct", value: name)
 
 			if let details = actionProperties.details {
 				parameters += details.mapNotNil { NSURLQueryItem(name: "ck", property: $0, for: request) }
@@ -111,7 +111,7 @@ internal final class RequestUrlBuilder {
 			parameters += ecommerceProperties.asQueryItems(for: request)
 		}
 		if let mediaProperties = (event as? TrackingEventWithMediaProperties)?.mediaProperties {
-			guard !mediaProperties.name.isEmpty else {
+			guard mediaProperties.name?.nonEmpty != nil else {
 				logError("Tracking event must contain a media name: \(request)")
 				return nil
 			}
