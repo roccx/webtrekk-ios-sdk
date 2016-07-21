@@ -12,6 +12,8 @@ internal final class DefaultPageTracker: PageTracker {
 	internal var advertisementProperties = AdvertisementProperties(id: nil)
 	internal var ecommerceProperties = EcommerceProperties()
 	internal var pageProperties: PageProperties
+	internal var sessionDetails = [Int: TrackingValue]()
+	internal var userProperties = UserProperties()
 	internal var variables = [String : String]()
 
 
@@ -54,8 +56,24 @@ internal final class DefaultPageTracker: PageTracker {
 			pageProperties:          pageProperties,
 			advertisementProperties: advertisementProperties,
 			ecommerceProperties:     ecommerceProperties,
+			sessionDetails:          sessionDetails,
+			userProperties:          userProperties,
 			variables:               variables
 		))
+	}
+
+
+	internal func trackPageView(pageViewEvent: PageViewEvent) {
+		checkIsOnMainThread()
+
+		handler.handleEvent(PageViewEvent(
+			pageProperties:          pageViewEvent.pageProperties.merged(over: pageProperties),
+			advertisementProperties: pageViewEvent.advertisementProperties.merged(over: advertisementProperties),
+			ecommerceProperties:     pageViewEvent.ecommerceProperties.merged(over: ecommerceProperties),
+			sessionDetails:          pageViewEvent.sessionDetails.merged(over: sessionDetails),
+			userProperties:          pageViewEvent.userProperties.merged(over: userProperties),
+			variables:               pageViewEvent.variables.merged(over: variables)
+			))
 	}
 
 
@@ -89,6 +107,8 @@ extension DefaultPageTracker: ActionEventHandler {
 		event.advertisementProperties = event.advertisementProperties.merged(over: advertisementProperties)
 		event.ecommerceProperties = event.ecommerceProperties.merged(over: ecommerceProperties)
 		event.pageProperties = event.pageProperties.merged(over: pageProperties)
+		event.sessionDetails = event.sessionDetails.merged(over: sessionDetails)
+		event.userProperties = event.userProperties.merged(over: userProperties)
 		event.variables = event.variables.merged(over: variables)
 
 		handler.handleEvent(event)
@@ -104,6 +124,9 @@ extension DefaultPageTracker: MediaEventHandler {
 		var event = event
 		event.pageName = event.pageName ?? pageProperties.name
 		event.viewControllerTypeName = event.viewControllerTypeName ?? pageProperties.viewControllerTypeName
+		event.userProperties = event.userProperties.merged(over: userProperties)
+		event.variables = event.variables.merged(over: variables)
+
 
 		handler.handleEvent(event)
 	}

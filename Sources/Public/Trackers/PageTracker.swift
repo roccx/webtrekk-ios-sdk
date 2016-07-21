@@ -8,16 +8,20 @@ public protocol PageTracker: class {
 	var advertisementProperties: AdvertisementProperties { get set }
 	var ecommerceProperties: EcommerceProperties { get set }
 	var pageProperties: PageProperties { get set }
+	var sessionDetails: [Int: TrackingValue] { get set }
+	var userProperties: UserProperties { get set }
 	var variables: [String : String] { get set }
 
 
 	func trackAction(actionName: String)
-
+	
 	func trackAction(event: ActionEvent)
 
 	func trackMedia(event: MediaEvent)
 
 	func trackPageView()
+
+	func trackPageView(pageViewEvent: PageViewEvent)
 
 	@warn_unused_result
 	func trackerForMedia(mediaName: String) -> MediaTracker
