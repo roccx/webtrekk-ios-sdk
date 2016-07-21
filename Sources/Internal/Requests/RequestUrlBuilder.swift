@@ -380,6 +380,9 @@ private extension PageProperties {
 		if let groups = groups {
 			items += groups.mapNotNil { NSURLQueryItem(name: "cg", property: $0, for: request) }
 		}
+		if let internalSearch = internalSearch {
+			items.append(name: "is", value: internalSearch)
+		}
 		if let url = url {
 			items.append(name: "pu", value: url)
 		}
@@ -425,9 +428,6 @@ private extension UserProperties {
 		}
 		if let id = id {
 			items.append(name: "cd", value: id)
-		}
-		if let internalSearch = internalSearch {
-			items.append(name: "is", value: internalSearch)
 		}
 		if let ipAddress = ipAddress {
 			items.append(name: "X-WT-IP", value: ipAddress)

@@ -553,6 +553,9 @@ internal class XmlTrackerConfigurationParser {
 
 		private func pageProperties() -> PageProperties {
 			var pageProperties = PageProperties(name: nil)
+			if let internalSearch = parameters[.internalSearch] {
+				pageProperties.internalSearch = internalSearch
+			}
 			if let url = parameters[.pageUrl] {
 				pageProperties.url = url
 			}

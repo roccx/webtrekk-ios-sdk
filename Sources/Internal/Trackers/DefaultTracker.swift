@@ -73,7 +73,7 @@ internal final class DefaultTracker: Tracker {
 			do {
 				let savedConfiguration = try XmlTrackerConfigurationParser().parse(xml: configurationData)
 				if savedConfiguration.version > configuration.version {
-					logDebug("Using saved configuration (version \(savedConfiguration.version).")
+					logDebug("Using saved configuration (version \(savedConfiguration.version)).")
 					configuration = savedConfiguration
 				}
 			}
