@@ -482,16 +482,18 @@ class RequestUrlBuilderTest: XCTestCase {
 			assert(url: url, doesNotContain: "cg2")
 			assert(url: url, doesNotContain: "cp1")
 			assert(url: url, doesNotContain: "cp2")
+			assert(url: url, doesNotContain: "is")
 			assert(url: url, doesNotContain: "pu")
 		}
 
-		event.pageProperties = PageProperties(name: "Page&Name", details: [1: "Detail&1", 2: "Detail&2"], groups: [1: "Group&1", 2: "Group&2"], url: "Page&Url")
+		event.pageProperties = PageProperties(name: "Page&Name", details: [1: "Detail&1", 2: "Detail&2"], groups: [1: "Group&1", 2: "Group&2"], internalSearch: "Internal&Search", url: "Page&Url")
 		if let url = urlForEvent(event) {
 			assert(url: url, contains: "p",   with: "400,Page&Name,0,0x0,32,0,1234567890000,0,0,0")
 			assert(url: url, contains: "cg1", with: "Group&1")
 			assert(url: url, contains: "cg2", with: "Group&2")
 			assert(url: url, contains: "cp1", with: "Detail&1")
 			assert(url: url, contains: "cp2", with: "Detail&2")
+			assert(url: url, contains: "is", with: "Internal&Search")
 			assert(url: url, contains: "pu",  with: "Page&Url")
 		}
 	}
