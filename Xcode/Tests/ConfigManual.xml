@@ -26,6 +26,24 @@
 	<!--automaticly track activities onStart method -->
 	<autoTracked>false</autoTracked>
 
+
+	<!--track if there was an application update -->
+	<autoTrackAppUpdate>false</autoTrackAppUpdate>
+	<!--track the advertiser id -->
+	<autoTrackAdvertiserId>false</autoTrackAdvertiserId>
+	<!--track the app versions name -->
+	<autoTrackAppVersionName>false</autoTrackAppVersionName>
+	<!--track the app versions code -->
+	<autoTrackAppVersionCode>false</autoTrackAppVersionCode>
+	<!--track the devices screen orientation -->
+	<autoTrackScreenOrientation>false</autoTrackScreenOrientation>
+	<!--track the current connection type -->
+	<autoTrackConnectionType>false</autoTrackConnectionType>
+	<!--track if the user has opted out for advertisement on google plays -->
+	<autoTrackAdvertisementOptOut>false</autoTrackAdvertisementOptOut>
+	<!--sends the size of the current locally stored urls in a custom parameter -->
+	<autoTrackRequestUrlStoreSize>false</autoTrackRequestUrlStoreSize>
+
 	<!--global tracking parameter -->
 	<globalTrackingParameter>
 		<!--define global tracking parameter which are send with every request, the key has to match a valid parameter name!

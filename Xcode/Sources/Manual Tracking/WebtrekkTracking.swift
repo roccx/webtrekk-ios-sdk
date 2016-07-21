@@ -7,12 +7,16 @@ extension WebtrekkTracking {
 	static let sharedTracker: Tracker = {
 		WebtrekkTracking.defaultLogger.minimumLevel = .debug
 
-		var configuration = TrackerConfiguration(
-			webtrekkId: "289053685367929",
-			serverUrl:  NSURL(string: "https://q3.webtrekk.net")!
-		)
-		configuration.maximumSendDelay = 30
+		guard let configurationFile = NSBundle.mainBundle().URLForResource("Webtrekk", withExtension: "xml") else {
+			fatalError("Cannot locate Webtrekk.xml")
+		}
 
-		return WebtrekkTracking.tracker(configuration: configuration)
+		do {
+			return try WebtrekkTracking.tracker(configurationFile: configurationFile)
+		}
+		catch let error {
+			fatalError("Cannot parse Webtrekk.xml: \(error)")
+		}
 	}()
+
 }
