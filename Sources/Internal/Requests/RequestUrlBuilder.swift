@@ -426,6 +426,9 @@ private extension UserProperties {
 		if let id = id {
 			items.append(name: "cd", value: id)
 		}
+		if let internalSearch = internalSearch {
+			items.append(name: "is", value: internalSearch)
+		}
 		if let ipAddress = ipAddress {
 			items.append(name: "X-WT-IP", value: ipAddress)
 		}

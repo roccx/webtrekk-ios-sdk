@@ -12,6 +12,7 @@ public struct UserProperties {
 	public var firstName: String?
 	public var gender: Gender?
 	public var id: String?
+	public var internalSearch: String?
 	public var ipAddress: String?
 	public var lastName: String?
 	public var newsletterSubscribed: Bool?
@@ -31,6 +32,7 @@ public struct UserProperties {
 		firstName: String? = nil,
 		gender: Gender? = nil,
 		id: String? = nil,
+		internalSearch: String? = nil,
 		ipAddress: String? = nil,
 		lastName: String? = nil,
 		newsletterSubscribed: Bool? = nil,
@@ -48,6 +50,7 @@ public struct UserProperties {
 		self.firstName = firstName
 		self.gender = gender
 		self.id = id
+		self.internalSearch = internalSearch
 		self.ipAddress = ipAddress
 		self.lastName = lastName
 		self.newsletterSubscribed = newsletterSubscribed
@@ -70,6 +73,7 @@ public struct UserProperties {
 			firstName:            firstName ?? other.firstName,
 			gender:               gender ?? other.gender,
 			id:                   id ?? other.id,
+			internalSearch:       internalSearch ?? other.internalSearch,
 			ipAddress:            ipAddress ?? other.ipAddress,
 			lastName:             lastName ?? other.lastName,
 			newsletterSubscribed: newsletterSubscribed ?? other.newsletterSubscribed,
