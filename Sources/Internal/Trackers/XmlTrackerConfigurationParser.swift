@@ -424,8 +424,8 @@ internal class XmlTrackerConfigurationParser {
 		case customerId = "CUSTOMER_ID"
 		case emailAddress = "EMAIL"
 		case emailReceiverId = "EMAIL_RID"
-		case gender = "GENDER"
 		case firstName = "GNAME"
+		case gender = "GENDER"
 		case internalSearch = "INTERN_SEARCH"
 		case ipAddress = "IP_ADDRESS"
 		case lastName = "SNAME"
@@ -458,7 +458,16 @@ internal class XmlTrackerConfigurationParser {
 			var result = [Int: TrackingValue]()
 			for (index, element) in elements {
 				if let key = element.key {
-					result[index] = .customVariable(name: key)
+					switch key {
+					case  "advertiserId":        result[index] = .defaultVariable(.advertisingId)
+					case  "advertisingOptOut":   result[index] = .defaultVariable(.advertisingTrackingEnabled)
+					case  "appVersion":          result[index] = .defaultVariable(.appVersion)
+					case  "connectionType":      result[index] = .defaultVariable(.connectionType)
+					case  "screenOrientation":   result[index] = .defaultVariable(.interfaceOrientation)
+					case  "appUpdated":          result[index] = .defaultVariable(.isFirstEventAfterAppUpdate)
+					case  "requestUrlStoreSize": result[index] = .defaultVariable(.requestQueueSize)
+					default:                     result[index] = .customVariable(name: key)
+					}
 				}
 				else {
 					result[index] = .constant(element.value)
@@ -615,6 +624,9 @@ internal class XmlTrackerConfigurationParser {
 			if let emailReceiverId = parameters[.emailReceiverId] {
 				userProperties.emailReceiverId = emailReceiverId
 			}
+			if let firstName = parameters[.firstName] {
+				userProperties.city = firstName
+			}
 			if let gender = parameters[.gender] {
 				switch gender.lowercaseString {
 				case "male": userProperties.gender = .male
@@ -622,8 +634,8 @@ internal class XmlTrackerConfigurationParser {
 				default: break
 				}
 			}
-			if let firstName = parameters[.firstName] {
-				userProperties.city = firstName
+			if let ipAddress = parameters[.ipAddress] {
+				userProperties.ipAddress = ipAddress
 			}
 			if let lastName = parameters[.lastName] {
 				userProperties.city = lastName

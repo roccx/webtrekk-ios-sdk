@@ -900,6 +900,7 @@ internal final class DefaultTracker: Tracker {
 			self.defaults.set(key: DefaultsKeys.configuration, to: data)
 
 			self.configuration = configuration
+			self.global = configuration.globalProperties
 		}
 	}
 
