@@ -33,6 +33,7 @@ public struct EcommerceProperties {
 		return EcommerceProperties(
 			currencyCode: currencyCode ?? other.currencyCode,
 			details:      details.merged(over: other.details),
+			orderNumber:  orderNumber ?? other.orderNumber,
 			products:     products ?? other.products,
 			status:       status ?? other.status,
 			totalValue:   totalValue ?? other.totalValue,

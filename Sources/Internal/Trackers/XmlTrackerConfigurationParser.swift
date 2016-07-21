@@ -560,15 +560,15 @@ internal class XmlTrackerConfigurationParser {
 
 		private func productProperties() -> EcommerceProperties.Product? {
 			var productName: String? = nil
-			if let name = parameters[.productName] {
+			if let name = parameters[.productName]?.nonEmpty {
 				productName = name
 			}
 			var productPrice: String? = nil
-			if let price = parameters[.productPrice] {
+			if let price = parameters[.productPrice]?.nonEmpty {
 				productPrice = price
 			}
 			var productQuantity: Int? = nil
-			if let quantityString = parameters[.productQuantity], quantity = Int(quantityString) {
+			if let quantityString = parameters[.productQuantity]?.nonEmpty, quantity = Int(quantityString) {
 				productQuantity = quantity
 			}
 			var productCategories: [Int: TrackingValue]? = nil

@@ -312,9 +312,16 @@ private extension EcommerceProperties {
 		}
 
 		var items = [NSURLQueryItem]()
-		items.append(name: "ba", value: products.map({ $0.name }).joinWithSeparator(";"))
-		items.append(name: "co", value: products.map({ $0.price ?? "" }).joinWithSeparator(";"))
-		items.append(name: "qn", value: products.map({ $0.quantity.map { String($0) } ?? "" }).joinWithSeparator(";"))
+
+		if let names = Optional(products.map({ $0.name })) where names.joinWithSeparator("").nonEmpty != nil {
+			items.append(name: "ba", value: names.joinWithSeparator(";"))
+		}
+		if let prices = Optional(products.map({ $0.price ?? "" })) where prices.joinWithSeparator("").nonEmpty != nil {
+			items.append(name: "co", value: prices.joinWithSeparator(";"))
+		}
+		if let quantity = Optional(products.map({ $0.quantity.map { String($0) } ?? "" })) where quantity.joinWithSeparator("").nonEmpty != nil {
+			items.append(name: "qn", value: quantity.joinWithSeparator(";"))
+		}
 
 		let categoryIndexes = Set(products.flatMap { $0.categories.map { Array($0.keys) } ?? [] })
 		for categoryIndex in categoryIndexes {
