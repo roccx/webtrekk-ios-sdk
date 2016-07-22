@@ -23,7 +23,7 @@ public protocol Tracker: class {
 
 	func trackAction(event: ActionEvent)
 
-	func trackMedia(event: MediaEvent)
+	func trackMediaAction(event: MediaEvent)
 
 	func trackPageView(event: PageViewEvent)
 
@@ -41,12 +41,101 @@ public protocol Tracker: class {
 
 public extension Tracker {
 
-	public func trackAction(actionName: String, inPage pageName: String) {
-		trackAction(ActionEvent(actionProperties: ActionProperties(name: actionName), pageProperties: PageProperties(name: pageName)))
+	public func trackAction(
+		actionName: String,
+		pageName: String,
+		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
+		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
+		sessionDetails: [Int: TrackingValue] = [:],
+		userProperties: UserProperties = UserProperties(),
+		variables: [String : String] = [:]
+	) {
+		trackAction(
+			ActionProperties(name: actionName),
+			pageProperties:          PageProperties(name: pageName),
+			advertisementProperties: advertisementProperties,
+			ecommerceProperties:     ecommerceProperties,
+			sessionDetails:          sessionDetails,
+			userProperties:          userProperties,
+			variables:               variables
+		)
 	}
 
 
-	public func trackPageView(pageName: String) {
-		trackPageView(PageViewEvent(pageProperties: PageProperties(name: pageName)))
+	public func trackAction(
+		actionProperties: ActionProperties,
+		pageProperties: PageProperties,
+		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
+		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
+		sessionDetails: [Int: TrackingValue] = [:],
+		userProperties: UserProperties = UserProperties(),
+		variables: [String : String] = [:]
+	) {
+		trackAction(ActionEvent(
+			actionProperties:        actionProperties,
+			pageProperties:          pageProperties,
+			advertisementProperties: advertisementProperties,
+			ecommerceProperties:     ecommerceProperties,
+			sessionDetails:          sessionDetails,
+			userProperties:          userProperties,
+			variables:               variables
+		))
+	}
+
+
+	public func trackMediaAction(
+		action: MediaEvent.Action,
+		mediaProperties: MediaProperties,
+		pageName: String?,
+		sessionDetails: [Int: TrackingValue] = [:],
+		userProperties: UserProperties = UserProperties(),
+		variables: [String : String] = [:]
+	) {
+		trackMediaAction(MediaEvent(
+			action: action,
+			mediaProperties: mediaProperties,
+			pageName: pageName,
+			sessionDetails: sessionDetails,
+			userProperties: userProperties,
+			variables: variables
+		))
+	}
+
+
+	public func trackPageView(
+		pageName: String,
+		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
+		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
+		sessionDetails: [Int: TrackingValue] = [:],
+		userProperties: UserProperties = UserProperties(),
+		variables: [String : String] = [:]
+	) {
+		trackPageView(
+			PageProperties(name: pageName),
+			advertisementProperties: advertisementProperties,
+			ecommerceProperties:     ecommerceProperties,
+			sessionDetails:          sessionDetails,
+			userProperties:          userProperties,
+			variables:               variables
+		)
+	}
+
+
+	public func trackPageView(
+		pageProperties: PageProperties,
+		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
+		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
+		sessionDetails: [Int: TrackingValue] = [:],
+		userProperties: UserProperties = UserProperties(),
+		variables: [String : String] = [:]
+	) {
+		trackPageView(PageViewEvent(
+			pageProperties:          pageProperties,
+			advertisementProperties: advertisementProperties,
+			ecommerceProperties:     ecommerceProperties,
+			sessionDetails:          sessionDetails,
+			userProperties:          userProperties,
+			variables:               variables
+		))
 	}
 }
