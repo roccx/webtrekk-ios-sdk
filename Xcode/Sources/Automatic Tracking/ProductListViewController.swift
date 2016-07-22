@@ -22,6 +22,7 @@ class ProductListViewController: UITableViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
+		WebtrekkTracking.sharedTracker.global.pageProperties.details = [11: "Test1", 12: "Test2"]
 		autoTracker.variables["Key2"] = "value2"
 		autoTracker.variables["Key3"] = "value3"
 		autoTracker.variables["Key4"] = "value4"

@@ -29,4 +29,18 @@ public struct GlobalProperties {
 		self.sessionDetails = sessionDetails
 		self.userProperties = userProperties
 	}
+
+	@warn_unused_result
+	internal func merged(over other: GlobalProperties) -> GlobalProperties {
+		return GlobalProperties(
+			actionProperties:        actionProperties.merged(over: other.actionProperties),
+			advertisementProperties: advertisementProperties.merged(over: other.advertisementProperties),
+			crossDeviceProperties:   crossDeviceProperties.merged(over: other.crossDeviceProperties),
+			ecommerceProperties:     ecommerceProperties.merged(over: other.ecommerceProperties),
+			mediaProperties:         mediaProperties.merged(over: other.mediaProperties),
+			pageProperties:          pageProperties.merged(over: other.pageProperties),
+			sessionDetails:          sessionDetails.merged(over: other.sessionDetails),
+			userProperties:          userProperties.merged(over: other.userProperties)
+		)
+	}
 }

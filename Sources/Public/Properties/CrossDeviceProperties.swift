@@ -62,4 +62,20 @@ public struct CrossDeviceProperties {
 			self.zipCode = zipCode
 		}
 	}
+
+	@warn_unused_result
+	internal func merged(over other: CrossDeviceProperties) -> CrossDeviceProperties {
+		return CrossDeviceProperties(
+			address:      address ?? other.address,
+			androidId:    androidId ?? other.androidId,
+			emailAddress: emailAddress ?? other.emailAddress,
+			facebookId:   facebookId ?? other.facebookId,
+			googlePlusId: googlePlusId ?? other.googlePlusId,
+			iosId:        iosId ?? other.iosId,
+			linkedInId:   linkedInId ?? other.linkedInId,
+			phoneNumber:  phoneNumber ?? other.phoneNumber,
+			twitterId:    twitterId ?? other.twitterId,
+			windowsId:    windowsId ?? other.windowsId
+		)
+	}
 }
