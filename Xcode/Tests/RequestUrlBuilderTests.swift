@@ -346,6 +346,26 @@ class RequestUrlBuilderTest: XCTestCase {
 	}
 
 
+	func testIpAddress() {
+		var event = PageViewEvent(pageProperties: PageProperties(name: "?"))
+
+		event.ipAddress = nil
+		if let url = urlForEvent(event) {
+			assert(url: url, doesNotContain: "X-WT-IP")
+		}
+
+		event.ipAddress = "1.2.3.4"
+		if let url = urlForEvent(event) {
+			assert(url: url, contains: "X-WT-IP", with: "1.2.3.4")
+		}
+
+		event.ipAddress = "2001:0db8:0000:0042:0000:8a2e:0370:7334"
+		if let url = urlForEvent(event) {
+			assert(url: url, contains: "X-WT-IP", with: "2001:0db8:0000:0042:0000:8a2e:0370:7334")
+		}
+	}
+
+
 	func testIsFirstEventAfterAppUpdateProperty() {
 		var properties = minimalProperties
 		assert(urlForProperties: properties, doesNotContain: "cs815")
@@ -555,7 +575,6 @@ class RequestUrlBuilderTest: XCTestCase {
 			assert(url: url, doesNotContain: "uc710")
 			assert(url: url, doesNotContain: "uc711")
 			assert(url: url, doesNotContain: "uc712")
-			assert(url: url, doesNotContain: "X-WT-IP")
 		}
 
 		event.userProperties = UserProperties(
@@ -568,7 +587,6 @@ class RequestUrlBuilderTest: XCTestCase {
 			firstName:            "First&Name",
 			gender:               .male,
 			id:                   "User&Id",
-			ipAddress:            "1.2.3.4",
 			lastName:             "Last&Name",
 			newsletterSubscribed: true,
 			phoneNumber:          "Phone&Number",
@@ -577,34 +595,31 @@ class RequestUrlBuilderTest: XCTestCase {
 			zipCode:              "Zip&Code"
 		)
 		if let url = urlForEvent(event) {
-			assert(url: url, contains: "cd",      with: "User&Id")
-			assert(url: url, contains: "uc1",     with: "Detail&1")
-			assert(url: url, contains: "uc2",     with: "Detail&2")
-			assert(url: url, contains: "uc700",   with: "Email&Address")
-			assert(url: url, contains: "uc701",   with: "Email&Receiver&Id")
-			assert(url: url, contains: "uc702",   with: "1") // newsletter subscribed
-			assert(url: url, contains: "uc703",   with: "First&Name")
-			assert(url: url, contains: "uc704",   with: "Last&Name")
-			assert(url: url, contains: "uc705",   with: "Phone&Number")
-			assert(url: url, contains: "uc706",   with: "1") // gender
-			assert(url: url, contains: "uc707",   with: "19860411")
-			assert(url: url, contains: "uc708",   with: "City&Name")
-			assert(url: url, contains: "uc709",   with: "Country&Name")
-			assert(url: url, contains: "uc710",   with: "Zip&Code")
-			assert(url: url, contains: "uc711",   with: "Street&Name")
-			assert(url: url, contains: "uc712",   with: "Street&Number")
-			assert(url: url, contains: "X-WT-IP", with: "1.2.3.4")
+			assert(url: url, contains: "cd",    with: "User&Id")
+			assert(url: url, contains: "uc1",   with: "Detail&1")
+			assert(url: url, contains: "uc2",   with: "Detail&2")
+			assert(url: url, contains: "uc700", with: "Email&Address")
+			assert(url: url, contains: "uc701", with: "Email&Receiver&Id")
+			assert(url: url, contains: "uc702", with: "1") // newsletter subscribed
+			assert(url: url, contains: "uc703", with: "First&Name")
+			assert(url: url, contains: "uc704", with: "Last&Name")
+			assert(url: url, contains: "uc705", with: "Phone&Number")
+			assert(url: url, contains: "uc706", with: "1") // gender
+			assert(url: url, contains: "uc707", with: "19860411")
+			assert(url: url, contains: "uc708", with: "City&Name")
+			assert(url: url, contains: "uc709", with: "Country&Name")
+			assert(url: url, contains: "uc710", with: "Zip&Code")
+			assert(url: url, contains: "uc711", with: "Street&Name")
+			assert(url: url, contains: "uc712", with: "Street&Number")
 		}
 
 		event.userProperties = UserProperties(
 			gender:               .female,
-			ipAddress:            "2001:0db8:0000:0042:0000:8a2e:0370:7334",
 			newsletterSubscribed: false
 		)
 		if let url = urlForEvent(event) {
-			assert(url: url, contains: "uc702",   with: "2") // newsletter subscribed
-			assert(url: url, contains: "uc706",   with: "2") // gender
-			assert(url: url, contains: "X-WT-IP", with: "2001:0db8:0000:0042:0000:8a2e:0370:7334")
+			assert(url: url, contains: "uc702", with: "2") // newsletter subscribed
+			assert(url: url, contains: "uc706", with: "2") // gender
 		}
 	}
 
