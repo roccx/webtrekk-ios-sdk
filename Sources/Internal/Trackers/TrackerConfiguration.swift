@@ -1,71 +1,71 @@
 import Foundation
 
 
-public struct TrackerConfiguration {
+internal struct TrackerConfiguration {
 
 	/** Allowed values for sendDelay */
-	public static let allowedMaximumSendDelays: ClosedInterval<NSTimeInterval> = 5 ... .infinity
+	internal static let allowedMaximumSendDelays: ClosedInterval<NSTimeInterval> = 5 ... .infinity
 
 	/** Allowed values for requestQueueLimit */
-	public static let allowedRequestQueueLimits: ClosedInterval<Int> = 1 ... .max
+	internal static let allowedRequestQueueLimits: ClosedInterval<Int> = 1 ... .max
 
 	/** Allowed values for resendOnStartEventTime */
-	public static let allowedResendOnStartEventTimes: ClosedInterval<NSTimeInterval> = 0 ... .infinity
+	internal static let allowedResendOnStartEventTimes: ClosedInterval<NSTimeInterval> = 0 ... .infinity
 
 	/** Allowed values for samplingRate */
-	public static let allowedSamplingRates: ClosedInterval<Int> = 0 ... .max
+	internal static let allowedSamplingRates: ClosedInterval<Int> = 0 ... .max
 
 	/** Allowed values for version */
-	public static let allowedVersions: ClosedInterval<Int> = 1 ... .max
+	internal static let allowedVersions: ClosedInterval<Int> = 1 ... .max
 
 	/** If enabled automatically tries to attach the Advertising Identifier to each request. */
-	public var automaticallyTracksAdvertisingId = true
+	internal var automaticallyTracksAdvertisingId = true
 
 	/** If enabled automatically tries to attach the Advertising Opt Out state to each request. */
-	public var automaticallyTracksAdvertisingOptOut = true
+	internal var automaticallyTracksAdvertisingOptOut = true
 
 	/** If enabled automatically trackes app updates. */
-	public var automaticallyTracksAppUpdates = true
+	internal var automaticallyTracksAppUpdates = true
 
 	/** If enabled automatically attaches the app version to each request. */
-	public var automaticallyTracksAppVersion = true
+	internal var automaticallyTracksAppVersion = true
 
 	/** If enabled automatically attaches the current request queue size to each request. */
-	public var automaticallyTracksRequestQueueSize = true
+	internal var automaticallyTracksRequestQueueSize = true
 
 	/** Url of the remote configuration. */
-	public var configurationUpdateUrl: NSURL? = nil
+	internal var configurationUpdateUrl: NSURL? = nil
 
 	/** Delay after which the event request is send to the server. */
-	public var maximumSendDelay = NSTimeInterval(5 * 60)
+	internal var maximumSendDelay = NSTimeInterval(5 * 60)
 
 	/** Maxiumum number of request which are stored before sending. */
-	public var requestQueueLimit = 1000
+	internal var requestQueueLimit = 1000
 
 	/** The timout interval indicating when a new session should be tracked after an app went in the background. */
-	public var resendOnStartEventTime = NSTimeInterval(30 * 60)
+	internal var resendOnStartEventTime = NSTimeInterval(30 * 60)
 
 	/** The tracker will randomly tracks only every X user. */
-	public var samplingRate = 0
+	internal var samplingRate = 0
 
 	/** Url of the tracking server. */
-	public var serverUrl: NSURL
+	internal var serverUrl: NSURL
 
 	/** The version is used to compare the current configuration with a remote configuration and to decide whether there is an update for the configuration available. */
-	public var version = 1
+	internal var version = 1
 
 	/** The unique identifier of your webtrekk account. */
-	public var webtrekkId: String
+	internal var webtrekkId: String
 
 	#if !os(watchOS)
 	/** Automatically attaches tracker instances to the corresponding view controller if possible. */
-	public var automaticallyTrackedPages = [Page]()
+	internal var automaticallyTrackedPages = [Page]()
 
 	/** If enabled automatically attaches the connection type to each request. */
-	public var automaticallyTracksConnectionType = true
+	internal var automaticallyTracksConnectionType = true
 
 	/** If enabled automatically attaches the interface orientation to each request. */
-	public var automaticallyTracksInterfaceOrientation = true
+	internal var automaticallyTracksInterfaceOrientation = true
 	#endif
 
 	internal var globalProperties = GlobalProperties()
@@ -79,7 +79,7 @@ public struct TrackerConfiguration {
 	- Parameter webtrekkId: The unique identifier of your webtrekk account
 	- Parameter serverUrl: Url of the tracking server
 	*/
-	public init(webtrekkId: String, serverUrl: NSURL) {
+	internal init(webtrekkId: String, serverUrl: NSURL) {
 		self.serverUrl = serverUrl
 		self.webtrekkId = webtrekkId
 	}
@@ -97,25 +97,25 @@ public struct TrackerConfiguration {
 	/**
 	Representation of an automatically tracked page.
 	*/
-	public struct Page {
+	internal struct Page {
 
-		public var actionProperties: ActionProperties?
+		internal var actionProperties: ActionProperties?
 
-		public var advertisementProperties: AdvertisementProperties?
+		internal var advertisementProperties: AdvertisementProperties?
 
-		public var ecommerceProperties: EcommerceProperties?
+		internal var ecommerceProperties: EcommerceProperties?
 
-		public var mediaProperties: MediaProperties?
+		internal var mediaProperties: MediaProperties?
 
 		/** Page Properties that should be tracked if not overwritten manually. */
-		public var pageProperties: PageProperties
+		internal var pageProperties: PageProperties
 
-		public var sessionDetails: [Int: TrackingValue]?
+		internal var sessionDetails: [Int: TrackingValue]?
 
-		public var userProperties: UserProperties?
+		internal var userProperties: UserProperties?
 
 		/** A Regular Expression to determine a view controller for automatic tracking. */
-		public var viewControllerTypeNamePattern: NSRegularExpression
+		internal var viewControllerTypeNamePattern: NSRegularExpression
 
 
 		/**
@@ -123,7 +123,7 @@ public struct TrackerConfiguration {
 		- Parameter pageProperties: Page Properties that should be tracked if not overwritten manually.
 		- Parameter customProperties: Custom Properties that should be tracked if not overwritten manually.
 		*/
-		public init(
+		internal init(
 			viewControllerTypeNamePattern: NSRegularExpression,
 			pageProperties: PageProperties,
 			actionProperties: ActionProperties? = nil,
