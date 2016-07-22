@@ -17,7 +17,7 @@ public protocol PageTracker: class {
 	
 	func trackAction(event: ActionEvent)
 
-	func trackMedia(event: MediaEvent)
+	func trackMediaAction(event: MediaEvent)
 
 	func trackPageView()
 

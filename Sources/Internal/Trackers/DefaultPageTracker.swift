@@ -42,7 +42,7 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
-	internal func trackMedia(event: MediaEvent) {
+	internal func trackMediaAction(event: MediaEvent) {
 		checkIsOnMainThread()
 
 		handleEvent(event)
