@@ -25,18 +25,11 @@ public enum WebtrekkTracking {
 		}
 
 		do {
-			return tracker(configuration: try XmlTrackerConfigurationParser().parse(xml: configurationData))
+			return DefaultTracker(configuration: try XmlTrackerConfigurationParser().parse(xml: configurationData))
 		}
 		catch let error {
 			fatalError("Cannot load Webtrekk configuration file '\(configurationFile)': \(error)")
 		}
-	}
-
-
-	private static func tracker(configuration configuration: TrackerConfiguration) -> Tracker {
-		checkIsOnMainThread()
-
-		return DefaultTracker(configuration: configuration)
 	}
 
 
