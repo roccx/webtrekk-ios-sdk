@@ -50,7 +50,7 @@
 		 entries made here are available as default parameters in the trackingparameter instance -->
 		<parameter id="CURRENCY">EUR</parameter>
 		<parameter id="USERAGENT">DONT SEND</parameter>
-
+		<parameter id="IP_ADDRESS">DONT SEND</parameter>
 		<!--define the global page parameter, the key is the index,  -->
 		<pageParameter>
 			<parameter id="1">test_global_pageparam1</parameter>

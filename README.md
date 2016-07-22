@@ -99,16 +99,142 @@ Additional Tracking Properties
 
 Beside the basic tracking of the different events each can be enhanced with more details. For that there are the `ActionEvent`, `MediaEvent` and the `PageEvent` which offers the possibility to add those details.
 
-PageViewEvent
--------------
+Page View Event
+---------------
 
-The `PageViewEvent`is the most commonly used event and as of that has most of the properties that the other two events have.
-
-### AdvertisementProperties
+The `PageViewEvent`is the most commonly used event and as of that has most of the properties that the other two events have. + Advertisement Properties + Ecommerce Properties + Page Properties + Session Details + User Properties
 
 ```swift
-AdvertisementProperties(id: "AdvertisementId", action: "AdvertisementActionName", details: [1: "AdvertisementDetail1", 2: "AdvertisementDetail2"])
+var pageViewEvent = PageViewEvent(pageProperties: PageProperties(name: "PageName"))
 ```
+
+### Advertisement Properties
+
+```swift
+pageViewEvent.advertisementProperties = AdvertisementProperties(id: "AdvertisementId", action: "AdvertisementActionName", details: [1: "AdvertisementDetail1", 2: "AdvertisementDetail2"])
+```
+
+### Ecommerce Properties
+
+```swift
+pageViewEvent.ecommerceProperties = EcommerceProperties(
+			currencyCode: "EUR",
+			details:      [1: "Detail1", 2: "Detail2"],
+			orderNumber:  "123-SVK-567",
+			products: [
+				EcommerceProperties.Product(name: "ProductName1", categories: [1: "Category1-1", 2: "Category1-2"], price: "100.11", quantity: 123),
+				EcommerceProperties.Product(name: "ProductName2", categories: [2: "Category2-2", 3: "Category2-3"], price: "200.22"),
+				EcommerceProperties.Product(name: "ProductName3", quantity: 456)
+			],
+			status:       .addedToBasket,
+			totalValue:   "1000.11",
+			voucherValue: "15.95"
+		)    
+```
+
+### Page Properties
+
+```swift
+pageViewEvent.pageProperties = PageProperties(name: "PageName", details: [1: "Detail1", 2: "Detail2"], groups: [1: "Group1", 2: "Group2"], internalSearch: "InternalSearch", url: "PageUrl")
+```
+
+### Session Details
+
+```swift
+pageViewEvent.sessionDetails = [1: "Detail1", 2: "Detail2"]
+```
+
+### User Properties
+
+```swift
+pageViewEvent.userProperties = UserProperties(
+			birthday:             UserProperties.Birthday(day: 12, month: 1, year: 1986),
+			city:                 "CityName",
+			country:              "CountryName",
+			details:              [1: "Detail1", 2: "Detail2"],
+			emailAddress:         "EmailAddress",
+			emailReceiverId:      "EmailReceiverId",
+			firstName:            "FirstName",
+			gender:               .male,
+			id:                   "UserId",
+			ipAddress:            "1.2.3.4",
+			lastName:             "LastName",
+			newsletterSubscribed: true,
+			phoneNumber:          "PhoneNumber",
+			street:               "StreetName",
+			streetNumber:         "StreetNumber",
+			zipCode:              "ZipCode"
+		)
+```
+
+Action Event
+------------
+
+The `ActionEvent` has additional to the properties of the `PageViewEvent` another property named `ActionProperties`. As per requirement any `ActionEvent` needs to be related to a page which concludes in every `ActionEvent` requires a `PageProperties`.
+
+```swift
+var actionEvent = ActionEvent(actionProperties: ActionProperties(name: "ActionName"), pageProperties: PageProperties(name: "PageName"))
+```
+
+### Action Properties
+
+```swift
+actionEvent.actionProperties = ActionProperties(name: "ActionName", details: [1: "Detail1", 2: "Detail2"])
+```
+
+Media Event
+-----------
+
+The `MediaEvent` has only a subset of the `PageViewEvent` properties and an additional `MediaProperties`. As per requirement any `MediaEvent` needs to be related to a page which concludes in every `MediaEvent` requires a page Name.
+
+-	Media Action
+-	Media Properties
+-	Page Name
+-	Session Details
+-	User Properties
+
+```swift
+var mediaEvent = MediaEvent(action: .initialize, mediaProperties: MediaProperties(name: "MediaName"), pageName: "PageName")
+```
+
+### Media Action
+
+Defines in what kind of action this event is categorized. Besides the SDK given Action a custom Action can also be used for example when a user clicks on an referral link.
+
+-	finish
+-	initialize
+-	pause
+-	play
+-	position
+-	seek
+-	stop
+-	custom(name: String)
+
+```swift
+mediaEvent.action = .custom(name: "referral-link")
+```
+
+### Media Properties
+
+```swift
+mediaEvent.mediaProperties = MediaProperties(
+			name:         "MediaName",
+			bandwidth:    123.456,
+			duration:     12345.2,
+			groups:       [1: "Group1", 2: "Group2"],
+			position:     456.7,
+			soundIsMuted: true,
+			soundVolume:  0.5
+		)
+```
+
+Global Properties
+=================
+
+Cross Device Bridge
+-------------------
+
+The "Cross Device Bridge" properties can be set on
 
 Configuration XML
 =================
