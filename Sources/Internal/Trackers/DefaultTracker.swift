@@ -797,7 +797,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	internal func trackMedia(event: MediaEvent) {
+	internal func trackMediaAction(event: MediaEvent) {
 		checkIsOnMainThread()
 
 		handleEvent(event)
