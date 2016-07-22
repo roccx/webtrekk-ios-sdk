@@ -50,36 +50,55 @@ internal final class RequestUrlBuilder {
 		parameters.append(name: "tz", value: String(Double(properties.timeZone.secondsFromGMT) / 60 / 60))
 		parameters.append(name: "X-WT-UA", value: properties.userAgent)
 
-		if let requestQueueSize = properties.requestQueueSize {
-			parameters.append(name: "cp784", value: String(requestQueueSize))
-		}
-		if let appVersion = properties.appVersion {
-			parameters.append(name: "cs804", value: appVersion)
-		}
-		if let connectionType = properties.connectionType {
-			parameters.append(name: "cs807", value: connectionType.serialized)
-		}
-		if let advertisingId = properties.advertisingId {
-			parameters.append(name: "cs809", value: advertisingId.UUIDString)
-		}
-		if let advertisingTrackingEnabled = properties.advertisingTrackingEnabled {
-			parameters.append(name: "cs813", value: advertisingTrackingEnabled ? "1" : "0")
-		}
-		if properties.isFirstEventAfterAppUpdate {
-			parameters.append(name: "cs815", value: "1")
+		if let ipAddress = event.ipAddress {
+			parameters.append(name: "X-WT-IP", value: ipAddress)
 		}
 		if let language = properties.locale?.objectForKey(NSLocaleLanguageCode) as? String {
 			parameters.append(name: "la", value: language)
 		}
 
-		#if !os(watchOS)
-			if let interfaceOrientation = properties.interfaceOrientation {
-				parameters.append(name: "cp783", value: interfaceOrientation.serialized)
+		if let event = event as? MediaEvent {
+			let actionId: String
+			switch event.action {
+			case .finish:           actionId = "finish"
+			case .initialize:       actionId = "init"
+			case .pause:            actionId = "pause"
+			case .play:             actionId = "play"
+			case .position:         actionId = "pos"
+			case .seek:             actionId = "seek"
+			case .stop:             actionId = "stop"
+			case let .custom(name): actionId = name
 			}
-		#endif
+			parameters.append(name: "mk", value: actionId)
+		}
+		else {
+			if let requestQueueSize = properties.requestQueueSize {
+				parameters.append(name: "cp784", value: String(requestQueueSize))
+			}
+			if let appVersion = properties.appVersion {
+				parameters.append(name: "cs804", value: appVersion)
+			}
+			if let connectionType = properties.connectionType {
+				parameters.append(name: "cs807", value: connectionType.serialized)
+			}
+			if let advertisingId = properties.advertisingId {
+				parameters.append(name: "cs809", value: advertisingId.UUIDString)
+			}
+			if let advertisingTrackingEnabled = properties.advertisingTrackingEnabled {
+				parameters.append(name: "cs813", value: advertisingTrackingEnabled ? "1" : "0")
+			}
+			if properties.isFirstEventAfterAppUpdate {
+				parameters.append(name: "cs815", value: "1")
+			}
 
-		parameters += request.crossDeviceProperties.asQueryItems()
-		parameters += event.userProperties.asQueryItems(for: request)
+			parameters += request.crossDeviceProperties.asQueryItems()
+
+			#if !os(watchOS)
+				if let interfaceOrientation = properties.interfaceOrientation {
+					parameters.append(name: "cp783", value: interfaceOrientation.serialized)
+				}
+			#endif
+		}
 
 		if let actionProperties = (event as? TrackingEventWithActionProperties)?.actionProperties {
 			guard let name = actionProperties.name?.nonEmpty else {
@@ -121,20 +140,8 @@ internal final class RequestUrlBuilder {
 		if let sessionDetails = (event as? TrackingEventWithSessionDetails)?.sessionDetails {
 			parameters += sessionDetails.mapNotNil { NSURLQueryItem(name: "cs", property: $0, for: request) }
 		}
-
-		if let event = event as? MediaEvent {
-			let actionId: String
-			switch event.action {
-			case .finish:           actionId = "finish"
-			case .initialize:       actionId = "init"
-			case .pause:            actionId = "pause"
-			case .play:             actionId = "play"
-			case .position:         actionId = "pos"
-			case .seek:             actionId = "seek"
-			case .stop:             actionId = "stop"
-			case let .custom(name): actionId = name
-			}
-			parameters.append(name: "mk", value: actionId)
+		if let userProperties = (event as? TrackingEventWithUserProperties)?.userProperties {
+			parameters += userProperties.asQueryItems(for: request)
 		}
 
 		parameters.append(name: "eor", value: "1")
@@ -428,9 +435,6 @@ private extension UserProperties {
 		}
 		if let id = id {
 			items.append(name: "cd", value: id)
-		}
-		if let ipAddress = ipAddress {
-			items.append(name: "X-WT-IP", value: ipAddress)
 		}
 		if let lastName = lastName {
 			items = items.filter({$0.name != "uc704"})

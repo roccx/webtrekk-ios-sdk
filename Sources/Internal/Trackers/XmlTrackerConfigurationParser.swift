@@ -191,6 +191,7 @@ internal class XmlTrackerConfigurationParser {
 				actionProperties: globalParameter.actionProperties(),
 				advertisementProperties: globalParameter.advertisementProperties(),
 				ecommerceProperties: globalParameter.ecommerceProperties(),
+				ipAddress: globalParameter.parameters[.ipAddress],
 				mediaProperties: globalParameter.mediaProperties(),
 				pageProperties: globalParameter.pageProperties(),
 				sessionDetails: globalParameter.sessionDetails(),
@@ -268,6 +269,7 @@ internal class XmlTrackerConfigurationParser {
 			page.actionProperties = screenParameter.actionProperties()
 			page.advertisementProperties = screenParameter.advertisementProperties()
 			page.ecommerceProperties = screenParameter.ecommerceProperties()
+			page.ipAddress = screenParameter.parameters[.ipAddress]
 			page.mediaProperties = screenParameter.mediaProperties()
 			page.pageProperties = screenParameter.pageProperties()
 			page.sessionDetails = screenParameter.sessionDetails()
@@ -636,9 +638,6 @@ internal class XmlTrackerConfigurationParser {
 				case "femal": userProperties.gender = .female
 				default: break
 				}
-			}
-			if let ipAddress = parameters[.ipAddress] {
-				userProperties.ipAddress = ipAddress
 			}
 			if let lastName = parameters[.lastName] {
 				userProperties.city = lastName

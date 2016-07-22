@@ -70,10 +70,11 @@ internal final class DefaultPageTracker: PageTracker {
 			pageProperties:          pageViewEvent.pageProperties.merged(over: pageProperties),
 			advertisementProperties: pageViewEvent.advertisementProperties.merged(over: advertisementProperties),
 			ecommerceProperties:     pageViewEvent.ecommerceProperties.merged(over: ecommerceProperties),
+			ipAddress:               pageViewEvent.ipAddress,
 			sessionDetails:          pageViewEvent.sessionDetails.merged(over: sessionDetails),
 			userProperties:          pageViewEvent.userProperties.merged(over: userProperties),
 			variables:               pageViewEvent.variables.merged(over: variables)
-			))
+		))
 	}
 
 
@@ -124,9 +125,7 @@ extension DefaultPageTracker: MediaEventHandler {
 		var event = event
 		event.pageName = event.pageName ?? pageProperties.name
 		event.viewControllerTypeName = event.viewControllerTypeName ?? pageProperties.viewControllerTypeName
-		event.userProperties = event.userProperties.merged(over: userProperties)
 		event.variables = event.variables.merged(over: variables)
-
 
 		handler.handleEvent(event)
 	}

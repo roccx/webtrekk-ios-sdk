@@ -87,16 +87,12 @@ public extension Tracker {
 		action: MediaEvent.Action,
 		mediaProperties: MediaProperties,
 		pageName: String?,
-		sessionDetails: [Int: TrackingValue] = [:],
-		userProperties: UserProperties = UserProperties(),
 		variables: [String : String] = [:]
 	) {
 		trackMediaAction(MediaEvent(
 			action: action,
 			mediaProperties: mediaProperties,
 			pageName: pageName,
-			sessionDetails: sessionDetails,
-			userProperties: userProperties,
 			variables: variables
 		))
 	}

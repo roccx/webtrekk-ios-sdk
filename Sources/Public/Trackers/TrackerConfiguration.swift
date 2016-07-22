@@ -105,6 +105,8 @@ public struct TrackerConfiguration {
 
 		public var ecommerceProperties: EcommerceProperties?
 
+		public var ipAddress: String?
+
 		public var mediaProperties: MediaProperties?
 
 		/** Page Properties that should be tracked if not overwritten manually. */
@@ -129,6 +131,7 @@ public struct TrackerConfiguration {
 			actionProperties: ActionProperties? = nil,
 			advertisementProperties: AdvertisementProperties? = nil,
 			ecommerceProperties: EcommerceProperties? = nil,
+			ipAddress: String? = nil,
 			mediaProperties: MediaProperties? = nil,
 			sessionDetails: [Int: TrackingValue]? = nil,
 			userProperties: UserProperties? = nil
@@ -136,6 +139,7 @@ public struct TrackerConfiguration {
 			self.actionProperties = actionProperties
 			self.advertisementProperties = advertisementProperties
 			self.ecommerceProperties = ecommerceProperties
+			self.ipAddress = ipAddress
 			self.mediaProperties = mediaProperties
 			self.pageProperties = pageProperties
 			self.sessionDetails = sessionDetails

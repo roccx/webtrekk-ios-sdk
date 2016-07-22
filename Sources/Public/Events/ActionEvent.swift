@@ -3,12 +3,14 @@ public struct ActionEvent:
 	TrackingEventWithAdvertisementProperties,
 	TrackingEventWithEcommerceProperties,
 	TrackingEventWithPageProperties,
-	TrackingEventWithSessionDetails
+	TrackingEventWithSessionDetails,
+	TrackingEventWithUserProperties
 {
 
 	public var actionProperties: ActionProperties
 	public var advertisementProperties: AdvertisementProperties
 	public var ecommerceProperties: EcommerceProperties
+	public var ipAddress: String?
 	public var pageProperties: PageProperties
 	public var sessionDetails: [Int: TrackingValue]
 	public var userProperties: UserProperties

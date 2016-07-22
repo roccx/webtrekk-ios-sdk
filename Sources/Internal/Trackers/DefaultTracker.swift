@@ -382,14 +382,11 @@ internal final class DefaultTracker: Tracker {
 		}
 
 		var event = event
+		event.ipAddress = event.ipAddress ?? page.ipAddress
 		event.pageName = event.pageName ?? page.pageProperties.name
 
 		guard !(event is ActionEvent) else {
 			return event
-		}
-
-		if let userProperties = page.userProperties {
-			event.userProperties = event.userProperties.merged(over: userProperties)
 		}
 
 		if var eventWithActionProperties = event as? TrackingEventWithActionProperties, let actionProperties = page.actionProperties {
@@ -416,6 +413,10 @@ internal final class DefaultTracker: Tracker {
 			eventWithSessionDetails.sessionDetails = eventWithSessionDetails.sessionDetails.merged(over: sessionDetails)
 			event = eventWithSessionDetails
 		}
+		if var eventWithUserProperties = event as? TrackingEventWithUserProperties, let userProperties = page.userProperties {
+			eventWithUserProperties.userProperties = eventWithUserProperties.userProperties.merged(over: userProperties)
+			event = eventWithUserProperties
+		}
 
 		return event
 	}
@@ -426,13 +427,12 @@ internal final class DefaultTracker: Tracker {
 		checkIsOnMainThread()
 
 		var event = event
+		event.ipAddress = event.ipAddress ?? global.ipAddress
 		event.pageName = event.pageName ?? global.pageProperties.name
 
 		guard !(event is ActionEvent) else {
 			return event
 		}
-
-		event.userProperties = event.userProperties.merged(over: global.userProperties)
 
 		if var eventWithActionProperties = event as? TrackingEventWithActionProperties {
 			eventWithActionProperties.actionProperties = eventWithActionProperties.actionProperties.merged(over: global.actionProperties)
@@ -457,6 +457,10 @@ internal final class DefaultTracker: Tracker {
 		if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails {
 			eventWithSessionDetails.sessionDetails = eventWithSessionDetails.sessionDetails.merged(over: global.sessionDetails)
 			event = eventWithSessionDetails
+		}
+		if var eventWithUserProperties = event as? TrackingEventWithUserProperties {
+			eventWithUserProperties.userProperties = eventWithUserProperties.userProperties.merged(over: global.userProperties)
+			event = eventWithUserProperties
 		}
 
 		return event
