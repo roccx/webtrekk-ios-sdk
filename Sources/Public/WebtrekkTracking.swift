@@ -33,7 +33,7 @@ public enum WebtrekkTracking {
 	}
 
 
-	internal static func tracker(configuration configuration: TrackerConfiguration) -> Tracker {
+	private static func tracker(configuration configuration: TrackerConfiguration) -> Tracker {
 		checkIsOnMainThread()
 
 		return DefaultTracker(configuration: configuration)
