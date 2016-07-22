@@ -93,7 +93,6 @@ internal final class DefaultTracker: Tracker {
 		self.configuration = configuration
 		self.defaults = defaults
 		self.everId = DefaultTracker._everId
-		self.global = configuration.globalProperties
 		self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
 		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
 		self.requestManager = RequestManager(queueLimit: configuration.requestQueueLimit)
@@ -382,39 +381,39 @@ internal final class DefaultTracker: Tracker {
 		}
 
 		var event = event
-		event.ipAddress = event.ipAddress ?? page.ipAddress
-		event.pageName = event.pageName ?? page.pageProperties.name
+		event.ipAddress = page.ipAddress ?? event.ipAddress
+		event.pageName = page.pageProperties.name ?? event.pageName
 
 		guard !(event is ActionEvent) else {
 			return event
 		}
 
 		if var eventWithActionProperties = event as? TrackingEventWithActionProperties, let actionProperties = page.actionProperties {
-			eventWithActionProperties.actionProperties = eventWithActionProperties.actionProperties.merged(over: actionProperties)
+			eventWithActionProperties.actionProperties = actionProperties.merged(over: eventWithActionProperties.actionProperties)
 			event = eventWithActionProperties
 		}
 		if var eventWithAdvertisementProperties = event as? TrackingEventWithAdvertisementProperties, let advertisementProperties = page.advertisementProperties {
-			eventWithAdvertisementProperties.advertisementProperties = eventWithAdvertisementProperties.advertisementProperties.merged(over: advertisementProperties)
+			eventWithAdvertisementProperties.advertisementProperties = advertisementProperties.merged(over: eventWithAdvertisementProperties.advertisementProperties)
 			event = eventWithAdvertisementProperties
 		}
 		if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties, let ecommerceProperties = page.ecommerceProperties {
-			eventWithEcommerceProperties.ecommerceProperties = eventWithEcommerceProperties.ecommerceProperties.merged(over: ecommerceProperties)
+			eventWithEcommerceProperties.ecommerceProperties = ecommerceProperties.merged(over: eventWithEcommerceProperties.ecommerceProperties)
 			event = eventWithEcommerceProperties
 		}
 		if var eventWithMediaProperties = event as? TrackingEventWithMediaProperties, let mediaProperties = page.mediaProperties {
-			eventWithMediaProperties.mediaProperties = eventWithMediaProperties.mediaProperties.merged(over: mediaProperties)
+			eventWithMediaProperties.mediaProperties = mediaProperties.merged(over: eventWithMediaProperties.mediaProperties)
 			event = eventWithMediaProperties
 		}
 		if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
-			eventWithPageProperties.pageProperties = eventWithPageProperties.pageProperties.merged(over: page.pageProperties)
+			eventWithPageProperties.pageProperties = page.pageProperties.merged(over: eventWithPageProperties.pageProperties)
 			event = eventWithPageProperties
 		}
 		if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails, let sessionDetails = page.sessionDetails {
-			eventWithSessionDetails.sessionDetails = eventWithSessionDetails.sessionDetails.merged(over: sessionDetails)
+			eventWithSessionDetails.sessionDetails = sessionDetails.merged(over: eventWithSessionDetails.sessionDetails)
 			event = eventWithSessionDetails
 		}
 		if var eventWithUserProperties = event as? TrackingEventWithUserProperties, let userProperties = page.userProperties {
-			eventWithUserProperties.userProperties = eventWithUserProperties.userProperties.merged(over: userProperties)
+			eventWithUserProperties.userProperties = userProperties.merged(over: eventWithUserProperties.userProperties)
 			event = eventWithUserProperties
 		}
 
@@ -425,6 +424,8 @@ internal final class DefaultTracker: Tracker {
 
 	private func eventByApplyingGlobalProperties(to event: TrackingEvent) -> TrackingEvent {
 		checkIsOnMainThread()
+
+		let global = configuration.globalProperties.merged(over: self.global)
 
 		var event = event
 		event.ipAddress = event.ipAddress ?? global.ipAddress
@@ -904,7 +905,6 @@ internal final class DefaultTracker: Tracker {
 			self.defaults.set(key: DefaultsKeys.configuration, to: data)
 
 			self.configuration = configuration
-			self.global = configuration.globalProperties
 		}
 	}
 

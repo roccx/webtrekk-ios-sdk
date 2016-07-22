@@ -7,7 +7,6 @@ import UIKit
 
 public protocol Tracker: class {
 
-	var configuration: TrackerConfiguration { get }
 	var everId: String { get }
 	var global: GlobalProperties { get set }
 	var plugins: [TrackerPlugin] { get set }
