@@ -30,23 +30,18 @@ Basic Usage
 import Webtrekk
 ```
 
-The minimal required configuration parameters for a valid Webtrekk instance are the `serverUrl` and the `webtrekkId`. The below code snippet shows a common way to integrate and configure a Webtrekk instance.
+To fullfill the requirements for creating a `Tracker` instance simply add a valid configuration within the application main bundle under the filename `webtrekk_config.xml`. The below code snippet shows a common way to integrate and configure a Webtrekk instance.
 
 ```swift
 let webtrekkTracker: Tracker = {
-    var configuration = TrackerConfiguration(
-		webtrekkId: "289053685367929",
-		serverUrl:  NSURL(string: "https://q3.webtrekk.net")!
-	)
-
-	return WebtrekkTracking.tracker(configuration: configuration)
+	return try! WebtrekkTracking.createTracker()
 }()
 ```
 
 Page View Tracking
 ------------------
 
-To track page views from the different screens of an App it is common to do this when a screen appeared. The below code snippet demonstrates this by creating a `tracker` variable with the name under which this specific screen of the App should be tracked. When the `UITableViewController` calls `viewDidAppear` the Screen is definitely visible to the user and can safely be tracked by calling `trackPageView()` on the previously assigned variable.
+To track page views from the different screens of an App it is common to do this when a screen appeared. The below code snippet demonstrates this by creating a `PageTracker` variable with the name under which this specific screen of the App should be tracked. This comfortable helps to always keep all tracking events pushed through this instance related to the previously specified page name. When the `UITableViewController` calls `viewDidAppear` the Screen is definitely visible to the user and can safely be tracked by calling `trackPageView()` on the assigned variable.
 
 ```swift
 class ProductListViewController: UITableViewController {
@@ -60,13 +55,25 @@ class ProductListViewController: UITableViewController {
 		tracker.trackPageView()
 	}
 }
+```
 
+As an alternative approach the `Tracker` instanced previously stored within `webtrekkTracker` can also send each and every type of event. A page view would be tracked like in the following snippet.
+
+```swift
+class ProductListViewController: UITableViewController {
+
+override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+
+		webtrekkTracker.trackPageView("Product Details")
+	}
+}
 ```
 
 Action Tracking
 ---------------
 
-The user interaction on a screen can be tracked by done in two different ways either by using a previously assigned `tracker` variable of the screen or by utilizing the Webtrekk instance. The code snippet demonstrates the recommended way by using the `tracker` variable within an `IBAction` call from a button.
+The user interaction on a screen can be tracked by using a previously assigned `tracker` variable of the screen or by utilizing the Webtrekk instance. The code snippet demonstrates the recommended way by using the `tracker` variable within an `IBAction` call from a button.
 
 ```swift
 @IBAction
@@ -75,10 +82,19 @@ func productTapped(sender: UIButton) {
 }
 ```
 
+As an alternative approach the `Tracker` instanced as previously mentioned can also send action tracking events. The `Tracker` just needs the page name the action is related to.
+
+```swift
+@IBAction
+func productTapped(sender: UIButton) {
+    webtrekkTracker.trackAction("Product tapped", pageName: "Product List")
+}
+```
+
 Media Tracking
 --------------
 
-The Webtrekk SDK offers a simple integration to track different states of you media playback. There are two approaches to make use of that. The first code snippet shows the recommended way by using the previously assigned `tracker`variable.
+The Webtrekk SDK offers a simple integration to track different states of you media playback. The code snippet shows the recommended way by using the previously assigned `tracker`variable.
 
 ```swift
 @IBAction
@@ -102,7 +118,13 @@ Beside the basic tracking of the different events each can be enhanced with more
 Page View Event
 ---------------
 
-The `PageViewEvent`is the most commonly used event and as of that has most of the properties that the other two events have. + Advertisement Properties + Ecommerce Properties + Page Properties + Session Details + User Properties
+The `PageViewEvent`is the most commonly used event and as of that has most of the properties that the other two events have.
+
+-	Advertisement Properties
+-	Ecommerce Properties
+-	Page Properties
+-	Session Details
+-	User Properties
 
 ```swift
 var pageViewEvent = PageViewEvent(pageProperties: PageProperties(name: "PageName"))
@@ -218,23 +240,29 @@ mediaEvent.action = .custom(name: "referral-link")
 
 ```swift
 mediaEvent.mediaProperties = MediaProperties(
-			name:         "MediaName",
-			bandwidth:    123.456,
-			duration:     12345.2,
-			groups:       [1: "Group1", 2: "Group2"],
-			position:     456.7,
-			soundIsMuted: true,
-			soundVolume:  0.5
-		)
+	name:         "MediaName",
+	bandwidth:    123.456,
+	duration:     12345.2,
+	groups:       [1: "Group1", 2: "Group2"],
+	position:     456.7,
+	soundIsMuted: true,
+	soundVolume:  0.5
+)
 ```
 
 Global Properties
 =================
 
+The `Tracker` has a property called global which holds all properties an event can have. The purpose of those properties are to be merged within every request to supplement the events with information gathered on a global scope.
+
 Cross Device Bridge
 -------------------
 
-The "Cross Device Bridge" properties can be set on
+The "Cross Device Bridge" properties can be set onto the global properties. The `address`, `emailAddress` or `phoneNumber` can either be set as a plain value or as an already hashed MD5 or SHA256 value.
+
+```swift
+tracker.global.crossDeviceProperties.emailAddress = .plain(text)
+```
 
 Configuration XML
 =================
@@ -247,6 +275,7 @@ Minimal
 A Configuration XML consist of at least three parameters: 'version', 'trackDomain' and 'trackId'
 
 ```xml
+<?xml version="1.0" encoding="utf-8"?>
 <webtrekkConfiguration>
 	<!--the version number for this configuration file -->
 	<version>1</version>
@@ -254,14 +283,8 @@ A Configuration XML consist of at least three parameters: 'version', 'trackDomai
 	<trackDomain>https://q3.webtrekk.net</trackDomain>
 
 	<!--customers trackid-->
-	<trackId>289053685367929</trackId>
+	<trackId>123456789123456</trackId>
 
-	<!-- measure only a subset of the users -->
-	<sampling>10</sampling>
-	<!-- interval between the requests are send in seconds -->
-	<sendDelay>5</sendDelay>
-	<!--maximum amoount of requests to store when the user is offline -->
-	<maxRequests>100</maxRequests>
 </webtrekkConfiguration>
 ```
 
@@ -270,24 +293,18 @@ Optional Settings
 
 Addition to be able to configure the minimal options for a Webtrekk Tracker the Configuration XMl opens the possibility to change other options too.
 
-| Option                   | Description |
-|--------------------------|-------------|
-| `sampling`               |             |
-| `sendDelay`              |             |
-| `resendOnStartEventTime` |             |
-| `maxRequests`            | s           |
+| Option                   | Description                                                                                        |
+|--------------------------|----------------------------------------------------------------------------------------------------|
+| `sampling`               | measure only every Nth user (0 to disable)                                                         |
+| `sendDelay`              | maximum delay after an event occurred before sending it to the server (in seconds)                 |
+| `resendOnStartEventTime` | minimum duration the app has to be in the background (or terminated) before starting a new session |
+| `maxRequests`            | maximum number of events to keep in the queue while there is no internet connection                |
 
 ```xml
-    <!-- measure only every Nth user (0 to disable) -->
-	<sampling>0</sampling>
-	<!-- maximum delay after an event occurred before sending it to the server (in seconds) -->
+  <sampling>0</sampling>
 	<sendDelay>300</sendDelay>
-	<!-- minimum duration the app has to be in the background (or terminated) before starting a new session -->
 	<resendOnStartEventTime>1800</resendOnStartEventTime>
-	<!-- maximum number of events to keep in the queue while there is no internet connection -->
 	<maxRequests>1000</maxRequests>
-	<!-- automatically download updated versions of this configuration file (empty to disable updates) -->
-	<configurationUpdateUrl>https://your.domain/webtrekk.xml</configurationUpdateUrl>
 ```
 
 Remote Configuration
@@ -295,16 +312,18 @@ Remote Configuration
 
 The Configuration XML also yields the option to reload a newer Configuration XML from a remote Url. A remotely saved Configuration XML needs to be valid against the definition, has a higher 'version' and the same 'trackId' as the currently used Configuration XML.
 
+```xml
+<enableRemoteConfiguration>false</enableRemoteConfiguration>
+<trackingConfigurationUrl>https://d1r27qvpjiaqj3.cloudfront.net/238713152098253/34629.xml</trackingConfigurationUrl>
+```
+
 Automatic Tracking
 ------------------
 
 To use the automatic Tracking feature the Configuration XML contains options to enable or disable different aspects for tracking.
 
 ```xml
-<!--automaticly track activities onStart method -->
 <autoTracked>true</autoTracked>
-
-
 <!--track if there was an application update -->
 <autoTrackAppUpdate>true</autoTrackAppUpdate>
 <!--track the advertiser id -->
@@ -329,7 +348,7 @@ To make use of the automatic page view tracking of the Webtrekk SDK the Configur
 
 ```xml
 <screen>
-	<classname>/.*\.ProductViewController/</classname>
+  <classname>/.*\.ProductViewController/</classname>
 	<mappingname>Product Details</mappingname>
 </screen>
 <screen>
@@ -420,8 +439,8 @@ pod update
 open Examples.xcworkspace
 ```
 
-Project structur
-================
+Project structure
+=================
 
 ```
 |_Module

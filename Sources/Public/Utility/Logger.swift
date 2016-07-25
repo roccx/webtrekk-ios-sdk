@@ -3,10 +3,13 @@ import Foundation
 
 public final class DefaultTrackingLogger: TrackingLogger {
 
+	/** Enable or disable logging completly */
 	public var enabled = true
+
+	/** Filter the amount of log output by setting different `TrackingLogLevel` */
 	public var minimumLevel = TrackingLogLevel.warning
 
-
+	/** Attach a message to the log output with a spezific `TackingLogLevel` */
 	public func log(@autoclosure message message: () -> String, level: TrackingLogLevel) {
 		guard enabled && level.rawValue >= minimumLevel.rawValue else {
 			return

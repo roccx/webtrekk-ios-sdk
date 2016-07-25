@@ -4,13 +4,25 @@ import UIKit
 
 public enum WebtrekkTracking {
 
+	/** Current version of the sdk */
 	public static let version = "4.0"
+	
 
+	/** the default implementation of `TrackingLogger` used for the sdk */
 	public static let defaultLogger = DefaultTrackingLogger()
+
+	/** Enable, disable or filter log outputs from the sdk by configuring the logger accordingly. A user implementation of `TrackingLogger` can be used too. */
 	public static var logger: TrackingLogger = WebtrekkTracking.defaultLogger
+
+	/** Indicates wether the sdk tries to migrated stored data from the previous major version. */
 	public static var migratesFromLibraryV3 = true
 
 
+	/**
+	Creates a `Tracker` by assuming that the configuration xml is named `webtrekk_config.xml` and is located within the application main bundle.
+	
+	- Throws: `TrackError` when the webtrekk_config.xml could not be located or when the configuration is not valid.
+	*/
 	public static func createTracker() throws -> Tracker {
 		checkIsOnMainThread()
 
@@ -22,7 +34,13 @@ public enum WebtrekkTracking {
 		return try createTracker(configurationFile: configurationFile)
 	}
 
+	/**
+	Creates a `Tracker` with the given configurationFile URL.
 
+	- Parameter configurationFile: The location of the configuration xml.
+
+	- Throws: `TrackError` when the configurationFile could not be located or when the configuration is not valid.
+	*/
 	public static func createTracker(configurationFile configurationFile: NSURL) throws -> Tracker {
 		checkIsOnMainThread()
 
@@ -38,7 +56,7 @@ public enum WebtrekkTracking {
 		}
 	}
 
-
+	/** Set wether the tracking is disabled or not. */
 	public static var isOptedOut: Bool {
 		get { return DefaultTracker.isOptedOut }
 		set { DefaultTracker.isOptedOut = newValue }
@@ -46,6 +64,7 @@ public enum WebtrekkTracking {
 
 
 	#if !os(watchOS)
+	/** Returns a `PageTracker` for a corresponding `UIViewController` which were configured by the xml. */
 	public static func trackerForAutotrackedViewController(viewController: UIViewController) -> PageTracker {
 		checkIsOnMainThread()
 
