@@ -15,8 +15,8 @@ public enum WebtrekkTracking {
 		checkIsOnMainThread()
 
 		let bundle = NSBundle.mainBundle()
-		guard let configurationFile = bundle.URLForResource("Webtrekk", withExtension: "xml") else {
-			throw TrackerError(message: "Cannot locate Webtrekk.xml in '\(bundle.bundlePath)'. Either place the file there or use WebtrekkTracking.createTracker(configurationFile:) to specify the file's location.")
+		guard let configurationFile = bundle.URLForResource("webtrekk_config", withExtension: "xml") else {
+			throw TrackerError(message: "Cannot locate webtrekk_config.xml in '\(bundle.bundlePath)'. Either place the file there or use WebtrekkTracking.createTracker(configurationFile:) to specify the file's location.")
 		}
 
 		return try createTracker(configurationFile: configurationFile)
