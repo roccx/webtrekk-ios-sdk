@@ -65,7 +65,7 @@ internal class XmlTrackerConfigurationParser {
 
 	private func readFromGlobalElement(xmlElement: XmlElement) throws {
 		guard xmlElement.name == "globalTrackingParameter" else {
-			throw Error(message: "\(xmlElement.path.joinWithSeparator(".")) needs to be globalTrackingParameter")
+			throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")) needs to be globalTrackingParameter")
 		}
 		guard !xmlElement.children.isEmpty else {
 			return
@@ -76,10 +76,10 @@ internal class XmlTrackerConfigurationParser {
 
 	private func readFromRootElement(xmlElement: XmlElement) throws -> TrackerConfiguration {
 		guard xmlElement.name == "webtrekkConfiguration" else {
-			throw Error(message: "\(xmlElement.path.joinWithSeparator(".")) root node needs to be webtrekkConfiguration")
+			throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")) root node needs to be webtrekkConfiguration")
 		}
 		guard !xmlElement.children.isEmpty else {
-			throw Error(message: "\(xmlElement.path.joinWithSeparator(".")) webtrekkConfiguration can not be empty")
+			throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")) webtrekkConfiguration can not be empty")
 		}
 		for child in xmlElement.children {
 			do {
@@ -114,16 +114,14 @@ internal class XmlTrackerConfigurationParser {
 					#endif
 					// TODO: Log not found elements?
 				}
-			} catch let generalError{
-				guard let error = generalError as? Error else {
-					throw generalError
-				}
-				throw Error(message: "\(xmlElement.path.joinWithSeparator(".")): \(error.message)")
+			}
+			catch let error as TrackerError {
+				throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")): \(error.message)")
 			}
 		}
 
 		guard let webtrekkId = webtrekkId, serverUrl = serverUrl else {
-			throw Error(message: "trackId and trackDomain needs to be set.")
+			throw TrackerError(message: "trackId and trackDomain must be set.")
 		}
 
 		var trackerConfiguration = TrackerConfiguration(webtrekkId: webtrekkId, serverUrl: serverUrl)
@@ -206,10 +204,10 @@ internal class XmlTrackerConfigurationParser {
 	#if !os(watchOS)
 	private func readFromScreenElement(xmlElement: XmlElement) throws {
 		guard xmlElement.name == "screen" else {
-			throw Error(message: "\(xmlElement.path.joinWithSeparator(".")) nodes needs to be screen")
+			throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")) nodes needs to be screen")
 		}
 		guard !xmlElement.children.isEmpty else {
-			throw Error(message: "\(xmlElement.path.joinWithSeparator(".")) node can not be empty")
+			throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")) node can not be empty")
 		}
 		// TODO: create screen here and append afterwards to array of screens
 		var viewControllerType: String?
@@ -242,13 +240,13 @@ internal class XmlTrackerConfigurationParser {
 		}
 
 		guard let viewControllerTypeName = viewControllerType else{
-			throw Error(message: "$\(xmlElement.path).classname needs to be set")
+			throw TrackerError(message: "$\(xmlElement.path).classname needs to be set")
 		}
 
 		let patternString: String
 		if viewControllerTypeName.hasPrefix("/") {
 			guard let _patternString = viewControllerTypeName.firstMatchForRegularExpression("^/(.*)/$")?[1] else {
-				throw Error(message: "invalid regular expression: missing trailing slash")
+				throw TrackerError(message: "invalid regular expression: missing trailing slash")
 			}
 			patternString = _patternString
 		}
@@ -262,7 +260,7 @@ internal class XmlTrackerConfigurationParser {
 			page = TrackerConfiguration.Page(viewControllerTypeNamePattern: pattern, pageProperties: PageProperties(viewControllerTypeName: viewControllerTypeName))
 		}
 		catch let error {
-			throw Error(message: "invalid regular expression: \(error)")
+			throw TrackerError(message: "invalid regular expression: \(error)")
 		}
 
 		if let screenParameter = screenTrackingParameter {
@@ -284,7 +282,7 @@ internal class XmlTrackerConfigurationParser {
 
 	private func readFromScreenTrackingParameterElement(xmlElement: XmlElement) throws -> ScreenTrackingParameter? {
 		guard xmlElement.name == "screenTrackingParameter" else {
-			throw Error(message: "screenTrackingParameter nodes needs to be screenTrackingParameter")
+			throw TrackerError(message: "screenTrackingParameter nodes needs to be screenTrackingParameter")
 		}
 		guard !xmlElement.children.isEmpty else {
 			return nil
@@ -332,18 +330,18 @@ internal class XmlTrackerConfigurationParser {
 		case "false": return false
 
 		default:
-			throw Error(message: "'\(string)' is not a valid boolean (expected 'true' or 'false')")
+			throw TrackerError(message: "'\(string)' is not a valid boolean (expected 'true' or 'false')")
 		}
 	}
 
 
 	private func parseDouble(string: String, allowedRange: ClosedInterval<Double>) throws -> Double? {
 		guard let value = Double(string) else {
-			throw Error(message: "'\(string)' is not a valid number")
+			throw TrackerError(message: "'\(string)' is not a valid number")
 		}
 
 		if !allowedRange.contains(value) {
-			throw Error(message: "value (\(value)) must be \(allowedRange.conditionText)")
+			throw TrackerError(message: "value (\(value)) must be \(allowedRange.conditionText)")
 		}
 
 		return value
@@ -352,18 +350,18 @@ internal class XmlTrackerConfigurationParser {
 
 	private func parseInt(string: String, allowedRange: ClosedInterval<Int>) throws -> Int? {
 		guard let value = Int(string) else {
-			throw Error(message: "'\(string)' is not a valid integer")
+			throw TrackerError(message: "'\(string)' is not a valid integer")
 		}
 
 		if !allowedRange.contains(value) {
 			if allowedRange.end == .max {
-				throw Error(message: "value (\(value)) must be larger than or equal to \(allowedRange.start)")
+				throw TrackerError(message: "value (\(value)) must be larger than or equal to \(allowedRange.start)")
 			}
 			if allowedRange.start == .min {
-				throw Error(message: "value (\(value)) must be smaller than or equal to \(allowedRange.end)")
+				throw TrackerError(message: "value (\(value)) must be smaller than or equal to \(allowedRange.end)")
 			}
 
-			throw Error(message: "value (\(value)) must be between \(allowedRange.start) (inclusive) and \(allowedRange.end) (inclusive)")
+			throw TrackerError(message: "value (\(value)) must be between \(allowedRange.start) (inclusive) and \(allowedRange.end) (inclusive)")
 		}
 
 		return value
@@ -373,7 +371,7 @@ internal class XmlTrackerConfigurationParser {
 	private func parseString(string: String, emptyAllowed: Bool) throws -> String? {
 		if string.isEmpty {
 			if !emptyAllowed {
-				throw Error(message: "must not be empty")
+				throw TrackerError(message: "must not be empty")
 			}
 
 			return nil
@@ -386,34 +384,19 @@ internal class XmlTrackerConfigurationParser {
 	private func parseUrl(string: String, emptyAllowed: Bool) throws -> NSURL? {
 		if string.isEmpty {
 			if !emptyAllowed {
-				throw Error(message: "must not be empty")
+				throw TrackerError(message: "must not be empty")
 			}
 
 			return nil
 		}
 
 		guard let value = NSURL(string: string) else {
-			throw Error(message: "'\(string)' is not a valid URL")
+			throw TrackerError(message: "'\(string)' is not a valid URL")
 		}
 
 		return value
 	}
-
-
-	private struct Error: CustomStringConvertible, ErrorType {
-
-		private var message: String
-
-
-		private init(message: String) {
-			self.message = message
-		}
-
-
-		private var description: String {
-			return message
-		}
-	}
+	
 
 
 	private enum PropertyName:String {

@@ -108,6 +108,8 @@ internal final class DefaultTracker: Tracker {
 		}
 
 		setUp()
+
+		checkForDuplicateTrackers()
 	}
 
 
@@ -250,6 +252,14 @@ internal final class DefaultTracker: Tracker {
 			if lastCheckedAppVersion != nil {
 				isFirstEventAfterAppUpdate = true
 			}
+		}
+	}
+
+
+	private func checkForDuplicateTrackers() {
+		let hasDuplicate = DefaultTracker.instances.values.contains { $0.target?.configuration.webtrekkId == configuration.webtrekkId && $0.target !== self }
+		if hasDuplicate {
+			logError("Multiple tracker instances for the same Webtrekk ID '\(configuration.webtrekkId)' were created. This is not supported and will corrupt tracking.")
 		}
 	}
 
