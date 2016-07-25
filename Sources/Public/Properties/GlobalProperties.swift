@@ -9,6 +9,7 @@ public struct GlobalProperties {
 	public var pageProperties: PageProperties
 	public var sessionDetails: [Int: TrackingValue]
 	public var userProperties: UserProperties
+	public var variables: [String : String]
 
 
 	public init(
@@ -20,7 +21,8 @@ public struct GlobalProperties {
 		mediaProperties: MediaProperties = MediaProperties(name: nil),
 		pageProperties: PageProperties = PageProperties(name: nil),
 		sessionDetails: [Int: TrackingValue] = [:],
-		userProperties: UserProperties = UserProperties()
+		userProperties: UserProperties = UserProperties(),
+		variables: [String : String] = [:]
 	) {
 		self.actionProperties = actionProperties
 		self.advertisementProperties = advertisementProperties
@@ -31,7 +33,9 @@ public struct GlobalProperties {
 		self.pageProperties = pageProperties
 		self.sessionDetails = sessionDetails
 		self.userProperties = userProperties
+		self.variables = variables
 	}
+
 
 	@warn_unused_result
 	internal func merged(over other: GlobalProperties) -> GlobalProperties {
@@ -43,7 +47,8 @@ public struct GlobalProperties {
 			mediaProperties:         mediaProperties.merged(over: other.mediaProperties),
 			pageProperties:          pageProperties.merged(over: other.pageProperties),
 			sessionDetails:          sessionDetails.merged(over: other.sessionDetails),
-			userProperties:          userProperties.merged(over: other.userProperties)
+			userProperties:          userProperties.merged(over: other.userProperties),
+			variables:               variables.merged(over: other.variables)
 		)
 	}
 }

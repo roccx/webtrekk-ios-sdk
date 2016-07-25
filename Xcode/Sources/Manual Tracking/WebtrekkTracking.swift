@@ -18,5 +18,4 @@ extension WebtrekkTracking {
 			fatalError("Cannot parse Webtrekk.xml: \(error)")
 		}
 	}()
-
 }

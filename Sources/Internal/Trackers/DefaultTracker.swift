@@ -430,6 +430,7 @@ internal final class DefaultTracker: Tracker {
 		var event = event
 		event.ipAddress = event.ipAddress ?? global.ipAddress
 		event.pageName = event.pageName ?? global.pageProperties.name
+		event.variables = event.variables.merged(over: global.variables)
 
 		guard !(event is ActionEvent) else {
 			return event
