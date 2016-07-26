@@ -384,8 +384,8 @@ internal final class DefaultTracker: Tracker {
 		checkIsOnMainThread()
 
 		guard let
-			viewControllerTypeName = event.viewControllerTypeName,
-			page = configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName)
+			viewControllerType = event.viewControllerType,
+			page = configuration.automaticallyTrackedPageForViewControllerType(viewControllerType)
 		else {
 			return event
 		}
@@ -1111,8 +1111,8 @@ extension DefaultTracker: RequestManager.Delegate {
 			var event = event
 
 			for tracker in trackers {
-				guard let viewControllerTypeName = event.viewControllerTypeName
-					where tracker.configuration.automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName) != nil
+				guard let viewControllerType = event.viewControllerType
+					where tracker.configuration.automaticallyTrackedPageForViewControllerType(viewControllerType) != nil
 				else {
 					continue
 				}

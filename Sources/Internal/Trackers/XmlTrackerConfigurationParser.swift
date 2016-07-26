@@ -239,7 +239,7 @@ internal class XmlTrackerConfigurationParser {
 			return
 		}
 
-		guard let viewControllerTypeName = viewControllerType else{
+		guard let viewControllerTypeName = viewControllerType else {
 			throw TrackerError(message: "$\(xmlElement.path).classname needs to be set")
 		}
 
@@ -257,7 +257,7 @@ internal class XmlTrackerConfigurationParser {
 		var page: TrackerConfiguration.Page
 		do {
 			let pattern = try NSRegularExpression(pattern: patternString, options: [])
-			page = TrackerConfiguration.Page(viewControllerTypeNamePattern: pattern, pageProperties: PageProperties(viewControllerTypeName: viewControllerTypeName))
+			page = TrackerConfiguration.Page(viewControllerTypeNamePattern: pattern, pageProperties: PageProperties(name: pageName))
 		}
 		catch let error {
 			throw TrackerError(message: "invalid regular expression: \(error)")
@@ -269,12 +269,10 @@ internal class XmlTrackerConfigurationParser {
 			page.ecommerceProperties = screenParameter.ecommerceProperties()
 			page.ipAddress = screenParameter.parameters[.ipAddress]
 			page.mediaProperties = screenParameter.mediaProperties()
-			page.pageProperties = screenParameter.pageProperties()
+			page.pageProperties = page.pageProperties.merged(over: screenParameter.pageProperties())
 			page.sessionDetails = screenParameter.sessionDetails()
 			page.userProperties = screenParameter.userProperties()
 		}
-
-		page.pageProperties.name = pageName?.nonEmpty
 
 		automaticallyTrackedPages.append(page)
 	}

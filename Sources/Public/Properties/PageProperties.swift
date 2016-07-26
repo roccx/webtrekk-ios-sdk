@@ -7,8 +7,8 @@ public struct PageProperties {
 	public var groups: [Int: TrackingValue]?
 	public var name: String?
 	public var internalSearch: String?
-	public var viewControllerTypeName: String?
 	public var url: String?
+	public var viewControllerType: UIViewController.Type?
 
 
 	public init(
@@ -27,7 +27,7 @@ public struct PageProperties {
 
 
 	public init(
-		viewControllerTypeName: String?,
+		viewControllerType: UIViewController.Type?,
 		details: [Int: TrackingValue]? = nil,
 		groups: [Int: TrackingValue]? = nil,
 		internalSearch: String? = nil,
@@ -36,8 +36,8 @@ public struct PageProperties {
 		self.details = details
 		self.groups = groups
 		self.internalSearch = internalSearch
-		self.viewControllerTypeName = viewControllerTypeName
 		self.url = url
+		self.viewControllerType = viewControllerType
 	}
 
 	
@@ -48,7 +48,7 @@ public struct PageProperties {
 		new.groups = groups.merged(over: other.groups)
 		new.name = name ?? other.name
 		new.internalSearch = internalSearch ?? other.internalSearch
-		new.viewControllerTypeName = viewControllerTypeName ?? other.viewControllerTypeName
+		new.viewControllerType = viewControllerType ?? other.viewControllerType
 		new.url = url ?? other.url
 		return new
 	}

@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 
 internal struct TrackerConfiguration {
@@ -86,8 +87,10 @@ internal struct TrackerConfiguration {
 
 
 	#if !os(watchOS)
-	internal func automaticallyTrackedPageForViewControllerTypeName(viewControllerTypeName: String) -> Page? {
-		return automaticallyTrackedPages.firstMatching({ $0.matches(viewControllerTypeName: viewControllerTypeName) })
+	internal func automaticallyTrackedPageForViewControllerType(viewControllerType: UIViewController.Type) -> Page? {
+		let typeName = String(reflecting: viewControllerType)
+
+		return automaticallyTrackedPages.firstMatching({ $0.matches(viewControllerTypeName: typeName) })
 	}
 	#endif
 

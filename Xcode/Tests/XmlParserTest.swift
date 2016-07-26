@@ -28,6 +28,7 @@ internal class XmlParserAutomaticTest: XCTestCase {
 		XCTAssertEqual(config.version, 1)
 	}
 
+
 	internal func testParserConfig() {
 		let config: TrackerConfiguration
 		do {
@@ -59,6 +60,7 @@ internal class XmlParserAutomaticTest: XCTestCase {
 
 		for (index, page) in config.automaticallyTrackedPages.enumerate() {
 			XCTAssertNotNil(page.pageProperties.name)
+
 			guard index == 1 else {
 				continue
 			}

@@ -1,3 +1,5 @@
+import UIKit
+
 #if !os(watchOS)
 	import AVFoundation
 #endif
@@ -26,12 +28,12 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
-	internal init(handler: Handler, viewControllerTypeName: String) {
+	internal init(handler: Handler, viewControllerType: UIViewController.Type) {
 		checkIsOnMainThread()
 
 		self.handler = handler
 
-		self.pageProperties = PageProperties(viewControllerTypeName: viewControllerTypeName)
+		self.pageProperties = PageProperties(viewControllerType: viewControllerType)
 	}
 
 
@@ -124,7 +126,7 @@ extension DefaultPageTracker: MediaEventHandler {
 
 		var event = event
 		event.pageName = event.pageName ?? pageProperties.name
-		event.viewControllerTypeName = event.viewControllerTypeName ?? pageProperties.viewControllerTypeName
+		event.viewControllerType = event.viewControllerType ?? pageProperties.viewControllerType
 		event.variables = event.variables.merged(over: variables)
 
 		handler.handleEvent(event)

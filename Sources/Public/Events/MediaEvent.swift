@@ -1,3 +1,6 @@
+import UIKit
+
+
 public struct MediaEvent: TrackingEventWithMediaProperties {
 
 	public var action: Action
@@ -5,7 +8,7 @@ public struct MediaEvent: TrackingEventWithMediaProperties {
 	public var mediaProperties: MediaProperties
 	public var pageName: String?
 	public var variables: [String : String]
-	public var viewControllerTypeName: String?
+	public var viewControllerType: UIViewController.Type?
 
 
 	public init(
@@ -24,13 +27,13 @@ public struct MediaEvent: TrackingEventWithMediaProperties {
 	public init(
 		action: Action,
 		mediaProperties: MediaProperties,
-		viewControllerTypeName: String?,
+		viewControllerType: UIViewController.Type?,
 		variables: [String : String] = [:]
 	) {
 		self.action = action
 		self.mediaProperties = mediaProperties
 		self.variables = variables
-		self.viewControllerTypeName = viewControllerTypeName
+		self.viewControllerType = viewControllerType
 	}
 
 

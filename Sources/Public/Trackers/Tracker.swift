@@ -62,6 +62,27 @@ public extension Tracker {
 
 
 	public func trackAction(
+		actionName: String,
+		viewControllerType: UIViewController.Type,
+		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
+		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
+		sessionDetails: [Int: TrackingValue] = [:],
+		userProperties: UserProperties = UserProperties(),
+		variables: [String : String] = [:]
+	) {
+		trackAction(
+			ActionProperties(name: actionName),
+			pageProperties:          PageProperties(viewControllerType: viewControllerType),
+			advertisementProperties: advertisementProperties,
+			ecommerceProperties:     ecommerceProperties,
+			sessionDetails:          sessionDetails,
+			userProperties:          userProperties,
+			variables:               variables
+		)
+	}
+
+
+	public func trackAction(
 		actionProperties: ActionProperties,
 		pageProperties: PageProperties,
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),

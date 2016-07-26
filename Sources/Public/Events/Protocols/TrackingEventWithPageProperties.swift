@@ -1,3 +1,6 @@
+import UIKit
+
+
 public protocol TrackingEventWithPageProperties: TrackingEvent {
 
 	var pageProperties: PageProperties { get mutating set }
@@ -12,8 +15,8 @@ public extension TrackingEventWithPageProperties {
 	}
 
 
-	public var viewControllerTypeName: String? {
-		get { return pageProperties.viewControllerTypeName }
-		mutating set { pageProperties.viewControllerTypeName = newValue }
+	public var viewControllerType: UIViewController.Type? {
+		get { return pageProperties.viewControllerType }
+		mutating set { pageProperties.viewControllerType = newValue }
 	}
 }
