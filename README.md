@@ -264,6 +264,26 @@ The "Cross Device Bridge" properties can be set onto the global properties. The 
 tracker.global.crossDeviceProperties.emailAddress = .plain(text)
 ```
 
+Automatic Tracking
+==================
+
+The Webtrekk SDK offers the possibility to configure an automatic creation of `Tracker` instances. Once a `UIViewControllers` is configured for automatic tracking the `WebtrekkTracking` holds a preconfigured `Tracker` instance which will be used to automatically track page view events within the `viewDidAppear` function. The code snippet demonstrates how to access this preconfigured instance for further tracking.
+
+```swift
+class ProductListViewController: UITableViewController {
+
+  var autoTracker: PageTracker {
+    return WebtrekkTracking.trackerForAutotrackedViewController(self)
+  }
+
+
+  @IBAction
+  func productTapped(sender: UIButton) {
+      autoTracker.trackAction("Product tapped")
+  }
+}
+```
+
 Configuration XML
 =================
 
