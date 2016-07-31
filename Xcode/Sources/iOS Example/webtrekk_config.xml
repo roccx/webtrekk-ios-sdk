@@ -57,7 +57,7 @@
 		<parameter id="ORDER_TOTAL">414</parameter>
 		<parameter id="ORDER_NUMBER">ABC-123-ERT</parameter>
 		<parameter id="VOUCHER_VALUE">515</parameter>
-		<parameter id="GENDER">male</parameter>
+		<parameter id="GENDER">2</parameter>
 
 		<parameter id="IP_ADDRESS">DONT SEND</parameter>
 		<!--define the global page parameter, the key is the index,  -->

@@ -21,7 +21,7 @@ class ProductListViewController: UITableViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		var b = UserProperties.Birthday
+
 		autoTracker.variables["Key2"] = "value2"
 		autoTracker.variables["Key3"] = "value3"
 		autoTracker.variables["Key4"] = "value4"

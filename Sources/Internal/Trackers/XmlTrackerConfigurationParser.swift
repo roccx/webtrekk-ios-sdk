@@ -615,8 +615,8 @@ internal class XmlTrackerConfigurationParser {
 			}
 			if let gender = parameters[.gender] {
 				switch gender.lowercaseString {
-				case "male": userProperties.gender = .male
-				case "femal": userProperties.gender = .female
+				case "male", "1": userProperties.gender = .male
+				case "femal", "2": userProperties.gender = .female
 				default: break
 				}
 			}
