@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "495162161D1DFBE80006A82D"
-               BuildableName = "Manual Tracking Example.app"
-               BlueprintName = "Manual Tracking Example"
+               BlueprintIdentifier = "495161D11D1DFB500006A82D"
+               BuildableName = "Example.app"
+               BlueprintName = "Example"
                ReferencedContainer = "container:Examples.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "495162161D1DFBE80006A82D"
-            BuildableName = "Manual Tracking Example.app"
-            BlueprintName = "Manual Tracking Example"
+            BlueprintIdentifier = "495161D11D1DFB500006A82D"
+            BuildableName = "Example.app"
+            BlueprintName = "Example"
             ReferencedContainer = "container:Examples.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -55,9 +55,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "495162161D1DFBE80006A82D"
-            BuildableName = "Manual Tracking Example.app"
-            BlueprintName = "Manual Tracking Example"
+            BlueprintIdentifier = "495161D11D1DFB500006A82D"
+            BuildableName = "Example.app"
+            BlueprintName = "Example"
             ReferencedContainer = "container:Examples.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -74,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "495162161D1DFBE80006A82D"
-            BuildableName = "Manual Tracking Example.app"
-            BlueprintName = "Manual Tracking Example"
+            BlueprintIdentifier = "495161D11D1DFB500006A82D"
+            BuildableName = "Example.app"
+            BlueprintName = "Example"
             ReferencedContainer = "container:Examples.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

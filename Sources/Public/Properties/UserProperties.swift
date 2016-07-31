@@ -83,6 +83,12 @@ public struct UserProperties {
 		public var day: Int
 		public var month: Int
 		public var year: Int
+
+		public init(day: Int = 1, month: Int, year: Int) {
+			self.day = day
+			self.month = month
+			self.year = year
+		}
 	}
 	
 

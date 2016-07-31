@@ -1,11 +1,9 @@
 import UIKit
 import Webtrekk
+import AdSupport
 
 
 class ProductListViewController: UITableViewController {
-
-	private let tracker = WebtrekkTracking.sharedTracker.trackerForPage("Product List")
-
 
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == "openProduct" {
@@ -15,18 +13,19 @@ class ProductListViewController: UITableViewController {
 			guard let productViewController = segue.destinationViewController as? ProductViewController else {
 				return
 			}
-
-			tracker.trackAction("Product tapped")
+			autoTracker.trackAction("Product tapped")
 
 			productViewController.productId = indexPath.row + 1
 		}
 	}
 
-
-	override func viewDidAppear(animated: Bool) {
-		super.viewDidAppear(animated)
-
-		tracker.trackPageView()
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		var b = UserProperties.Birthday
+		autoTracker.variables["Key2"] = "value2"
+		autoTracker.variables["Key3"] = "value3"
+		autoTracker.variables["Key4"] = "value4"
+		autoTracker.variables["KeyOverride"] = "valueOverride"
 	}
 }
 

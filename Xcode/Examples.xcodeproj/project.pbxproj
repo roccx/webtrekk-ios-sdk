@@ -7,47 +7,36 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4951620D1D1DFBBD0006A82D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161EC1D1DFB9C0006A82D /* AppDelegate.swift */; };
-		4951620E1D1DFBBD0006A82D /* ProductListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161ED1D1DFB9C0006A82D /* ProductListViewController.swift */; };
-		4951620F1D1DFBBD0006A82D /* ProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161EE1D1DFB9C0006A82D /* ProductViewController.swift */; };
-		495162101D1DFBBD0006A82D /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 495161EF1D1DFB9C0006A82D /* webtrekk_config.xml */; };
-		495162111D1DFBBD0006A82D /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161F01D1DFB9C0006A82D /* WebtrekkTracking.swift */; };
 		495162121D1DFBC30006A82D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495161E61D1DFB9C0006A82D /* LaunchScreen.storyboard */; };
 		495162131D1DFBC30006A82D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495161E71D1DFB9C0006A82D /* Main.storyboard */; };
 		495162151D1DFBC30006A82D /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495161E91D1DFB9C0006A82D /* Video.mp4 */; };
-		4951621E1D1DFBE80006A82D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495161E71D1DFB9C0006A82D /* Main.storyboard */; };
-		495162201D1DFBE80006A82D /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495161E91D1DFB9C0006A82D /* Video.mp4 */; };
-		495162211D1DFBE80006A82D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495161E61D1DFB9C0006A82D /* LaunchScreen.storyboard */; };
-		495162351D1DFC590006A82D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161F21D1DFB9C0006A82D /* AppDelegate.swift */; };
-		495162361D1DFC590006A82D /* ProductListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161F31D1DFB9C0006A82D /* ProductListViewController.swift */; };
-		495162371D1DFC590006A82D /* ProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161F41D1DFB9C0006A82D /* ProductViewController.swift */; };
-		495162381D1DFC590006A82D /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495161F51D1DFB9C0006A82D /* WebtrekkTracking.swift */; };
 		495162391D1DFC5F0006A82D /* ConfigAutomatic.xml in Resources */ = {isa = PBXBuildFile; fileRef = 495162061D1DFB9C0006A82D /* ConfigAutomatic.xml */; };
 		4951623A1D1DFC5F0006A82D /* ConfigManual.xml in Resources */ = {isa = PBXBuildFile; fileRef = 495162071D1DFB9C0006A82D /* ConfigManual.xml */; };
 		4951623B1D1DFC5F0006A82D /* ConfigMinimal.xml in Resources */ = {isa = PBXBuildFile; fileRef = 495162081D1DFB9C0006A82D /* ConfigMinimal.xml */; };
 		4951623C1D1DFC5F0006A82D /* EventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495162091D1DFB9C0006A82D /* EventTest.swift */; };
 		4951623D1D1DFC5F0006A82D /* RequestUrlBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620B1D1DFB9C0006A82D /* RequestUrlBuilderTests.swift */; };
 		4951623E1D1DFC5F0006A82D /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */; };
-		52B4475E2A22B8D281F1C4BB /* Pods_iOS_Automatic_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */; };
-		B71B0A0E1D40CB9C00A45F1C /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = B71B0A0D1D40CB9C00A45F1C /* webtrekk_config.xml */; };
+		9D982D925187365A215B1DE4 /* Pods_iOS_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F05209EDDBE65B58F6F92233 /* Pods_iOS_Example.framework */; };
 		B72368BB1D3F643100D64C63 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72368BA1D3F643100D64C63 /* AdSupport.framework */; };
-		B76E298E1D33C5B7006F3F71 /* VoucherListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E298D1D33C5B7006F3F71 /* VoucherListViewController.swift */; };
-		B76E29901D33C5F6006F3F71 /* VoucherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E298F1D33C5F6006F3F71 /* VoucherViewController.swift */; };
-		B76E29921D33CF1A006F3F71 /* VoucherListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E29911D33CF1A006F3F71 /* VoucherListViewController.swift */; };
-		B76E29941D33CF9B006F3F71 /* VoucherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E29931D33CF9B006F3F71 /* VoucherViewController.swift */; };
-		B76E29961D33DFC1006F3F71 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E29951D33DFC1006F3F71 /* SettingsViewController.swift */; };
-		B76E29981D33E6B7006F3F71 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E29971D33E6B7006F3F71 /* SettingsViewController.swift */; };
+		B73DB2311D49ECC200F0C8DD /* iOS Example in Resources */ = {isa = PBXBuildFile; fileRef = B73DB2301D49ECC200F0C8DD /* iOS Example */; };
+		B73DB23D1D49ED4F00F0C8DD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB2351D49ED4F00F0C8DD /* AppDelegate.swift */; };
+		B73DB23E1D49ED4F00F0C8DD /* ProductListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB2361D49ED4F00F0C8DD /* ProductListViewController.swift */; };
+		B73DB23F1D49ED4F00F0C8DD /* ProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB2371D49ED4F00F0C8DD /* ProductViewController.swift */; };
+		B73DB2401D49ED4F00F0C8DD /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB2381D49ED4F00F0C8DD /* SettingsViewController.swift */; };
+		B73DB2411D49ED4F00F0C8DD /* VoucherListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB2391D49ED4F00F0C8DD /* VoucherListViewController.swift */; };
+		B73DB2421D49ED4F00F0C8DD /* VoucherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB23A1D49ED4F00F0C8DD /* VoucherViewController.swift */; };
+		B73DB2431D49ED4F00F0C8DD /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = B73DB23B1D49ED4F00F0C8DD /* webtrekk_config.xml */; };
+		B73DB2441D49ED4F00F0C8DD /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB23C1D49ED4F00F0C8DD /* WebtrekkTracking.swift */; };
 		D9F19E56282C75668E84DE07 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */; };
-		FB9C2289089B9F4C07AF791D /* Pods_iOS_Manual_Tracking_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		495162301D1DFC1E0006A82D /* PBXContainerItemProxy */ = {
+		B73DB2451D49EE6900F0C8DD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 495161AF1D1DFB0F0006A82D /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 495162161D1DFBE80006A82D;
-			remoteInfo = "Manual Tracking Example";
+			remoteGlobalIDString = 495161D11D1DFB500006A82D;
+			remoteInfo = Example;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -56,20 +45,11 @@
 		2498CE9BD6C4DFE82C1CC9A5 /* Pods-iOS-Manual Tracking Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Manual Tracking Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example.release.xcconfig"; sourceTree = "<group>"; };
 		2A18E2020C0C8D790D45199E /* Pods-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		3AF10C6A88059CEC573259C5 /* Pods-iOS-Automatic Tracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Automatic Tracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example.debug.xcconfig"; sourceTree = "<group>"; };
-		495161D21D1DFB500006A82D /* Automatic Tracking Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Automatic Tracking Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		495161D21D1DFB500006A82D /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		495161E51D1DFB9C0006A82D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		495161E61D1DFB9C0006A82D /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		495161E71D1DFB9C0006A82D /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		495161E91D1DFB9C0006A82D /* Video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Video.mp4; sourceTree = "<group>"; };
-		495161EC1D1DFB9C0006A82D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		495161ED1D1DFB9C0006A82D /* ProductListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductListViewController.swift; sourceTree = "<group>"; };
-		495161EE1D1DFB9C0006A82D /* ProductViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductViewController.swift; sourceTree = "<group>"; };
-		495161EF1D1DFB9C0006A82D /* webtrekk_config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = webtrekk_config.xml; sourceTree = "<group>"; };
-		495161F01D1DFB9C0006A82D /* WebtrekkTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
-		495161F21D1DFB9C0006A82D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		495161F31D1DFB9C0006A82D /* ProductListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductListViewController.swift; sourceTree = "<group>"; };
-		495161F41D1DFB9C0006A82D /* ProductViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductViewController.swift; sourceTree = "<group>"; };
-		495161F51D1DFB9C0006A82D /* WebtrekkTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
 		495161F71D1DFB9C0006A82D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		495161F91D1DFB9C0006A82D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
 		495161FA1D1DFB9C0006A82D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -89,23 +69,27 @@
 		4951620A1D1DFB9C0006A82D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4951620B1D1DFB9C0006A82D /* RequestUrlBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestUrlBuilderTests.swift; sourceTree = "<group>"; };
 		4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XmlParserTest.swift; sourceTree = "<group>"; };
-		495162251D1DFBE80006A82D /* Manual Tracking Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Manual Tracking Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4951622B1D1DFC1E0006A82D /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		497AAE311D22D2780094B8B4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		497AAE321D22D28A0094B8B4 /* Webtrekk.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = Webtrekk.podspec; path = ../Webtrekk.podspec; sourceTree = "<group>"; };
-		B71B0A0D1D40CB9C00A45F1C /* webtrekk_config.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = webtrekk_config.xml; sourceTree = "<group>"; };
+		940A7661FF75E983D9FA93C6 /* Pods-iOS-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Example/Pods-iOS-Example.release.xcconfig"; sourceTree = "<group>"; };
 		B72368BA1D3F643100D64C63 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
-		B76E298D1D33C5B7006F3F71 /* VoucherListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherListViewController.swift; sourceTree = "<group>"; };
-		B76E298F1D33C5F6006F3F71 /* VoucherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherViewController.swift; sourceTree = "<group>"; };
-		B76E29911D33CF1A006F3F71 /* VoucherListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherListViewController.swift; sourceTree = "<group>"; };
-		B76E29931D33CF9B006F3F71 /* VoucherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherViewController.swift; sourceTree = "<group>"; };
-		B76E29951D33DFC1006F3F71 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		B76E29971D33E6B7006F3F71 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		B73DB2301D49ECC200F0C8DD /* iOS Example */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "iOS Example"; path = "/Users/bwerker/Documents/Repositories/webtrekk-library/Xcode/Sources/iOS Example"; sourceTree = "<absolute>"; };
+		B73DB2351D49ED4F00F0C8DD /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B73DB2361D49ED4F00F0C8DD /* ProductListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductListViewController.swift; sourceTree = "<group>"; };
+		B73DB2371D49ED4F00F0C8DD /* ProductViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductViewController.swift; sourceTree = "<group>"; };
+		B73DB2381D49ED4F00F0C8DD /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		B73DB2391D49ED4F00F0C8DD /* VoucherListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherListViewController.swift; sourceTree = "<group>"; };
+		B73DB23A1D49ED4F00F0C8DD /* VoucherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoucherViewController.swift; sourceTree = "<group>"; };
+		B73DB23B1D49ED4F00F0C8DD /* webtrekk_config.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = webtrekk_config.xml; sourceTree = "<group>"; };
+		B73DB23C1D49ED4F00F0C8DD /* WebtrekkTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
 		BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Manual_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Automatic_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D29455AE99F8B7F5F76E838A /* Pods-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig"; sourceTree = "<group>"; };
+		D56012B81A1CD155B0DE5B50 /* Pods-iOS-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Example/Pods-iOS-Example.debug.xcconfig"; sourceTree = "<group>"; };
 		D9550D87BD74A73547C55348 /* Pods-iOS-Manual Tracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Manual Tracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example.debug.xcconfig"; sourceTree = "<group>"; };
+		F05209EDDBE65B58F6F92233 /* Pods_iOS_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,15 +98,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B72368BB1D3F643100D64C63 /* AdSupport.framework in Frameworks */,
-				52B4475E2A22B8D281F1C4BB /* Pods_iOS_Automatic_Tracking_Example.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4951621C1D1DFBE80006A82D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FB9C2289089B9F4C07AF791D /* Pods_iOS_Manual_Tracking_Example.framework in Frameworks */,
+				9D982D925187365A215B1DE4 /* Pods_iOS_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,8 +130,7 @@
 		495161B81D1DFB0F0006A82D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				495161D21D1DFB500006A82D /* Automatic Tracking Example.app */,
-				495162251D1DFBE80006A82D /* Manual Tracking Example.app */,
+				495161D21D1DFB500006A82D /* Example.app */,
 				4951622B1D1DFC1E0006A82D /* Tests.xctest */,
 			);
 			name = Products;
@@ -175,42 +150,11 @@
 		495161EA1D1DFB9C0006A82D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				495161EB1D1DFB9C0006A82D /* Automatic Tracking */,
-				495161F11D1DFB9C0006A82D /* Manual Tracking */,
+				B73DB2341D49ED4F00F0C8DD /* iOS Example */,
 				495161F61D1DFB9C0006A82D /* WatchKit App */,
 				495161FB1D1DFB9C0006A82D /* WatchKit Extension */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		495161EB1D1DFB9C0006A82D /* Automatic Tracking */ = {
-			isa = PBXGroup;
-			children = (
-				495161EC1D1DFB9C0006A82D /* AppDelegate.swift */,
-				495161ED1D1DFB9C0006A82D /* ProductListViewController.swift */,
-				495161EE1D1DFB9C0006A82D /* ProductViewController.swift */,
-				B76E29951D33DFC1006F3F71 /* SettingsViewController.swift */,
-				B76E298D1D33C5B7006F3F71 /* VoucherListViewController.swift */,
-				B76E298F1D33C5F6006F3F71 /* VoucherViewController.swift */,
-				495161F01D1DFB9C0006A82D /* WebtrekkTracking.swift */,
-				495161EF1D1DFB9C0006A82D /* webtrekk_config.xml */,
-			);
-			path = "Automatic Tracking";
-			sourceTree = "<group>";
-		};
-		495161F11D1DFB9C0006A82D /* Manual Tracking */ = {
-			isa = PBXGroup;
-			children = (
-				495161F21D1DFB9C0006A82D /* AppDelegate.swift */,
-				495161F31D1DFB9C0006A82D /* ProductListViewController.swift */,
-				B76E29971D33E6B7006F3F71 /* SettingsViewController.swift */,
-				495161F41D1DFB9C0006A82D /* ProductViewController.swift */,
-				B76E29911D33CF1A006F3F71 /* VoucherListViewController.swift */,
-				B76E29931D33CF9B006F3F71 /* VoucherViewController.swift */,
-				495161F51D1DFB9C0006A82D /* WebtrekkTracking.swift */,
-				B71B0A0D1D40CB9C00A45F1C /* webtrekk_config.xml */,
-			);
-			path = "Manual Tracking";
 			sourceTree = "<group>";
 		};
 		495161F61D1DFB9C0006A82D /* WatchKit App */ = {
@@ -260,8 +204,24 @@
 				CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */,
 				CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */,
 				BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */,
+				F05209EDDBE65B58F6F92233 /* Pods_iOS_Example.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B73DB2341D49ED4F00F0C8DD /* iOS Example */ = {
+			isa = PBXGroup;
+			children = (
+				B73DB2351D49ED4F00F0C8DD /* AppDelegate.swift */,
+				B73DB2361D49ED4F00F0C8DD /* ProductListViewController.swift */,
+				B73DB2371D49ED4F00F0C8DD /* ProductViewController.swift */,
+				B73DB2381D49ED4F00F0C8DD /* SettingsViewController.swift */,
+				B73DB2391D49ED4F00F0C8DD /* VoucherListViewController.swift */,
+				B73DB23A1D49ED4F00F0C8DD /* VoucherViewController.swift */,
+				B73DB23B1D49ED4F00F0C8DD /* webtrekk_config.xml */,
+				B73DB23C1D49ED4F00F0C8DD /* WebtrekkTracking.swift */,
+			);
+			path = "iOS Example";
 			sourceTree = "<group>";
 		};
 		F6D5AB716B904C7CC4FFDE6C /* Pods */ = {
@@ -273,6 +233,8 @@
 				1B23DA1EADCD8C1FBB06B5FB /* Pods-iOS-Automatic Tracking Example.release.xcconfig */,
 				D9550D87BD74A73547C55348 /* Pods-iOS-Manual Tracking Example.debug.xcconfig */,
 				2498CE9BD6C4DFE82C1CC9A5 /* Pods-iOS-Manual Tracking Example.release.xcconfig */,
+				D56012B81A1CD155B0DE5B50 /* Pods-iOS-Example.debug.xcconfig */,
+				940A7661FF75E983D9FA93C6 /* Pods-iOS-Example.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -280,9 +242,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		495161D11D1DFB500006A82D /* Automatic Tracking Example */ = {
+		495161D11D1DFB500006A82D /* Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 495161E11D1DFB500006A82D /* Build configuration list for PBXNativeTarget "Automatic Tracking Example" */;
+			buildConfigurationList = 495161E11D1DFB500006A82D /* Build configuration list for PBXNativeTarget "Example" */;
 			buildPhases = (
 				0FA171CD7C739D6C47511CF5 /* [CP] Check Pods Manifest.lock */,
 				495161CE1D1DFB500006A82D /* Sources */,
@@ -295,29 +257,9 @@
 			);
 			dependencies = (
 			);
-			name = "Automatic Tracking Example";
+			name = Example;
 			productName = "Automatic Tracking Example";
-			productReference = 495161D21D1DFB500006A82D /* Automatic Tracking Example.app */;
-			productType = "com.apple.product-type.application";
-		};
-		495162161D1DFBE80006A82D /* Manual Tracking Example */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 495162221D1DFBE80006A82D /* Build configuration list for PBXNativeTarget "Manual Tracking Example" */;
-			buildPhases = (
-				B7FED3D4EADA5CE6138AECEC /* [CP] Check Pods Manifest.lock */,
-				495162171D1DFBE80006A82D /* Sources */,
-				4951621C1D1DFBE80006A82D /* Frameworks */,
-				4951621D1D1DFBE80006A82D /* Resources */,
-				B68AD189839B9A8D3D60E45B /* [CP] Embed Pods Frameworks */,
-				ADF65BCFEFEED3FABFC95718 /* [CP] Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Manual Tracking Example";
-			productName = "Automatic Tracking Example";
-			productReference = 495162251D1DFBE80006A82D /* Manual Tracking Example.app */;
+			productReference = 495161D21D1DFB500006A82D /* Example.app */;
 			productType = "com.apple.product-type.application";
 		};
 		4951622A1D1DFC1E0006A82D /* Tests */ = {
@@ -334,7 +276,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				495162311D1DFC1E0006A82D /* PBXTargetDependency */,
+				B73DB2461D49EE6900F0C8DD /* PBXTargetDependency */,
 			);
 			name = Tests;
 			productName = Tests;
@@ -357,7 +299,7 @@
 					};
 					4951622A1D1DFC1E0006A82D = {
 						CreatedOnToolsVersion = 7.3.1;
-						TestTargetID = 495162161D1DFBE80006A82D;
+						TestTargetID = 495161D11D1DFB500006A82D;
 					};
 				};
 			};
@@ -374,8 +316,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				495161D11D1DFB500006A82D /* Automatic Tracking Example */,
-				495162161D1DFBE80006A82D /* Manual Tracking Example */,
+				495161D11D1DFB500006A82D /* Example */,
 				4951622A1D1DFC1E0006A82D /* Tests */,
 			);
 		};
@@ -386,21 +327,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B73DB2431D49ED4F00F0C8DD /* webtrekk_config.xml in Resources */,
 				495162131D1DFBC30006A82D /* Main.storyboard in Resources */,
-				495162101D1DFBBD0006A82D /* webtrekk_config.xml in Resources */,
 				495162151D1DFBC30006A82D /* Video.mp4 in Resources */,
+				B73DB2311D49ECC200F0C8DD /* iOS Example in Resources */,
 				495162121D1DFBC30006A82D /* LaunchScreen.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4951621D1D1DFBE80006A82D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4951621E1D1DFBE80006A82D /* Main.storyboard in Resources */,
-				495162201D1DFBE80006A82D /* Video.mp4 in Resources */,
-				B71B0A0E1D40CB9C00A45F1C /* webtrekk_config.xml in Resources */,
-				495162211D1DFBE80006A82D /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,55 +375,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Example/Pods-iOS-Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		86D6A59F46C3757FE42870D6 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		ADF65BCFEFEED3FABFC95718 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B68AD189839B9A8D3D60E45B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B7FED3D4EADA5CE6138AECEC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -534,7 +420,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Automatic Tracking Example/Pods-iOS-Automatic Tracking Example-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Example/Pods-iOS-Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FEFCB597F67AF7406FA509AE /* [CP] Copy Pods Resources */ = {
@@ -559,27 +445,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4951620F1D1DFBBD0006A82D /* ProductViewController.swift in Sources */,
-				B76E298E1D33C5B7006F3F71 /* VoucherListViewController.swift in Sources */,
-				B76E29961D33DFC1006F3F71 /* SettingsViewController.swift in Sources */,
-				4951620E1D1DFBBD0006A82D /* ProductListViewController.swift in Sources */,
-				B76E29901D33C5F6006F3F71 /* VoucherViewController.swift in Sources */,
-				4951620D1D1DFBBD0006A82D /* AppDelegate.swift in Sources */,
-				495162111D1DFBBD0006A82D /* WebtrekkTracking.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		495162171D1DFBE80006A82D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				495162371D1DFC590006A82D /* ProductViewController.swift in Sources */,
-				B76E29921D33CF1A006F3F71 /* VoucherListViewController.swift in Sources */,
-				B76E29981D33E6B7006F3F71 /* SettingsViewController.swift in Sources */,
-				495162361D1DFC590006A82D /* ProductListViewController.swift in Sources */,
-				B76E29941D33CF9B006F3F71 /* VoucherViewController.swift in Sources */,
-				495162351D1DFC590006A82D /* AppDelegate.swift in Sources */,
-				495162381D1DFC590006A82D /* WebtrekkTracking.swift in Sources */,
+				B73DB2441D49ED4F00F0C8DD /* WebtrekkTracking.swift in Sources */,
+				B73DB23F1D49ED4F00F0C8DD /* ProductViewController.swift in Sources */,
+				B73DB2411D49ED4F00F0C8DD /* VoucherListViewController.swift in Sources */,
+				B73DB23E1D49ED4F00F0C8DD /* ProductListViewController.swift in Sources */,
+				B73DB2421D49ED4F00F0C8DD /* VoucherViewController.swift in Sources */,
+				B73DB23D1D49ED4F00F0C8DD /* AppDelegate.swift in Sources */,
+				B73DB2401D49ED4F00F0C8DD /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -596,10 +468,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		495162311D1DFC1E0006A82D /* PBXTargetDependency */ = {
+		B73DB2461D49EE6900F0C8DD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 495162161D1DFBE80006A82D /* Manual Tracking Example */;
-			targetProxy = 495162301D1DFC1E0006A82D /* PBXContainerItemProxy */;
+			target = 495161D11D1DFB500006A82D /* Example */;
+			targetProxy = B73DB2451D49EE6900F0C8DD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -700,7 +572,7 @@
 		};
 		495161E21D1DFB500006A82D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AF10C6A88059CEC573259C5 /* Pods-iOS-Automatic Tracking Example.debug.xcconfig */;
+			baseConfigurationReference = D56012B81A1CD155B0DE5B50 /* Pods-iOS-Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -716,7 +588,7 @@
 		};
 		495161E31D1DFB500006A82D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1B23DA1EADCD8C1FBB06B5FB /* Pods-iOS-Automatic Tracking Example.release.xcconfig */;
+			baseConfigurationReference = 940A7661FF75E983D9FA93C6 /* Pods-iOS-Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -730,32 +602,6 @@
 			};
 			name = Release;
 		};
-		495162231D1DFBE80006A82D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D9550D87BD74A73547C55348 /* Pods-iOS-Manual Tracking Example.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example;
-				PRODUCT_MODULE_NAME = Example;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		495162241D1DFBE80006A82D /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2498CE9BD6C4DFE82C1CC9A5 /* Pods-iOS-Manual Tracking Example.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.example;
-				PRODUCT_MODULE_NAME = Example;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		495162331D1DFC1E0006A82D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2A18E2020C0C8D790D45199E /* Pods-Tests.debug.xcconfig */;
@@ -764,7 +610,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Manual Tracking Example.app/Manual Tracking Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example.app/Example";
 			};
 			name = Debug;
 		};
@@ -776,7 +622,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Manual Tracking Example.app/Manual Tracking Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example.app/Example";
 			};
 			name = Release;
 		};
@@ -792,20 +638,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		495161E11D1DFB500006A82D /* Build configuration list for PBXNativeTarget "Automatic Tracking Example" */ = {
+		495161E11D1DFB500006A82D /* Build configuration list for PBXNativeTarget "Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				495161E21D1DFB500006A82D /* Debug */,
 				495161E31D1DFB500006A82D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		495162221D1DFBE80006A82D /* Build configuration list for PBXNativeTarget "Manual Tracking Example" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				495162231D1DFBE80006A82D /* Debug */,
-				495162241D1DFBE80006A82D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

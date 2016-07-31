@@ -636,7 +636,7 @@ internal class XmlTrackerConfigurationParser {
 				userProperties.city = streetNumber
 			}
 			if let zipCode = parameters[.zipCode] {
-				userProperties.city = zipCode
+				userProperties.zipCode = zipCode
 			}
 			return userProperties
 		}
