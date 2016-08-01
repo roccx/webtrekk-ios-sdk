@@ -22,6 +22,9 @@ class ProductListViewController: UITableViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
+		// will be overwriten by global xml value which in turn will be overwritten by screen xml value
+		autoTracker.ecommerceProperties.currencyCode = "HKD"
+
 		autoTracker.variables["Key2"] = "value2"
 		autoTracker.variables["Key3"] = "value3"
 		autoTracker.variables["Key4"] = "value4"

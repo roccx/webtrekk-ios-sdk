@@ -438,40 +438,40 @@ internal final class DefaultTracker: Tracker {
 		let global = configuration.globalProperties.merged(over: self.global)
 
 		var event = event
-		event.ipAddress = event.ipAddress ?? global.ipAddress
-		event.pageName = event.pageName ?? global.pageProperties.name
-		event.variables = event.variables.merged(over: global.variables)
+		event.ipAddress = global.ipAddress ?? event.ipAddress
+		event.pageName = global.pageProperties.name ?? event.pageName
+		event.variables = global.variables.merged(over: event.variables)
 
 		guard !(event is ActionEvent) else {
 			return event
 		}
 
 		if var eventWithActionProperties = event as? TrackingEventWithActionProperties {
-			eventWithActionProperties.actionProperties = eventWithActionProperties.actionProperties.merged(over: global.actionProperties)
+			eventWithActionProperties.actionProperties = global.actionProperties.merged(over: eventWithActionProperties.actionProperties)
 			event = eventWithActionProperties
 		}
 		if var eventWithAdvertisementProperties = event as? TrackingEventWithAdvertisementProperties {
-			eventWithAdvertisementProperties.advertisementProperties = eventWithAdvertisementProperties.advertisementProperties.merged(over: global.advertisementProperties)
+			eventWithAdvertisementProperties.advertisementProperties = global.advertisementProperties.merged(over: eventWithAdvertisementProperties.advertisementProperties)
 			event = eventWithAdvertisementProperties
 		}
 		if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties {
-			eventWithEcommerceProperties.ecommerceProperties = eventWithEcommerceProperties.ecommerceProperties.merged(over: global.ecommerceProperties)
+			eventWithEcommerceProperties.ecommerceProperties = global.ecommerceProperties.merged(over: eventWithEcommerceProperties.ecommerceProperties)
 			event = eventWithEcommerceProperties
 		}
 		if var eventWithMediaProperties = event as? TrackingEventWithMediaProperties {
-			eventWithMediaProperties.mediaProperties = eventWithMediaProperties.mediaProperties.merged(over: global.mediaProperties)
+			eventWithMediaProperties.mediaProperties = global.mediaProperties.merged(over: eventWithMediaProperties.mediaProperties)
 			event = eventWithMediaProperties
 		}
 		if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
-			eventWithPageProperties.pageProperties = eventWithPageProperties.pageProperties.merged(over: global.pageProperties)
+			eventWithPageProperties.pageProperties = global.pageProperties.merged(over: eventWithPageProperties.pageProperties)
 			event = eventWithPageProperties
 		}
 		if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails {
-			eventWithSessionDetails.sessionDetails = eventWithSessionDetails.sessionDetails.merged(over: global.sessionDetails)
+			eventWithSessionDetails.sessionDetails = global.sessionDetails.merged(over: eventWithSessionDetails.sessionDetails)
 			event = eventWithSessionDetails
 		}
 		if var eventWithUserProperties = event as? TrackingEventWithUserProperties {
-			eventWithUserProperties.userProperties = eventWithUserProperties.userProperties.merged(over: global.userProperties)
+			eventWithUserProperties.userProperties = global.userProperties.merged(over: eventWithUserProperties.userProperties)
 			event = eventWithUserProperties
 		}
 

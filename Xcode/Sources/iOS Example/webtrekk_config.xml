@@ -136,7 +136,7 @@
 		<screenTrackingParameter>
 			<!--define global tracking parameter which are send with every request, the key has to match a valid parameter name!
 			 entries made here are available as default parameters in the trackingparameter instance -->
-			<parameter id="CURRENCY">EUR</parameter>
+			<parameter id="CURRENCY">USD</parameter>
 			<parameter id="BIRTHDAY">19991201</parameter>
 
 			<parameter id="CITY">CITY</parameter>
