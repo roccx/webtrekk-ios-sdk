@@ -190,72 +190,72 @@ private extension CrossDeviceProperties {
 				if result.isEmpty {
 					break
 				}
-				items.append(name: "cdb5", value: result.md5())
-				items.append(name: "cdb6", value: result.sha256())
+				items.append(name: "cdb5", value: result.md5().lowercaseString)
+				items.append(name: "cdb6", value: result.sha256().lowercaseString)
 
 			case let .hashed(md5, sha256):
 				if let md5 = md5 {
-					items.append(name: "cdb5", value: md5)
+					items.append(name: "cdb5", value: md5.lowercaseString)
 				}
 				if let sha256 = sha256 {
-					items.append(name: "cdb6", value: sha256)
+					items.append(name: "cdb6", value: sha256.lowercaseString)
 				}
 			}
 		}
 
 		if let androidId = androidId {
-			items.append(name: "cdb7", value: androidId.lowercaseString)
+			items.append(name: "cdb7", value: androidId)
 		}
 
 		if let email = emailAddress {
 			switch email {
 			case let .plain(value):
-				let result = value.lowercaseString
-				items.append(name: "cdb1", value: result.md5())
-				items.append(name: "cdb2", value: result.sha256())
+				let result = value.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()).lowercaseString
+				items.append(name: "cdb1", value: result.md5().lowercaseString)
+				items.append(name: "cdb2", value: result.sha256().lowercaseString)
 
 			case let .hashed(md5, sha256):
 				if let md5 = md5 {
-					items.append(name: "cdb1", value: md5)
+					items.append(name: "cdb1", value: md5.lowercaseString)
 				}
 				if let sha256 = sha256 {
-					items.append(name: "cdb2", value: sha256)
+					items.append(name: "cdb2", value: sha256.lowercaseString)
 				}
 			}
 		}
 		if let facebookId = facebookId {
-			items.append(name: "cdb10", value: facebookId.lowercaseString)
+			items.append(name: "cdb10", value: facebookId.md5().lowercaseString)
 		}
 		if let googlePlusId = googlePlusId {
-			items.append(name: "cdb12", value: googlePlusId.lowercaseString)
+			items.append(name: "cdb12", value: googlePlusId.md5().lowercaseString)
 		}
 		if let iosId = iosId {
-			items.append(name: "cdb8", value: iosId.lowercaseString)
+			items.append(name: "cdb8", value: iosId)
 		}
 		if let linkedInId = linkedInId {
-			items.append(name: "cdb13", value: linkedInId.lowercaseString)
+			items.append(name: "cdb13", value: linkedInId.md5().lowercaseString)
 		}
 		if let phoneNumber = phoneNumber {
 			switch phoneNumber {
 			case let .plain(value):
 				let result = value.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: "0123456789").invertedSet).joinWithSeparator("")
-				items.append(name: "cdb3", value: result.md5())
-				items.append(name: "cdb4", value: result.sha256())
+				items.append(name: "cdb3", value: result.md5().lowercaseString)
+				items.append(name: "cdb4", value: result.sha256().lowercaseString)
 
 			case let .hashed(md5, sha256):
 				if let md5 = md5 {
-					items.append(name: "cdb3", value: md5)
+					items.append(name: "cdb3", value: md5.lowercaseString)
 				}
 				if let sha256 = sha256 {
-					items.append(name: "cdb4", value: sha256)
+					items.append(name: "cdb4", value: sha256.lowercaseString)
 				}
 			}
 		}
 		if let twitterId = twitterId {
-			items.append(name: "cdb11", value: twitterId.lowercaseString)
+			items.append(name: "cdb11", value: twitterId.md5().lowercaseString)
 		}
 		if let windowsId = windowsId {
-			items.append(name: "cdb9", value: windowsId.lowercaseString)
+			items.append(name: "cdb9", value: windowsId)
 		}
 		
 		return items
