@@ -351,11 +351,11 @@ internal final class DefaultTracker: Tracker {
 	internal func enqueueRequestForEvent(event: TrackingEvent) {
 		checkIsOnMainThread()
 
-		var event = event
+		var event = eventByApplyingGlobalProperties(to: event)
+
 		#if !os(watchOS)
 			event = eventByApplyingAutomaticPageTracking(to: event)
 		#endif
-		event = eventByApplyingGlobalProperties(to: event)
 
 		guard var request = createRequestForEvent(event) else {
 			return
