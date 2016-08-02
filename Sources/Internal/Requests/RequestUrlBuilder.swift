@@ -224,16 +224,16 @@ private extension CrossDeviceProperties {
 			}
 		}
 		if let facebookId = facebookId {
-			items.append(name: "cdb10", value: facebookId.lowercaseString.md5().lowercaseString)
+			items.append(name: "cdb10", value: facebookId.lowercaseString.sha256().lowercaseString)
 		}
 		if let googlePlusId = googlePlusId {
-			items.append(name: "cdb12", value: googlePlusId.lowercaseString.md5().lowercaseString)
+			items.append(name: "cdb12", value: googlePlusId.lowercaseString.sha256().lowercaseString)
 		}
 		if let iosId = iosId {
 			items.append(name: "cdb8", value: iosId)
 		}
 		if let linkedInId = linkedInId {
-			items.append(name: "cdb13", value: linkedInId.lowercaseString.md5().lowercaseString)
+			items.append(name: "cdb13", value: linkedInId.lowercaseString.sha256().lowercaseString)
 		}
 		if let phoneNumber = phoneNumber {
 			switch phoneNumber {
@@ -252,7 +252,7 @@ private extension CrossDeviceProperties {
 			}
 		}
 		if let twitterId = twitterId {
-			items.append(name: "cdb11", value: twitterId.lowercaseString.md5().lowercaseString)
+			items.append(name: "cdb11", value: twitterId.lowercaseString.sha256().lowercaseString)
 		}
 		if let windowsId = windowsId {
 			items.append(name: "cdb9", value: windowsId)
