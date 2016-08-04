@@ -44,6 +44,7 @@ public struct GlobalProperties {
 			advertisementProperties: advertisementProperties.merged(over: other.advertisementProperties),
 			crossDeviceProperties:   crossDeviceProperties.merged(over: other.crossDeviceProperties),
 			ecommerceProperties:     ecommerceProperties.merged(over: other.ecommerceProperties),
+			ipAddress:               ipAddress ?? other.ipAddress,
 			mediaProperties:         mediaProperties.merged(over: other.mediaProperties),
 			pageProperties:          pageProperties.merged(over: other.pageProperties),
 			sessionDetails:          sessionDetails.merged(over: other.sessionDetails),
