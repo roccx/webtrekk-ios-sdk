@@ -34,7 +34,7 @@ public struct EcommerceProperties {
 			currencyCode: currencyCode ?? other.currencyCode,
 			details:      details.merged(over: other.details),
 			orderNumber:  orderNumber ?? other.orderNumber,
-			products:     products != nil ? products?.merge(over: other.products) : other.products,
+			products:     products ?? other.products,
 			status:       status ?? other.status,
 			totalValue:   totalValue ?? other.totalValue,
 			voucherValue: voucherValue ?? other.voucherValue
