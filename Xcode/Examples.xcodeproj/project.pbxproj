@@ -74,7 +74,7 @@
 		497AAE321D22D28A0094B8B4 /* Webtrekk.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = Webtrekk.podspec; path = ../Webtrekk.podspec; sourceTree = "<group>"; };
 		940A7661FF75E983D9FA93C6 /* Pods-iOS-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Example/Pods-iOS-Example.release.xcconfig"; sourceTree = "<group>"; };
 		B72368BA1D3F643100D64C63 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
-		B73DB2301D49ECC200F0C8DD /* iOS Example */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "iOS Example"; path = "/Users/bwerker/Documents/Repositories/webtrekk-library/Xcode/Sources/iOS Example"; sourceTree = "<absolute>"; };
+		B73DB2301D49ECC200F0C8DD /* iOS Example */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "iOS Example"; path = "Sources/iOS Example"; sourceTree = "<group>"; };
 		B73DB2351D49ED4F00F0C8DD /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B73DB2361D49ED4F00F0C8DD /* ProductListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductListViewController.swift; sourceTree = "<group>"; };
 		B73DB2371D49ED4F00F0C8DD /* ProductViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductViewController.swift; sourceTree = "<group>"; };
