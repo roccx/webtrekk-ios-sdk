@@ -407,7 +407,20 @@ internal final class DefaultTracker: Tracker {
 			event = eventWithAdvertisementProperties
 		}
 		if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties, let ecommerceProperties = page.ecommerceProperties {
+			let eventEcommerceProducts = eventWithEcommerceProperties.ecommerceProperties.products
 			eventWithEcommerceProperties.ecommerceProperties = ecommerceProperties.merged(over: eventWithEcommerceProperties.ecommerceProperties)
+			if let products = ecommerceProperties.products where !products.isEmpty, let product = products.first {
+				if let eventProducts = eventEcommerceProducts where !eventProducts.isEmpty {
+					var mergedProducts: [EcommerceProperties.Product] = []
+					for eventProduct in eventProducts {
+						mergedProducts.append(product.merged(over: eventProduct))
+					}
+					eventWithEcommerceProperties.ecommerceProperties.products = mergedProducts
+				}
+				else {
+					eventWithEcommerceProperties.ecommerceProperties.products = products
+				}
+			}
 			event = eventWithEcommerceProperties
 		}
 		if var eventWithMediaProperties = event as? TrackingEventWithMediaProperties, let mediaProperties = page.mediaProperties {
@@ -455,7 +468,20 @@ internal final class DefaultTracker: Tracker {
 			event = eventWithAdvertisementProperties
 		}
 		if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties {
+			let eventEcommerceProducts = eventWithEcommerceProperties.ecommerceProperties.products
 			eventWithEcommerceProperties.ecommerceProperties = global.ecommerceProperties.merged(over: eventWithEcommerceProperties.ecommerceProperties)
+			if let products = global.ecommerceProperties.products where !products.isEmpty, let product = products.first {
+				if let eventProducts = eventEcommerceProducts where !eventProducts.isEmpty {
+					var mergedProducts: [EcommerceProperties.Product] = []
+					for eventProduct in eventProducts {
+						mergedProducts.append(product.merged(over: eventProduct))
+					}
+					eventWithEcommerceProperties.ecommerceProperties.products = mergedProducts
+				}
+				else {
+					eventWithEcommerceProperties.ecommerceProperties.products = products
+				}
+			}
 			event = eventWithEcommerceProperties
 		}
 		if var eventWithMediaProperties = event as? TrackingEventWithMediaProperties {

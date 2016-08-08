@@ -61,6 +61,17 @@ public struct EcommerceProperties {
 			self.price = price
 			self.quantity = quantity
 		}
+
+
+		@warn_unused_result
+		internal func merged(over other: Product) -> Product {
+			return Product(
+				name:       name.isEmpty ? other.name : name,
+				categories: categories.merged(over: other.categories),
+				price:      price ?? other.price,
+				quantity:   quantity ?? other.quantity
+			)
+		}
 	}
 
 

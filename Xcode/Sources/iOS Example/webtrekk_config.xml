@@ -170,6 +170,10 @@
 				<parameter id="2">test_screen_actionparam2</parameter>
 				<parameter id="3" key="KeyOverride"></parameter>
 			</actionParameter>
+			<productCategories>
+				<parameter id="2">test_screen_productcategory2</parameter>
+				<parameter id="3" key="KeyOverride"></parameter>
+			</productCategories>
 			<mediaCategories>
 				<parameter id="2">test_screen_mediacategory2</parameter>
 				<parameter id="3" key="KeyOverride"></parameter>
