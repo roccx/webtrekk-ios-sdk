@@ -26,6 +26,7 @@ enum PropertyValue {
         case let .value(value):
             return value
         case let .key(key):
+            let _ = key
             return nil
         }
     }
