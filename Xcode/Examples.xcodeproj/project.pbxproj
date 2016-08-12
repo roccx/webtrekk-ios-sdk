@@ -8,11 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		12E91364B92E9491A5E0C0D4 /* Pods_iOS_Example_ModuleTest_TestsOld.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0784BAD974BE31EAD154031E /* Pods_iOS_Example_ModuleTest_TestsOld.framework */; };
-		415F400E403A4B59C67727BC /* Pods_iOS_Example_ModuleTest_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 431C088806ECF160B7604122 /* Pods_iOS_Example_ModuleTest_Tests.framework */; };
 		495162121D1DFBC30006A82D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495161E61D1DFB9C0006A82D /* LaunchScreen.storyboard */; };
 		495162131D1DFBC30006A82D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495161E71D1DFB9C0006A82D /* Main.storyboard */; };
 		495162151D1DFBC30006A82D /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495161E91D1DFB9C0006A82D /* Video.mp4 */; };
-		68DAEB82476388B17B1276CB /* Pods_TestsOld.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E7D2D059880C791331E8FE /* Pods_TestsOld.framework */; };
 		85A5EDCC2EFFB3DBB509277A /* Pods_iOS_Example_ModuleTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB547C7EFB209290DC1F091E /* Pods_iOS_Example_ModuleTest.framework */; };
 		9D982D925187365A215B1DE4 /* Pods_iOS_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F05209EDDBE65B58F6F92233 /* Pods_iOS_Example.framework */; };
 		9F415F291D5C7C81002CB83F /* AAMigrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F151D5C7C6D002CB83F /* AAMigrationTest.swift */; };
@@ -40,7 +38,6 @@
 		9F415FFF1D5CE239002CB83F /* EventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495162091D1DFB9C0006A82D /* EventTest.swift */; };
 		9F4160001D5CE23E002CB83F /* RequestUrlBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620B1D1DFB9C0006A82D /* RequestUrlBuilderTests.swift */; };
 		9F4160011D5CE23E002CB83F /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */; };
-		9F4160031D5CE337002CB83F /* Pods_TestsOld.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4160021D5CE337002CB83F /* Pods_TestsOld.framework */; };
 		A9C514BF2D2B3FEF8F5D2490 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */; };
 		B72368BB1D3F643100D64C63 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72368BA1D3F643100D64C63 /* AdSupport.framework */; };
 		B73DB2311D49ECC200F0C8DD /* iOS Example in Resources */ = {isa = PBXBuildFile; fileRef = B73DB2301D49ECC200F0C8DD /* iOS Example */; };
@@ -199,7 +196,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F415F351D5C80B4002CB83F /* WebtrekkOld.framework in Frameworks */,
-				415F400E403A4B59C67727BC /* Pods_iOS_Example_ModuleTest_Tests.framework in Frameworks */,
 				A9C514BF2D2B3FEF8F5D2490 /* Pods_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,8 +212,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F4160031D5CE337002CB83F /* Pods_TestsOld.framework in Frameworks */,
-				68DAEB82476388B17B1276CB /* Pods_TestsOld.framework in Frameworks */,
 				12E91364B92E9491A5E0C0D4 /* Pods_iOS_Example_ModuleTest_TestsOld.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
