@@ -340,7 +340,7 @@ private extension EcommerceProperties {
 
 		var categoryIndexes = Set(products?.flatMap { $0.categories.map { Array($0.keys) } ?? [] } ?? [])
         
-        if let keysConf = productConf?.categories?.keys {
+        if let _ = productConf?.categories?.keys {
             categoryIndexes = categoryIndexes.union(productConf?.categories.map{ Array($0.keys) } ?? [])
         }
         

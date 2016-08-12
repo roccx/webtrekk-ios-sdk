@@ -169,7 +169,7 @@ public struct EcommerceProperties {
             self.voucherValue = voucherValue
         }
         
-        if let productConf = self.productConf {
+        if let _ = self.productConf {
             self.productConf?.processKeys(event)
         }
 //            if let _ = self.products{
