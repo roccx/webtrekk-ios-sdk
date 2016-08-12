@@ -2,7 +2,6 @@ import XCTest
 
 @testable import Webtrekk
 
-
 internal class ActionEventTest: XCTestCase {
 
 	internal var requestBuilder: RequestUrlBuilder = {

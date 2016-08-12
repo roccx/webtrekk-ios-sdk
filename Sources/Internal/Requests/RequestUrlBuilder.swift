@@ -294,14 +294,7 @@ private extension EcommerceProperties {
 		}
 		items += mergeProductQueryItems(for: request)
 		if let status = status {
-			switch status {
-			case .addedToBasket:
-				items.append(name: "st", value: "add")
-			case .purchased:
-				items.append(name: "st", value: "conf")
-			case .viewed:
-				items.append(name: "st", value: "view")
-			}
+				items.append(name: "st", value: status.rawValue)
 		}
 		if let totalValue = totalValue {
 			items.append(name: "ov", value: "\(totalValue)")
@@ -314,26 +307,53 @@ private extension EcommerceProperties {
 
 
 	private func mergeProductQueryItems(for request: TrackerRequest) -> [NSURLQueryItem] {
-		guard let products = products where !products.isEmpty else {
-			return []
+		
+        if self.products == nil && self.productConf == nil {
+                return []
 		}
 
 		var items = [NSURLQueryItem]()
 
-		if let names = Optional(products.map({ $0.name })) where names.joinWithSeparator("").nonEmpty != nil {
-			items.append(name: "ba", value: names.joinWithSeparator(";"))
-		}
-		if let prices = Optional(products.map({ $0.price ?? "" })) where prices.joinWithSeparator("").nonEmpty != nil {
-			items.append(name: "co", value: prices.joinWithSeparator(";"))
-		}
-		if let quantity = Optional(products.map({ $0.quantity.map { String($0) } ?? "" })) where quantity.joinWithSeparator("").nonEmpty != nil {
-			items.append(name: "qn", value: quantity.joinWithSeparator(";"))
-		}
+        if let confName = self.productConf?.name {
+            items.append(name: "ba", value: confName)
+        } else {
+            if let names = products?.map({ $0.name ?? "" }) where names.joinWithSeparator("").nonEmpty != nil {
+                items.append(name: "ba", value: names.joinWithSeparator(";"))
+            }
+        }
+		
+        if let confPrice = self.productConf?.price {
+            items.append(name: "co", value: confPrice)
+        } else {
+            if let prices = products?.map({ $0.price ?? "" }) where prices.joinWithSeparator("").nonEmpty != nil {
+                items.append(name: "co", value: prices.joinWithSeparator(";"))
+            }
+        }
+        
+        if let confQuantity = self.productConf?.quantity {
+            items.append(name: "qn", value: String(confQuantity))
+        } else {
+            if let quantity = products?.map({ $0.quantity.map { String($0) } ?? "" }) where quantity.joinWithSeparator("").nonEmpty != nil {
+                items.append(name: "qn", value: quantity.joinWithSeparator(";"))
+            }
+        }
 
-		let categoryIndexes = Set(products.flatMap { $0.categories.map { Array($0.keys) } ?? [] })
+		var categoryIndexes = Set(products?.flatMap { $0.categories.map { Array($0.keys) } ?? [] } ?? [])
+        
+        if let keysConf = productConf?.categories?.keys {
+            categoryIndexes = categoryIndexes.union(productConf?.categories.map{ Array($0.keys) } ?? [])
+        }
+        
 		for categoryIndex in categoryIndexes {
-			let value = products.map({ $0.categories?[categoryIndex]?.serialized(for: request) ?? "" }).joinWithSeparator(";")
-			items.append(name: "ca\(categoryIndex)", value: value)
+            var value: String? = self.productConf?.categories?[categoryIndex]?.serialized(for: request)
+            
+            if value == nil {
+                value = products?.map({ $0.categories?[categoryIndex]?.serialized(for: request) ?? "" }).joinWithSeparator(";")
+            }
+            
+            if let _ = value {
+                items.append(name: "ca\(categoryIndex)", value: value)
+            }
 		}
 
 		return items
@@ -431,7 +451,7 @@ private extension UserProperties {
 		}
 		if let gender = gender {
 			items = items.filter({$0.name != "uc706"})
-			items.append(name: "uc706", value: gender == UserProperties.Gender.male ? "1" :  "2")
+			items.append(name: "uc706", value: String(gender.rawValue))
 		}
 		if let id = id {
 			items.append(name: "cd", value: id)

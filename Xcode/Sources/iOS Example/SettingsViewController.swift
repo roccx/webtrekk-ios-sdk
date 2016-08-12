@@ -23,7 +23,7 @@ class SettingsViewController: UIViewController {
 			return
 		}
 
-		WebtrekkTracking.sharedTracker.global.crossDeviceProperties.emailAddress = .plain(text)
+		WebtrekkTracking.instance().global.crossDeviceProperties.emailAddress = .plain(text)
 
 		autoTracker.trackAction("Test Cross Device Bridge tapped")
 	}

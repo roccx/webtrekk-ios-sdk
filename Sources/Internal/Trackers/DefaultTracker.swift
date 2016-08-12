@@ -155,7 +155,7 @@ internal final class DefaultTracker: Tracker {
 		}
 	}
 	#else
-	internal func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?) {
+	internal func initTimers() {
 		checkIsOnMainThread()
 
 		if requestManagerStartTimer == nil {
@@ -407,8 +407,9 @@ internal final class DefaultTracker: Tracker {
 			event = eventWithAdvertisementProperties
 		}
 		if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties, let ecommerceProperties = page.ecommerceProperties {
-			let eventEcommerceProducts = eventWithEcommerceProperties.ecommerceProperties.products
 			eventWithEcommerceProperties.ecommerceProperties = ecommerceProperties.merged(over: eventWithEcommerceProperties.ecommerceProperties)
+            eventWithEcommerceProperties.ecommerceProperties.processKeys(event)
+            let eventEcommerceProducts = eventWithEcommerceProperties.ecommerceProperties.products
 			if let products = ecommerceProperties.products where !products.isEmpty, let product = products.first {
 				if let eventProducts = eventEcommerceProducts where !eventProducts.isEmpty {
 					var mergedProducts: [EcommerceProperties.Product] = []
@@ -429,6 +430,7 @@ internal final class DefaultTracker: Tracker {
 		}
 		if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
 			eventWithPageProperties.pageProperties = page.pageProperties.merged(over: eventWithPageProperties.pageProperties)
+            eventWithPageProperties.pageProperties.processKeys(event)
 			event = eventWithPageProperties
 		}
 		if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails, let sessionDetails = page.sessionDetails {
@@ -437,6 +439,7 @@ internal final class DefaultTracker: Tracker {
 		}
 		if var eventWithUserProperties = event as? TrackingEventWithUserProperties, let userProperties = page.userProperties {
 			eventWithUserProperties.userProperties = userProperties.merged(over: eventWithUserProperties.userProperties)
+            eventWithUserProperties.userProperties.processKeys(event)
 			event = eventWithUserProperties
 		}
 
@@ -468,8 +471,9 @@ internal final class DefaultTracker: Tracker {
 			event = eventWithAdvertisementProperties
 		}
 		if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties {
-			let eventEcommerceProducts = eventWithEcommerceProperties.ecommerceProperties.products
 			eventWithEcommerceProperties.ecommerceProperties = global.ecommerceProperties.merged(over: eventWithEcommerceProperties.ecommerceProperties)
+            eventWithEcommerceProperties.ecommerceProperties.processKeys(event)
+            let eventEcommerceProducts = eventWithEcommerceProperties.ecommerceProperties.products
 			if let products = global.ecommerceProperties.products where !products.isEmpty, let product = products.first {
 				if let eventProducts = eventEcommerceProducts where !eventProducts.isEmpty {
 					var mergedProducts: [EcommerceProperties.Product] = []
@@ -490,6 +494,7 @@ internal final class DefaultTracker: Tracker {
 		}
 		if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
 			eventWithPageProperties.pageProperties = global.pageProperties.merged(over: eventWithPageProperties.pageProperties)
+            eventWithPageProperties.pageProperties.processKeys(event)
 			event = eventWithPageProperties
 		}
 		if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails {
@@ -498,6 +503,7 @@ internal final class DefaultTracker: Tracker {
 		}
 		if var eventWithUserProperties = event as? TrackingEventWithUserProperties {
 			eventWithUserProperties.userProperties = global.userProperties.merged(over: eventWithUserProperties.userProperties)
+            eventWithUserProperties.userProperties.processKeys(event)
 			event = eventWithUserProperties
 		}
 

@@ -1,0 +1,238 @@
+//
+//  PageTest.swift
+//  WebtrekkTest
+//
+//  Created by arsen.vartbaronov on 10/07/16.
+//  Copyright © 2016 CocoaPods. All rights reserved.
+//
+
+import XCTest
+import Nimble
+import Webtrekk
+
+
+class PageTest: WTBaseTestNew {
+    
+    var mainViewController: ViewController!
+
+//    private func pageTest()
+//    {
+//        doURLSendTestAction(){
+//        if let pageTracker = WTBaseURLTests.tracker {
+//            pageTracker.trackPageView("pageName")
+//        }
+//        }
+//        
+//        doURLSendTestCheck(){parametersArr in
+//            print("key value print______________")
+//            for (key, value) in parametersArr{
+//                print(key+"="+value)
+//            }
+//        }
+//    }
+    
+    func testKeyValue(){
+        doURLSendTestAction(){
+            let defTracker = WebtrekkTracking.instance()
+            defTracker.global.variables["Key1"] = "value1"
+            defTracker.global.variables["Key2"] = "value2"
+            defTracker.global.variables["KeyOver1"] = "overValue1"
+            defTracker.trackPageView("pageName")
+        }
+        
+        doURLSendTestCheck(){parametersArr in
+            print("key value print for keyValueTestSimple______________")
+            for (key, value) in parametersArr{
+                print(key+"="+value)
+            }
+            expect(parametersArr["cp1"]).to(equal("value1"))
+            expect(parametersArr["cp2"]).to(equal("value2"))
+            expect(parametersArr["cb2"]).to(equal("value2"))
+            expect(parametersArr["cc2"]).to(equal("value2"))
+            expect(parametersArr["cs2"]).to(equal("value2"))
+            //expect(parametersArr["ck2"]).to(equal("value2"))
+            expect(parametersArr["ca2"]).to(equal("value2"))
+            expect(parametersArr["cg2"]).to(equal("value2"))
+            expect(parametersArr["uc2"]).to(equal("value2"))
+            //expect(parametersArr["mg2"]).to(equal("value2"))
+            
+            expect(parametersArr["cp20"]).to(equal("test_pageparam2"))
+            expect(parametersArr["cb1"]).to(equal("test_ecomparam1"))
+            expect(parametersArr["cc1"]).to(equal("test_adparam1"))
+            expect(parametersArr["cs1"]).to(equal("test_sessionparam1"))
+            //expect(parametersArr["ck1"]).to(equal("test_actionparam1"))
+            expect(parametersArr["ca1"]).to(equal("test_productcategory1"))
+            expect(parametersArr["cg1"]).to(equal("test_pagecategory1"))
+            expect(parametersArr["uc1"]).to(equal("test_usercategory1"))
+            //expect(parametersArr["mg1"]).to(equal("test_mediacategory1"))
+        }
+        
+        
+        doURLSendTestAction(){
+                WebtrekkTracking.instance().trackPageView(PageProperties(name: "PageName", details: [20: "cp20Override"]))
+        }
+
+        doURLSendTestCheck(){parametersArr in
+            print("key value print for keyValueTestSimple______________")
+            for (key, value) in parametersArr{
+                print(key+"="+value)
+            }
+            expect(parametersArr["cp1"]).to(equal("value1"))
+            expect(parametersArr["cp2"]).to(equal("value2"))
+            expect(parametersArr["cb2"]).to(equal("value2"))
+            expect(parametersArr["cc2"]).to(equal("value2"))
+            expect(parametersArr["cs2"]).to(equal("value2"))
+            //expect(parametersArr["ck2"]).to(equal("value2"))
+            expect(parametersArr["ca2"]).to(equal("value2"))
+            expect(parametersArr["cg2"]).to(equal("value2"))
+            expect(parametersArr["uc2"]).to(equal("value2"))
+            //expect(parametersArr["mg2"]).to(equal("value2"))
+            
+            expect(parametersArr["cp20"]).to(equal("test_pageparam2"))
+            expect(parametersArr["cb1"]).to(equal("test_ecomparam1"))
+            expect(parametersArr["cc1"]).to(equal("test_adparam1"))
+            expect(parametersArr["cs1"]).to(equal("test_sessionparam1"))
+            //expect(parametersArr["ck1"]).to(equal("test_actionparam1"))
+            expect(parametersArr["ca1"]).to(equal("test_productcategory1"))
+            expect(parametersArr["cg1"]).to(equal("test_pagecategory1"))
+            expect(parametersArr["uc1"]).to(equal("test_usercategory1"))
+            //expect(parametersArr["mg1"]).to(equal("test_mediacategory1"))
+        }
+    }
+    
+    func testKeyValueOverride(){
+
+        if self.mainViewController == nil {
+            self.mainViewController = ViewController()
+        }
+
+        doURLSendTestAction(){
+            let pageTracker = WebtrekkTracking.trackerForAutotrackedViewController(self.mainViewController)
+            pageTracker.variables["Key1"]="value1"
+            pageTracker.variables["Key2"]="value2"
+            pageTracker.variables["KeyOver1"]="overValue1"
+            pageTracker.pageProperties.details = [1: "don't Override"]
+            self.mainViewController.beginAppearanceTransition(true, animated: false)
+            self.mainViewController.endAppearanceTransition()
+        }
+        
+        doURLSendTestCheck(){parametersArr in
+            print("key value print for keyValueTestOverride______________")
+            for (key, value) in parametersArr{
+                print(key+"="+value)
+            }
+            expect(parametersArr["cp2"]).to(equal("overValue1"))
+            expect(parametersArr["cb2"]).to(equal("overValue1"))
+            expect(parametersArr["cc2"]).to(equal("overValue1"))
+            expect(parametersArr["cs2"]).to(equal("overValue1"))
+            //expect(parametersArr["ck2"]).to(equal("overValue1"))
+            expect(parametersArr["ca2"]).to(equal("overValue1"))
+            expect(parametersArr["cg2"]).to(equal("overValue1"))
+            expect(parametersArr["uc2"]).to(equal("overValue1"))
+            //expect(parametersArr["mg2"]).to(equal("overValue1"))
+            
+            expect(parametersArr["cp1"]).to(equal("test_pageparam2Override"))
+            expect(parametersArr["cb1"]).to(equal("test_ecomparam1Override"))
+            expect(parametersArr["cc1"]).to(equal("test_adparam1Override"))
+            expect(parametersArr["cs1"]).to(equal("test_sessionparam1Override"))
+            //expect(parametersArr["ck1"]).to(equal("test_actionparam1Override"))
+            expect(parametersArr["ca1"]).to(equal("test_productcategory1Override"))
+            expect(parametersArr["cg1"]).to(equal("test_pagecategory1Override"))
+            expect(parametersArr["uc1"]).to(equal("test_usercategory1Override"))
+            //expect(parametersArr["mg1"]).to(equal("test_mediacategory1Override"))
+        }
+    }
+    
+    func testAutoParameter()
+    {
+        doURLSendTestAction(){
+            WebtrekkTracking.instance().trackPageView("pageName")
+        }
+        
+        doURLSendTestCheck(){parametersArr in
+            expect(parametersArr["cs804"]).to(equal("1.0"))
+            expect(parametersArr["cs807"]).to(equal("WIFI"))
+        }
+    }
+    
+    
+    //To be done
+    private func oneTest()
+    {
+        doURLSendTestAction(){
+            WebtrekkTracking.instance().trackPageView("pageName")
+        }
+        
+        doURLSendTestCheck(){parametersArr in
+            expect(parametersArr["one"]).to(equal("1"))
+            expect(parametersArr["fns"]).to(equal("1"))
+            }
+    }
+    
+    
+    func testOrientation(){
+           let parOrientation = "cp783"
+        
+          if self.mainViewController == nil {
+              self.mainViewController = ViewController()
+          }
+
+            doURLSendTestAction(){
+                self.mainViewController.beginAppearanceTransition(true, animated: false)
+                self.mainViewController.endAppearanceTransition()
+            }
+        
+            doURLSendTestCheck(){parametersArr in
+                expect(parametersArr[parOrientation]).to(equal("portrait"))
+            }
+           doURLSendTestAction(){
+               self.mainViewController.beginAppearanceTransition(true, animated: false)
+               let value = UIInterfaceOrientation.LandscapeLeft.rawValue
+               UIDevice.currentDevice().setValue(value, forKey: "orientation")
+               self.mainViewController.endAppearanceTransition()
+           }
+        
+           doURLSendTestCheck(){parametersArr in
+               expect(parametersArr[parOrientation]).to(equal("landscape"))
+           }
+    }
+    
+    func testOptOut()
+    {
+        doURLSendTestAction(){
+            WebtrekkTracking.isOptedOut = true
+            WebtrekkTracking.instance().trackPageView("pageName")
+        }
+        
+        self.doURLnotSendTestCheck()
+        
+        doURLSendTestAction(){
+            WebtrekkTracking.isOptedOut = false
+            WebtrekkTracking.instance().trackPageView("pageName")
+        }
+        
+        doURLSendTestCheck(){parametersArr in
+                expect(parametersArr["p"]).notTo(beNil())
+            }
+    }
+    
+    // MARK: auto track test
+    func testAutoTrack(){
+        
+        if self.mainViewController == nil {
+            self.mainViewController = ViewController()
+        }
+
+        doURLSendTestAction(){
+            self.mainViewController.beginAppearanceTransition(true, animated: false)
+            self.mainViewController.endAppearanceTransition()
+        }
+        
+        self.timeout = 10
+            doURLSendTestCheck(){parametersArr in
+                expect(parametersArr["p"]).to(contain("autoPageName"))
+            }
+
+    }
+}
+

@@ -14,8 +14,6 @@ public protocol Tracker: class {
 
 	#if os(watchOS)
 	func applicationDidFinishLaunching()
-	#else
-	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?)
 	#endif
 
 	func sendPendingEvents()
@@ -46,7 +44,7 @@ public extension Tracker {
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
 		sessionDetails: [Int: TrackingValue] = [:],
-		userProperties: UserProperties = UserProperties(),
+		userProperties: UserProperties = UserProperties(birthday: nil),
 		variables: [String : String] = [:]
 	) {
 		trackAction(
@@ -67,7 +65,7 @@ public extension Tracker {
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
 		sessionDetails: [Int: TrackingValue] = [:],
-		userProperties: UserProperties = UserProperties(),
+		userProperties: UserProperties = UserProperties(birthday: nil),
 		variables: [String : String] = [:]
 	) {
 		trackAction(
@@ -88,7 +86,7 @@ public extension Tracker {
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
 		sessionDetails: [Int: TrackingValue] = [:],
-		userProperties: UserProperties = UserProperties(),
+		userProperties: UserProperties = UserProperties(birthday: nil),
 		variables: [String : String] = [:]
 	) {
 		trackAction(ActionEvent(
@@ -123,7 +121,7 @@ public extension Tracker {
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
 		sessionDetails: [Int: TrackingValue] = [:],
-		userProperties: UserProperties = UserProperties(),
+		userProperties: UserProperties = UserProperties(birthday: nil),
 		variables: [String : String] = [:]
 	) {
 		trackPageView(
@@ -142,7 +140,7 @@ public extension Tracker {
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
 		sessionDetails: [Int: TrackingValue] = [:],
-		userProperties: UserProperties = UserProperties(),
+		userProperties: UserProperties = UserProperties(birthday: nil),
 		variables: [String : String] = [:]
 	) {
 		trackPageView(PageViewEvent(
@@ -154,4 +152,19 @@ public extension Tracker {
 			variables:               variables
 		))
 	}
+    
+    public func trackCDB(crossDeviceProperties: CrossDeviceProperties)
+    {
+        global.crossDeviceProperties = crossDeviceProperties
+        trackPageView("CDBPage")
+    }
+    
+    public subscript(key: String) -> String? {
+        get {
+            return global.variables[key]
+        }
+        set {
+            global.variables[key] = newValue
+        }
+    }
 }

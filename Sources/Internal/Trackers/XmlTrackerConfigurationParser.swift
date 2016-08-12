@@ -37,7 +37,7 @@ internal class XmlTrackerConfigurationParser {
 	private func parseScreenTrackingParameter(xmlElement: XmlElement) -> ScreenTrackingParameter {
 		var categories = [String: [Int: CategoryElement]]()
 
-		var parameters = [PropertyName: String]()
+		var parameters = [PropertyName: PropertyValue]()
 		for child in xmlElement.children {
 			switch child.name {
 			case "parameter":
@@ -189,14 +189,13 @@ internal class XmlTrackerConfigurationParser {
 				actionProperties: globalParameter.actionProperties(),
 				advertisementProperties: globalParameter.advertisementProperties(),
 				ecommerceProperties: globalParameter.ecommerceProperties(),
-				ipAddress: globalParameter.parameters[.ipAddress],
+				ipAddress: globalParameter.parameters[.ipAddress]?.serialized(),
 				mediaProperties: globalParameter.mediaProperties(),
 				pageProperties: globalParameter.pageProperties(),
 				sessionDetails: globalParameter.sessionDetails(),
 				userProperties: globalParameter.userProperties()
 			)
 		}
-
 		return trackerConfiguration
 	}
 
@@ -267,7 +266,7 @@ internal class XmlTrackerConfigurationParser {
 			page.actionProperties = screenParameter.actionProperties()
 			page.advertisementProperties = screenParameter.advertisementProperties()
 			page.ecommerceProperties = screenParameter.ecommerceProperties()
-			page.ipAddress = screenParameter.parameters[.ipAddress]
+			page.ipAddress = screenParameter.parameters[.ipAddress]?.serialized()
 			page.mediaProperties = screenParameter.mediaProperties()
 			page.pageProperties = page.pageProperties.merged(over: screenParameter.pageProperties())
 			page.sessionDetails = screenParameter.sessionDetails()
@@ -305,7 +304,7 @@ internal class XmlTrackerConfigurationParser {
 		return xmlCategoryElements
 	}
 
-	private func readFromParameterElement(xmlElement: XmlElement) -> (PropertyName, String)? {
+	private func readFromParameterElement(xmlElement: XmlElement) -> (PropertyName, PropertyValue)? {
 		guard xmlElement.name == "parameter" else {
 			return nil
 		}
@@ -313,7 +312,11 @@ internal class XmlTrackerConfigurationParser {
 			return nil
 		}
 		if let propertyName = PropertyName(rawValue: parameterName) {
-			return (propertyName, value: xmlElement.text)
+            if let key = xmlElement.attributes["key"] {
+                return (propertyName, value: .key(key))
+            }else{
+                return (propertyName, value: .value(xmlElement.text))
+            }
 		}
 		else {
 			// TODO: PropertyName is not defined yet, log or throw?
@@ -430,9 +433,9 @@ internal class XmlTrackerConfigurationParser {
 
 	private class ScreenTrackingParameter {
 		var categories: [String: [Int: CategoryElement]]
-		var parameters: [PropertyName: String]
+		var parameters: [PropertyName: PropertyValue]
 
-		init(categories: [String: [Int: CategoryElement]], parameters: [PropertyName: String]) {
+		init(categories: [String: [Int: CategoryElement]], parameters: [PropertyName: PropertyValue]) {
 			self.categories = categories
 			self.parameters = parameters
 		}
@@ -467,11 +470,11 @@ internal class XmlTrackerConfigurationParser {
 
 		private func advertisementProperties() -> AdvertisementProperties {
 			var advertisementId: String? = nil
-			if let id = parameters[.advertisementId] {
+			if let id = parameters[.advertisementId]?.serialized() {
 				advertisementId = id
 			}
 			var advertisementAction: String? = nil
-			if let action = parameters[.advertisementAction] {
+			if let action = parameters[.advertisementAction]?.serialized() {
 				advertisementAction = action
 			}
 			var details: [Int: TrackingValue]? = nil
@@ -484,46 +487,36 @@ internal class XmlTrackerConfigurationParser {
 
 		
 		private func ecommerceProperties() -> EcommerceProperties {
-			var currencyCode: String? = nil
-			if let code = parameters[.currencyCode] {
-				currencyCode = code
+        
+            var ecommerceProperties = EcommerceProperties()
+			
+            if let currencyCodeConfig = parameters[.currencyCode] {
+				ecommerceProperties.currencyCodeConfig = currencyCodeConfig
 			}
-			var orderNumber: String? = nil
-			if let number = parameters[.orderNumber] {
-				orderNumber = number
+            
+			if let orderNumberConfig = parameters[.orderNumber] {
+				ecommerceProperties.orderNumberConfig = orderNumberConfig
 			}
-			var product: EcommerceProperties.Product? = nil
-			if let productProperties = productProperties() {
-				product = productProperties
-			}
-			var status: EcommerceProperties.Status? = nil
-			if let statusString = parameters[.productStatus] {
-				switch statusString {
-				case "conf": status = .purchased
-				case "add":  status = .addedToBasket
-				case "view": status = .viewed
-				default:         break
-				}
+            
+			if let statusConfig = parameters[.productStatus] {
+                ecommerceProperties.statusConfig = statusConfig
 			}
 
-			var totalValue: String? = nil
-			if let value = parameters[.totalValue] {
-				totalValue = value
-			}
-			var voucherValue: String? = nil
-			if let value = parameters[.voucherValue] {
-				voucherValue = value
-			}
-			var details: [Int: TrackingValue]? = nil
+            if let totalValueConfig = parameters[.totalValue] {
+                ecommerceProperties.totalValueConfig = totalValueConfig
+            }
+
+            if let voucherValueConfig = parameters[.voucherValue] {
+                ecommerceProperties.voucherValueConfig = voucherValueConfig
+            }
+        
 			if let elements = categories["ecomParameter"], ecommerceDetails = resolved(elements) {
-				details = ecommerceDetails
+				ecommerceProperties.details = ecommerceDetails
 			}
 
-			var ecommerceProperties = EcommerceProperties(currencyCode: currencyCode, details: details, orderNumber: orderNumber, status: status, totalValue: totalValue, voucherValue: voucherValue)
-			guard let productToAdd = product else {
-				return ecommerceProperties
+			if let productConf = productProperties() {
+				ecommerceProperties.productConf = productConf
 			}
-			ecommerceProperties.products = [productToAdd]
 
 			return ecommerceProperties
 		}
@@ -536,10 +529,10 @@ internal class XmlTrackerConfigurationParser {
 
 		private func pageProperties() -> PageProperties {
 			var pageProperties = PageProperties(name: nil)
-			if let internalSearch = parameters[.internalSearch] {
-				pageProperties.internalSearch = internalSearch
+			if let internalSearchConfig = parameters[.internalSearch] {
+                pageProperties.internalSearchConfig = internalSearchConfig
 			}
-			if let url = parameters[.pageUrl] {
+			if let url = parameters[.pageUrl]?.serialized() {
 				pageProperties.url = url
 			}
 			if let elements = categories["pageParameter"], pageDetails = resolved(elements) {
@@ -554,28 +547,29 @@ internal class XmlTrackerConfigurationParser {
 
 
 		private func productProperties() -> EcommerceProperties.Product? {
-			var productName: String? = nil
-			if let name = parameters[.productName]?.nonEmpty {
-				productName = name
+            
+            var productNameConfig: PropertyValue? = nil
+			if let nameConfig = parameters[.productName] {
+				productNameConfig = nameConfig
 			}
-			var productPrice: String? = nil
-			if let price = parameters[.productPrice]?.nonEmpty {
-				productPrice = price
-			}
-			var productQuantity: Int? = nil
-			if let quantityString = parameters[.productQuantity]?.nonEmpty, quantity = Int(quantityString) {
-				productQuantity = quantity
+			var productPriceConfig: PropertyValue? = nil
+			if let priceConfig = parameters[.productPrice] {
+				productPriceConfig = priceConfig
+            }
+			var productQuantityConfig: PropertyValue? = nil
+			if let quantityConfig = parameters[.productQuantity] {
+				productQuantityConfig = quantityConfig
 			}
 			var productCategories: [Int: TrackingValue]? = nil
 			if let elements = categories["productCategories"], productCategoriesElements = resolved(elements) {
 				productCategories = productCategoriesElements
 			}
 
-			guard productName != nil || productPrice != nil || productQuantity != nil || productCategories != nil else {
+			guard productNameConfig != nil || productPriceConfig != nil || productQuantityConfig != nil || productCategories != nil else {
 				return nil
 			}
 
-			return EcommerceProperties.Product(name: productName ?? "", categories: productCategories, price: productPrice, quantity: productQuantity)
+			return EcommerceProperties.Product(nameConfig: productNameConfig, categories: productCategories, priceConfig: productPriceConfig, quantityConfig: productQuantityConfig)
 		}
 
 
@@ -585,57 +579,50 @@ internal class XmlTrackerConfigurationParser {
 
 
 		private func userProperties() -> UserProperties {
-			var userProperties = UserProperties()
+			var userProperties = UserProperties(birthday: nil)
 			if let categoryElements = categories["userCategories"], details = resolved(categoryElements) {
 				userProperties.details = details
 			}
-			if let str = parameters[.birthday] where str.characters.count == 8,
-			   let year = Int(str.substringWithRange(str.startIndex...str.startIndex.advancedBy(3))),
-			   let month = Int(str.substringWithRange(str.startIndex.advancedBy(4)...str.startIndex.advancedBy(5))),
-			   let day = Int(str.substringWithRange(str.startIndex.advancedBy(6)..<str.endIndex)) {
-				userProperties.birthday = UserProperties.Birthday(day: day, month: month, year: year)
+			if let bithdayConfig = parameters[.birthday]  {
+				userProperties.birthdayConfig = bithdayConfig
 			}
-			if let city = parameters[.city] {
+			if let city = parameters[.city]?.serialized() {
 				userProperties.city = city
 			}
-			if let country = parameters[.country] {
+			if let country = parameters[.country]?.serialized() {
 				userProperties.country = country
 			}
-			if let customerId = parameters[.customerId] {
-				userProperties.id = customerId
+			if let idConfig = parameters[.customerId] {
+				userProperties.idConfig = idConfig
 			}
-			if let emailAddress = parameters[.emailAddress] {
-				userProperties.emailAddress = emailAddress
+			if let emailAddressConfig = parameters[.emailAddress] {
+				userProperties.emailAddressConfig = emailAddressConfig
 			}
-			if let emailReceiverId = parameters[.emailReceiverId] {
-				userProperties.emailReceiverId = emailReceiverId
+			if let emailReceiverIdConfig = parameters[.emailReceiverId] {
+				userProperties.emailReceiverIdConfig = emailReceiverIdConfig
 			}
-			if let firstName = parameters[.firstName] {
+			if let firstName = parameters[.firstName]?.serialized() {
 				userProperties.city = firstName
 			}
-			if let gender = parameters[.gender] {
-				switch gender.lowercaseString {
-				case "male", "1": userProperties.gender = .male
-				case "femal", "2": userProperties.gender = .female
-				default: break
-				}
-			}
-			if let lastName = parameters[.lastName] {
+			if let genderConfig = parameters[.gender] {
+                userProperties.genderConfig = genderConfig
+            }
+			if let lastName = parameters[.lastName]?.serialized() {
 				userProperties.city = lastName
 			}
-			if let newsletterSubscribed = parameters[.newsletterSubscribed] {
+			if let newsletterSubscribed = parameters[.newsletterSubscribed]?.serialized() {
 				userProperties.city = newsletterSubscribed
 			}
-			if let phoneNumber = parameters[.phoneNumber] {
+			if let phoneNumber = parameters[.phoneNumber]?.serialized() {
 				userProperties.city = phoneNumber
 			}
-			if let street = parameters[.street] {
+			if let street = parameters[.street]?.serialized() {
 				userProperties.city = street
 			}
-			if let streetNumber = parameters[.streetNumber] {
+			if let streetNumber = parameters[.streetNumber]?.serialized() {
 				userProperties.city = streetNumber
 			}
-			if let zipCode = parameters[.zipCode] {
+			if let zipCode = parameters[.zipCode]?.serialized() {
 				userProperties.zipCode = zipCode
 			}
 			return userProperties

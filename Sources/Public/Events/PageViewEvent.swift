@@ -21,7 +21,7 @@ public struct PageViewEvent:
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
 		ipAddress: String? = nil,
 		sessionDetails: [Int: TrackingValue] = [:],
-		userProperties: UserProperties = UserProperties(),
+		userProperties: UserProperties = UserProperties(birthday: nil),
 		variables: [String : String] = [:]
 	) {
 		self.advertisementProperties = advertisementProperties

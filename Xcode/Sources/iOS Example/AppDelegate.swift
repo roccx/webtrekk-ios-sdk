@@ -9,7 +9,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-		WebtrekkTracking.sharedTracker.application(application, didFinishLaunchingWithOptions: launchOptions)
+        WebtrekkTracking.defaultLogger.minimumLevel = .debug
+        try! WebtrekkTracking.initTrack()
 
 		return true
 	}
