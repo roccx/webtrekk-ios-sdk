@@ -557,7 +557,7 @@ class RequestUrlBuilderTest: XCTestCase {
 	func testUserProperties() {
 		var event = PageViewEvent(pageProperties: PageProperties(name: "?"))
 
-		event.userProperties = UserProperties()
+        event.userProperties = UserProperties(birthday: nil)
 		if let url = urlForEvent(event) {
 			assert(url: url, doesNotContain: "cd")
 			assert(url: url, doesNotContain: "uc1")

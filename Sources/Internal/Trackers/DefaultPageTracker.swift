@@ -15,7 +15,7 @@ internal final class DefaultPageTracker: PageTracker {
 	internal var ecommerceProperties = EcommerceProperties()
 	internal var pageProperties: PageProperties
 	internal var sessionDetails = [Int: TrackingValue]()
-	internal var userProperties = UserProperties()
+    internal var userProperties = UserProperties(birthday: nil)
 	internal var variables = [String : String]()
 
 

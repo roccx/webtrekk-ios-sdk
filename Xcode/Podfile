@@ -8,8 +8,18 @@ abstract_target "iOS" do
 	platform :ios, "8.0"
 
 	target "Example" do
-		target "Tests" do
-			inherit! :search_paths
+      target "ModuleTest" do
+ 		target "TestsOld" do
+            target "Tests" do
+                inherit! :search_paths
+                pod 'Quick', '~> 0.8'
+                pod 'Nimble', '~> 3.0'
+                pod 'FBSnapshotTestCase'
+                pod 'Nimble-Snapshots'
+                pod 'OHHTTPStubs'
+                pod 'OHHTTPStubs/Swift'
+                end
+            end
 		end
 	end
 end

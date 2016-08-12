@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-public enum WebtrekkTracking {
+public class WebtrekkTracking {
 
 	/** Current version of the sdk */
 	public static let version = "4.0"
@@ -16,23 +16,45 @@ public enum WebtrekkTracking {
 
 	/** Indicates wether the sdk tries to migrated stored data from the previous major version. */
 	public static var migratesFromLibraryV3 = true
+    
+    /** Main track object */
+    private static var tracker: Tracker?
+    
+     /** Get main shared Webtrekk instance. */
+    public static func instance() -> Tracker
+    {
+        guard tracker != nil else
+        {
+            logger.logError("Tracker isn't initialized. Please call initTrack() first. Application will crash")
+            return tracker!
+        }
+        return tracker!
+    }
+    
+    /** return true if Webtrekk is already initialized. */
+    public static func isInitialized()->Bool{
+        return tracker != nil
+    }
 
-
-	/**
-	Creates a `Tracker` by assuming that the configuration xml is named `webtrekk_config.xml` and is located within the application main bundle.
-	
-	- Throws: `TrackError` when the webtrekk_config.xml could not be located or when the configuration is not valid.
-	*/
-	public static func createTracker() throws -> Tracker {
-		checkIsOnMainThread()
-
-		let bundle = NSBundle.mainBundle()
-		guard let configurationFile = bundle.URLForResource("webtrekk_config", withExtension: "xml") else {
-			throw TrackerError(message: "Cannot locate webtrekk_config.xml in '\(bundle.bundlePath)'. Either place the file there or use WebtrekkTracking.createTracker(configurationFile:) to specify the file's location.")
-		}
-
-		return try createTracker(configurationFile: configurationFile)
-	}
+    /** initialize tracking. It should be called before invoking instance() function
+     Optional parameter "configurationFile" is used to define location of webtrekk configuration file.
+     In case this parameter is nil the default location is in main bundle with name webtrekk_config 
+     and xml extension*/
+    public static func initTrack(configurationFile: NSURL? = nil) throws
+    {
+        guard tracker == nil else {
+            logger.logWarning("Tracker is arleady initialized. No twice initialization done.")
+            return
+        }
+        
+        guard let confFile = configurationFile ?? NSBundle.mainBundle().URLForResource("webtrekk_config", withExtension: "xml") else {
+            throw TrackerError(message: "Cannot locate webtrekk_config.xml in '\(NSBundle.mainBundle().bundlePath)'. Either place the file there or use WebtrekkTracking.createTracker(configurationFile:) to specify the file's location.")
+        }
+        
+        checkIsOnMainThread()
+        
+        tracker = try createTracker(configurationFile: confFile)
+    }
 
 	/**
 	Creates a `Tracker` with the given configurationFile URL.
@@ -41,15 +63,18 @@ public enum WebtrekkTracking {
 
 	- Throws: `TrackError` when the configurationFile could not be located or when the configuration is not valid.
 	*/
-	public static func createTracker(configurationFile configurationFile: NSURL) throws -> Tracker {
-		checkIsOnMainThread()
+	private static func createTracker(configurationFile configurationFile: NSURL) throws -> Tracker {
 
 		guard let configurationData = NSData(contentsOfURL: configurationFile) else {
 			throw TrackerError(message: "Cannot load Webtrekk configuration file '\(configurationFile)'")
 		}
 
 		do {
-			return DefaultTracker(configuration: try XmlTrackerConfigurationParser().parse(xml: configurationData))
+			let tracker = DefaultTracker(configuration: try XmlTrackerConfigurationParser().parse(xml: configurationData))
+            
+            tracker.initTimers()
+            
+            return tracker
 		}
 		catch let error {
 			throw TrackerError(message: "Cannot load Webtrekk configuration file '\(configurationFile)': \(error)")

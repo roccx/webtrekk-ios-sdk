@@ -23,7 +23,7 @@ public struct ActionEvent:
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
 		sessionDetails: [Int: TrackingValue] = [:],
-		userProperties: UserProperties = UserProperties(),
+		userProperties: UserProperties = UserProperties(birthday: nil),
 		variables: [String : String] = [:]
 	) {
 		self.actionProperties = actionProperties

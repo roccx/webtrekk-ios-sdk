@@ -1,3 +1,5 @@
+import Foundation
+
 public struct EcommerceProperties {
 
 	public var currencyCode: String?
@@ -7,6 +9,12 @@ public struct EcommerceProperties {
 	public var status: Status?
 	public var totalValue: String?
 	public var voucherValue: String?
+    var currencyCodeConfig: PropertyValue?
+    var orderNumberConfig: PropertyValue?
+    var statusConfig: PropertyValue?
+    var voucherValueConfig: PropertyValue?
+    var totalValueConfig: PropertyValue?
+    var productConf: Product?
 
 
 	public init(
@@ -27,10 +35,29 @@ public struct EcommerceProperties {
 		self.voucherValue = voucherValue
 	}
 
+    init(
+        currencyCodeConfig: PropertyValue?,
+        details: [Int: TrackingValue]? = nil,
+        orderNumberConfig:PropertyValue? = nil,
+        products: [Product]? = nil,
+        statusConfig: PropertyValue? = nil,
+        totalValueConfig: PropertyValue? = nil,
+        voucherValueConfig: PropertyValue? = nil,
+        productConf: Product? = nil
+        ) {
+        self.currencyCodeConfig = currencyCodeConfig
+        self.details = details
+        self.orderNumberConfig = orderNumberConfig
+        self.products = products
+        self.statusConfig = statusConfig
+        self.totalValueConfig = totalValueConfig
+        self.voucherValueConfig = voucherValueConfig
+        self.productConf = productConf
+    }
 	
 	@warn_unused_result
 	internal func merged(over other: EcommerceProperties) -> EcommerceProperties {
-		return EcommerceProperties(
+		var new = EcommerceProperties(
 			currencyCode: currencyCode ?? other.currencyCode,
 			details:      details.merged(over: other.details),
 			orderNumber:  orderNumber ?? other.orderNumber,
@@ -39,6 +66,13 @@ public struct EcommerceProperties {
 			totalValue:   totalValue ?? other.totalValue,
 			voucherValue: voucherValue ?? other.voucherValue
 		)
+        new.currencyCodeConfig = currencyCodeConfig ?? other.currencyCodeConfig
+        new.orderNumberConfig = orderNumberConfig ?? other.orderNumberConfig
+        new.statusConfig = statusConfig ?? other.statusConfig
+        new.totalValueConfig = totalValueConfig ?? other.totalValueConfig
+        new.voucherValueConfig = voucherValueConfig ?? other.voucherValueConfig
+        new.productConf = productConf ?? other.productConf
+        return new
 	}
 
 
@@ -46,9 +80,12 @@ public struct EcommerceProperties {
 	public struct Product {
 
 		public var categories: [Int: TrackingValue]?
-		public var name: String
+		public var name: String?
 		public var price: String?
 		public var quantity: Int?
+        var nameConfig: PropertyValue?
+        var priceConfig: PropertyValue?
+        var quantityConfig: PropertyValue?
 
 		public init(
 			name: String,
@@ -63,23 +100,95 @@ public struct EcommerceProperties {
 		}
 
 
-		@warn_unused_result
+        init(
+            nameConfig: PropertyValue? = nil,
+            categories: [Int: TrackingValue]? = nil,
+            priceConfig: PropertyValue? = nil,
+            quantityConfig: PropertyValue? = nil
+            ) {
+            self.categories = categories
+            self.nameConfig = nameConfig
+            self.priceConfig = priceConfig
+            self.quantityConfig = quantityConfig
+        }
+		
+        
+        @warn_unused_result
 		internal func merged(over other: Product) -> Product {
-			return Product(
-				name:       name.isEmpty ? other.name : name,
-				categories: categories.merged(over: other.categories),
-				price:      price ?? other.price,
-				quantity:   quantity ?? other.quantity
-			)
+			var new = Product()
+            
+            new.name = name ?? other.name
+            new.categories = categories.merged(over: other.categories)
+            new.price = price ?? other.price
+            new.quantity = quantity ?? other.quantity
+            new.nameConfig = nameConfig ?? other.nameConfig
+            new.priceConfig = priceConfig ?? other.priceConfig
+            new.quantityConfig = quantityConfig ?? other.quantityConfig
+            return new
 		}
+        
+        
+        private mutating func processKeys(event: TrackingEvent){
+            if let name = nameConfig?.serialized(for: event) {
+                self.name = name
+            }
+            if let price = priceConfig?.serialized(for: event) {
+                self.price = price
+            }
+            
+            if let quantity = self.quantityConfig?.serialized(for: event) {
+                    if quantity.isQuantity{
+                        self.quantity = Int(quantity)
+                    }
+            }
+        }
 	}
 
-
-
-	public enum Status {
-
-		case addedToBasket
-		case purchased
-		case viewed
+    public enum Status: String{
+		case addedToBasket = "add"
+		case purchased = "conf"
+		case viewed = "view"
 	}
+    
+    mutating func processKeys(event: TrackingEvent){
+        if let currencyCode = currencyCodeConfig?.serialized(for: event) {
+            self.currencyCode = currencyCode
+        }
+        if let orderNumber = orderNumberConfig?.serialized(for: event) {
+            self.orderNumber = orderNumber
+        }
+        if let staus = statusConfig?.serialized(for: event) {
+                self.status = Status(rawValue: staus)
+        }
+        
+        if let totalValue = totalValueConfig?.serialized(for: event) {
+            self.totalValue = totalValue
+        }
+        
+        if let voucherValue = voucherValueConfig?.serialized(for: event) {
+            self.voucherValue = voucherValue
+        }
+        
+        if let productConf = self.productConf {
+            self.productConf?.processKeys(event)
+        }
+//            if let _ = self.products{
+//                for (index, value) in (self.products?.enumerate())! {
+//                    var productNew = self.productConf!
+//                    productNew.merged(over: value)
+//                    self.products?[index] = productNew
+//                }
+//            }else {
+//                self.products?.append(self.productConf!)
+//            }
+//        }
+    }
+}
+
+private extension String  {
+    var isQuantity : Bool {
+        get{
+            return characters.count > 0 && self.rangeOfCharacterFromSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet) == nil
+        }
+    }
 }

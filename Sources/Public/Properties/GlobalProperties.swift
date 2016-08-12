@@ -21,7 +21,7 @@ public struct GlobalProperties {
 		mediaProperties: MediaProperties = MediaProperties(name: nil),
 		pageProperties: PageProperties = PageProperties(name: nil),
 		sessionDetails: [Int: TrackingValue] = [:],
-		userProperties: UserProperties = UserProperties(),
+		userProperties: UserProperties = UserProperties(birthday: nil),
 		variables: [String : String] = [:]
 	) {
 		self.actionProperties = actionProperties
