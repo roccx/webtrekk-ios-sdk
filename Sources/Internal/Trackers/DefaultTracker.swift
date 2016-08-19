@@ -30,6 +30,7 @@ internal final class DefaultTracker: Tracker {
 	private let requestQueueBackupFile: NSURL?
 	private var requestQueueLoaded = false
 	private let requestUrlBuilder: RequestUrlBuilder
+    private let campaign: Campaign
 
 	internal let everId: String
 	internal var global = GlobalProperties()
@@ -99,7 +100,11 @@ internal final class DefaultTracker: Tracker {
 		self.requestQueueBackupFile = DefaultTracker.requestQueueBackupFileForWebtrekkId(configuration.webtrekkId)
 		self.requestUrlBuilder = RequestUrlBuilder(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId)
 
-		DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
+        self.campaign = Campaign(trackID: configuration.webtrekkId)
+        
+        campaign.processCampaign()
+		
+        DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
 
 		requestManager.delegate = self
 
@@ -357,10 +362,12 @@ internal final class DefaultTracker: Tracker {
 			event = eventByApplyingAutomaticPageTracking(to: event)
 		#endif
 
-		guard var request = createRequestForEvent(event) else {
+        event = campaignOverride(to :event) ?? event
+		
+        guard var request = createRequestForEvent(event) else {
 			return
 		}
-
+        
 		for plugin in plugins {
 			request = plugin.tracker(self, requestForQueuingRequest: request)
 		}
@@ -377,7 +384,33 @@ internal final class DefaultTracker: Tracker {
 		isFirstEventOfApp = false
 		isFirstEventOfSession = false
 	}
-
+    
+    private func campaignOverride(to event: TrackingEvent) -> TrackingEvent? {
+        
+        guard var _ = event as? TrackingEventWithAdvertisementProperties,
+            let _ = event as? TrackingEventWithEcommerceProperties else{
+                return nil
+        }
+        
+        if let mc = campaign.getAndDeletSavedMediaCode() {
+                var returnEvent = event
+                    
+                var eventWithAdvertisementProperties = returnEvent as! TrackingEventWithAdvertisementProperties
+                eventWithAdvertisementProperties.advertisementProperties.id = mc
+                eventWithAdvertisementProperties.advertisementProperties.action = "c"
+                returnEvent = eventWithAdvertisementProperties
+            
+                var eventWithEcommerceProperties = returnEvent as! TrackingEventWithEcommerceProperties
+                var detailsToAdd = eventWithEcommerceProperties.ecommerceProperties.details ?? [Int: TrackingValue]()
+                detailsToAdd[900] = "1"
+                eventWithEcommerceProperties.ecommerceProperties.details = detailsToAdd
+                returnEvent = eventWithEcommerceProperties
+            
+                return returnEvent
+            }
+        
+        return nil
+    }
 
 	#if !os(watchOS)
 	private func eventByApplyingAutomaticPageTracking(to event: TrackingEvent) -> TrackingEvent {
