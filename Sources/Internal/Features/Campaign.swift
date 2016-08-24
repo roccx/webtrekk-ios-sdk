@@ -28,9 +28,6 @@ class Campaign{
         
         WebtrekkTracking.logger.logDebug("Campaign process is starting")
         
-        //if not get advId
-        let advID = Environment.advertisingIdentifierManager?.advertisingIdentifier
-        
         // sent request
         
         let session = RequestManager.createUrlSession()
