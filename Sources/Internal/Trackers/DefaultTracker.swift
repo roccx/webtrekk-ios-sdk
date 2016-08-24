@@ -1005,13 +1005,12 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	private static let userAgent: String = {
+    static let userAgent: String = {
 		checkIsOnMainThread()
 
 		let properties = [
-			Environment.operatingSystemName,
-			Environment.operatingSystemVersionString,
 			Environment.deviceModelString,
+            Environment.operatingSystemName + " " + Environment.operatingSystemVersionString,
 			NSLocale.currentLocale().localeIdentifier
 			].joinWithSeparator("; ")
 

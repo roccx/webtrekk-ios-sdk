@@ -45,6 +45,8 @@ class Campaign{
             queryItems.append(NSURLQueryItem(name: "aid", value: advID.UUIDString))
         }
         
+        queryItems.append(NSURLQueryItem(name: "X-WT-UA", value: DefaultTracker.userAgent))
+        
         urlComponents.queryItems = queryItems
         
         guard let url = urlComponents.URL else {
