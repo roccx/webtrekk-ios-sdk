@@ -39,6 +39,7 @@
 		9F4160001D5CE23E002CB83F /* RequestUrlBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620B1D1DFB9C0006A82D /* RequestUrlBuilderTests.swift */; };
 		9F4160011D5CE23E002CB83F /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */; };
 		9F5B49C21D65E5DD00E58E2B /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72368BA1D3F643100D64C63 /* AdSupport.framework */; };
+		9F8354881D6F1E2400887BEA /* LICENSE.MD in Sources */ = {isa = PBXBuildFile; fileRef = 9F8354871D6F1E2400887BEA /* LICENSE.MD */; };
 		A9C514BF2D2B3FEF8F5D2490 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */; };
 		B72368BB1D3F643100D64C63 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72368BA1D3F643100D64C63 /* AdSupport.framework */; };
 		B73DB2311D49ECC200F0C8DD /* iOS Example in Resources */ = {isa = PBXBuildFile; fileRef = B73DB2301D49ECC200F0C8DD /* iOS Example */; };
@@ -159,6 +160,7 @@
 		9F415FC21D5CDCCB002CB83F /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/Nimble/Nimble.framework"; sourceTree = "<group>"; };
 		9F415FFA1D5CE213002CB83F /* TestsOld.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestsOld.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F4160021D5CE337002CB83F /* Pods_TestsOld.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_TestsOld.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/Pods_TestsOld.framework"; sourceTree = "<group>"; };
+		9F8354871D6F1E2400887BEA /* LICENSE.MD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = LICENSE.MD; path = ../LICENSE.MD; sourceTree = "<group>"; };
 		AC86ED3C67C08C21A1B1750D /* Pods-TestsOld.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestsOld.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TestsOld/Pods-TestsOld.debug.xcconfig"; sourceTree = "<group>"; };
 		B72368BA1D3F643100D64C63 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		B73DB2301D49ECC200F0C8DD /* iOS Example */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "iOS Example"; path = "Sources/iOS Example"; sourceTree = "<group>"; };
@@ -235,6 +237,7 @@
 				495162051D1DFB9C0006A82D /* Tests */,
 				497AAE311D22D2780094B8B4 /* README.md */,
 				497AAE321D22D28A0094B8B4 /* Webtrekk.podspec */,
+				9F8354871D6F1E2400887BEA /* LICENSE.MD */,
 			);
 			sourceTree = "<group>";
 		};
@@ -781,6 +784,7 @@
 				B73DB23F1D49ED4F00F0C8DD /* ProductViewController.swift in Sources */,
 				B73DB2411D49ED4F00F0C8DD /* VoucherListViewController.swift in Sources */,
 				B73DB23E1D49ED4F00F0C8DD /* ProductListViewController.swift in Sources */,
+				9F8354881D6F1E2400887BEA /* LICENSE.MD in Sources */,
 				B73DB2421D49ED4F00F0C8DD /* VoucherViewController.swift in Sources */,
 				B73DB23D1D49ED4F00F0C8DD /* AppDelegate.swift in Sources */,
 				B73DB2401D49ED4F00F0C8DD /* SettingsViewController.swift in Sources */,
