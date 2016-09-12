@@ -50,7 +50,7 @@ class Campaign{
         var queryItems = [NSURLQueryItem]()
         queryItems.append(NSURLQueryItem(name: "trackid", value: self.trackID))
         
-        if let advID = Environment.advertisingIdentifierManager?.advertisingIdentifier {
+        if let advID = Environment.advertisingIdentifierManager?.advertisingIdentifier where advID.UUIDString != "00000000-0000-0000-0000-000000000000" {
             queryItems.append(NSURLQueryItem(name: "aid", value: advID.UUIDString))
         }
         
