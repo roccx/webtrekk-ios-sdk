@@ -51,6 +51,7 @@ internal final class DefaultTracker: Tracker {
 	private let requestUrlBuilder: RequestUrlBuilder
     private let campaign: Campaign
     private let deepLink = DeepLink()
+    public var pageURL: String?
 
 	internal var global = GlobalProperties()
 	internal var plugins = [TrackerPlugin]()
@@ -383,6 +384,8 @@ internal final class DefaultTracker: Tracker {
         event = campaignOverride(to :event) ?? event
         
         event = deepLinkOverride(to: event) ?? event
+        
+        event = pageURLOverride(to: event) ?? event
 		
         guard var request = createRequestForEvent(event) else {
 			return
@@ -454,6 +457,33 @@ internal final class DefaultTracker: Tracker {
         
         return nil
     }
+    
+    //override PageURLParameter
+    private func pageURLOverride(to event:TrackingEvent) -> TrackingEvent? {
+        
+        guard var _ = event as? TrackingEventWithPageProperties else{
+                return nil
+        }
+        
+        if let pageURL = self.pageURL {
+            
+            guard pageURL.isValidURL() else {
+                WebtrekkTracking.defaultLogger.logError("Invalid URL \(pageURL) for override pu parameter")
+                return nil
+            }
+
+            var returnEvent = event
+            
+            var eventWithPageProperties = returnEvent as! TrackingEventWithPageProperties
+            eventWithPageProperties.pageProperties.url = pageURL
+            returnEvent = eventWithPageProperties
+            
+            return returnEvent
+        }
+        
+        return nil
+    }
+    
 
 	#if !os(watchOS)
 	private func eventByApplyingAutomaticPageTracking(to event: TrackingEvent) -> TrackingEvent {

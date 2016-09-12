@@ -179,6 +179,7 @@ class ParameterTest: WTBaseTestNew {
         doURLSendTestAction(){
             self.mainViewController.beginAppearanceTransition(true, animated: false)
             let tracker = WebtrekkTracking.trackerForAutotrackedViewController(self.mainViewController)
+            WebtrekkTracking.instance().pageURL = nil
             //uncomment after fix with default memberwise initializer is done.
             tracker.userProperties.birthday = UserProperties.Birthday(day: 11, month: 4, year: 1986)
             tracker.userProperties.city = "CITY"
@@ -210,7 +211,7 @@ class ParameterTest: WTBaseTestNew {
             tracker.pageProperties.name = "pageNameNotauto"
             tracker.pageProperties.groups = [10: "pageCat10", 11: "pageCat11"]
             tracker.pageProperties.internalSearch = "InternalSearch"
-            tracker.pageProperties.url = "PageURL"
+            tracker.pageProperties.url = "http://www.webrekk.com"
             tracker.pageProperties.details = [30: "pageCustom30", 31: "pageCustom31"]
             
             tracker.advertisementProperties.id = "ADVERTISEMENT"
@@ -238,7 +239,7 @@ class ParameterTest: WTBaseTestNew {
             expect(parametersArr["uc704"]).to(equal("SNAME"))
             expect(parametersArr["uc702"]).to(equal("2"))
             expect(parametersArr["oi"]).to(equal("ORDER_NUMBER"))
-            expect(parametersArr["pu"]).to(equal("PageURL"))
+            expect(parametersArr["pu"]).to(equal("http://www.webrekk.com"))
             expect(parametersArr["uc705"]).to(equal("123456789"))
             expect(parametersArr["ba"]).to(equal("productName1;productName2"))
             expect(parametersArr["ca11"]).to(equal("productCat11;productCat21"))
@@ -255,7 +256,7 @@ class ParameterTest: WTBaseTestNew {
             expect(parametersArr["cg10"]).to(equal("pageCat10"))
             expect(parametersArr["cg11"]).to(equal("pageCat11"))
             expect(parametersArr["is"]).to(equal("InternalSearch"))
-            expect(parametersArr["pu"]).to(equal("PageURL"))
+            expect(parametersArr["pu"]).to(equal("http://www.webrekk.com"))
             expect(parametersArr["cp30"]).to(equal("pageCustom30"))
             expect(parametersArr["cp31"]).to(equal("pageCustom31"))
             expect(parametersArr["mc"]).to(equal("ADVERTISEMENT"))
@@ -269,11 +270,12 @@ class ParameterTest: WTBaseTestNew {
         
         doURLSendTestAction(){
             let tracker = WebtrekkTracking.instance()
+            tracker.pageURL = nil
             let pagePropertiesL = PageProperties(
                 name: "pageNameNotauto",
                 groups: [10: "pageCat10", 11: "pageCat11"],
                 internalSearch: "InternalSearch",
-                url: "PageURL",
+                url: "http://www.webrekk.com",
                 details: [30: "pageCustom30", 31: "pageCustom31"])
             let userPropertiesL = UserProperties(
                 birthday: UserProperties.Birthday(day: 11, month: 4, year: 1986),
@@ -336,7 +338,7 @@ class ParameterTest: WTBaseTestNew {
             expect(parametersArr["uc704"]).to(equal("SNAME"))
             expect(parametersArr["uc702"]).to(equal("2"))
             expect(parametersArr["oi"]).to(equal("ORDER_NUMBER"))
-            expect(parametersArr["pu"]).to(equal("PageURL"))
+            expect(parametersArr["pu"]).to(equal("http://www.webrekk.com"))
             expect(parametersArr["uc705"]).to(equal("123456789"))
             expect(parametersArr["ba"]).to(equal("productName1;productName2"))
             expect(parametersArr["ca11"]).to(equal("productCat11;productCat21"))
@@ -354,7 +356,7 @@ class ParameterTest: WTBaseTestNew {
             expect(parametersArr["cg10"]).to(equal("pageCat10"))
             expect(parametersArr["cg11"]).to(equal("pageCat11"))
             expect(parametersArr["is"]).to(equal("InternalSearch"))
-            expect(parametersArr["pu"]).to(equal("PageURL"))
+            expect(parametersArr["pu"]).to(equal("http://www.webrekk.com"))
             expect(parametersArr["cp30"]).to(equal("pageCustom30"))
             expect(parametersArr["cp31"]).to(equal("pageCustom31"))
             expect(parametersArr["mc"]).to(equal("ADVERTISEMENT"))

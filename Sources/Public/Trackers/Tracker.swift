@@ -57,6 +57,9 @@ public protocol Tracker: class {
     
     /** set media code. Media code will be sent with next page request only. Only setter is working. Getter always returns ""*/
     var mediaCode: String { get set }
+    
+    //Override of page URL parameters in code or xml
+    var pageURL: String? { get set }
 }
 
 

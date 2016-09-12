@@ -50,6 +50,15 @@ internal extension String {
 	internal var simpleDescription: String {
 		return "\"\(self)\""
 	}
+    
+    internal func isValidURL() -> Bool {
+    
+    if let url = NSURL(string: self), let host = url.host{
+            return true
+        } else {
+            return false
+        }
+    }
 }
 
 

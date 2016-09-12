@@ -27,8 +27,14 @@ public struct PageProperties {
 	public var groups: [Int: TrackingValue]?
 	public var name: String?
 	public var internalSearch: String?
- 	public var url: String?
 	public var viewControllerType: UIViewController.Type?
+    public var url: String? {
+        didSet {
+            if !isURLCanBeSet(self.url) {
+                printInvalidURL(self.url!)
+            }
+        }
+    }
     var internalSearchConfig: PropertyValue?
 
 
@@ -43,7 +49,7 @@ public struct PageProperties {
 		self.groups = groups
 		self.name = name
 		self.internalSearch = internalSearch
-		self.url = url
+        setUpURL(url)
 	}
 
 
@@ -57,7 +63,7 @@ public struct PageProperties {
 		self.details = details
 		self.groups = groups
 		self.internalSearch = internalSearch
-		self.url = url
+		setUpURL(url)
 		self.viewControllerType = viewControllerType
 	}
     
@@ -73,7 +79,7 @@ public struct PageProperties {
         self.groups = groups
         self.name = nameComplex
         self.internalSearchConfig = internalSearchConfig
-        self.url = url
+        setUpURL(url)
     }
 	
 	@warn_unused_result
@@ -94,5 +100,22 @@ public struct PageProperties {
         if let internalSearch = internalSearchConfig?.serialized(for: event) {
             self.internalSearch = internalSearch
         }
+    }
+    
+    mutating private func setUpURL(url: String?){
+    
+    if isURLCanBeSet(url) {
+        self.url = url
+    } else {
+        printInvalidURL(url!)
+    }
+    }
+    
+    private func isURLCanBeSet(url: String?) -> Bool {
+       return url == nil || url!.isValidURL()
+    }
+    
+    private func printInvalidURL(url: String) {
+        WebtrekkTracking.defaultLogger.logError("Invalid URL \(url) for pu parameter")
     }
 }

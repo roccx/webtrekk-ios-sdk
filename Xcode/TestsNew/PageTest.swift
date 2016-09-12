@@ -25,22 +25,6 @@ import Webtrekk
 class PageTest: WTBaseTestNew {
     
     var mainViewController: ViewController!
-
-//    private func pageTest()
-//    {
-//        doURLSendTestAction(){
-//        if let pageTracker = WTBaseURLTests.tracker {
-//            pageTracker.trackPageView("pageName")
-//        }
-//        }
-//        
-//        doURLSendTestCheck(){parametersArr in
-//            print("key value print______________")
-//            for (key, value) in parametersArr{
-//                print(key+"="+value)
-//            }
-//        }
-//    }
     
     func testKeyValue(){
         doURLSendTestAction(){
@@ -244,6 +228,35 @@ class PageTest: WTBaseTestNew {
                 expect(parametersArr["p"]).to(contain("autoPageName"))
             }
 
+    }
+    
+    func testPageURLOverrideTest()
+    {
+        // test incorrect pu parameter is set
+        doURLSendTestAction(){
+            
+            let track = WebtrekkTracking.instance()
+            
+            track.pageURL = "some incorrect url"
+            track.trackPageView(PageProperties(name: "SomePageName", url: "http://www.sample.com"))
+        }
+
+        doURLSendTestCheck(){parametersArr in
+                expect(parametersArr["pu"]).to(contain("http://www.sample.com"))
+        }
+        
+        // test correct pu parameter is set
+        doURLSendTestAction(){
+            
+            let track = WebtrekkTracking.instance()
+            
+            track.pageURL = "https://www.webtrekk.com"
+            track.trackPageView(PageProperties(name: "SomePageName", url: "http://www.sample.com"))
+        }
+
+        doURLSendTestCheck(){parametersArr in
+                expect(parametersArr["pu"]).to(contain("https://www.webtrekk.com"))
+        }
     }
 }
 
