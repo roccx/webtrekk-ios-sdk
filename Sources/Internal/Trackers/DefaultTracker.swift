@@ -50,8 +50,8 @@ internal final class DefaultTracker: Tracker {
 	private var requestQueueLoaded = false
 	private let requestUrlBuilder: RequestUrlBuilder
     private let campaign: Campaign
+    private let deepLink = DeepLink()
 
-	internal let everId: String
 	internal var global = GlobalProperties()
 	internal var plugins = [TrackerPlugin]()
 
@@ -67,7 +67,6 @@ internal final class DefaultTracker: Tracker {
 			sharedDefaults.set(key: DefaultsKeys.migrationCompleted, to: true)
 
 			if WebtrekkTracking.migratesFromLibraryV3, let migration = Migration.migrateFromLibraryV3(webtrekkId: webtrekkId) {
-				precondition(!DefaultTracker._everIdIsLoaded)
 
 				sharedDefaults.set(key: DefaultsKeys.everId, to: migration.everId)
 
@@ -112,7 +111,6 @@ internal final class DefaultTracker: Tracker {
 
 		self.configuration = configuration
 		self.defaults = defaults
-		self.everId = DefaultTracker._everId
 		self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
 		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
 		self.requestManager = RequestManager(queueLimit: configuration.requestQueueLimit)
@@ -134,6 +132,7 @@ internal final class DefaultTracker: Tracker {
 		setUp()
 
 		checkForDuplicateTrackers()
+
 	}
 
 
@@ -382,6 +381,8 @@ internal final class DefaultTracker: Tracker {
 		#endif
 
         event = campaignOverride(to :event) ?? event
+        
+        event = deepLinkOverride(to: event) ?? event
 		
         guard var request = createRequestForEvent(event) else {
 			return
@@ -404,6 +405,29 @@ internal final class DefaultTracker: Tracker {
 		isFirstEventOfSession = false
 	}
     
+    // override media code in request in case of deeplink
+    
+    private func deepLinkOverride(to event: TrackingEvent) -> TrackingEvent? {
+        
+        guard var _ = event as? TrackingEventWithAdvertisementProperties,
+            let _ = event as? TrackingEventWithEcommerceProperties else{
+                return nil
+        }
+    
+        if let mc = deepLink.getAndDeletSavedDeepLinkMediaCode() {
+            var returnEvent = event
+            
+            var eventWithAdvertisementProperties = returnEvent as! TrackingEventWithAdvertisementProperties
+            eventWithAdvertisementProperties.advertisementProperties.id = mc
+            returnEvent = eventWithAdvertisementProperties
+            
+            return returnEvent
+        }
+        
+        return nil
+    }
+    
+    // override some parameter in request if campaign is completed
     private func campaignOverride(to event: TrackingEvent) -> TrackingEvent? {
         
         guard var _ = event as? TrackingEventWithAdvertisementProperties,
@@ -562,15 +586,45 @@ internal final class DefaultTracker: Tracker {
 		return event
 	}
 
-
-	private static let _everId: String = {
-		_everIdIsLoaded = true
-		return DefaultTracker.loadEverId()
-	}()
-	private static var _everIdIsLoaded = false
-
-
-	private var isFirstEventAfterAppUpdate: Bool {
+    /** get and set everID. If you set Ever ID it started to use new value for all requests*/
+    public var everId: String {
+        get {
+            checkIsOnMainThread()
+            
+            // cash ever id in internal parameter to avoid multiple request to setting.
+            if everIdInternal == nil {
+                
+                everIdInternal = DefaultTracker.sharedDefaults.stringForKey(DefaultsKeys.everId)
+                
+                //generate ever id if it isn't exist
+                return everIdInternal ?? {
+                    let everId = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
+                    DefaultTracker.sharedDefaults.set(key: DefaultsKeys.everId, to: everId)
+                    return everId
+                    }()
+            } else {
+                return everIdInternal!
+            }
+        }
+        
+        set(newEverID) {
+            checkIsOnMainThread()
+            
+            //check if ever id has correct format
+            if let isMatched = newEverID.isMatchForRegularExpression("\\d{19}") where isMatched {
+                // set ever id value in setting and in cash
+                DefaultTracker.sharedDefaults.set(key: DefaultsKeys.everId, to: newEverID)
+                self.everIdInternal = newEverID
+            } else {
+                WebtrekkTracking.defaultLogger.logError("Incorrect ever id format: \(newEverID)")
+            }
+        }
+    }
+    
+    //cash for ever id
+    private var everIdInternal: String?
+    
+    private var isFirstEventAfterAppUpdate: Bool {
 		didSet {
 			checkIsOnMainThread()
 
@@ -616,17 +670,6 @@ internal final class DefaultTracker: Tracker {
 		}
 	}
 	private static var isOptedOutWasSetManually = false
-
-
-	private static func loadEverId() -> String {
-		checkIsOnMainThread()
-
-		return sharedDefaults.stringForKey(DefaultsKeys.everId) ?? {
-			let everId = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
-			sharedDefaults.set(key: DefaultsKeys.everId, to: everId)
-			return everId
-			}()
-	}
 
 
 	private static func loadIsOptedOut() -> Bool {
@@ -786,6 +829,7 @@ internal final class DefaultTracker: Tracker {
 		#if !os(watchOS)
 			setUpObservers()
 			updateAutomaticTracking()
+            setupAutoDeepLinkTrack()
 		#endif
 
 		updateSampling()
@@ -938,6 +982,14 @@ internal final class DefaultTracker: Tracker {
 		return DefaultPageTracker(handler: self, pageName: pageName)
 	}
 
+    #if !os(watchOS)
+    private func setupAutoDeepLinkTrack()
+    {
+        //init deep link to get automatic object
+        deepLink.deepLinkInit()
+    }
+    #endif
+    
 
 	#if !os(watchOS)
 	private func updateAutomaticTracking() {
@@ -1113,6 +1165,19 @@ internal final class DefaultTracker: Tracker {
 
 		return true
 	}
+    
+    /** set media code. Media code will be sent with next page request only. Only setter is working. Getter always returns ""d*/
+    public var mediaCode: String {
+        get {
+            return ""
+        }
+        
+        set (newMediaCode) {
+            checkIsOnMainThread()
+            deepLink.setMediaCode(newMediaCode)
+        }
+    }
+    
 }
 
 
@@ -1229,12 +1294,12 @@ extension DefaultTracker: RequestManager.Delegate {
 
 
 
-private struct DefaultsKeys {
+struct DefaultsKeys {
 
 	private static let appHibernationDate = "appHibernationDate"
 	private static let appVersion = "appVersion"
 	private static let configuration = "configuration"
-	private static let everId = "everId"
+	static let everId = "everId"
 	private static let isFirstEventAfterAppUpdate = "isFirstEventAfterAppUpdate"
 	private static let isFirstEventOfApp = "isFirstEventOfApp"
 	private static let isSampling = "isSampling"

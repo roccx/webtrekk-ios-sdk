@@ -44,3 +44,31 @@ internal func swizzleMethod(ofType type: AnyClass, fromSelector: Selector, toSel
 	method_exchangeImplementations(fromMethod, toMethod)
 	return true
 }
+
+// functoin add method to class from another class
+func addMethodFromAnotherClass(toClass toClass: AnyClass, methodSelector: Selector, fromClass: AnyClass) -> Bool{
+    
+    //get method object
+    
+    let method = class_getInstanceMethod(fromClass, methodSelector)
+    
+    if  method == nil {
+        WebtrekkTracking.defaultLogger.logError("can't get method from method selector")
+        return false
+    }
+    
+    let methodImpl = method_getImplementation(method)
+    let methodTypes = method_getTypeEncoding(method)
+    
+    if  methodImpl == nil {
+        WebtrekkTracking.defaultLogger.logError("can't get method implementation from method")
+        return false
+    }
+    
+    if  methodTypes == nil {
+        WebtrekkTracking.defaultLogger.logError("can't get method types from method")
+        return false
+    }
+    
+    return class_addMethod(toClass, methodSelector, methodImpl, methodTypes)
+}

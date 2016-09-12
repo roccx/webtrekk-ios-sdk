@@ -39,6 +39,7 @@
 		9F4160001D5CE23E002CB83F /* RequestUrlBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620B1D1DFB9C0006A82D /* RequestUrlBuilderTests.swift */; };
 		9F4160011D5CE23E002CB83F /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */; };
 		9F5B49C21D65E5DD00E58E2B /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72368BA1D3F643100D64C63 /* AdSupport.framework */; };
+		9F76E59F1D85917300B9597A /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F76E59E1D85917200B9597A /* DeepLink.swift */; };
 		9F8354881D6F1E2400887BEA /* LICENSE.MD in Sources */ = {isa = PBXBuildFile; fileRef = 9F8354871D6F1E2400887BEA /* LICENSE.MD */; };
 		A9C514BF2D2B3FEF8F5D2490 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */; };
 		B72368BB1D3F643100D64C63 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72368BA1D3F643100D64C63 /* AdSupport.framework */; };
@@ -160,7 +161,9 @@
 		9F415FC21D5CDCCB002CB83F /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/Nimble/Nimble.framework"; sourceTree = "<group>"; };
 		9F415FFA1D5CE213002CB83F /* TestsOld.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestsOld.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F4160021D5CE337002CB83F /* Pods_TestsOld.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_TestsOld.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/Pods_TestsOld.framework"; sourceTree = "<group>"; };
+		9F76E59E1D85917200B9597A /* DeepLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		9F8354871D6F1E2400887BEA /* LICENSE.MD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = LICENSE.MD; path = ../LICENSE.MD; sourceTree = "<group>"; };
+		9F9487C01D7DB8060072CB0B /* ModuleTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ModuleTest.entitlements; sourceTree = "<group>"; };
 		AC86ED3C67C08C21A1B1750D /* Pods-TestsOld.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestsOld.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TestsOld/Pods-TestsOld.debug.xcconfig"; sourceTree = "<group>"; };
 		B72368BA1D3F643100D64C63 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		B73DB2301D49ECC200F0C8DD /* iOS Example */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "iOS Example"; path = "Sources/iOS Example"; sourceTree = "<group>"; };
@@ -226,6 +229,7 @@
 		495161AE1D1DFB0F0006A82D = {
 			isa = PBXGroup;
 			children = (
+				9F9487C01D7DB8060072CB0B /* ModuleTest.entitlements */,
 				9F415F7F1D5CB9DE002CB83F /* Webtrekk.framework */,
 				9F415F7C1D5CB9C2002CB83F /* ReachabilitySwift.framework */,
 				9F415F141D5C7C6D002CB83F /* TestsNew */,
@@ -344,6 +348,7 @@
 				9F415F1C1D5C7C6D002CB83F /* ParameterTest.swift */,
 				9F415F1D1D5C7C6D002CB83F /* stub.jpg */,
 				9F415F1E1D5C7C6D002CB83F /* WTBaseTestNew.swift */,
+				9F76E59E1D85917200B9597A /* DeepLink.swift */,
 			);
 			path = TestsNew;
 			sourceTree = "<group>";
@@ -521,6 +526,11 @@
 					9F415F531D5CAD09002CB83F = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = 8JS62GK93M;
+						SystemCapabilities = {
+							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
+						};
 					};
 					9F415FE01D5CE213002CB83F = {
 						TestTargetID = 495161D11D1DFB500006A82D;
@@ -802,6 +812,7 @@
 				9F415F9A1D5CCC08002CB83F /* ViewController.swift in Sources */,
 				9F415F301D5C7C81002CB83F /* ParameterTest.swift in Sources */,
 				9F415F2F1D5C7C81002CB83F /* PageTest.swift in Sources */,
+				9F76E59F1D85917300B9597A /* DeepLink.swift in Sources */,
 				9F415F2C1D5C7C81002CB83F /* HttpBaseTestNew.swift in Sources */,
 				9F415F2A1D5C7C81002CB83F /* ActionTest.swift in Sources */,
 			);
@@ -1072,6 +1083,7 @@
 			baseConfigurationReference = 3622436282EC4C14E7FC7DEF /* Pods-iOS-Example-ModuleTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ModuleTest.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/ModuleTest/Info.plist";
@@ -1088,6 +1100,7 @@
 			baseConfigurationReference = 326E6D01AF37AD639E3CAAD5 /* Pods-iOS-Example-ModuleTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ModuleTest.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/ModuleTest/Info.plist";

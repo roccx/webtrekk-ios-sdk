@@ -23,6 +23,19 @@ internal extension String {
 			fatalError("Invalid regular expression pattern: \(error)")
 		}
 	}
+    
+    //check if string is matched to expression
+    internal func isMatchForRegularExpression(expression: String) -> Bool?{
+    
+       do {
+            let regularExpression = try NSRegularExpression(pattern: expression, options: [])
+            return regularExpression.numberOfMatchesInString(self, options: [], range: NSMakeRange(0, utf16.count)) == 1
+       }
+            catch let error {
+                WebtrekkTracking.defaultLogger.logError("Incorrect regular expression \(expression)")
+                return nil
+       }
+    }
 
 
 	internal var nonEmpty: String? {

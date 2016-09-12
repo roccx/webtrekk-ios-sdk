@@ -55,7 +55,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
+    
+    func application(application: UIApplication,
+                     continueUserActivity userActivity: NSUserActivity,
+                                          restorationHandler: ([AnyObject]?) -> Void) -> Bool {
+        
+        print("Original Selector is called")
+        
+        return true
+    }
 }
-

@@ -27,7 +27,8 @@ import UIKit
 
 public protocol Tracker: class {
 
-	var everId: String { get }
+	/** get and set everID. If you set Ever ID it started to use new value for all requests*/
+    var everId: String { get set }
 	var global: GlobalProperties { get set }
 	var plugins: [TrackerPlugin] { get set }
 
@@ -53,6 +54,9 @@ public protocol Tracker: class {
 
 	@warn_unused_result
 	func trackerForPage(pageName: String) -> PageTracker
+    
+    /** set media code. Media code will be sent with next page request only. Only setter is working. Getter always returns ""*/
+    var mediaCode: String { get set }
 }
 
 
