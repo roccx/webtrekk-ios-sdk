@@ -51,6 +51,7 @@ internal final class DefaultTracker: Tracker {
 	private let requestUrlBuilder: RequestUrlBuilder
     private let campaign: Campaign
     private let deepLink = DeepLink()
+    /**this value override pu parameter if it is setup from code in any other way or configuraion xml*/
     public var pageURL: String?
 
 	internal var global = GlobalProperties()
