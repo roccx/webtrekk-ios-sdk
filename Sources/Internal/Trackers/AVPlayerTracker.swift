@@ -25,12 +25,12 @@ internal final class AVPlayerTracker: NSObject {
 
 	private var itemDidPlayToEndTimeObserver: NSObjectProtocol?
 	private var parent: MediaTracker
-	private var pauseDetectionTimer: NSTimer?
+	private var pauseDetectionTimer: Timer?
 	private var playbackState = PlaybackState.stopped
 	private weak var player: AVPlayer?
 	private var playerTimeObserver: AnyObject?
-	private var positionTimer: NSTimer?
-	private var seekCompletionTimer: NSTimer?
+	private var positionTimer: Timer?
+	private var seekCompletionTimer: Timer?
 
 
 	private init(player: AVPlayer, parentTracker: MediaTracker) {
@@ -50,7 +50,7 @@ internal final class AVPlayerTracker: NSObject {
 
 	deinit {
 		if let itemDidPlayToEndTimeObserver = itemDidPlayToEndTimeObserver {
-			NSNotificationCenter.defaultCenter().removeObserver(itemDidPlayToEndTimeObserver)
+			NotificationCenter.default.removeObserver(itemDidPlayToEndTimeObserver)
 		}
 
 		pauseDetectionTimer?.invalidate()
@@ -78,7 +78,7 @@ internal final class AVPlayerTracker: NSObject {
 			}
 		}
 
-		if let player = player, playerTimeObserver = playerTimeObserver {
+		if let player = player, let playerTimeObserver = playerTimeObserver {
 			onMainQueue(synchronousIfPossible: true) {
 				player.removeTimeObserver(playerTimeObserver)
 			}
@@ -86,8 +86,8 @@ internal final class AVPlayerTracker: NSObject {
 	}
 
 
-	private var _lastKnownPlaybackTime: NSTimeInterval?
-	private var lastKnownPlaybackTime: NSTimeInterval? {
+	private var _lastKnownPlaybackTime: TimeInterval?
+	private var lastKnownPlaybackTime: TimeInterval? {
 		checkIsOnMainThread()
 
 		if let time = player?.currentTime() {
@@ -98,7 +98,7 @@ internal final class AVPlayerTracker: NSObject {
 	}
 
 
-	private func onPlayerDeinit(unownedPlayer: Unmanaged<AVPlayer>) {
+	fileprivate func onPlayerDeinit(_ unownedPlayer: Unmanaged<AVPlayer>) {
 		onMainQueue(synchronousIfPossible: true) {
 			if let playerTimeObserver = self.playerTimeObserver {
 				self.playerTimeObserver = nil
@@ -112,22 +112,22 @@ internal final class AVPlayerTracker: NSObject {
 	}
 
 
-	private func setUpObservers(player player: AVPlayer) {
+	private func setUpObservers(player: AVPlayer) {
 		checkIsOnMainThread()
 
-		let mainQueue = NSOperationQueue.mainQueue()
-		let notificationCenter = NSNotificationCenter.defaultCenter()
+		let mainQueue = OperationQueue.main
+		let notificationCenter = NotificationCenter.default
 
-		itemDidPlayToEndTimeObserver = notificationCenter.addObserverForName(AVPlayerItemDidPlayToEndTimeNotification, object: nil, queue: mainQueue) { [weak self] notification in
-			guard let `self` = self, player = self.player where notification.object === player.currentItem else {
+		itemDidPlayToEndTimeObserver = notificationCenter.addObserver(forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil, queue: mainQueue) { [weak self] notification in
+			guard let `self` = self, let player = self.player, let object = notification.object as?  AVPlayerItem, object === player.currentItem else {
 				return
 			}
 
 			self.updateToPlaybackState(.finished)
 		}
 
-		playerTimeObserver = player.addPeriodicTimeObserverForInterval(CMTimeMakeWithSeconds(60, 1), queue: nil) { [weak self] currentTime in
-			guard let `self` = self, player = self.player else {
+		playerTimeObserver = player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(60, 1), queue: nil) { [weak self] currentTime in
+			guard let `self` = self, let player = self.player else {
 				return
 			}
 
@@ -137,7 +137,7 @@ internal final class AVPlayerTracker: NSObject {
 					self.updateToPlaybackState(.seeking)
 
 					self.seekCompletionTimer?.invalidate()
-					self.seekCompletionTimer = NSTimer.scheduledTimerWithTimeInterval(1) { [weak self] in
+					self.seekCompletionTimer = Timer.scheduledTimerWithTimeInterval(1) { [weak self] in
 						guard let `self` = self else {
 							return
 						}
@@ -157,11 +157,11 @@ internal final class AVPlayerTracker: NSObject {
 			}
 
 			self.updatePlaybackState()
-		}
+		} as AnyObject?
 	}
 
 
-	internal static func track(player player: AVPlayer, with tracker: MediaTracker) {
+	internal static func track(player: AVPlayer, with tracker: MediaTracker) {
 		checkIsOnMainThread()
 
 		player.trackers.add(AVPlayerTracker(player: player, parentTracker: tracker))
@@ -171,11 +171,11 @@ internal final class AVPlayerTracker: NSObject {
 	private func updateMediaProperties() {
 		checkIsOnMainThread()
 
-		guard let player = player, item = player.currentItem else {
+		guard let player = player, let item = player.currentItem else {
 			return
 		}
 
-		if let bandwidth = item.accessLog()?.events.last?.indicatedBitrate where bandwidth >= 1 {
+		if let bandwidth = item.accessLog()?.events.last?.indicatedBitrate , bandwidth >= 1 {
 			parent.mediaProperties.bandwidth = bandwidth
 		}
 
@@ -217,14 +217,18 @@ internal final class AVPlayerTracker: NSObject {
 
 		if playbackState == .playing {
 			if positionTimer == nil {
-				positionTimer = NSTimer.scheduledTimerWithTimeInterval(30, repeats: true) {
-					guard self.playbackState == .playing else {
-						return
-					}
-
-					self.updateMediaProperties()
-					self.parent.trackAction(.position)
-				}
+                if #available(iOS 10.0, *) {
+                    positionTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) {_ in
+                        guard self.playbackState == .playing else {
+                            return
+                        }
+                        
+                        self.updateMediaProperties()
+                        self.parent.trackAction(.position)
+                    }
+                } else {
+                    // Fallback on earlier versions
+                }
 			}
 		}
 		else {
@@ -236,7 +240,7 @@ internal final class AVPlayerTracker: NSObject {
 	}
 
 
-	private func updateToPlaybackState(playbackState: PlaybackState) {
+	private func updateToPlaybackState(_ playbackState: PlaybackState) {
 		checkIsOnMainThread()
 
 		guard playbackState != self.playbackState else {
@@ -252,7 +256,7 @@ internal final class AVPlayerTracker: NSObject {
 		seekCompletionTimer = nil
 
 		if playbackState == .pausedOrSeeking {
-			pauseDetectionTimer = NSTimer.scheduledTimerWithTimeInterval(0.5) { [weak self] in
+			pauseDetectionTimer = Timer.scheduledTimerWithTimeInterval(0.5) { [weak self] in
 				guard let `self` = self else {
 					return
 				}
@@ -300,19 +304,19 @@ extension AVPlayer {
 
 	private struct AssociatedKeys {
 
-		private static var trackers = UInt8()
+		fileprivate static var trackers = UInt8()
 	}
 
 
 
-	private var isPlaying: Bool {
+	fileprivate var isPlaying: Bool {
 		checkIsOnMainThread()
 
 		return abs(rate) >= 0.000001
 	}
 
 
-	private var trackers: Trackers {
+	fileprivate var trackers: Trackers {
 		checkIsOnMainThread()
 
 		return objc_getAssociatedObject(self, &AssociatedKeys.trackers) as? Trackers ?? {
@@ -330,7 +334,7 @@ extension AVPlayer {
 		private let player: Unmanaged<AVPlayer>
 
 
-		private init(player: AVPlayer) {
+		fileprivate init(player: AVPlayer) {
 			self.player = Unmanaged.passUnretained(player)
 		}
 
@@ -342,7 +346,7 @@ extension AVPlayer {
 		}
 
 
-		private func add(tracker: AVPlayerTracker) {
+		fileprivate func add(_ tracker: AVPlayerTracker) {
 			trackers.append(tracker)
 		}
 	}

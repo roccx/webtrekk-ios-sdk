@@ -38,7 +38,7 @@ public enum TrackingValue {
 }
 
 
-extension TrackingValue: StringLiteralConvertible {
+extension TrackingValue: ExpressibleByStringLiteral {
 
 	public init(extendedGraphemeClusterLiteral value: StringLiteralType) {
 		self = .constant(value)

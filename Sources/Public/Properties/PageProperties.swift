@@ -82,7 +82,7 @@ public struct PageProperties {
         setUpURL(url)
     }
 	
-	@warn_unused_result
+	
     internal func merged(over other: PageProperties) -> PageProperties {
 		var new = self
 		new.details = details.merged(over: other.details)
@@ -95,14 +95,14 @@ public struct PageProperties {
 		return new
 	}
     
-    mutating func processKeys(event: TrackingEvent)
+    mutating func processKeys(_ event: TrackingEvent)
     {
         if let internalSearch = internalSearchConfig?.serialized(for: event) {
             self.internalSearch = internalSearch
         }
     }
     
-    mutating private func setUpURL(url: String?){
+    mutating fileprivate func setUpURL(_ url: String?){
     
     if isURLCanBeSet(url) {
         self.url = url
@@ -111,11 +111,11 @@ public struct PageProperties {
     }
     }
     
-    private func isURLCanBeSet(url: String?) -> Bool {
+    fileprivate func isURLCanBeSet(_ url: String?) -> Bool {
        return url == nil || url!.isValidURL()
     }
     
-    private func printInvalidURL(url: String) {
+    fileprivate func printInvalidURL(_ url: String) {
         WebtrekkTracking.defaultLogger.logError("Invalid URL \(url) for pu parameter")
     }
 }

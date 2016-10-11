@@ -19,5 +19,5 @@
 
 internal protocol ActionEventHandler {
 
-	func handleEvent (event: ActionEvent)
+	func handleEvent (_ event: ActionEvent)
 }

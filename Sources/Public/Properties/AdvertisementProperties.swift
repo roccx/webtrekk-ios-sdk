@@ -36,7 +36,7 @@ public struct AdvertisementProperties {
 	}
 
 	
-	@warn_unused_result
+	
 	internal func merged(over other: AdvertisementProperties) -> AdvertisementProperties {
 		return AdvertisementProperties(
 			id:      id ?? other.id,

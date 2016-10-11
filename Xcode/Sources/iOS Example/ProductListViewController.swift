@@ -24,18 +24,18 @@ import AdSupport
 
 class ProductListViewController: UITableViewController {
 
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "openProduct" {
-			guard let cell = sender as? UITableViewCell, indexPath = tableView.indexPathForCell(cell) else {
+			guard let cell = sender as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) else {
 				return
 			}
-			guard let productViewController = segue.destinationViewController as? ProductViewController else {
+			guard let productViewController = segue.destination as? ProductViewController else {
 				return
 			}
 
 			autoTracker.trackAction("Product tapped")
 
-			productViewController.productId = indexPath.row + 1
+			productViewController.productId = (indexPath as NSIndexPath).row + 1
 		}
 	}
 
@@ -50,22 +50,22 @@ class ProductListViewController: UITableViewController {
 		autoTracker.variables["KeyOverride"] = "valueOverride"
 
 		// example for products which are displayed on this screen
-		autoTracker.ecommerceProperties.products = [EcommerceProperties.Product(name: "productName1", price:"100", quantity: 1, categories: [1: "productCat11", 2: "productCat12"]),		 EcommerceProperties.Product(name: "productName2", price:"200", quantity: 2, categories: [2: "productCat21", 3: "productCat22"])]
+		autoTracker.ecommerceProperties.products = [EcommerceProperties.Product(name: "productName1", categories: [1: "productCat11", 2: "productCat12"], price:"100", quantity: 1),		 EcommerceProperties.Product(name: "productName2",categories: [2: "productCat21", 3: "productCat22"], price:"200", quantity: 2)]
 	}
 }
 
 
 extension ProductListViewController { // UITableViewDataSource
 
-	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("product", forIndexPath: indexPath)
-		cell.textLabel?.text = "Product \(indexPath.row + 1)"
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "product", for: indexPath)
+		cell.textLabel?.text = "Product \((indexPath as NSIndexPath).row + 1)"
 
 		return cell
 	}
 
 
-	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return 100
 	}
 }

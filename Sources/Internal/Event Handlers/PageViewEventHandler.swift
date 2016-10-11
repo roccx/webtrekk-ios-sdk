@@ -19,5 +19,5 @@
 
 internal protocol PageViewEventHandler {
 
-	func handleEvent (event: PageViewEvent)
+	func handleEvent (_ event: PageViewEvent)
 }

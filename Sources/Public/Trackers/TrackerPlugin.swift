@@ -31,7 +31,7 @@ let isOptOut = WebtrekkTracking.isOptedOuts
 public protocol TrackerPlugin: class {
 
 	/** Handle the `TrackerRequest` before it is enqueued for delivery. */
-	func tracker (tracker: Tracker, requestForQueuingRequest request: TrackerRequest) -> TrackerRequest
+	func tracker (_ tracker: Tracker, requestForQueuingRequest request: TrackerRequest) -> TrackerRequest
 	/** Handle the `TrackerRequest` after it was enqueued. */
-	func tracker (tracker: Tracker, didQueueRequest request: TrackerRequest)
+	func tracker (_ tracker: Tracker, didQueueRequest request: TrackerRequest)
 }

@@ -32,13 +32,13 @@ class SettingsViewController: UIViewController {
 		guard let optOutSwitch = optOutSwitch else {
 			return
 		}
-		optOutSwitch.on = WebtrekkTracking.isOptedOut
+		optOutSwitch.isOn = WebtrekkTracking.isOptedOut
 	}
 
 
 	@IBAction
-	func tappedTestCDB(sender: UIButton) {
-		guard let emailTextField = emailTextField, text = emailTextField.text where !text.isEmpty else {
+	func tappedTestCDB(_ sender: UIButton) {
+		guard let emailTextField = emailTextField, let text = emailTextField.text , !text.isEmpty else {
 			return
 		}
 
@@ -49,8 +49,8 @@ class SettingsViewController: UIViewController {
 
 
 	@IBAction
-	func tappedOptOutSwitch(sender: UISwitch) {
-		WebtrekkTracking.isOptedOut = sender.on
+	func tappedOptOutSwitch(_ sender: UISwitch) {
+		WebtrekkTracking.isOptedOut = sender.isOn
 		
 		autoTracker.trackAction("OptOut Switch tapped")
 	}

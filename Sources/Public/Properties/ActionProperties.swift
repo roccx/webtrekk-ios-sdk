@@ -32,7 +32,7 @@ public struct ActionProperties {
 	}
 
 	
-	@warn_unused_result
+	
 	internal func merged(over other: ActionProperties) -> ActionProperties {
 		return ActionProperties(
 			name:    name ?? other.name,

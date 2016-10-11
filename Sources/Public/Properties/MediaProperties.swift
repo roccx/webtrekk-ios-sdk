@@ -24,10 +24,10 @@ import Foundation
 public struct MediaProperties {
 
 	public var bandwidth: Double?    // bit/s
-	public var duration: NSTimeInterval?
+	public var duration: TimeInterval?
 	public var groups: [Int: TrackingValue]?
 	public var name: String?
-	public var position: NSTimeInterval?
+	public var position: TimeInterval?
 	public var soundIsMuted: Bool?
 	public var soundVolume: Double?  // 0 ... 1
 
@@ -35,9 +35,9 @@ public struct MediaProperties {
 	public init(
 		name: String?,
 		bandwidth: Double? = nil,
-		duration: NSTimeInterval? = nil,
+		duration: TimeInterval? = nil,
 		groups: [Int: TrackingValue]? = nil,
-		position: NSTimeInterval? = nil,
+		position: TimeInterval? = nil,
 		soundIsMuted: Bool? = nil,
 		soundVolume: Double? = nil
 	) {
@@ -51,7 +51,7 @@ public struct MediaProperties {
 	}
 
 	
-	@warn_unused_result
+	
 	internal func merged(over other: MediaProperties) -> MediaProperties {
 		return MediaProperties(
 			name:         name ?? other.name,

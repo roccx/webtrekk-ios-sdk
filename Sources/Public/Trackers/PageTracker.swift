@@ -33,28 +33,28 @@ public protocol PageTracker: class {
 	var variables: [String : String] { get set }
 
 
-	func trackAction(actionName: String)
+	func trackAction(_ actionName: String)
 	
-	func trackAction(event: ActionEvent)
+	func trackAction(_ event: ActionEvent)
 
-	func trackMediaAction(event: MediaEvent)
+	func trackMediaAction(_ event: MediaEvent)
 
 	func trackPageView()
 
-	func trackPageView(pageViewEvent: PageViewEvent)
+	func trackPageView(_ pageViewEvent: PageViewEvent)
 
-	@warn_unused_result
-	func trackerForMedia(mediaName: String) -> MediaTracker
+	
+	func trackerForMedia(_ mediaName: String) -> MediaTracker
 
 	#if !os(watchOS)
-	func trackerForMedia(mediaName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker
+	func trackerForMedia(_ mediaName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker
 	#endif
 }
 
 
 public extension PageTracker {
 
-	public func trackAction(actionName: String) {
+	public func trackAction(_ actionName: String) {
 		trackAction(ActionEvent(actionProperties: ActionProperties(name: actionName), pageProperties: pageProperties))
 	}
     

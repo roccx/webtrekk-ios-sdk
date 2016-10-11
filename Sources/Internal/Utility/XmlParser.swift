@@ -25,7 +25,7 @@ internal struct XmlElement {
 
 internal final class XmlParser {
 
-	internal func parse(xml data: NSData) throws -> XmlElement {
+	internal func parse(xml data: Data) throws -> XmlElement {
 		return try ActualParser(xml: data).rootElement
 	}
 }
@@ -33,17 +33,17 @@ internal final class XmlParser {
 
 private final class ActualParser: NSObject {
 
-	private var currentText = ""
-	private var elementBuilder: ElementBuilder?
-	private var elementBuilderStack = [ElementBuilder]()
-	private var elementPath = [String]()
-	private var error: ErrorType?
-	private let parser: NSXMLParser
-	private lazy var rootElement: XmlElement = lazyPlaceholder()
+	fileprivate var currentText = ""
+	fileprivate var elementBuilder: ElementBuilder?
+	fileprivate var elementBuilderStack = [ElementBuilder]()
+	fileprivate var elementPath = [String]()
+	fileprivate var error: Error?
+	fileprivate let parser: XMLParser
+	fileprivate lazy var rootElement: XmlElement = lazyPlaceholder()
 
 
-	private init(xml data: NSData) throws {
-		self.parser = NSXMLParser(data: data)
+	fileprivate init(xml data: Data) throws {
+		self.parser = XMLParser(data: data)
 
 		super.init()
 
@@ -58,36 +58,36 @@ private final class ActualParser: NSObject {
 
 
 
-	private final class ElementBuilder {
+	fileprivate final class ElementBuilder {
 
-		private let attributes: [String : String]
-		private var children = [XmlElement]()
-		private let path: [String]
-		private var text = ""
+		fileprivate let attributes: [String : String]
+		fileprivate var children = [XmlElement]()
+		fileprivate let path: [String]
+		fileprivate var text = ""
 
 
-		private init(attributes: [String : String], path: [String]) {
+		fileprivate init(attributes: [String : String], path: [String]) {
 			self.attributes = attributes
 			self.path = path
 		}
 
 
-		private func build() -> XmlElement {
+		fileprivate func build() -> XmlElement {
 			return XmlElement(attributes: attributes, children: children, path: path, text: text)
 		}
 	}
 }
 
 
-extension ActualParser: NSXMLParserDelegate {
+extension ActualParser: XMLParserDelegate {
 
 	@objc
-	private func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName: String?) {
+	fileprivate func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName: String?) {
 		guard let elementBuilder = elementBuilder else {
 			fatalError()
 		}
 
-		currentText = currentText.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+		currentText = currentText.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 
 		elementBuilder.text = currentText
 
@@ -110,7 +110,7 @@ extension ActualParser: NSXMLParserDelegate {
 
 
 	@objc
-	private func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName: String?, attributes: [String : String]) {
+	fileprivate func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName: String?, attributes: [String : String]) {
 		currentText = ""
 		elementPath.append(elementName)
 
@@ -123,13 +123,13 @@ extension ActualParser: NSXMLParserDelegate {
 
 
 	@objc
-	private func parser(parser: NSXMLParser, foundCharacters string: String) {
+	fileprivate func parser(_ parser: XMLParser, foundCharacters string: String) {
 		currentText += string
 	}
 
 
 	@objc
-	private func parser(parser: NSXMLParser, parseErrorOccurred parseError: NSError) {
+	fileprivate func parser(_ parser: XMLParser, parseErrorOccurred parseError: Error) {
 		if error == nil {
 			error = parseError
 		}

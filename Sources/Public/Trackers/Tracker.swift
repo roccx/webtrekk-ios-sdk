@@ -39,21 +39,21 @@ public protocol Tracker: class {
 
 	func sendPendingEvents()
 
-	func trackAction(event: ActionEvent)
+	func trackAction(_ event: ActionEvent)
 
-	func trackMediaAction(event: MediaEvent)
+	func trackMediaAction(_ event: MediaEvent)
 
-	func trackPageView(event: PageViewEvent)
+	func trackPageView(_ event: PageViewEvent)
 
-	@warn_unused_result
-	func trackerForMedia(mediaName: String, pageName: String) -> MediaTracker
+	
+	func trackerForMedia(_ mediaName: String, pageName: String) -> MediaTracker
 
 	#if !os(watchOS)
-	func trackerForMedia(mediaName: String, pageName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker
+	func trackerForMedia(_ mediaName: String, pageName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker
 	#endif
 
-	@warn_unused_result
-	func trackerForPage(pageName: String) -> PageTracker
+	
+	func trackerForPage(_ pageName: String) -> PageTracker
     
     /** set media code. Media code will be sent with next page request only. Only setter is working. Getter always returns ""*/
     var mediaCode: String { get set }
@@ -66,7 +66,7 @@ public protocol Tracker: class {
 public extension Tracker {
 
 	public func trackAction(
-		actionName: String,
+		_ actionName: String,
 		pageName: String,
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
@@ -87,7 +87,7 @@ public extension Tracker {
 
 
 	public func trackAction(
-		actionName: String,
+		_ actionName: String,
 		viewControllerType: UIViewController.Type,
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
@@ -108,7 +108,7 @@ public extension Tracker {
 
 
 	public func trackAction(
-		actionProperties: ActionProperties,
+		_ actionProperties: ActionProperties,
 		pageProperties: PageProperties,
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
@@ -129,7 +129,7 @@ public extension Tracker {
 
 
 	public func trackMediaAction(
-		action: MediaEvent.Action,
+		_ action: MediaEvent.Action,
 		mediaProperties: MediaProperties,
 		pageName: String?,
 		variables: [String : String] = [:]
@@ -144,7 +144,7 @@ public extension Tracker {
 
 
 	public func trackPageView(
-		pageName: String,
+		_ pageName: String,
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
 		sessionDetails: [Int: TrackingValue] = [:],
@@ -163,7 +163,7 @@ public extension Tracker {
 
 
 	public func trackPageView(
-		pageProperties: PageProperties,
+		_ pageProperties: PageProperties,
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
 		sessionDetails: [Int: TrackingValue] = [:],
@@ -180,7 +180,7 @@ public extension Tracker {
 		))
 	}
     
-    public func trackCDB(crossDeviceProperties: CrossDeviceProperties)
+    public func trackCDB(_ crossDeviceProperties: CrossDeviceProperties)
     {
         global.crossDeviceProperties = crossDeviceProperties
         trackPageView("CDBPage")

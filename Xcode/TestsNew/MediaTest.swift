@@ -33,9 +33,9 @@ class MediaTest: WTBaseTestNew {
                 mediaProperties: MediaProperties(
                     name: "mpName",
                     bandwidth: 22.2,
-                    duration: NSTimeInterval(33.6),
+                    duration: TimeInterval(33.6),
                     groups: [20: "group20"],
-                    position: NSTimeInterval(44.5),
+                    position: TimeInterval(44.5),
                     soundIsMuted: true,
                     soundVolume: 9.9),
                 pageName: "mediaPage"))

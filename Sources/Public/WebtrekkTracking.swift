@@ -59,15 +59,15 @@ public class WebtrekkTracking {
      Optional parameter "configurationFile" is used to define location of webtrekk configuration file.
      In case this parameter is nil the default location is in main bundle with name webtrekk_config 
      and xml extension*/
-    public static func initTrack(configurationFile: NSURL? = nil) throws
+    public static func initTrack(_ configurationFile: URL? = nil) throws
     {
         guard tracker == nil else {
             logger.logWarning("Tracker is arleady initialized. No twice initialization done.")
             return
         }
         
-        guard let confFile = configurationFile ?? NSBundle.mainBundle().URLForResource("webtrekk_config", withExtension: "xml") else {
-            throw TrackerError(message: "Cannot locate webtrekk_config.xml in '\(NSBundle.mainBundle().bundlePath)'. Either place the file there or use WebtrekkTracking.createTracker(configurationFile:) to specify the file's location.")
+        guard let confFile = configurationFile ?? Bundle.main.url(forResource: "webtrekk_config", withExtension: "xml") else {
+            throw TrackerError(message: "Cannot locate webtrekk_config.xml in '\(Bundle.main.bundlePath)'. Either place the file there or use WebtrekkTracking.createTracker(configurationFile:) to specify the file's location.")
         }
         
         checkIsOnMainThread()
@@ -82,9 +82,9 @@ public class WebtrekkTracking {
 
 	- Throws: `TrackError` when the configurationFile could not be located or when the configuration is not valid.
 	*/
-	private static func createTracker(configurationFile configurationFile: NSURL) throws -> Tracker {
+	private static func createTracker(configurationFile: URL) throws -> Tracker {
 
-		guard let configurationData = NSData(contentsOfURL: configurationFile) else {
+		guard let configurationData = try? Data(contentsOf: configurationFile) else {
 			throw TrackerError(message: "Cannot load Webtrekk configuration file '\(configurationFile)'")
 		}
 
@@ -109,7 +109,7 @@ public class WebtrekkTracking {
 
 	#if !os(watchOS)
 	/** Returns a `PageTracker` for a corresponding `UIViewController` which were configured by the xml. */
-	public static func trackerForAutotrackedViewController(viewController: UIViewController) -> PageTracker {
+	public static func trackerForAutotrackedViewController(_ viewController: UIViewController) -> PageTracker {
 		checkIsOnMainThread()
 
 		return viewController.automaticTracker

@@ -43,7 +43,7 @@ public struct TrackerRequest {
 
 	public struct Properties {
 
-		public var advertisingId: NSUUID?
+		public var advertisingId: UUID?
 		public var advertisingTrackingEnabled: Bool?
 		public var appVersion: String?
 		public var connectionType: ConnectionType?
@@ -51,12 +51,12 @@ public struct TrackerRequest {
 		public var isFirstEventAfterAppUpdate = false
 		public var isFirstEventOfApp = false
 		public var isFirstEventOfSession = false
-		public var locale: NSLocale?
+		public var locale: Locale?
 		public var requestQueueSize: Int?
 		public var screenSize: (width: Int, height: Int)?
 		public var samplingRate: Int
-		public var timeZone: NSTimeZone
-		public var timestamp: NSDate
+		public var timeZone: TimeZone
+		public var timestamp: Date
 		public var userAgent: String
 
 		#if !os(watchOS)
@@ -67,8 +67,8 @@ public struct TrackerRequest {
 		internal init(
 			everId: String,
 			samplingRate: Int,
-			timeZone: NSTimeZone,
-			timestamp: NSDate,
+			timeZone: TimeZone,
+			timestamp: Date,
 			userAgent: String
 		) {
 			self.everId = everId

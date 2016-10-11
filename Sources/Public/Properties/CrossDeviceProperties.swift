@@ -83,7 +83,7 @@ public struct CrossDeviceProperties {
 		}
 	}
 
-	@warn_unused_result
+	
 	internal func merged(over other: CrossDeviceProperties) -> CrossDeviceProperties {
 		return CrossDeviceProperties(
 			address:      address ?? other.address,

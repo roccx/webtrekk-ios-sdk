@@ -26,9 +26,9 @@ import UIKit
 
 internal final class DefaultPageTracker: PageTracker {
 
-	internal typealias Handler = protocol<ActionEventHandler, MediaEventHandler, PageViewEventHandler>
+	internal typealias Handler = ActionEventHandler & MediaEventHandler & PageViewEventHandler
 
-	private let handler: Handler
+	fileprivate let handler: Handler
 	
 	internal var advertisementProperties = AdvertisementProperties(id: nil)
 	internal var ecommerceProperties = EcommerceProperties()
@@ -56,14 +56,14 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
-	internal func trackAction(event: ActionEvent) {
+	internal func trackAction(_ event: ActionEvent) {
 		checkIsOnMainThread()
 
 		handleEvent(event)
 	}
 
 
-	internal func trackMediaAction(event: MediaEvent) {
+	internal func trackMediaAction(_ event: MediaEvent) {
 		checkIsOnMainThread()
 
 		handleEvent(event)
@@ -84,7 +84,7 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
-	internal func trackPageView(pageViewEvent: PageViewEvent) {
+	internal func trackPageView(_ pageViewEvent: PageViewEvent) {
 		checkIsOnMainThread()
 
 		handler.handleEvent(PageViewEvent(
@@ -99,8 +99,8 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
-	@warn_unused_result
-	internal func trackerForMedia(mediaName: String) -> MediaTracker {
+	
+	internal func trackerForMedia(_ mediaName: String) -> MediaTracker {
 		checkIsOnMainThread()
 
 		return DefaultMediaTracker(handler: self, mediaName: mediaName, pageName: nil)
@@ -108,7 +108,7 @@ internal final class DefaultPageTracker: PageTracker {
 
 
 	#if !os(watchOS)
-	internal func trackerForMedia(mediaName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker {
+	internal func trackerForMedia(_ mediaName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker {
 		checkIsOnMainThread()
 
 		let tracker = trackerForMedia(mediaName)
@@ -122,7 +122,7 @@ internal final class DefaultPageTracker: PageTracker {
 
 extension DefaultPageTracker: ActionEventHandler {
 
-	internal func handleEvent(event: ActionEvent) {
+	internal func handleEvent(_ event: ActionEvent) {
 		checkIsOnMainThread()
 
 		var event = event
@@ -140,7 +140,7 @@ extension DefaultPageTracker: ActionEventHandler {
 
 extension DefaultPageTracker: MediaEventHandler {
 
-	internal func handleEvent(event: MediaEvent) {
+	internal func handleEvent(_ event: MediaEvent) {
 		checkIsOnMainThread()
 
 		var event = event

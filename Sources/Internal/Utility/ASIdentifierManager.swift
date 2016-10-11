@@ -5,7 +5,7 @@ import Foundation
 internal class ASIdentifierManager: NSObject {
 
 	@objc
-	internal dynamic var advertisingIdentifier: NSUUID? { return nil }
+	internal dynamic var advertisingIdentifier: UUID? { return nil }
 
 
 	@objc(isAdvertisingTrackingEnabled)

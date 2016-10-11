@@ -1,14 +1,14 @@
 import Foundation
 
 
-internal extension NSFileManager {
+internal extension FileManager {
 
 	@nonobjc
-	internal func itemExistsAtURL(url: NSURL) -> Bool {
-		guard url.fileURL, let path = url.path else {
+	internal func itemExistsAtURL(_ url: URL) -> Bool {
+		guard url.isFileURL , !url.path.isEmpty else {
 			return false
 		}
 
-		return fileExistsAtPath(path)
+		return fileExists(atPath: url.path)
 	}
 }

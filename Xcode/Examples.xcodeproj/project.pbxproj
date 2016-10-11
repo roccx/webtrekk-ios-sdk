@@ -518,14 +518,17 @@
 					495161D11D1DFB500006A82D = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = 8JS62GK93M;
+						LastSwiftMigration = 0800;
 					};
 					4951622A1D1DFC1E0006A82D = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = 9F415F531D5CAD09002CB83F;
 					};
 					9F415F531D5CAD09002CB83F = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = 8JS62GK93M;
+						LastSwiftMigration = 0800;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
 								enabled = 1;
@@ -992,6 +995,7 @@
 				PRODUCT_MODULE_NAME = Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1012,6 +1016,7 @@
 				PRODUCT_MODULE_NAME = Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1043,6 +1048,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "TestsNew/Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ModuleTest.app/ModuleTest";
 			};
 			name = Debug;
@@ -1074,6 +1080,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "TestsNew/Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ModuleTest.app/ModuleTest";
 			};
 			name = Release;
@@ -1091,6 +1098,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.webtrekk.ModuleTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1108,6 +1116,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.webtrekk.ModuleTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

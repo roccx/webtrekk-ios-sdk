@@ -23,38 +23,38 @@ import Webtrekk
 
 class VoucherListViewController: UITableViewController {
 
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "openVoucher" {
-			guard let cell = sender as? UITableViewCell, indexPath = tableView.indexPathForCell(cell) else {
+			guard let cell = sender as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) else {
 				return
 			}
-			guard let voucherViewController = segue.destinationViewController as? VoucherViewController else {
+			guard let voucherViewController = segue.destination as? VoucherViewController else {
 				return
 			}
 
 			autoTracker.trackAction("Voucher tapped")
 
-			voucherViewController.voucherId = indexPath.row + 1
+			voucherViewController.voucherId = (indexPath as NSIndexPath).row + 1
 		}
 	}
 
-	@IBAction func cancel(sender: AnyObject) {
-		dismissViewControllerAnimated(true, completion: nil)
+	@IBAction func cancel(_ sender: AnyObject) {
+		dismiss(animated: true, completion: nil)
 	}
 }
 
 
 extension VoucherListViewController { // UITableViewDataSource
 
-	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("voucher", forIndexPath: indexPath)
-		cell.textLabel?.text = "Voucher \(indexPath.row + 1)"
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "voucher", for: indexPath)
+		cell.textLabel?.text = "Voucher \((indexPath as NSIndexPath).row + 1)"
 
 		return cell
 	}
 
 
-	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return 100
 	}
 }

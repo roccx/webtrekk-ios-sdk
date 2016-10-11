@@ -34,19 +34,19 @@ internal final class DefaultTracker: Tracker {
 	private static let sharedDefaults = UserDefaults.standardDefaults.child(namespace: "webtrekk")
 
 	#if !os(watchOS)
-	private let application = UIApplication.sharedApplication()
-	private var applicationDidBecomeActiveObserver: NSObjectProtocol?
-	private var applicationWillEnterForegroundObserver: NSObjectProtocol?
-	private var applicationWillResignActiveObserver: NSObjectProtocol?
-	private var backgroundTaskIdentifier = UIBackgroundTaskInvalid
+	fileprivate let application = UIApplication.shared
+	fileprivate var applicationDidBecomeActiveObserver: NSObjectProtocol?
+	fileprivate var applicationWillEnterForegroundObserver: NSObjectProtocol?
+	fileprivate var applicationWillResignActiveObserver: NSObjectProtocol?
+	fileprivate var backgroundTaskIdentifier = UIBackgroundTaskInvalid
 	#endif
 
 	private let defaults: UserDefaults
 	private var isFirstEventOfSession = true
 	private var isSampling = false
-	private let requestManager: RequestManager
-	private var requestManagerStartTimer: NSTimer?
-	private let requestQueueBackupFile: NSURL?
+	fileprivate let requestManager: RequestManager
+	private var requestManagerStartTimer: Timer?
+	private let requestQueueBackupFile: URL?
 	private var requestQueueLoaded = false
 	private let requestUrlBuilder: RequestUrlBuilder
     private let campaign: Campaign
@@ -64,8 +64,8 @@ internal final class DefaultTracker: Tracker {
 		let sharedDefaults = DefaultTracker.sharedDefaults
 		var defaults = sharedDefaults.child(namespace: configuration.webtrekkId)
 
-		var migratedRequestQueue: [NSURL]?
-		if let webtrekkId = configuration.webtrekkId.nonEmpty where !(sharedDefaults.boolForKey(DefaultsKeys.migrationCompleted) ?? false) {
+		var migratedRequestQueue: [URL]?
+		if let webtrekkId = configuration.webtrekkId.nonEmpty , !(sharedDefaults.boolForKey(DefaultsKeys.migrationCompleted) ?? false) {
 			sharedDefaults.set(key: DefaultsKeys.migrationCompleted, to: true)
 
 			if WebtrekkTracking.migratesFromLibraryV3, let migration = Migration.migrateFromLibraryV3(webtrekkId: webtrekkId) {
@@ -78,12 +78,12 @@ internal final class DefaultTracker: Tracker {
 				if !DefaultTracker.isOptedOutWasSetManually, let isOptedOut = migration.isOptedOut {
 					sharedDefaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
 				}
-				if let samplingRate = migration.samplingRate, isSampling = migration.isSampling {
+				if let samplingRate = migration.samplingRate, let isSampling = migration.isSampling {
 					defaults.set(key: DefaultsKeys.isSampling, to: isSampling)
 					defaults.set(key: DefaultsKeys.samplingRate, to: samplingRate)
 				}
 
-				migratedRequestQueue = migration.requestQueue
+				migratedRequestQueue = migration.requestQueue as [URL]?
 
 				logInfo("Migrated from Webtrekk Library v3: \(migration)")
 			}
@@ -127,7 +127,7 @@ internal final class DefaultTracker: Tracker {
 
 		requestManager.delegate = self
 
-		if let migratedRequestQueue = migratedRequestQueue where !DefaultTracker.isOptedOut {
+		if let migratedRequestQueue = migratedRequestQueue , !DefaultTracker.isOptedOut {
 			requestManager.prependRequests(migratedRequestQueue)
 		}
 
@@ -151,7 +151,7 @@ internal final class DefaultTracker: Tracker {
 		}
 
 		#if !os(watchOS)
-			let notificationCenter = NSNotificationCenter.defaultCenter()
+			let notificationCenter = NotificationCenter.default
 			if let applicationDidBecomeActiveObserver = applicationDidBecomeActiveObserver {
 				notificationCenter.removeObserver(applicationDidBecomeActiveObserver)
 			}
@@ -184,12 +184,12 @@ internal final class DefaultTracker: Tracker {
 		checkIsOnMainThread()
 
 		if requestManagerStartTimer == nil {
-			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(configuration.maximumSendDelay) {
+			requestManagerStartTimer = Timer.scheduledTimerWithTimeInterval(configuration.maximumSendDelay) {
 				self.startRequestManager()
 			}
 		}
 
-		NSTimer.scheduledTimerWithTimeInterval(15) {
+		let _ = Timer.scheduledTimerWithTimeInterval(15) {
 			self.updateConfiguration()
 		}
 	}
@@ -199,7 +199,7 @@ internal final class DefaultTracker: Tracker {
 		checkIsOnMainThread()
 
 		if requestManagerStartTimer == nil {
-			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(configuration.maximumSendDelay) {
+			requestManagerStartTimer = Timer.scheduledTimerWithTimeInterval(configuration.maximumSendDelay) {
 				self.startRequestManager()
 			}
 		}
@@ -214,10 +214,10 @@ internal final class DefaultTracker: Tracker {
 	private func applicationWillResignActive() {
 		checkIsOnMainThread()
 
-		defaults.set(key: DefaultsKeys.appHibernationDate, to: NSDate())
+		defaults.set(key: DefaultsKeys.appHibernationDate, to: Date())
 
 		if backgroundTaskIdentifier == UIBackgroundTaskInvalid {
-			backgroundTaskIdentifier = application.beginBackgroundTaskWithName("Webtrekk Tracker #\(configuration.webtrekkId)") { [weak self] in
+			backgroundTaskIdentifier = application.beginBackgroundTask(withName: "Webtrekk Tracker #\(configuration.webtrekkId)") { [weak self] in
 				guard let `self` = self else {
 					return
 				}
@@ -249,7 +249,7 @@ internal final class DefaultTracker: Tracker {
 	private func applicationWillEnterForeground() {
 		checkIsOnMainThread()
 
-		if let hibernationDate = defaults.dateForKey(DefaultsKeys.appHibernationDate) where -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
+		if let hibernationDate = defaults.dateForKey(DefaultsKeys.appHibernationDate) , -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
 			isFirstEventOfSession = false
 		}
 		else {
@@ -261,7 +261,7 @@ internal final class DefaultTracker: Tracker {
 
 	#if !os(watchOS)
 	private static let _autotrackingEventHandler = AutotrackingEventHandler()
-	internal static var autotrackingEventHandler: protocol<ActionEventHandler, MediaEventHandler, PageViewEventHandler> {
+	internal static var autotrackingEventHandler: ActionEventHandler & MediaEventHandler & PageViewEventHandler {
 		return _autotrackingEventHandler
 	}
 	#endif
@@ -289,7 +289,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	internal private(set) var configuration: TrackerConfiguration {
+	internal fileprivate(set) var configuration: TrackerConfiguration {
 		didSet {
 			checkIsOnMainThread()
 
@@ -309,7 +309,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	private func createRequestForEvent(event: TrackingEvent) -> TrackerRequest? {
+	private func createRequestForEvent(_ event: TrackingEvent) -> TrackerRequest? {
 		checkIsOnMainThread()
 
 		guard validateEvent(event) else {
@@ -319,17 +319,17 @@ internal final class DefaultTracker: Tracker {
 		var requestProperties = TrackerRequest.Properties(
 			everId:       everId,
 			samplingRate: configuration.samplingRate,
-			timeZone:     NSTimeZone.defaultTimeZone(),
-			timestamp:    NSDate(),
+			timeZone:     TimeZone.current,
+			timestamp:    Date(),
 			userAgent:    DefaultTracker.userAgent
 		)
-		requestProperties.locale = NSLocale.currentLocale()
+		requestProperties.locale = Locale.current
 
 		#if os(watchOS)
 			let device = WKInterfaceDevice.currentDevice()
 			requestProperties.screenSize = (width: Int(device.screenBounds.width * device.screenScale), height: Int(device.screenBounds.height * device.screenScale))
 		#else
-			let screen = UIScreen.mainScreen()
+			let screen = UIScreen.main
 			requestProperties.screenSize = (width: Int(screen.bounds.width * screen.scale), height: Int(screen.bounds.height * screen.scale))
 		#endif
 
@@ -373,7 +373,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	internal func enqueueRequestForEvent(event: TrackingEvent) {
+	internal func enqueueRequestForEvent(_ event: TrackingEvent) {
 		checkIsOnMainThread()
 
 		var event = eventByApplyingGlobalProperties(to: event)
@@ -492,7 +492,7 @@ internal final class DefaultTracker: Tracker {
 
 		guard let
 			viewControllerType = event.viewControllerType,
-			page = configuration.automaticallyTrackedPageForViewControllerType(viewControllerType)
+			let page = configuration.automaticallyTrackedPageForViewControllerType(viewControllerType)
 		else {
 			return event
 		}
@@ -517,8 +517,8 @@ internal final class DefaultTracker: Tracker {
 			eventWithEcommerceProperties.ecommerceProperties = ecommerceProperties.merged(over: eventWithEcommerceProperties.ecommerceProperties)
             eventWithEcommerceProperties.ecommerceProperties.processKeys(event)
             let eventEcommerceProducts = eventWithEcommerceProperties.ecommerceProperties.products
-			if let products = ecommerceProperties.products where !products.isEmpty, let product = products.first {
-				if let eventProducts = eventEcommerceProducts where !eventProducts.isEmpty {
+			if let products = ecommerceProperties.products , !products.isEmpty, let product = products.first {
+				if let eventProducts = eventEcommerceProducts , !eventProducts.isEmpty {
 					var mergedProducts: [EcommerceProperties.Product] = []
 					for eventProduct in eventProducts {
 						mergedProducts.append(product.merged(over: eventProduct))
@@ -581,8 +581,8 @@ internal final class DefaultTracker: Tracker {
 			eventWithEcommerceProperties.ecommerceProperties = global.ecommerceProperties.merged(over: eventWithEcommerceProperties.ecommerceProperties)
             eventWithEcommerceProperties.ecommerceProperties.processKeys(event)
             let eventEcommerceProducts = eventWithEcommerceProperties.ecommerceProperties.products
-			if let products = global.ecommerceProperties.products where !products.isEmpty, let product = products.first {
-				if let eventProducts = eventEcommerceProducts where !eventProducts.isEmpty {
+			if let products = global.ecommerceProperties.products , !products.isEmpty, let product = products.first {
+				if let eventProducts = eventEcommerceProducts , !eventProducts.isEmpty {
 					var mergedProducts: [EcommerceProperties.Product] = []
 					for eventProduct in eventProducts {
 						mergedProducts.append(product.merged(over: eventProduct))
@@ -629,7 +629,7 @@ internal final class DefaultTracker: Tracker {
                 
                 //generate ever id if it isn't exist
                 return everIdInternal ?? {
-                    let everId = String(format: "6%010.0f%08lu", arguments: [NSDate().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
+                    let everId = String(format: "6%010.0f%08lu", arguments: [Date().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
                     DefaultTracker.sharedDefaults.set(key: DefaultsKeys.everId, to: everId)
                     return everId
                     }()
@@ -642,7 +642,7 @@ internal final class DefaultTracker: Tracker {
             checkIsOnMainThread()
             
             //check if ever id has correct format
-            if let isMatched = newEverID.isMatchForRegularExpression("\\d{19}") where isMatched {
+            if let isMatched = newEverID.isMatchForRegularExpression("\\d{19}") , isMatched {
                 // set ever id value in setting and in cash
                 DefaultTracker.sharedDefaults.set(key: DefaultsKeys.everId, to: newEverID)
                 self.everIdInternal = newEverID
@@ -723,14 +723,14 @@ internal final class DefaultTracker: Tracker {
 			return
 		}
 
-		let fileManager = NSFileManager.defaultManager()
+		let fileManager = FileManager.default
 		guard fileManager.itemExistsAtURL(file) else {
 			return
 		}
 
 		guard !DefaultTracker.isOptedOut else {
 			do {
-				try fileManager.removeItemAtURL(file)
+				try fileManager.removeItem(at: file)
 				logDebug("Ignored request queue at '\(file)': User opted out of tracking.")
 			}
 			catch let error {
@@ -740,19 +740,19 @@ internal final class DefaultTracker: Tracker {
 			return
 		}
 
-		let queue: [NSURL]
+		let queue: [URL]
 		do {
-			let data = try NSData(contentsOfURL: file, options: [])
+			let data = try Data(contentsOf: file, options: [])
 
 			let object: AnyObject?
 			if #available(iOS 9.0, *) {
-				object = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data)
+				object = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data as NSData)
 			}
 			else {
-				object = NSKeyedUnarchiver.unarchiveObjectWithData(data)
+				object = NSKeyedUnarchiver.unarchiveObject(with: data) as AnyObject?
 			}
 
-			guard let _queue = object as? [NSURL] else {
+			guard let _queue = object as? [URL] else {
 				logError("Cannot load request queue from '\(file)': Data has wrong format: \(object)")
 				return
 			}
@@ -771,13 +771,13 @@ internal final class DefaultTracker: Tracker {
 
 	#if !os(watchOS)
 	private func retrieveConnectionType() -> TrackerRequest.Properties.ConnectionType? {
-		guard let reachability = try? Reachability.reachabilityForInternetConnection() else {
+		guard let reachability = Reachability.init() else {
 			return nil
 		}
-		if reachability.isReachableViaWiFi() {
+		if reachability.isReachableViaWiFi {
 			return .wifi
 		}
-		else if reachability.isReachableViaWWAN() {
+		else if reachability.isReachableViaWWAN {
 			if let carrierType = CTTelephonyNetworkInfo().currentRadioAccessTechnology {
 				switch carrierType {
 				case CTRadioAccessTechnologyGPRS, CTRadioAccessTechnologyEdge, CTRadioAccessTechnologyCDMA1x:
@@ -797,7 +797,7 @@ internal final class DefaultTracker: Tracker {
 				return .other
 			}
 		}
-		else if reachability.isReachable() {
+		else if reachability.isReachable {
 			return .other
 		}
 		else {
@@ -807,33 +807,33 @@ internal final class DefaultTracker: Tracker {
 	#endif
 
 
-	private static func requestQueueBackupFileForWebtrekkId(webtrekkId: String) -> NSURL? {
+	private static func requestQueueBackupFileForWebtrekkId(_ webtrekkId: String) -> URL? {
 		checkIsOnMainThread()
 
-		let searchPathDirectory: NSSearchPathDirectory
+		let searchPathDirectory: FileManager.SearchPathDirectory
 		#if os(iOS) || os(OSX) || os(watchOS)
-			searchPathDirectory = .ApplicationSupportDirectory
+			searchPathDirectory = .applicationSupportDirectory
 		#elseif os(tvOS)
 			searchPathDirectory = .CachesDirectory
 		#endif
 
-		let fileManager = NSFileManager.defaultManager()
+		let fileManager = FileManager.default
 
-		var directory: NSURL
+		var directory: URL
 		do {
-			directory = try fileManager.URLForDirectory(searchPathDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: true)
+			directory = try fileManager.url(for: searchPathDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 		}
 		catch let error {
 			logError("Cannot find directory for storing request queue backup file: \(error)")
 			return nil
 		}
 
-		directory = directory.URLByAppendingPathComponent("Webtrekk")
-		directory = directory.URLByAppendingPathComponent(webtrekkId)
+		directory = directory.appendingPathComponent("Webtrekk")
+		directory = directory.appendingPathComponent(webtrekkId)
 
 		if !fileManager.itemExistsAtURL(directory) {
 			do {
-				try fileManager.createDirectoryAtURL(directory, withIntermediateDirectories: true, attributes: [NSURLIsExcludedFromBackupKey: true])
+				try fileManager.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [URLResourceKey.isExcludedFromBackupKey.rawValue: true])
 			}
 			catch let error {
 				logError("Cannot create directory at '\(directory)' for storing request queue backup file: \(error)")
@@ -841,7 +841,7 @@ internal final class DefaultTracker: Tracker {
 			}
 		}
 
-		return directory.URLByAppendingPathComponent("requestQueue.archive")
+		return directory.appendingPathComponent("requestQueue.archive")
 	}
 
 
@@ -871,14 +871,14 @@ internal final class DefaultTracker: Tracker {
 	private func setUpObservers() {
 		checkIsOnMainThread()
 
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		applicationDidBecomeActiveObserver = notificationCenter.addObserverForName(UIApplicationDidBecomeActiveNotification, object: nil, queue: nil) { [weak self] _ in
+		let notificationCenter = NotificationCenter.default
+		applicationDidBecomeActiveObserver = notificationCenter.addObserver(forName: NSNotification.Name.UIApplicationDidBecomeActive, object: nil, queue: nil) { [weak self] _ in
 			self?.applicationDidBecomeActive()
 		}
-		applicationWillEnterForegroundObserver = notificationCenter.addObserverForName(UIApplicationWillEnterForegroundNotification, object: nil, queue: nil) { [weak self] _ in
+		applicationWillEnterForegroundObserver = notificationCenter.addObserver(forName: NSNotification.Name.UIApplicationWillEnterForeground, object: nil, queue: nil) { [weak self] _ in
 			self?.applicationWillEnterForeground()
 		}
-		applicationWillResignActiveObserver = notificationCenter.addObserverForName(UIApplicationWillResignActiveNotification, object: nil, queue: nil) { [weak self] _ in
+		applicationWillResignActiveObserver = notificationCenter.addObserver(forName: NSNotification.Name.UIApplicationWillResignActive, object: nil, queue: nil) { [weak self] _ in
 			self?.applicationWillResignActive()
 		}
 	}
@@ -892,7 +892,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	private func saveRequestQueue() {
+	fileprivate func saveRequestQueue() {
 		checkIsOnMainThread()
 
 		guard let file = requestQueueBackupFile else {
@@ -907,10 +907,10 @@ internal final class DefaultTracker: Tracker {
 
 		let queue = requestManager.queue
 		guard !queue.isEmpty else {
-			let fileManager = NSFileManager.defaultManager()
+			let fileManager = FileManager.default
 			if fileManager.itemExistsAtURL(file) {
 				do {
-					try NSFileManager.defaultManager().removeItemAtURL(file)
+					try FileManager.default.removeItem(at: file)
 					logDebug("Deleted request queue at '\(file).")
 				}
 				catch let error {
@@ -921,9 +921,9 @@ internal final class DefaultTracker: Tracker {
 			return
 		}
 
-		let data = NSKeyedArchiver.archivedDataWithRootObject(queue)
+		let data = NSKeyedArchiver.archivedData(withRootObject: queue)
 		do {
-			try data.writeToURL(file, options: .AtomicWrite)
+			try data.write(to: file, options: .atomicWrite)
 			logDebug("Saved \(queue.count) queued request(s) to '\(file).")
 		}
 		catch let error {
@@ -932,7 +932,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	private func startRequestManager() {
+	fileprivate func startRequestManager() {
 		checkIsOnMainThread()
 
 		requestManagerStartTimer?.invalidate()
@@ -943,7 +943,7 @@ internal final class DefaultTracker: Tracker {
 		}
 
 		#if !os(watchOS)
-			guard application.applicationState == .Active else {
+			guard application.applicationState == .active else {
 				return
 			}
 		#endif
@@ -953,7 +953,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	private func stopRequestManager() {
+	fileprivate func stopRequestManager() {
 		checkIsOnMainThread()
 
 		guard requestManager.started else {
@@ -965,29 +965,29 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	internal func trackAction(event: ActionEvent) {
+	internal func trackAction(_ event: ActionEvent) {
 		checkIsOnMainThread()
 
 		handleEvent(event)
 	}
 
 
-	internal func trackMediaAction(event: MediaEvent) {
+	internal func trackMediaAction(_ event: MediaEvent) {
 		checkIsOnMainThread()
 
 		handleEvent(event)
 	}
 
 
-	internal func trackPageView(event: PageViewEvent) {
+	internal func trackPageView(_ event: PageViewEvent) {
 		checkIsOnMainThread()
 
 		handleEvent(event)
 	}
 
 
-	@warn_unused_result
-	internal func trackerForMedia(mediaName: String, pageName: String) -> MediaTracker {
+	
+	internal func trackerForMedia(_ mediaName: String, pageName: String) -> MediaTracker {
 		checkIsOnMainThread()
 
 		return DefaultMediaTracker(handler: self, mediaName: mediaName, pageName: pageName)
@@ -995,7 +995,7 @@ internal final class DefaultTracker: Tracker {
 
 
 	#if !os(watchOS)
-	internal func trackerForMedia(mediaName: String, pageName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker {
+	internal func trackerForMedia(_ mediaName: String, pageName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker {
 		checkIsOnMainThread()
 
 		let tracker = trackerForMedia(mediaName, pageName: pageName)
@@ -1006,15 +1006,15 @@ internal final class DefaultTracker: Tracker {
 	#endif
 
 
-	@warn_unused_result
-	internal func trackerForPage(pageName: String) -> PageTracker {
+	
+	internal func trackerForPage(_ pageName: String) -> PageTracker {
 		checkIsOnMainThread()
 
 		return DefaultPageTracker(handler: self, pageName: pageName)
 	}
 
     #if !os(watchOS)
-    private func setupAutoDeepLinkTrack()
+    fileprivate func setupAutoDeepLinkTrack()
     {
         //init deep link to get automatic object
         deepLink.deepLinkInit()
@@ -1023,18 +1023,18 @@ internal final class DefaultTracker: Tracker {
     
 
 	#if !os(watchOS)
-	private func updateAutomaticTracking() {
+	fileprivate func updateAutomaticTracking() {
 		checkIsOnMainThread()
 
 		let handler = DefaultTracker._autotrackingEventHandler
 
 		if configuration.automaticallyTrackedPages.isEmpty {
-			if let index = handler.trackers.indexOf({ $0 === self}) {
-				handler.trackers.removeAtIndex(index)
+			if let index = handler.trackers.index(where: { $0 === self}) {
+				handler.trackers.remove(at: index)
 			}
 		}
 		else {
-			if !handler.trackers.contains({ $0 === self }) {
+			if !handler.trackers.contains(where: { $0 === self }) {
 				handler.trackers.append(self)
 			}
 
@@ -1051,7 +1051,7 @@ internal final class DefaultTracker: Tracker {
 			return
 		}
 
-		requestManager.fetch(url: updateUrl) { data, error in
+		let _ = requestManager.fetch(url: updateUrl) { data, error in
 			if let error = error {
 				logError("Cannot load configuration from \(updateUrl): \(error)")
 				return
@@ -1090,7 +1090,7 @@ internal final class DefaultTracker: Tracker {
 	private func updateSampling() {
 		checkIsOnMainThread()
 
-		if let isSampling = defaults.boolForKey(DefaultsKeys.isSampling), samplingRate = defaults.intForKey(DefaultsKeys.samplingRate) where samplingRate == configuration.samplingRate {
+		if let isSampling = defaults.boolForKey(DefaultsKeys.isSampling), let samplingRate = defaults.intForKey(DefaultsKeys.samplingRate) , samplingRate == configuration.samplingRate {
 			self.isSampling = isSampling
 		}
 		else {
@@ -1113,14 +1113,14 @@ internal final class DefaultTracker: Tracker {
 		let properties = [
 			Environment.deviceModelString,
             Environment.operatingSystemName + " " + Environment.operatingSystemVersionString,
-			NSLocale.currentLocale().localeIdentifier
-			].joinWithSeparator("; ")
+			Locale.current.identifier
+			].joined(separator: "; ")
 
 		return "Tracking Library \(WebtrekkTracking.version) (\(properties))"
 	}()
 
 
-	private static func validatedConfiguration(configuration: TrackerConfiguration) -> TrackerConfiguration {
+	private static func validatedConfiguration(_ configuration: TrackerConfiguration) -> TrackerConfiguration {
 		checkIsOnMainThread()
 
 		var configuration = configuration
@@ -1148,7 +1148,7 @@ internal final class DefaultTracker: Tracker {
 			}
 		#endif
 
-		func checkProperty<Value: Comparable>(name: String, value: Value, allowedValues: ClosedInterval<Value>) -> Value {
+		func checkProperty<Value: Comparable>(_ name: String, value: Value, allowedValues: ClosedRange<Value>) -> Value {
 			guard !allowedValues.contains(value) else {
 				return value
 			}
@@ -1165,14 +1165,14 @@ internal final class DefaultTracker: Tracker {
 		configuration.version                = checkProperty("version",                value: configuration.version,                allowedValues: TrackerConfiguration.allowedVersions)
 
 		if !problems.isEmpty {
-			(isError ? logError : logWarning)("Illegal values in tracker configuration: \(problems.joinWithSeparator(", "))")
+			(isError ? logError : logWarning)("Illegal values in tracker configuration: \(problems.joined(separator: ", "))")
 		}
 
 		return configuration
 	}
 
 
-	private func validateEvent(event: TrackingEvent) -> Bool {
+	private func validateEvent(_ event: TrackingEvent) -> Bool {
 		checkIsOnMainThread()
 
 		guard event.pageName?.nonEmpty != nil else {
@@ -1214,7 +1214,7 @@ internal final class DefaultTracker: Tracker {
 
 extension DefaultTracker: ActionEventHandler {
 
-	internal func handleEvent(event: ActionEvent) {
+	internal func handleEvent(_ event: ActionEvent) {
 		checkIsOnMainThread()
 
 		enqueueRequestForEvent(event)
@@ -1224,7 +1224,7 @@ extension DefaultTracker: ActionEventHandler {
 
 extension DefaultTracker: MediaEventHandler {
 
-	internal func handleEvent(event: MediaEvent) {
+	internal func handleEvent(_ event: MediaEvent) {
 		checkIsOnMainThread()
 
 		enqueueRequestForEvent(event)
@@ -1234,7 +1234,7 @@ extension DefaultTracker: MediaEventHandler {
 
 extension DefaultTracker: PageViewEventHandler {
 
-	internal func handleEvent(event: PageViewEvent) {
+	internal func handleEvent(_ event: PageViewEvent) {
 		checkIsOnMainThread()
 
 		enqueueRequestForEvent(event)
@@ -1244,14 +1244,14 @@ extension DefaultTracker: PageViewEventHandler {
 
 extension DefaultTracker: RequestManager.Delegate {
 
-	internal func requestManager(requestManager: RequestManager, didFailToSendRequest request: NSURL, error: RequestManager.Error) {
+	internal func requestManager(_ requestManager: RequestManager, didFailToSendRequest request: URL, error: RequestManager.ConnectionError) {
 		checkIsOnMainThread()
 
 		requestManagerDidFinishRequest()
 	}
 
 
-	internal func requestManager(requestManager: RequestManager, didSendRequest request: NSURL) {
+	internal func requestManager(_ requestManager: RequestManager, didSendRequest request: URL) {
 		checkIsOnMainThread()
 
 		requestManagerDidFinishRequest()
@@ -1270,7 +1270,7 @@ extension DefaultTracker: RequestManager.Delegate {
 					backgroundTaskIdentifier = UIBackgroundTaskInvalid
 				}
 
-				if application.applicationState != .Active {
+				if application.applicationState != .active {
 					stopRequestManager()
 				}
 			}
@@ -1283,15 +1283,15 @@ extension DefaultTracker: RequestManager.Delegate {
 #if !os(watchOS)
 	private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHandler, PageViewEventHandler {
 
-		private var trackers = [DefaultTracker]()
+		fileprivate var trackers = [DefaultTracker]()
 
 
-		private func broadcastEvent<Event: TrackingEvent>(event: Event, handler: (DefaultTracker) -> (Event) -> Void) {
+		private func broadcastEvent<Event: TrackingEvent>(_ event: Event, handler: (DefaultTracker) -> (Event) -> Void) {
 			var event = event
 
 			for tracker in trackers {
 				guard let viewControllerType = event.viewControllerType
-					where tracker.configuration.automaticallyTrackedPageForViewControllerType(viewControllerType) != nil
+					, tracker.configuration.automaticallyTrackedPageForViewControllerType(viewControllerType) != nil
 				else {
 					continue
 				}
@@ -1301,21 +1301,21 @@ extension DefaultTracker: RequestManager.Delegate {
 		}
 
 
-		private func handleEvent(event: ActionEvent) {
+		fileprivate func handleEvent(_ event: ActionEvent) {
 			checkIsOnMainThread()
 
 			broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
 		}
 
 
-		private func handleEvent(event: MediaEvent) {
+		fileprivate func handleEvent(_ event: MediaEvent) {
 			checkIsOnMainThread()
 
 			broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
 		}
 
 
-		private func handleEvent(event: PageViewEvent) {
+		fileprivate func handleEvent(_ event: PageViewEvent) {
 			checkIsOnMainThread()
 
 			broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
@@ -1327,14 +1327,14 @@ extension DefaultTracker: RequestManager.Delegate {
 
 struct DefaultsKeys {
 
-	private static let appHibernationDate = "appHibernationDate"
-	private static let appVersion = "appVersion"
-	private static let configuration = "configuration"
+	fileprivate static let appHibernationDate = "appHibernationDate"
+	fileprivate static let appVersion = "appVersion"
+	fileprivate static let configuration = "configuration"
 	static let everId = "everId"
-	private static let isFirstEventAfterAppUpdate = "isFirstEventAfterAppUpdate"
-	private static let isFirstEventOfApp = "isFirstEventOfApp"
-	private static let isSampling = "isSampling"
-	private static let isOptedOut = "optedOut"
-	private static let migrationCompleted = "migrationCompleted"
-	private static let samplingRate = "samplingRate"
+	fileprivate static let isFirstEventAfterAppUpdate = "isFirstEventAfterAppUpdate"
+	fileprivate static let isFirstEventOfApp = "isFirstEventOfApp"
+	fileprivate static let isSampling = "isSampling"
+	fileprivate static let isOptedOut = "optedOut"
+	fileprivate static let migrationCompleted = "migrationCompleted"
+	fileprivate static let samplingRate = "samplingRate"
 }

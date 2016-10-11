@@ -114,7 +114,7 @@ public struct UserProperties {
 		self.zipCode = zipCode
 	}
     
-	@warn_unused_result
+	
 	internal func merged(over other: UserProperties) -> UserProperties {
 		 var new = UserProperties(
 			birthday:             birthday ?? other.birthday,
@@ -164,9 +164,12 @@ public struct UserProperties {
 
             if (rawValue.isBirthday)
             {
-                self.year = Int(rawValue.substringWithRange(rawValue.startIndex...rawValue.startIndex.advancedBy(3)))!
-                self.month = Int(rawValue.substringWithRange(rawValue.startIndex.advancedBy(4)...rawValue.startIndex.advancedBy(5)))!
-                self.day = Int(rawValue.substringWithRange(rawValue.startIndex.advancedBy(6)..<rawValue.endIndex))!
+                
+                self.year = Int(rawValue.substring(to:rawValue.characters.index(rawValue.startIndex, offsetBy: 4)))!
+                
+                let monthRange = rawValue.characters.index(rawValue.startIndex, offsetBy: 4)..<rawValue.characters.index(rawValue.startIndex, offsetBy: 6)
+                self.month = Int(rawValue.substring(with: monthRange))!
+                self.day = Int(rawValue.substring(from: rawValue.characters.index(rawValue.startIndex, offsetBy: 6)))!
             }else{
                 WebtrekkTracking.logger.logWarning("Incorrect bithday format. Birthday won't be tracked")
                 return nil
@@ -195,7 +198,7 @@ public struct UserProperties {
  	}
     
     
-    mutating func processKeys(event: TrackingEvent){
+    mutating func processKeys(_ event: TrackingEvent){
         if let birthday = Birthday(raw: birthdayConfig?.serialized(for: event)) {
             self.birthday = birthday
         }
@@ -218,7 +221,7 @@ public struct UserProperties {
 private extension String  {
     var isBirthday : Bool {
         get{
-            return characters.count == 8 && self.rangeOfCharacterFromSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet) == nil
+            return characters.count == 8 && self.rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil
         }
     }
     

@@ -29,7 +29,7 @@ public final class DefaultTrackingLogger: TrackingLogger {
 	public var minimumLevel = TrackingLogLevel.warning
 
 	/** Attach a message to the log output with a spezific `TackingLogLevel` */
-	public func log(@autoclosure message message: () -> String, level: TrackingLogLevel) {
+	public func log(message: @autoclosure () -> String, level: TrackingLogLevel) {
 		guard enabled && level.rawValue >= minimumLevel.rawValue else {
 			return
 		}
@@ -47,7 +47,7 @@ public enum TrackingLogLevel: Int {
 	case error   = 4
 
 
-	private var title: String {
+	fileprivate var title: String {
 		switch (self) {
 		case .debug:   return "Debug"
 		case .info:    return "Info"
@@ -60,28 +60,28 @@ public enum TrackingLogLevel: Int {
 
 public protocol TrackingLogger: class {
 
-	func log (@autoclosure message message: () -> String, level: TrackingLogLevel)
+	func log (message: @autoclosure () -> String, level: TrackingLogLevel)
 }
 
 
 public extension TrackingLogger {
 
-	public func logDebug(@autoclosure message: () -> String) {
+	public func logDebug(_ message: @autoclosure () -> String) {
 		log(message: message, level: .debug)
 	}
 
 
-	public func logError(@autoclosure message: () -> String) {
+	public func logError(_ message: @autoclosure () -> String) {
 		log(message: message, level: .error)
 	}
 
 
-	public func logInfo(@autoclosure message: () -> String) {
+	public func logInfo(_ message: @autoclosure () -> String) {
 		log(message: message, level: .info)
 	}
 
 
-	public func logWarning(@autoclosure message: () -> String) {
+	public func logWarning(_ message: @autoclosure () -> String) {
 		log(message: message, level: .warning)
 	}
 }

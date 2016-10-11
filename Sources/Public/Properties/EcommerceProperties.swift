@@ -75,7 +75,7 @@ public struct EcommerceProperties {
         self.productConf = productConf
     }
 	
-	@warn_unused_result
+	
 	internal func merged(over other: EcommerceProperties) -> EcommerceProperties {
 		var new = EcommerceProperties(
 			currencyCode: currencyCode ?? other.currencyCode,
@@ -133,7 +133,7 @@ public struct EcommerceProperties {
         }
 		
         
-        @warn_unused_result
+        
 		internal func merged(over other: Product) -> Product {
 			var new = Product()
             
@@ -148,7 +148,7 @@ public struct EcommerceProperties {
 		}
         
         
-        private mutating func processKeys(event: TrackingEvent){
+        fileprivate mutating func processKeys(_ event: TrackingEvent){
             if let name = nameConfig?.serialized(for: event) {
                 self.name = name
             }
@@ -170,7 +170,7 @@ public struct EcommerceProperties {
 		case viewed = "view"
 	}
     
-    mutating func processKeys(event: TrackingEvent){
+    mutating func processKeys(_ event: TrackingEvent){
         if let currencyCode = currencyCodeConfig?.serialized(for: event) {
             self.currencyCode = currencyCode
         }
@@ -208,7 +208,7 @@ public struct EcommerceProperties {
 private extension String  {
     var isQuantity : Bool {
         get{
-            return characters.count > 0 && self.rangeOfCharacterFromSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet) == nil
+            return characters.count > 0 && self.rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil
         }
     }
 }

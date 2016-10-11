@@ -182,8 +182,8 @@ class PageTest: WTBaseTestNew {
             }
            doURLSendTestAction(){
                self.mainViewController.beginAppearanceTransition(true, animated: false)
-               let value = UIInterfaceOrientation.LandscapeLeft.rawValue
-               UIDevice.currentDevice().setValue(value, forKey: "orientation")
+               let value = UIInterfaceOrientation.landscapeLeft.rawValue
+               UIDevice.current.setValue(value, forKey: "orientation")
                self.mainViewController.endAppearanceTransition()
            }
         

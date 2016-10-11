@@ -122,7 +122,7 @@ class CDBTest: WTBaseTestNew {
 
     }
     
-    private func doTest(cycle: Int){
+    private func doTest(_ cycle: Int){
         if (cycle == 0){
             NSLog("Start CDB test -------------")
         }
@@ -135,35 +135,35 @@ class CDBTest: WTBaseTestNew {
         switch cycle {
         case 0:
             track.trackCDB(CrossDeviceProperties(
-                emailAddress: .plain(parametersValue[cycleTestArr[cycle][0]]),
-                phoneNumber: .plain(parametersValue[cycleTestArr[cycle][1]]),
                 address: .plain(convertStringToAddress(parametersValue[cycleTestArr[cycle][2]])),
                 androidId: parametersValue[cycleTestArr[cycle][3]],
-                iosId: parametersValue[cycleTestArr[cycle][4]],
-                windowsId: parametersValue[cycleTestArr[cycle][5]],
+                emailAddress: .plain(parametersValue[cycleTestArr[cycle][0]]),
                 facebookId: parametersValue[cycleTestArr[cycle][6]],
-                twitterId: parametersValue[cycleTestArr[cycle][7]],
                 googlePlusId: parametersValue[cycleTestArr[cycle][8]],
-                linkedInId: parametersValue[cycleTestArr[cycle][9]]
+                iosId: parametersValue[cycleTestArr[cycle][4]],
+                linkedInId: parametersValue[cycleTestArr[cycle][9]],
+                phoneNumber: .plain(parametersValue[cycleTestArr[cycle][1]]),
+                twitterId: parametersValue[cycleTestArr[cycle][7]],
+                windowsId: parametersValue[cycleTestArr[cycle][5]]
             ))
 //            track.global.crossDeviceProperties = cdbProperty
             //setCustom(1, parametersValue[cycleTestArr[cycle][10]]));
         case 1, 2, 3:
             track.trackCDB(CrossDeviceProperties(
+                address: .plain(convertStringToAddress(parametersValue[cycleTestArr[cycle][2]])),
                 emailAddress: .plain(parametersValue[cycleTestArr[cycle][0]]),
-                phoneNumber: .plain(parametersValue[cycleTestArr[cycle][1]]),
-                address: .plain(convertStringToAddress(parametersValue[cycleTestArr[cycle][2]]))
+                phoneNumber: .plain(parametersValue[cycleTestArr[cycle][1]])
             ))
         case 4:
             track.trackCDB(CrossDeviceProperties(
+            address: .plain(convertStringToAddress(parametersValue[cycleTestArr[cycle][3]])),
             emailAddress: .hashed(md5: parametersValue[cycleTestArr[cycle][0]], sha256: parametersValue[cycleTestArr[cycle][1]]),
-            phoneNumber: .plain(parametersValue[cycleTestArr[cycle][2]]),
-            address: .plain(convertStringToAddress(parametersValue[cycleTestArr[cycle][3]]))
+            phoneNumber: .plain(parametersValue[cycleTestArr[cycle][2]])
             ))
         case 5:
             track.trackCDB(CrossDeviceProperties(
-            phoneNumber: .hashed(md5: parametersValue[cycleTestArr[cycle][0]], sha256: parametersValue[cycleTestArr[cycle][1]]),
-            address: .plain(convertStringToAddress(parametersValue[cycleTestArr[cycle][2]]))
+            address: .plain(convertStringToAddress(parametersValue[cycleTestArr[cycle][2]])),
+            phoneNumber: .hashed(md5: parametersValue[cycleTestArr[cycle][0]], sha256: parametersValue[cycleTestArr[cycle][1]])
             ))
         case 6,7:
             track.trackCDB(CrossDeviceProperties(
@@ -179,32 +179,32 @@ class CDBTest: WTBaseTestNew {
         
     }
     
-    private func processResult (cycle: Int, parameters: [String:String]){
+    private func processResult (_ cycle: Int, parameters: [String:String]){
         
         for  index in cycleTestArr[cycle] {
             
             let parName = parametersName[index];
             let parValue = parametersValue[index];
             let firstKey = firstOrSha256KeyName[index];
-            let firstValue = firstOrSha256Value[index]?.lowercaseString;
+            let firstValue = firstOrSha256Value[index]?.lowercased();
             let mdKey = mdKeyName[index];
-            let mdValue = mdFieldValue[index]?.lowercaseString;
+            let mdValue = mdFieldValue[index]?.lowercased();
             
             NSLog("test " + parName + " value:" + parValue+"\n")
             
             if let key = firstKey {
-                expect(firstValue).to(equal(parameters[key]?.lowercaseString), description: "cycle: \(cycle) key:\(key) index: \(index). ER: \(firstValue) AR:\(parameters[key])")
+                expect(firstValue).to(equal(parameters[key]?.lowercased()), description: "cycle: \(cycle) key:\(key) index: \(index). ER: \(firstValue) AR:\(parameters[key])")
             }
             
             if let key = mdKey {
-                expect(mdValue).to(equal(parameters[key]?.lowercaseString), description: "cycle: \(cycle) key:\(key) index: \(index). ER: \(mdValue) AR:\(parameters[key])")
+                expect(mdValue).to(equal(parameters[key]?.lowercased()), description: "cycle: \(cycle) key:\(key) index: \(index). ER: \(mdValue) AR:\(parameters[key])")
             }
         }
     }
     
     
-    private func convertStringToAddress(value: String) -> CrossDeviceProperties.Address {
-        let addressConponents = value.characters.split("|")
+    private func convertStringToAddress(_ value: String) -> CrossDeviceProperties.Address {
+        let addressConponents = value.characters.split(separator: "|")
         return CrossDeviceProperties.Address(firstName: String(addressConponents[0]),
             lastName: String(addressConponents[1]), street: String(addressConponents[3]),
             streetNumber: String(addressConponents[4]), zipCode: String(addressConponents[2]))

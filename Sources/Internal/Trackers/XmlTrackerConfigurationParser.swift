@@ -28,13 +28,13 @@ internal class XmlTrackerConfigurationParser {
 	private var automaticallyTracksAppUpdates: Bool?
 	private var automaticallyTracksAppVersion: Bool?
 	private var automaticallyTracksRequestQueueSize: Bool?
-	private var configurationUpdateUrl: NSURL?
+	private var configurationUpdateUrl: URL?
 	private var enableRemoteConfiguration: Bool?
-	private var maximumSendDelay: NSTimeInterval?
+	private var maximumSendDelay: TimeInterval?
 	private var requestQueueLimit: Int?
-	private var resendOnStartEventTime: NSTimeInterval?
+	private var resendOnStartEventTime: TimeInterval?
 	private var samplingRate: Int?
-	private var serverUrl: NSURL?
+	private var serverUrl: URL?
 	private var version: Int?
 	private var webtrekkId: String?
 
@@ -48,12 +48,12 @@ internal class XmlTrackerConfigurationParser {
 	private var globalScreenTrackingParameter: ScreenTrackingParameter?
 
 
-	internal func parse(xml data: NSData) throws -> TrackerConfiguration {
+	internal func parse(xml data: Data) throws -> TrackerConfiguration {
 		return try readFromRootElement(XmlParser().parse(xml: data))
 	}
 
 
-	private func parseScreenTrackingParameter(xmlElement: XmlElement) -> ScreenTrackingParameter {
+	private func parseScreenTrackingParameter(_ xmlElement: XmlElement) -> ScreenTrackingParameter {
 		var categories = [String: [Int: CategoryElement]]()
 
 		var parameters = [PropertyName: PropertyValue]()
@@ -82,9 +82,9 @@ internal class XmlTrackerConfigurationParser {
 	}
 
 
-	private func readFromGlobalElement(xmlElement: XmlElement) throws {
+	private func readFromGlobalElement(_ xmlElement: XmlElement) throws {
 		guard xmlElement.name == "globalTrackingParameter" else {
-			throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")) needs to be globalTrackingParameter")
+			throw TrackerError(message: "\(xmlElement.path.joined(separator: ".")) needs to be globalTrackingParameter")
 		}
 		guard !xmlElement.children.isEmpty else {
 			return
@@ -93,12 +93,12 @@ internal class XmlTrackerConfigurationParser {
 	}
 
 
-	private func readFromRootElement(xmlElement: XmlElement) throws -> TrackerConfiguration {
+	fileprivate func readFromRootElement(_ xmlElement: XmlElement) throws -> TrackerConfiguration {
 		guard xmlElement.name == "webtrekkConfiguration" else {
-			throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")) root node needs to be webtrekkConfiguration")
+			throw TrackerError(message: "\(xmlElement.path.joined(separator: ".")) root node needs to be webtrekkConfiguration")
 		}
 		guard !xmlElement.children.isEmpty else {
-			throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")) webtrekkConfiguration can not be empty")
+			throw TrackerError(message: "\(xmlElement.path.joined(separator: ".")) webtrekkConfiguration can not be empty")
 		}
 		for child in xmlElement.children {
 			do {
@@ -135,11 +135,11 @@ internal class XmlTrackerConfigurationParser {
 				}
 			}
 			catch let error as TrackerError {
-				throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")): \(error.message)")
+				throw TrackerError(message: "\(xmlElement.path.joined(separator: ".")): \(error.message)")
 			}
 		}
 
-		guard let webtrekkId = webtrekkId, serverUrl = serverUrl else {
+		guard let webtrekkId = webtrekkId, let serverUrl = serverUrl else {
 			throw TrackerError(message: "trackId and trackDomain must be set.")
 		}
 
@@ -149,7 +149,7 @@ internal class XmlTrackerConfigurationParser {
 			trackerConfiguration.configurationUpdateUrl = configurationUpdateUrl
 		}
 
-		if let enableRemoteConfiguration = enableRemoteConfiguration where !enableRemoteConfiguration {
+		if let enableRemoteConfiguration = enableRemoteConfiguration , !enableRemoteConfiguration {
 			trackerConfiguration.configurationUpdateUrl = nil
 		}
 
@@ -220,12 +220,12 @@ internal class XmlTrackerConfigurationParser {
 
 
 	#if !os(watchOS)
-	private func readFromScreenElement(xmlElement: XmlElement) throws {
+	fileprivate func readFromScreenElement(_ xmlElement: XmlElement) throws {
 		guard xmlElement.name == "screen" else {
-			throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")) nodes needs to be screen")
+			throw TrackerError(message: "\(xmlElement.path.joined(separator: ".")) nodes needs to be screen")
 		}
 		guard !xmlElement.children.isEmpty else {
-			throw TrackerError(message: "\(xmlElement.path.joinWithSeparator(".")) node can not be empty")
+			throw TrackerError(message: "\(xmlElement.path.joined(separator: ".")) node can not be empty")
 		}
 		// TODO: create screen here and append afterwards to array of screens
 		var viewControllerType: String?
@@ -243,8 +243,8 @@ internal class XmlTrackerConfigurationParser {
 		}
 
 		// if autotracked is not set it is assumed enabled
-		if let globalAutoTracked = self.autoTracked where !globalAutoTracked {
-			if let screenAutoTracked = autoTracked where screenAutoTracked {
+		if let globalAutoTracked = self.autoTracked , !globalAutoTracked {
+			if let screenAutoTracked = autoTracked , screenAutoTracked {
 				autoTracked = true
 			}
 			else {
@@ -253,7 +253,7 @@ internal class XmlTrackerConfigurationParser {
 		}
 		autoTracked = autoTracked ?? true
 
-		guard let isTrackingEnabled = autoTracked where isTrackingEnabled else {
+		guard let isTrackingEnabled = autoTracked , isTrackingEnabled else {
 			return
 		}
 
@@ -269,7 +269,7 @@ internal class XmlTrackerConfigurationParser {
 			patternString = _patternString
 		}
 		else {
-			patternString = "\\b\(NSRegularExpression.escapedPatternForString(viewControllerTypeName))\\b"
+			patternString = "\\b\(NSRegularExpression.escapedPattern(for: viewControllerTypeName))\\b"
 		}
 
 		var page: TrackerConfiguration.Page
@@ -296,7 +296,7 @@ internal class XmlTrackerConfigurationParser {
 	}
 
 
-	private func readFromScreenTrackingParameterElement(xmlElement: XmlElement) throws -> ScreenTrackingParameter? {
+	fileprivate func readFromScreenTrackingParameterElement(_ xmlElement: XmlElement) throws -> ScreenTrackingParameter? {
 		guard xmlElement.name == "screenTrackingParameter" else {
 			throw TrackerError(message: "screenTrackingParameter nodes needs to be screenTrackingParameter")
 		}
@@ -309,13 +309,13 @@ internal class XmlTrackerConfigurationParser {
 	#endif
 
 
-	private func readFromCategoryElement(xmlElement: XmlElement) -> [Int: CategoryElement]? {
+	private func readFromCategoryElement(_ xmlElement: XmlElement) -> [Int: CategoryElement]? {
 		guard !xmlElement.children.isEmpty else {
 			return nil
 		}
 		var xmlCategoryElements = [Int: CategoryElement]()
 		for child in xmlElement.children where child.name == "parameter" {
-			guard let indexString = child.attributes["id"], index = Int(indexString) else {
+			guard let indexString = child.attributes["id"], let index = Int(indexString) else {
 				continue
 			}
 			xmlCategoryElements[index] = CategoryElement(key: child.attributes["key"], value: child.text)
@@ -323,7 +323,7 @@ internal class XmlTrackerConfigurationParser {
 		return xmlCategoryElements
 	}
 
-	private func readFromParameterElement(xmlElement: XmlElement) -> (PropertyName, PropertyValue)? {
+	private func readFromParameterElement(_ xmlElement: XmlElement) -> (PropertyName, PropertyValue)? {
 		guard xmlElement.name == "parameter" else {
 			return nil
 		}
@@ -344,7 +344,7 @@ internal class XmlTrackerConfigurationParser {
 	}
 
 
-	private func parseBool(string: String) throws -> Bool?{
+	private func parseBool(_ string: String) throws -> Bool?{
 		switch (string) {
 		case "true":  return true
 		case "false": return false
@@ -355,7 +355,7 @@ internal class XmlTrackerConfigurationParser {
 	}
 
 
-	private func parseDouble(string: String, allowedRange: ClosedInterval<Double>) throws -> Double? {
+	private func parseDouble(_ string: String, allowedRange: ClosedRange<Double>) throws -> Double? {
 		guard let value = Double(string) else {
 			throw TrackerError(message: "'\(string)' is not a valid number")
 		}
@@ -368,27 +368,27 @@ internal class XmlTrackerConfigurationParser {
 	}
 
 
-	private func parseInt(string: String, allowedRange: ClosedInterval<Int>) throws -> Int? {
+	private func parseInt(_ string: String, allowedRange: ClosedRange<Int>) throws -> Int? {
 		guard let value = Int(string) else {
 			throw TrackerError(message: "'\(string)' is not a valid integer")
 		}
 
 		if !allowedRange.contains(value) {
-			if allowedRange.end == .max {
-				throw TrackerError(message: "value (\(value)) must be larger than or equal to \(allowedRange.start)")
+			if allowedRange.upperBound == .max {
+				throw TrackerError(message: "value (\(value)) must be larger than or equal to \(allowedRange.lowerBound)")
 			}
-			if allowedRange.start == .min {
-				throw TrackerError(message: "value (\(value)) must be smaller than or equal to \(allowedRange.end)")
+			if allowedRange.lowerBound == .min {
+				throw TrackerError(message: "value (\(value)) must be smaller than or equal to \(allowedRange.upperBound)")
 			}
 
-			throw TrackerError(message: "value (\(value)) must be between \(allowedRange.start) (inclusive) and \(allowedRange.end) (inclusive)")
+			throw TrackerError(message: "value (\(value)) must be between \(allowedRange.lowerBound) (inclusive) and \(allowedRange.upperBound) (inclusive)")
 		}
 
 		return value
 	}
 
 
-	private func parseString(string: String, emptyAllowed: Bool) throws -> String? {
+	private func parseString(_ string: String, emptyAllowed: Bool) throws -> String? {
 		if string.isEmpty {
 			if !emptyAllowed {
 				throw TrackerError(message: "must not be empty")
@@ -401,7 +401,7 @@ internal class XmlTrackerConfigurationParser {
 	}
 
 
-	private func parseUrl(string: String, emptyAllowed: Bool) throws -> NSURL? {
+	private func parseUrl(_ string: String, emptyAllowed: Bool) throws -> URL? {
 		if string.isEmpty {
 			if !emptyAllowed {
 				throw TrackerError(message: "must not be empty")
@@ -410,7 +410,7 @@ internal class XmlTrackerConfigurationParser {
 			return nil
 		}
 
-		guard let value = NSURL(string: string) else {
+		guard let value = URL(string: string) else {
 			throw TrackerError(message: "'\(string)' is not a valid URL")
 		}
 
@@ -450,7 +450,7 @@ internal class XmlTrackerConfigurationParser {
 	}
 
 
-	private class ScreenTrackingParameter {
+	fileprivate class ScreenTrackingParameter {
 		var categories: [String: [Int: CategoryElement]]
 		var parameters: [PropertyName: PropertyValue]
 
@@ -459,7 +459,7 @@ internal class XmlTrackerConfigurationParser {
 			self.parameters = parameters
 		}
 
-		private func resolved(elements: [Int: CategoryElement]) -> [Int: TrackingValue]? {
+		private func resolved(_ elements: [Int: CategoryElement]) -> [Int: TrackingValue]? {
 			var result = [Int: TrackingValue]()
 			for (index, element) in elements {
 				if let key = element.key {
@@ -482,12 +482,12 @@ internal class XmlTrackerConfigurationParser {
 		}
 
 
-		private func actionProperties() -> ActionProperties {
+		fileprivate func actionProperties() -> ActionProperties {
 			return ActionProperties(name: nil, details: categories["actionParameter"].flatMap { resolved($0) })
 		}
 
 
-		private func advertisementProperties() -> AdvertisementProperties {
+		fileprivate func advertisementProperties() -> AdvertisementProperties {
 			var advertisementId: String? = nil
 			if let id = parameters[.advertisementId]?.serialized() {
 				advertisementId = id
@@ -497,7 +497,7 @@ internal class XmlTrackerConfigurationParser {
 				advertisementAction = action
 			}
 			var details: [Int: TrackingValue]? = nil
-			if let elements = categories["adParameter"], advertisementDetails = resolved(elements) {
+			if let elements = categories["adParameter"], let advertisementDetails = resolved(elements) {
 				details = advertisementDetails
 			}
 
@@ -505,7 +505,7 @@ internal class XmlTrackerConfigurationParser {
 		}
 
 		
-		private func ecommerceProperties() -> EcommerceProperties {
+		fileprivate func ecommerceProperties() -> EcommerceProperties {
         
             var ecommerceProperties = EcommerceProperties()
 			
@@ -529,7 +529,7 @@ internal class XmlTrackerConfigurationParser {
                 ecommerceProperties.voucherValueConfig = voucherValueConfig
             }
         
-			if let elements = categories["ecomParameter"], ecommerceDetails = resolved(elements) {
+			if let elements = categories["ecomParameter"], let ecommerceDetails = resolved(elements) {
 				ecommerceProperties.details = ecommerceDetails
 			}
 
@@ -541,12 +541,12 @@ internal class XmlTrackerConfigurationParser {
 		}
 
 
-		private func mediaProperties() -> MediaProperties {
+		fileprivate func mediaProperties() -> MediaProperties {
 			return MediaProperties(name: nil, groups: categories["mediaCategories"].flatMap { resolved($0) })
 		}
 
 
-		private func pageProperties() -> PageProperties {
+		fileprivate func pageProperties() -> PageProperties {
 			var pageProperties = PageProperties(name: nil)
 			if let internalSearchConfig = parameters[.internalSearch] {
                 pageProperties.internalSearchConfig = internalSearchConfig
@@ -554,10 +554,10 @@ internal class XmlTrackerConfigurationParser {
 			if let url = parameters[.pageUrl]?.serialized() {
 				pageProperties.url = url
 			}
-			if let elements = categories["pageParameter"], pageDetails = resolved(elements) {
+			if let elements = categories["pageParameter"], let pageDetails = resolved(elements) {
 				pageProperties.details = pageDetails
 			}
-			if let elements = categories["pageCategories"], pageGroups = resolved(elements) {
+			if let elements = categories["pageCategories"], let pageGroups = resolved(elements) {
 				pageProperties.groups = pageGroups
 			}
 
@@ -580,7 +580,7 @@ internal class XmlTrackerConfigurationParser {
 				productQuantityConfig = quantityConfig
 			}
 			var productCategories: [Int: TrackingValue]? = nil
-			if let elements = categories["productCategories"], productCategoriesElements = resolved(elements) {
+			if let elements = categories["productCategories"], let productCategoriesElements = resolved(elements) {
 				productCategories = productCategoriesElements
 			}
 
@@ -592,14 +592,14 @@ internal class XmlTrackerConfigurationParser {
 		}
 
 
-		private func sessionDetails() -> [Int: TrackingValue] {
+		fileprivate func sessionDetails() -> [Int: TrackingValue] {
 			return categories["sessionParameter"].flatMap { resolved($0) } ?? [:]
 		}
 
 
-		private func userProperties() -> UserProperties {
+		fileprivate func userProperties() -> UserProperties {
 			var userProperties = UserProperties(birthday: nil)
-			if let categoryElements = categories["userCategories"], details = resolved(categoryElements) {
+			if let categoryElements = categories["userCategories"], let details = resolved(categoryElements) {
 				userProperties.details = details
 			}
 			if let bithdayConfig = parameters[.birthday]  {

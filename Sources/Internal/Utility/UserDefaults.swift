@@ -3,84 +3,84 @@ import Foundation
 
 internal final class UserDefaults {
 
-	internal static let standardDefaults = UserDefaults(source: NSUserDefaults.standardUserDefaults(), keyPrefix: "")
+	internal static let standardDefaults = UserDefaults(source: Foundation.UserDefaults.standard, keyPrefix: "")
 
-	private let keyPrefix: String
-	private let source: NSUserDefaults
+	fileprivate let keyPrefix: String
+	fileprivate let source: Foundation.UserDefaults
 
 
-	private init(source: NSUserDefaults, keyPrefix: String) {
+	fileprivate init(source: Foundation.UserDefaults, keyPrefix: String) {
 		self.keyPrefix = keyPrefix
 		self.source = source
 	}
 
 
-	internal func boolForKey(key: String) -> Bool? {
+	internal func boolForKey(_ key: String) -> Bool? {
 		return objectForKey(key) as? Bool
 	}
 
 
-	internal func child(namespace namespace: String) -> UserDefaults {
+	internal func child(namespace: String) -> UserDefaults {
 		return UserDefaults(source: source, keyPrefix: "\(keyPrefix)\(namespace).")
 	}
 
 
-	internal func dataForKey(key: String) -> NSData? {
-		return objectForKey(key) as? NSData
+	internal func dataForKey(_ key: String) -> Data? {
+		return objectForKey(key) as? Data
 	}
 
 
-	internal func dateForKey(key: String) -> NSDate? {
-		return objectForKey(key) as? NSDate
+	internal func dateForKey(_ key: String) -> Date? {
+		return objectForKey(key) as? Date
 	}
 
 
-	internal func intForKey(key: String) -> Int? {
+	internal func intForKey(_ key: String) -> Int? {
 		return objectForKey(key) as? Int
 	}
 
 
-	internal func objectForKey(key: String) -> AnyObject? {
-		return source.objectForKey(keyPrefix + key)
+	internal func objectForKey(_ key: String) -> AnyObject? {
+		return source.object(forKey: keyPrefix + key) as AnyObject?
 	}
 
 
-	internal func remove(key key: String) {
-		source.removeObjectForKey(keyPrefix + key)
+	internal func remove(key: String) {
+		source.removeObject(forKey: keyPrefix + key)
 	}
 
 
-	internal func stringForKey(key: String) -> String? {
+	internal func stringForKey(_ key: String) -> String? {
 		return objectForKey(key) as? String
 	}
 
 
-	private func set(key key: String, to value: AnyObject?) {
-		source.setObject(value, forKey: keyPrefix + key)
+	private func set(key: String, to value: AnyObject?) {
+		source.set(value, forKey: keyPrefix + key)
 	}
 
 
-	internal func set(key key: String, to value: Bool?) {
+	internal func set(key: String, to value: Bool?) {
 		set(key: key, to: value as AnyObject?)
 	}
 
 
-	internal func set(key key: String, to value: NSData?) {
+	internal func set(key: String, to value: Data?) {
 		set(key: key, to: value as AnyObject?)
 	}
 
 
-	internal func set(key key: String, to value: NSDate?) {
+	internal func set(key: String, to value: Date?) {
 		set(key: key, to: value as AnyObject?)
 	}
 
 
-	internal func set(key key: String, to value: Int?) {
+	internal func set(key: String, to value: Int?) {
 		set(key: key, to: value as AnyObject?)
 	}
 
 
-	internal func set(key key: String, to value: String?) {
+	internal func set(key: String, to value: String?) {
 		set(key: key, to: value as AnyObject?)
 	}
 }

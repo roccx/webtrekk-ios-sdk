@@ -18,7 +18,7 @@
 //
 
 
-public struct TrackerError: ErrorType {
+public struct TrackerError: Error {
 
 	public var message: String
 

@@ -11,17 +11,17 @@ internal struct Environment {
 	internal static var advertisingIdentifierManager: ASIdentifierManager? = {
 		let selector = #selector(ASIdentifierManager.sharedManager)
 
-		guard let identifierManagerClass = NSClassFromString("ASIdentifierManager") as? NSObjectProtocol where identifierManagerClass.respondsToSelector(selector) else {
+		guard let identifierManagerClass = NSClassFromString("ASIdentifierManager") as? NSObjectProtocol , identifierManagerClass.responds(to: selector) else {
 			return nil
 		}
 
-		let sharedManager = identifierManagerClass.performSelector(selector).takeUnretainedValue()
-		return unsafeBitCast(sharedManager, ASIdentifierManager.self)
+		let sharedManager = identifierManagerClass.perform(selector).takeUnretainedValue()
+		return unsafeBitCast(sharedManager, to: ASIdentifierManager.self)
 	}()
 
 
 	internal static let appVersion: String? = {
-		return NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String
+		return Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
 	}()
 
 
@@ -29,7 +29,7 @@ internal struct Environment {
 		#if os(watchOS)
 			return WKInterfaceDevice.currentDevice().model
 		#else
-			let device = UIDevice.currentDevice()
+			let device = UIDevice.current
 			if device.isSimulator {
 				return "\(operatingSystemName) Simulator"
 			}
@@ -54,7 +54,7 @@ internal struct Environment {
 
 
 	internal static let operatingSystemVersionString: String = {
-		let version = NSProcessInfo().operatingSystemVersion
+		let version = ProcessInfo().operatingSystemVersion
 		if version.patchVersion == 0 {
 			return "\(version.majorVersion).\(version.minorVersion)"
 		}

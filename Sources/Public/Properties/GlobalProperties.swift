@@ -57,7 +57,7 @@ public struct GlobalProperties {
 	}
 
 
-	@warn_unused_result
+	
 	internal func merged(over other: GlobalProperties) -> GlobalProperties {
 		return GlobalProperties(
 			actionProperties:        actionProperties.merged(over: other.actionProperties),

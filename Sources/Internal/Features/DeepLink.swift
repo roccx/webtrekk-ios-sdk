@@ -32,7 +32,7 @@ class DeepLink: NSObject{
         var methodCount: UInt32 = 0
         
         // get class of delegate instance
-        guard let delgate = UIApplication.sharedApplication().delegate,
+        guard let delgate = UIApplication.shared.delegate,
               let delegateClass = object_getClass(delgate) else {
             return
         }
@@ -44,14 +44,14 @@ class DeepLink: NSObject{
             let count = Int(methodCount)
             
             defer {
-                methods.destroy()
-                methods.dealloc(count)
+                methods!.deinitialize()
+                methods!.deallocate(capacity: count)
             }
             // go throught all methods
             for i in 0..<count {
-                let method : Method = methods[i]
+                let method : Method = methods![i]!
                 let methodSel = method_getName(method)
-                let methodName = String.fromCString(sel_getName(methodSel))
+                let methodName = String(cString: sel_getName(methodSel))
                 
                 //if appplication with continueUserActivity found replace this method
                 if methodName == "application:continueUserActivity:restorationHandler:" {
@@ -60,7 +60,7 @@ class DeepLink: NSObject{
                       methodSelector:replacedSel, fromClass: DeepLink.self) {
                     
                         // next change implementation of two methods
-                        if swizzleMethod(ofType: delegateClass, fromSelector: methodSel, toSelector: replacedSel) {
+                        if swizzleMethod(ofType: delegateClass, fromSelector: methodSel!, toSelector: replacedSel) {
                             WebtrekkTracking.defaultLogger.logDebug("swizzle Deep Link successfully")
                         } else {
                             WebtrekkTracking.defaultLogger.logError("Cann't swizzle Deep Link")
@@ -79,14 +79,14 @@ class DeepLink: NSObject{
     
     // method that replaces application in delegate
     @objc(wt_application:continueUserActivity:restorationHandler:)
-    dynamic func wt_application(application: UIApplication,
+    dynamic func wt_application(_ application: UIApplication,
                      continueUserActivity userActivity: NSUserActivity,
                                           restorationHandler: ([AnyObject]?) -> Void) -> Bool {
         
         // test if this is deep link
         if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
                 let url = userActivity.webpageURL,
-                let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: true),
+                let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
                 let queryItems = components.queryItems{
             
             WebtrekkTracking.defaultLogger.logDebug("Deep link is received")
@@ -101,7 +101,7 @@ class DeepLink: NSObject{
                     
                     if let value = queryItem.value  {
                         // check if ever id has correct format 19 digits.
-                        if let isMatched = value.isMatchForRegularExpression("\\d{19}") where isMatched {
+                        if let isMatched = value.isMatchForRegularExpression("\\d{19}") , isMatched {
                             track.everId = value
                             WebtrekkTracking.defaultLogger.logDebug("Ever id from Deep link is set")
                         } else {
@@ -134,7 +134,7 @@ class DeepLink: NSObject{
     }
     
     //save media code to settings
-    func setMediaCode(mediaCode: String)
+    func setMediaCode(_ mediaCode: String)
     {
         self.sharedDefaults.set(key: DeepLink.savedDeepLinkMediaCode, to: mediaCode)
     }

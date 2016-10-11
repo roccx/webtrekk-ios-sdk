@@ -131,8 +131,8 @@ class ParameterTest: WTBaseTestNew {
             tracker["VOUCHER_VALUE"]="VOUCHER_VALUE"
 //          tracker["ZIP"]="ZIP"
             
-            tracker.ecommerceProperties.products = [EcommerceProperties.Product(name: "productName1", price:"100", quantity: 1, categories: [11: "productCat11", 12: "productCat12"]),
-                EcommerceProperties.Product(name: "productName2", price:"200", quantity: 2, categories: [11: "productCat21", 12: "productCat22"])]
+            tracker.ecommerceProperties.products = [EcommerceProperties.Product(name: "productName1", categories: [11: "productCat11", 12: "productCat12"], price:"100", quantity: 1),
+                EcommerceProperties.Product(name: "productName2", categories: [11: "productCat21", 12: "productCat22"], price:"200", quantity: 2)]
             tracker.ecommerceProperties.totalValue = "ORDER_TOTALCODE"
 
             self.mainViewController.endAppearanceTransition()
@@ -201,8 +201,8 @@ class ParameterTest: WTBaseTestNew {
             tracker.ecommerceProperties.currencyCode = "CURRENCY"
             tracker.ecommerceProperties.details = [10 : "ecomeCustomField10"]
             tracker.ecommerceProperties.orderNumber = "ORDER_NUMBER"
-            tracker.ecommerceProperties.products = [EcommerceProperties.Product(name: "productName1", price:"100", quantity: 1, categories: [11: "productCat11", 12: "productCat12"]),
-                EcommerceProperties.Product(name: "productName2", price:"200", quantity: 2, categories: [11: "productCat21", 12: "productCat22"])]
+            tracker.ecommerceProperties.products = [EcommerceProperties.Product(name: "productName1", categories: [11: "productCat11", 12: "productCat12"], price:"100", quantity: 1),
+                EcommerceProperties.Product(name: "productName2", categories: [11: "productCat21", 12: "productCat22"], price:"200", quantity: 2)]
             tracker.ecommerceProperties.totalValue = "ORDER_TOTAL"
             tracker.ecommerceProperties.voucherValue = "VOUCHER_VALUE"
             tracker.ecommerceProperties.status = .viewed
@@ -273,10 +273,10 @@ class ParameterTest: WTBaseTestNew {
             tracker.pageURL = nil
             let pagePropertiesL = PageProperties(
                 name: "pageNameNotauto",
+                details: [30: "pageCustom30", 31: "pageCustom31"],
                 groups: [10: "pageCat10", 11: "pageCat11"],
                 internalSearch: "InternalSearch",
-                url: "http://www.webrekk.com",
-                details: [30: "pageCustom30", 31: "pageCustom31"])
+                url: "http://www.webrekk.com")
             let userPropertiesL = UserProperties(
                 birthday: UserProperties.Birthday(day: 11, month: 4, year: 1986),
                 city: "CITY",
@@ -303,8 +303,8 @@ class ParameterTest: WTBaseTestNew {
                 currencyCode: "CURRENCY",
                 details: [10 : "ecomeCustomField10"],
                 orderNumber: "ORDER_NUMBER",
-                products: [EcommerceProperties.Product(name: "productName1", price:"100", quantity: 1, categories: [11: "productCat11", 12: "productCat12"]),
-                    EcommerceProperties.Product(name: "productName2", price:"200", quantity: 2, categories: [11: "productCat21", 12: "productCat22"])],
+                products: [EcommerceProperties.Product(name: "productName1", categories: [11: "productCat11", 12: "productCat12"], price:"100", quantity: 1),
+                    EcommerceProperties.Product(name: "productName2", categories: [11: "productCat21", 12: "productCat22"], price:"200", quantity: 2)],
                 status: .viewed,
                 totalValue: "ORDER_TOTAL",
                 voucherValue: "VOUCHER_VALUE")

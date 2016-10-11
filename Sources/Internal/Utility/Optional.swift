@@ -1,15 +1,14 @@
-internal protocol _Optional: NilLiteralConvertible {
+internal protocol _Optional: ExpressibleByNilLiteral {
 
 	associatedtype Wrapped
 
-	init()
 	init(_ some: Wrapped)
 
-	@warn_unused_result
-	func map<U>(@noescape f: (Wrapped) throws -> U) rethrows -> U?
+	
+	func map<U>(_ transform: (Wrapped) throws -> U) rethrows -> U?
 
-	@warn_unused_result
-	func flatMap<U>(@noescape f: (Wrapped) throws -> U?) rethrows -> U?
+	
+	func flatMap<U>(_ transform: (Wrapped) throws -> U?) rethrows -> U?
 }
 
 
@@ -19,7 +18,7 @@ extension Optional: _Optional {}
 internal extension _Optional {
 
 	internal var simpleDescription: String {
-		return map { String($0) } ?? "<nil>"
+		return map { String(describing: $0) } ?? "<nil>"
 	}
 
 

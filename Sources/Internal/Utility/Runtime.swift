@@ -1,7 +1,7 @@
 import ObjectiveC
 
 
-private func class_getInstanceMethodIgnoringSupertypes(clazz: AnyClass, _ name: Selector) -> Method {
+private func class_getInstanceMethodIgnoringSupertypes(_ clazz: AnyClass, _ name: Selector) -> Method? {
 	let method = class_getInstanceMethod(clazz, name)
 
 	if let superclass = class_getSuperclass(clazz) {
@@ -11,7 +11,7 @@ private func class_getInstanceMethodIgnoringSupertypes(clazz: AnyClass, _ name: 
 		}
 	}
 
-	return method
+	return method!
 }
 
 
@@ -32,7 +32,7 @@ internal func swizzleMethod(ofType type: AnyClass, fromSelector: Selector, toSel
 
 	let fromTypePointer = method_getTypeEncoding(fromMethod)
 	let toTypePointer = method_getTypeEncoding(toMethod)
-	guard fromTypePointer != nil && toTypePointer != nil, let fromType = String.fromCString(fromTypePointer), toType = String.fromCString(toTypePointer) else {
+	guard fromTypePointer != nil && toTypePointer != nil, let fromType = String(validatingUTF8: fromTypePointer!), let toType = String(validatingUTF8: toTypePointer!) else {
 		logError("Selector '\(fromSelector)' was not swizzled with selector '\(toSelector)' since their type encodings could not be accessed.")
 		return false
 	}
@@ -46,7 +46,7 @@ internal func swizzleMethod(ofType type: AnyClass, fromSelector: Selector, toSel
 }
 
 // functoin add method to class from another class
-func addMethodFromAnotherClass(toClass toClass: AnyClass, methodSelector: Selector, fromClass: AnyClass) -> Bool{
+func addMethodFromAnotherClass(toClass: AnyClass, methodSelector: Selector, fromClass: AnyClass) -> Bool{
     
     //get method object
     

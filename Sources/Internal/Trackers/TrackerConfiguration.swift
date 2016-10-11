@@ -24,19 +24,19 @@ import UIKit
 internal struct TrackerConfiguration {
 
 	/** Allowed values for sendDelay */
-	internal static let allowedMaximumSendDelays: ClosedInterval<NSTimeInterval> = 5 ... .infinity
+	internal static let allowedMaximumSendDelays: ClosedRange<TimeInterval> = 5 ... .infinity
 
 	/** Allowed values for requestQueueLimit */
-	internal static let allowedRequestQueueLimits: ClosedInterval<Int> = 1 ... .max
+	internal static let allowedRequestQueueLimits: ClosedRange<Int> = 1 ... .max
 
 	/** Allowed values for resendOnStartEventTime */
-	internal static let allowedResendOnStartEventTimes: ClosedInterval<NSTimeInterval> = 0 ... .infinity
+	internal static let allowedResendOnStartEventTimes: ClosedRange<TimeInterval> = 0 ... .infinity
 
 	/** Allowed values for samplingRate */
-	internal static let allowedSamplingRates: ClosedInterval<Int> = 0 ... .max
+	internal static let allowedSamplingRates: ClosedRange<Int> = 0 ... .max
 
 	/** Allowed values for version */
-	internal static let allowedVersions: ClosedInterval<Int> = 1 ... .max
+	internal static let allowedVersions: ClosedRange<Int> = 1 ... .max
 
 	/** If enabled automatically tries to attach the Advertising Identifier to each request. */
 	internal var automaticallyTracksAdvertisingId = true
@@ -54,22 +54,22 @@ internal struct TrackerConfiguration {
 	internal var automaticallyTracksRequestQueueSize = true
 
 	/** Url of the remote configuration. */
-	internal var configurationUpdateUrl: NSURL? = nil
+	internal var configurationUpdateUrl: URL? = nil
 
 	/** Delay after which the event request is send to the server. */
-	internal var maximumSendDelay = NSTimeInterval(5 * 60)
+	internal var maximumSendDelay = TimeInterval(5 * 60)
 
 	/** Maxiumum number of request which are stored before sending. */
 	internal var requestQueueLimit = 1000
 
 	/** The timout interval indicating when a new session should be tracked after an app went in the background. */
-	internal var resendOnStartEventTime = NSTimeInterval(30 * 60)
+	internal var resendOnStartEventTime = TimeInterval(30 * 60)
 
 	/** The tracker will randomly tracks only every X user. */
 	internal var samplingRate = 0
 
 	/** Url of the tracking server. */
-	internal var serverUrl: NSURL
+	internal var serverUrl: URL
 
 	/** The version is used to compare the current configuration with a remote configuration and to decide whether there is an update for the configuration available. */
 	internal var version = 1
@@ -99,17 +99,17 @@ internal struct TrackerConfiguration {
 	- Parameter webtrekkId: The unique identifier of your webtrekk account
 	- Parameter serverUrl: Url of the tracking server
 	*/
-	internal init(webtrekkId: String, serverUrl: NSURL) {
+	internal init(webtrekkId: String, serverUrl: URL) {
 		self.serverUrl = serverUrl
 		self.webtrekkId = webtrekkId
 	}
 
 
 	#if !os(watchOS)
-	internal func automaticallyTrackedPageForViewControllerType(viewControllerType: UIViewController.Type) -> Page? {
+	internal func automaticallyTrackedPageForViewControllerType(_ viewControllerType: UIViewController.Type) -> Page? {
 		let typeName = String(reflecting: viewControllerType)
 
-		return automaticallyTrackedPages.firstMatching({ $0.matches(viewControllerTypeName: typeName) })
+		return automaticallyTrackedPages.firstMatching(predicate: { $0.matches(viewControllerTypeName: typeName) })
 	}
 	#endif
 
@@ -170,8 +170,8 @@ internal struct TrackerConfiguration {
 		}
 
 
-		private func matches(viewControllerTypeName viewControllerTypeName: String) -> Bool {
-			return viewControllerTypeNamePattern.rangeOfFirstMatchInString(viewControllerTypeName, options: [], range: NSRange(forString: viewControllerTypeName)).location != NSNotFound
+		fileprivate func matches(viewControllerTypeName: String) -> Bool {
+			return viewControllerTypeNamePattern.rangeOfFirstMatch(in: viewControllerTypeName, options: [], range: NSRange(forString: viewControllerTypeName)).location != NSNotFound
 		}
 	}
 	#endif

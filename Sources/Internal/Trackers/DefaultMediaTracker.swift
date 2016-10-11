@@ -39,7 +39,7 @@ internal final class DefaultMediaTracker: MediaTracker {
 	}
 
 
-	internal func trackAction(action: MediaEvent.Action) {
+	internal func trackAction(_ action: MediaEvent.Action) {
 		checkIsOnMainThread()
 
 		var event = MediaEvent(

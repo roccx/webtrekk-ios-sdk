@@ -25,19 +25,19 @@ import Webtrekk
 
 class ProductViewController: UIViewController {
 
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		if segue.identifier == "openVideo" {
-			guard let playerViewController = segue.destinationViewController as? AVPlayerViewController else {
+			guard let playerViewController = segue.destination as? AVPlayerViewController else {
 				return
 			}
-			guard let videoUrl = NSBundle.mainBundle().URLForResource("Video", withExtension: "mp4") else {
+			guard let videoUrl = Bundle.main.url(forResource: "Video", withExtension: "mp4") else {
 				return
 			}
 
 			autoTracker.trackAction("Play Video tapped")
 
-			let player = AVPlayer(URL: videoUrl)
-			autoTracker.trackerForMedia("product-video-\(productId)", automaticallyTrackingPlayer: player)
+			let player = AVPlayer(url: videoUrl)
+			let _ = autoTracker.trackerForMedia("product-video-\(productId)", automaticallyTrackingPlayer: player)
 
 			playerViewController.player = player
 

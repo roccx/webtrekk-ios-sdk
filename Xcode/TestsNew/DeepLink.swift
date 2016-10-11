@@ -69,13 +69,13 @@ class DeepLink: WTBaseTestNew {
         let mediaCode = "mediaCodeURL"
 
         doURLSendTestAction(){
-            let url = NSURL(string: "https://www.webtrekk.com?wt_everID=\(everId)&wt_mediaCode=\(mediaCode)")
+            let url = URL(string: "https://www.webtrekk.com?wt_everID=\(everId)&wt_mediaCode=\(mediaCode)")
             let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
             userActivity.webpageURL = url
             
-            UIApplication.sharedApplication().delegate?.application!(UIApplication.sharedApplication(),
-            continueUserActivity: userActivity){
-                (_: [AnyObject]?) -> Void in
+            let _ = UIApplication.shared.delegate?.application!(UIApplication.shared,
+            continue: userActivity){
+                (_: [Any]?) -> Void in
             }
             
             WebtrekkTracking.instance().trackPageView("SomePage")

@@ -35,7 +35,7 @@ class Campaign{
     func processCampaign() {
         
         // check if compain is done already
-        if let isCampaignSet = sharedDefaults.boolForKey(Campaign.campaignHasProcessed) where isCampaignSet { return
+        if let isCampaignSet = sharedDefaults.boolForKey(Campaign.campaignHasProcessed) , isCampaignSet { return
         }
         
         WebtrekkTracking.logger.logDebug("Campaign process is starting")
@@ -43,31 +43,33 @@ class Campaign{
         // sent request
         
         let session = RequestManager.createUrlSession()
-        guard let urlComponents = NSURLComponents(string: "https://appinstall.webtrekk.net/appinstall/v1/install") else {
+        var urlComponents = URLComponents(string: "https://appinstall.webtrekk.net/appinstall/v1/install")
+        
+        guard urlComponents != nil  else {
             WebtrekkTracking.logger.logError("can't initializate URL for campaign")
             return
         }
-        var queryItems = [NSURLQueryItem]()
-        queryItems.append(NSURLQueryItem(name: "trackid", value: self.trackID))
+        var queryItems = [URLQueryItem]()
+        queryItems.append(URLQueryItem(name: "trackid", value: self.trackID))
         
-        if let advID = Environment.advertisingIdentifierManager?.advertisingIdentifier where advID.UUIDString != "00000000-0000-0000-0000-000000000000" {
-            queryItems.append(NSURLQueryItem(name: "aid", value: advID.UUIDString))
+        if let advID = Environment.advertisingIdentifierManager?.advertisingIdentifier , advID.uuidString != "00000000-0000-0000-0000-000000000000" {
+            queryItems.append(URLQueryItem(name: "aid", value: advID.uuidString))
         }
         
-        queryItems.append(NSURLQueryItem(name: "X-WT-UA", value: DefaultTracker.userAgent))
+        queryItems.append(URLQueryItem(name: "X-WT-UA", value: DefaultTracker.userAgent))
         
-        urlComponents.queryItems = queryItems
+        urlComponents?.queryItems = queryItems
         
-        guard let url = urlComponents.URL else {
+        guard let url = urlComponents?.url else {
             WebtrekkTracking.logger.logError("can't construct URL for campaign")
             return
         }
         
-        let task = session.dataTaskWithURL(url){ data, response, error in
+        let task = session.dataTask(with: url, completionHandler: { data, response, error in
             if let error = error {
                 WebtrekkTracking.logger.logError("Install campaign request error:\(error)")
             } else {
-                guard let responseGuard = response as? NSHTTPURLResponse else {
+                guard let responseGuard = response as? HTTPURLResponse else {
                     WebtrekkTracking.logger.logError("Install campaign response error:\(response)")
                     return
                 }
@@ -79,16 +81,16 @@ class Campaign{
                 }
                 
                 // parc response
-                guard let dataG = data, let json = try? NSJSONSerialization.JSONObjectWithData(dataG, options: .AllowFragments),
-                    let jsonMedia = json["mediacode"] as? String where jsonMedia.characters.split("=").count == 2 else {
-                    
+                guard let dataG = data, let json = try? JSONSerialization.jsonObject(with: dataG, options: .allowFragments) as! [String:Any],
+                    let jsonMedia = json["mediacode"] as? String , jsonMedia.characters.split(separator: "=").count == 2 else {
+            
                     WebtrekkTracking.logger.logError("Incorrect JSON response:\(data)")
                     return
                 }
             
                WebtrekkTracking.logger.logDebug("Media code is received:\(jsonMedia)")
             
-               let mc = String(jsonMedia.characters.split("=")[1])
+               let mc = String(jsonMedia.characters.split(separator: "=")[1])
                 
                 guard !mc.isEmpty else {
                     WebtrekkTracking.logger.logError("media code length is zero")
@@ -98,7 +100,7 @@ class Campaign{
                 self.sharedDefaults.set(key: Campaign.campaignHasProcessed, to: true)
                 self.sharedDefaults.set(key: Campaign.savedMediaCode, to: mc)
             }
-        }
+        })
         
         WebtrekkTracking.logger.logDebug("Campaign request is sent:\(url)")
         task.resume()

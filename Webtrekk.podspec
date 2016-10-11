@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
 	s.name    = 'Webtrekk'
-	s.version = '4.0.1'
+	s.version = '4.1.0'
 
 	s.author   = { 'Webtrekk' => 'arsen.vartbaronov@webtrekk.com' }
 	s.homepage = 'https://www.webtrekk.com/en/solutions/mobile-analytics/'
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
 	s.ios.deployment_target     = '8.0'
 	#s.watchos.deployment_target = '2.0' # not yet supported
 
-	s.dependency 'CryptoSwift', '~> 0.5.1'
+	s.dependency 'CryptoSwift', '~> 0.6.0'
 
-	s.ios.dependency 'ReachabilitySwift', '~> 2.3.3'
+	s.ios.dependency 'ReachabilitySwift', '~> 3.0.0'
 end

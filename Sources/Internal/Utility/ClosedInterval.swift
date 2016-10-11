@@ -1,11 +1,11 @@
-internal extension ClosedInterval {
+internal extension ClosedRange {
 
-	internal func clamp(value: Bound) -> Bound {
-		if value < start {
-			return start
+	internal func clamp(_ value: Bound) -> Bound {
+		if value < lowerBound {
+			return lowerBound
 		}
-		if value > end {
-			return end
+		if value > upperBound {
+			return upperBound
 		}
 
 		return value
@@ -13,20 +13,20 @@ internal extension ClosedInterval {
 }
 
 
-internal extension ClosedInterval where Bound: MinimumMaximumAware {
+internal extension ClosedRange where Bound: MinimumMaximumAware {
 
 	internal var conditionText: String {
-		if start.isMinimum && end.isMaximum {
+		if lowerBound.isMinimum && upperBound.isMaximum {
 			return "any value"
 		}
-		if end.isMaximum {
-			return ">= \(start)"
+		if upperBound.isMaximum {
+			return ">= \(lowerBound)"
 		}
-		if start.isMinimum {
-			return "<= \(end)"
+		if lowerBound.isMinimum {
+			return "<= \(upperBound)"
 		}
 
-		return ">= \(start) and <= \(end)"
+		return ">= \(lowerBound) and <= \(upperBound)"
 	}
 }
 
@@ -42,12 +42,12 @@ internal protocol MinimumMaximumAware {
 extension Float: MinimumMaximumAware {
 
 	internal var isMaximum: Bool {
-		return !isSignMinus && isInfinite
+		return sign == .plus && isInfinite
 	}
 
 
 	internal var isMinimum: Bool {
-		return isSignMinus && isInfinite
+		return sign == .minus && isInfinite
 	}
 }
 
@@ -55,12 +55,12 @@ extension Float: MinimumMaximumAware {
 extension Double: MinimumMaximumAware {
 
 	internal var isMaximum: Bool {
-		return !isSignMinus && isInfinite
+		return sign == .plus && isInfinite
 	}
 
 
 	internal var isMinimum: Bool {
-		return isSignMinus && isInfinite
+		return sign == .minus && isInfinite
 	}
 }
 

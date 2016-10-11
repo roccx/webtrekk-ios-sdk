@@ -29,18 +29,18 @@ internal final class RequestManager {
 	internal typealias Delegate = _RequestManagerDelegate
 
 	private var currentFailureCount = 0
-	private var currentRequest: NSURL?
-	private var pendingTask: NSURLSessionDataTask?
-	private var sendNextRequestTimer: NSTimer?
-	private let urlSession: NSURLSession
+	private var currentRequest: URL?
+	private var pendingTask: URLSessionDataTask?
+	private var sendNextRequestTimer: Timer?
+	private let urlSession: URLSession
 
 	#if !os(watchOS)
 	private let reachability: Reachability?
 	private var sendingInterruptedBecauseUnreachable = false
 	#endif
 
-	internal private(set) var queue = [NSURL]()
-	internal private(set) var started = false
+	internal fileprivate(set) var queue = [URL]()
+	internal fileprivate(set) var started = false
 
 	internal weak var delegate: Delegate?
 
@@ -52,13 +52,8 @@ internal final class RequestManager {
 		self.urlSession = RequestManager.createUrlSession()
 
 		#if !os(watchOS)
-		do {
-			reachability = try Reachability.reachabilityForInternetConnection()
-		}
-		catch let error {
-			logInfo("Cannot check for internet connectivity: \(error)")
-			reachability = nil
-		}
+        
+        reachability = Reachability.init()
 
 		reachability?.whenReachable = { [weak self] reachability in
 			logDebug("Internet is reachable again!")
@@ -77,7 +72,7 @@ internal final class RequestManager {
 	#endif
 
 
-	private func cancelCurrentRequest() {
+	fileprivate func cancelCurrentRequest() {
 		checkIsOnMainThread()
 
 		guard let pendingTask = pendingTask else {
@@ -101,22 +96,22 @@ internal final class RequestManager {
 	}
 
 
-	internal static func createUrlSession() -> NSURLSession {
-		let configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
-		configuration.HTTPCookieAcceptPolicy = .Never
-		configuration.HTTPShouldSetCookies = false
-		configuration.URLCache = nil
-		configuration.URLCredentialStorage = nil
-		configuration.requestCachePolicy = .ReloadIgnoringLocalAndRemoteCacheData
+	internal static func createUrlSession() -> URLSession {
+		let configuration = URLSessionConfiguration.ephemeral
+		configuration.httpCookieAcceptPolicy = .never
+		configuration.httpShouldSetCookies = false
+		configuration.urlCache = nil
+		configuration.urlCredentialStorage = nil
+		configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
 
-		let session = NSURLSession(configuration: configuration, delegate: nil, delegateQueue: NSOperationQueue.mainQueue())
+		let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
 		session.sessionDescription = "Webtrekk Tracking"
 
 		return session
 	}
 
 
-	internal func enqueueRequest(request: NSURL, maximumDelay: NSTimeInterval) {
+	internal func enqueueRequest(_ request: URL, maximumDelay: TimeInterval) {
 		checkIsOnMainThread()
 
 		if queue.count >= queueLimit {
@@ -133,15 +128,15 @@ internal final class RequestManager {
 	}
 
 
-	internal func fetch(url url: NSURL, completion: (NSData?, Error?) -> Void) -> NSURLSessionDataTask {
+	internal func fetch(url: URL, completion: @escaping (Data?, ConnectionError?) -> Void) -> URLSessionDataTask {
 		checkIsOnMainThread()
 
-		let task = urlSession.dataTaskWithURL(url) { data, response, error in
+		let task = urlSession.dataTask(with: url, completionHandler: { data, response, error in
 			if let error = error {
 				let retryable: Bool
 				let isCompletelyOffline: Bool
 
-				switch error.code {
+				switch (error as NSError).code {
 				case NSURLErrorBadServerResponse,
 				     NSURLErrorCallIsActive,
 				     NSURLErrorCannotConnectToHost,
@@ -160,7 +155,7 @@ internal final class RequestManager {
 					retryable = false
 				}
 
-				switch error.code {
+				switch (error as NSError).code {
 				case NSURLErrorCallIsActive,
 				     NSURLErrorDataNotAllowed,
 				     NSURLErrorInternationalRoamingOff,
@@ -172,32 +167,32 @@ internal final class RequestManager {
 					isCompletelyOffline = false
 				}
 
-				completion(nil, Error(message: error.localizedDescription, isTemporary: retryable, isCompletelyOffline: isCompletelyOffline, underlyingError: error))
+				completion(nil, ConnectionError(message: error.localizedDescription, isTemporary: retryable, isCompletelyOffline: isCompletelyOffline, underlyingError: error))
 				return
 			}
 
-			guard let response = response as? NSHTTPURLResponse else {
-				completion(nil, Error(message: "No Response", isTemporary: false))
+			guard let response = response as? HTTPURLResponse else {
+				completion(nil, ConnectionError(message: "No Response", isTemporary: false))
 				return
 			}
 			guard !(500 ... 599).contains(response.statusCode) else {
-				completion(nil, Error(message: "HTTP \(response.statusCode)", isTemporary: true))
+				completion(nil, ConnectionError(message: "HTTP \(response.statusCode)", isTemporary: true))
 				return
 			}
 			guard (200 ... 299).contains(response.statusCode), let data = data else {
-				completion(nil, Error(message: "HTTP \(response.statusCode)", isTemporary: false))
+				completion(nil, ConnectionError(message: "HTTP \(response.statusCode)", isTemporary: false))
 				return
 			}
 
 			completion(data, nil)
-		}
+		}) 
 		task.resume()
 		
 		return task
 	}
 
 
-	private func maximumNumberOfFailures(with error: Error) -> Int {
+	fileprivate func maximumNumberOfFailures(with error: ConnectionError) -> Int {
 		checkIsOnMainThread()
 
 		if error.isCompletelyOffline {
@@ -209,10 +204,10 @@ internal final class RequestManager {
 	}
 
 
-	internal func prependRequests(requests: [NSURL]) {
+	internal func prependRequests(_ requests: [URL]) {
 		checkIsOnMainThread()
 
-		queue.insertContentsOf(requests, at: 0)
+		queue.insert(contentsOf: requests, at: 0)
 		
 		removeRequestsExceedingQueueLimit()
 	}
@@ -229,7 +224,7 @@ internal final class RequestManager {
 	}
 
 
-	private func removeRequestsExceedingQueueLimit() {
+	fileprivate func removeRequestsExceedingQueueLimit() {
 		checkIsOnMainThread()
 
 		if queueLimit < queue.count {
@@ -245,7 +240,7 @@ internal final class RequestManager {
 	}
 
 
-	private func sendNextRequest() {
+	fileprivate func sendNextRequest() {
 		checkIsOnMainThread()
 
 		sendNextRequestTimer?.invalidate()
@@ -263,7 +258,7 @@ internal final class RequestManager {
 
 		#if !os(watchOS)
 			if let reachability = reachability {
-				guard reachability.isReachable() else {
+				guard reachability.isReachable else {
 					if !sendingInterruptedBecauseUnreachable {
 						sendingInterruptedBecauseUnreachable = true
 
@@ -303,7 +298,7 @@ internal final class RequestManager {
 
 					self.currentFailureCount = 0
 					self.currentRequest = nil
-					self.queue.removeFirstEqual(url)
+					let _ = self.queue.removeFirstEqual(url)
 
 					self.delegate?.requestManager(self, didFailToSendRequest: url, error: error)
 					return
@@ -313,7 +308,7 @@ internal final class RequestManager {
 
 					self.currentFailureCount = 0
 					self.currentRequest = nil
-					self.queue.removeFirstEqual(url)
+					let _ = self.queue.removeFirstEqual(url)
 
 					self.delegate?.requestManager(self, didFailToSendRequest: url, error: error)
 					return
@@ -329,7 +324,7 @@ internal final class RequestManager {
 
 			self.currentFailureCount = 0
 			self.currentRequest = nil
-			self.queue.removeFirstEqual(url)
+			let _ = self.queue.removeFirstEqual(url)
 
 			logDebug("Sent: \(url)")
 
@@ -340,7 +335,7 @@ internal final class RequestManager {
 	}
 
 
-	private func sendNextRequest(maximumDelay maximumDelay: NSTimeInterval) {
+	fileprivate func sendNextRequest(maximumDelay: TimeInterval) {
 		checkIsOnMainThread()
 
 		guard !queue.isEmpty else {
@@ -352,13 +347,13 @@ internal final class RequestManager {
 		}
 
 		if let sendNextRequestTimer = sendNextRequestTimer {
-			let fireDate = NSDate(timeIntervalSinceNow: maximumDelay)
-			if fireDate.compare(sendNextRequestTimer.fireDate) == NSComparisonResult.OrderedAscending {
+			let fireDate = Date(timeIntervalSinceNow: maximumDelay)
+			if fireDate.compare(sendNextRequestTimer.fireDate) == ComparisonResult.orderedAscending {
 				sendNextRequestTimer.fireDate = fireDate
 			}
 		}
 		else {
-			sendNextRequestTimer = NSTimer.scheduledTimerWithTimeInterval(maximumDelay) {
+			sendNextRequestTimer = Timer.scheduledTimerWithTimeInterval(maximumDelay) {
 				self.sendNextRequestTimer = nil
 				self.sendAllRequests()
 			}
@@ -401,15 +396,15 @@ internal final class RequestManager {
 
 
 
-	internal struct Error: ErrorType {
+	internal struct ConnectionError: Error {
 
 		internal var isCompletelyOffline: Bool
 		internal var isTemporary: Bool
 		internal var message: String
-		internal var underlyingError: ErrorType?
+		internal var underlyingError: Error?
 
 
-		internal init(message: String, isTemporary: Bool, isCompletelyOffline: Bool = false, underlyingError: ErrorType? = nil) {
+		internal init(message: String, isTemporary: Bool, isCompletelyOffline: Bool = false, underlyingError: Error? = nil) {
 			self.isCompletelyOffline = isCompletelyOffline
 			self.isTemporary = isTemporary
 			self.message = message
@@ -421,6 +416,6 @@ internal final class RequestManager {
 
 internal protocol _RequestManagerDelegate: class {
 
-	func requestManager (requestManager: RequestManager, didSendRequest request: NSURL)
-	func requestManager (requestManager: RequestManager, didFailToSendRequest request: NSURL, error: RequestManager.Error)
+	func requestManager (_ requestManager: RequestManager, didSendRequest request: URL)
+	func requestManager (_ requestManager: RequestManager, didFailToSendRequest request: URL, error: RequestManager.ConnectionError)
 }

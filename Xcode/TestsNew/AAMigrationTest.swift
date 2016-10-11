@@ -25,7 +25,7 @@ class AAMigrationTest: HttpBaseTestNew {
     
     override func setUp() {
         super.setUp()
-        Webtrekk.startWithServerUrl(NSURL(string: "https://q3.webtrekk.net"), trackId: "542303889946687", samplingRate: 0, sendDelay: 5, appVersionParameter: "100")
+        Webtrekk.start(withServerUrl: URL(string: "https://q3.webtrekk.net"), trackId: "542303889946687", samplingRate: 0, sendDelay: 5, appVersionParameter: "100")
     }
 
     func testMigration(){

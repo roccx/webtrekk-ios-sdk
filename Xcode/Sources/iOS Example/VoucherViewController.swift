@@ -23,10 +23,10 @@ import Webtrekk
 
 class VoucherViewController: UIViewController {
 
-	@IBAction func activateVoucher(sender: AnyObject) {
+	@IBAction func activateVoucher(_ sender: AnyObject) {
 		autoTracker.ecommerceProperties.voucherValue = "\(voucherId)"
 		autoTracker.trackAction("Activate Voucher Tapped")
-		dismissViewControllerAnimated(true, completion: nil)
+		dismiss(animated: true, completion: nil)
 	}
 
 	var voucherId = 0 {

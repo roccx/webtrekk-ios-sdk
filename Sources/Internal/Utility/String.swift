@@ -3,18 +3,18 @@ import Foundation
 
 internal extension String {
 
-	@warn_unused_result
-	internal func firstMatchForRegularExpression(regularExpression: NSRegularExpression) -> [String]? {
-		guard let match = regularExpression.firstMatchInString(self, options: [], range: NSMakeRange(0, utf16.count)) else {
+	
+	internal func firstMatchForRegularExpression(_ regularExpression: NSRegularExpression) -> [String]? {
+		guard let match = regularExpression.firstMatch(in: self, options: [], range: NSMakeRange(0, utf16.count)) else {
 			return nil
 		}
 
-		return (0 ..< match.numberOfRanges).map { self[match.rangeAtIndex($0).rangeInString(self)!] }
+		return (0 ..< match.numberOfRanges).map { self[match.rangeAt($0).rangeInString(self)!] }
 	}
 
 
-	@warn_unused_result
-	internal func firstMatchForRegularExpression(regularExpressionPattern: String) -> [String]? {
+	
+	internal func firstMatchForRegularExpression(_ regularExpressionPattern: String) -> [String]? {
 		do {
 			let regularExpression = try NSRegularExpression(pattern: regularExpressionPattern, options: [])
 			return firstMatchForRegularExpression(regularExpression)
@@ -25,15 +25,14 @@ internal extension String {
 	}
     
     //check if string is matched to expression
-    internal func isMatchForRegularExpression(expression: String) -> Bool?{
+    internal func isMatchForRegularExpression(_ expression: String) -> Bool?{
     
        do {
             let regularExpression = try NSRegularExpression(pattern: expression, options: [])
-            return regularExpression.numberOfMatchesInString(self, options: [], range: NSMakeRange(0, utf16.count)) == 1
-       }
-            catch let error {
-                WebtrekkTracking.defaultLogger.logError("Incorrect regular expression \(expression)")
-                return nil
+            return regularExpression.numberOfMatches(in: self, options: [], range: NSMakeRange(0, utf16.count)) == 1
+       }catch let error {
+            WebtrekkTracking.defaultLogger.logError("Error: \(error) for incorrect regular expression: \(expression)")
+            return nil
        }
     }
 
@@ -53,7 +52,7 @@ internal extension String {
     
     internal func isValidURL() -> Bool {
     
-    if let url = NSURL(string: self), let host = url.host{
+    if let url = URL(string: self), let _ = url.host{
             return true
         } else {
             return false

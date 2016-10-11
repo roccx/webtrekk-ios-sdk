@@ -1,10 +1,10 @@
 import Foundation
 
 
-internal extension SequenceType {
+internal extension Sequence {
 
-	@warn_unused_result
-	internal func firstMatching(@noescape predicate: Generator.Element throws -> Bool) rethrows -> Generator.Element? {
+	
+	internal func firstMatching(predicate: (Iterator.Element) throws -> Bool) rethrows -> Iterator.Element? {
 		for element in self where try predicate(element) {
 			return element
 		}
@@ -13,8 +13,8 @@ internal extension SequenceType {
 	}
 
 
-	@warn_unused_result
-	internal func mapNotNil<T>(@noescape transform: (Generator.Element) throws -> T?) rethrows -> [T] {
+	
+	internal func mapNotNil<T>(transform: (Iterator.Element) throws -> T?) rethrows -> [T] {
 		var result = [T]()
 		for element in self {
 			guard let mappedElement = try transform(element) else {
@@ -29,11 +29,11 @@ internal extension SequenceType {
 }
 
 
-internal extension SequenceType where Generator.Element: _Optional {
+internal extension Sequence where Iterator.Element: _Optional {
 
-	@warn_unused_result
-	internal func filterNonNil() -> [Generator.Element.Wrapped] {
-		var result = Array<Generator.Element.Wrapped>()
+	
+	internal func filterNonNil() -> [Iterator.Element.Wrapped] {
+		var result = Array<Iterator.Element.Wrapped>()
 		for element in self {
 			guard let element = element.value else {
 				continue

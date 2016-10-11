@@ -23,8 +23,8 @@ import OHHTTPStubs
 
 class HttpBaseTestNew: XCTestCase {
     
-    static var request: NSURLRequest?
-    var timeout: NSTimeInterval = 12
+    static var request: URLRequest?
+    var timeout: TimeInterval = 12
     static var stubDescription: OHHTTPStubsDescriptor?
 
 
@@ -46,12 +46,12 @@ class HttpBaseTestNew: XCTestCase {
             return
         }
         
-        HttpBaseTestNew.stubDescription = stub(isHost("q3.webtrekk.net")){ request in
+        HttpBaseTestNew.stubDescription = stub(condition: isHost("q3.webtrekk.net")){ request in
             
             HttpBaseTestNew.request = request
             
-            let stubPath = OHPathForFile("stub.jpg", self.dynamicType)
-            return fixture(stubPath!, headers: ["Content-Type":"image/jpeg"])
+            let stubPath = OHPathForFile("stub.jpg", type(of: self))
+            return fixture(filePath: stubPath!, headers: ["Content-Type" as NSObject:"image/jpeg" as AnyObject])
         }
         
     }
@@ -64,18 +64,18 @@ class HttpBaseTestNew: XCTestCase {
         }
     }
     
-    func doURLSendTestAction(closure: ()->()){
+    func doURLSendTestAction(_ closure: ()->()){
         HttpBaseTestNew.request = nil
         closure()
     }
     
-    private func getReceivedURLParameters(query: String) -> [String:String]
+    private func getReceivedURLParameters(_ query: String) -> [String:String]
     {
-        let valueKeys = query.characters.split("&")
+        let valueKeys = query.characters.split(separator: "&")
         var keyValueMap = [String: String]()
         
         for valueKey in valueKeys{
-            let keyValueArray:[AnySequence<Character>] = valueKey.split("=")
+            let keyValueArray:[AnySequence<Character>] = valueKey.split(separator: "=")
             if (keyValueArray.count == 2){
                 keyValueMap[String(keyValueArray[0])] = String(keyValueArray[1])
             }else
@@ -87,20 +87,20 @@ class HttpBaseTestNew: XCTestCase {
         return keyValueMap
     }
     
-    func doURLnotSendTestCheck(timeout: NSTimeInterval = 10){
+    func doURLnotSendTestCheck(_ timeout: TimeInterval = 10){
         expect(HttpBaseTestNew.request).toEventually(beNil(), timeout:timeout)
         
     }
     
-    func doURLSendTestCheck(closure: (parameters: [String: String])->())
+    func doURLSendTestCheck(_ closure: (_ parameters: [String: String])->())
     {
         expect(HttpBaseTestNew.request).toEventuallyNot(beNil(), timeout:self.timeout)
         
         guard let _ = HttpBaseTestNew.request else{
             return
         }
-        NSLog("Send URL is:"+(HttpBaseTestNew.request?.URL?.absoluteString)!)
+        NSLog("Send URL is:"+(HttpBaseTestNew.request?.url?.absoluteString)!)
         
-        closure(parameters: getReceivedURLParameters((HttpBaseTestNew.request?.URL?.query)!))
+        closure(getReceivedURLParameters((HttpBaseTestNew.request?.url?.query)!))
     }
 }
