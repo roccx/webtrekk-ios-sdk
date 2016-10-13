@@ -146,7 +146,9 @@ class PageTest: WTBaseTestNew {
         
         doURLSendTestCheck(){parametersArr in
             expect(parametersArr["cs804"]).to(equal("1.0"))
+            #if !os(tvOS)
             expect(parametersArr["cs807"]).to(equal("WIFI"))
+            #endif
         }
     }
     
@@ -164,7 +166,7 @@ class PageTest: WTBaseTestNew {
             }
     }
     
-    
+    #if !os(tvOS)
     func testOrientation(){
            let parOrientation = "cp783"
         
@@ -191,6 +193,7 @@ class PageTest: WTBaseTestNew {
                expect(parametersArr[parOrientation]).to(equal("landscape"))
            }
     }
+    #endif
     
     func testOptOut()
     {

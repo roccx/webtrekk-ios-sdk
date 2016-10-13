@@ -6,7 +6,8 @@ Pod::Spec.new do |s|
 	s.author   = { 'Webtrekk' => 'arsen.vartbaronov@webtrekk.com' }
 	s.homepage = 'https://www.webtrekk.com/en/solutions/mobile-analytics/'
 	s.license  = { :type => 'MIT', :file => 'LICENSE.MD' }
-	s.platform = :ios, '8.0'
+    s.ios.deployment_target = '8.0'
+    s.tvos.deployment_target = '9.0'
 	s.source   = { :git => 'https://github.com/Webtrekk/webtrekk-ios-sdk.git', :tag => s.version }
 	s.summary  = 'The Webtrekk SDK allows you to track user activities, screen flow and media usage for an App.'
 
@@ -22,7 +23,8 @@ Pod::Spec.new do |s|
 	s.ios.deployment_target     = '8.0'
 	#s.watchos.deployment_target = '2.0' # not yet supported
 
-	s.dependency 'CryptoSwift', '~> 0.6.0'
+	s.dependency 'CryptoSwift', '0.6.0'
 
 	s.ios.dependency 'ReachabilitySwift', '~> 3.0.0'
+    s.tvos.dependency 'ReachabilitySwift', '~> 3.0.0'
 end

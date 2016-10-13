@@ -21,6 +21,9 @@ import UIKit
 
 #if os(watchOS)
 	import WatchKit
+#elseif os(tvOS)
+    import AVFoundation
+    import ReachabilitySwift
 #else
 	import AVFoundation
 	import CoreTelephony
@@ -355,7 +358,7 @@ internal final class DefaultTracker: Tracker {
 			requestProperties.requestQueueSize = requestManager.queue.count
 		}
 
-		#if !os(watchOS)
+		#if !os(watchOS) && !os(tvOS)
 			if configuration.automaticallyTracksConnectionType, let connectionType = retrieveConnectionType(){
 				requestProperties.connectionType = connectionType
 			}
@@ -769,7 +772,7 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	#if !os(watchOS)
+	#if !os(watchOS) && !os(tvOS)
 	private func retrieveConnectionType() -> TrackerRequest.Properties.ConnectionType? {
 		guard let reachability = Reachability.init() else {
 			return nil
@@ -814,7 +817,7 @@ internal final class DefaultTracker: Tracker {
 		#if os(iOS) || os(OSX) || os(watchOS)
 			searchPathDirectory = .applicationSupportDirectory
 		#elseif os(tvOS)
-			searchPathDirectory = .CachesDirectory
+			searchPathDirectory = .cachesDirectory
 		#endif
 
 		let fileManager = FileManager.default

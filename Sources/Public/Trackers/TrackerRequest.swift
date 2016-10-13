@@ -59,7 +59,7 @@ public struct TrackerRequest {
 		public var timestamp: Date
 		public var userAgent: String
 
-		#if !os(watchOS)
+		#if !os(watchOS) && !os(tvOS)
 		public var interfaceOrientation: UIInterfaceOrientation?
 		#endif
 

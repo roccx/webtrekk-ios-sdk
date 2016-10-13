@@ -217,7 +217,7 @@ internal final class AVPlayerTracker: NSObject {
 
 		if playbackState == .playing {
 			if positionTimer == nil {
-                if #available(iOS 10.0, *) {
+                if #available(iOS 10.0, *) , #available(tvOS 10.0, *)  {
                     positionTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) {_ in
                         guard self.playbackState == .playing else {
                             return

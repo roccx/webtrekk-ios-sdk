@@ -116,7 +116,7 @@ internal final class RequestUrlBuilder {
 
 			parameters += request.crossDeviceProperties.asQueryItems()
 
-			#if !os(watchOS)
+			#if !os(watchOS) && !os(tvOS)
 				if let interfaceOrientation = properties.interfaceOrientation {
 					append(arr: &parameters, name: "cp783", value: interfaceOrientation.serialized)
 				}
@@ -540,7 +540,12 @@ private extension TrackingValue {
 			case .advertisingTrackingEnabled: return request.properties.advertisingTrackingEnabled.map { $0 ? "1" : "0" }
 			case .appVersion:                 return request.properties.appVersion
 			case .connectionType:             return request.properties.connectionType?.serialized
-			case .interfaceOrientation:       return request.properties.interfaceOrientation?.serialized
+            case .interfaceOrientation:
+            #if os(tvOS)
+                return "undefined"
+            #else
+                return request.properties.interfaceOrientation?.serialized
+            #endif
 			case .isFirstEventAfterAppUpdate: return request.properties.isFirstEventAfterAppUpdate ? "1" : "0"
 			case .requestQueueSize:           return request.properties.requestQueueSize.map { String($0) }
 			}
@@ -564,15 +569,15 @@ private extension URLQueryItem {
 }
 
 
-#if !os(watchOS)
+#if !os(watchOS) && !os(tvOS)
 private extension UIInterfaceOrientation {
 
 	var serialized: String {
-		switch self {
-		case .landscapeLeft, .landscapeRight: return "landscape"
-		case .portrait, .portraitUpsideDown:  return "portrait"
-		case .unknown:                        return "undefined"
-		}
+        switch self {
+        case .landscapeLeft, .landscapeRight: return "landscape"
+        case .portrait, .portraitUpsideDown:  return "portrait"
+        case .unknown:                        return "undefined"
+        }
 	}
 }
 #endif
