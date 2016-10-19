@@ -24,11 +24,15 @@ enum PropertyValue {
     case key(String)
     
     func serialized(for event: TrackingEvent) -> String? {
+        return serialized(variables: event.variables)
+    }
+    
+    func serialized(variables: [String: String]) -> String? {
         switch self {
         case let .value(value):
             return value
         case let .key(key):
-            return event.variables[key]
+            return variables[key]
         }
     }
     

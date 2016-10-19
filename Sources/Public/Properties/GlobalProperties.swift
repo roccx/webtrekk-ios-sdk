@@ -18,17 +18,9 @@
 //
 
 
-public struct GlobalProperties {
+public class GlobalProperties: BaseProperties {
 	
-	public var actionProperties: ActionProperties
-	public var advertisementProperties: AdvertisementProperties
 	public var crossDeviceProperties: CrossDeviceProperties
-	public var ecommerceProperties: EcommerceProperties
-	public var ipAddress: String?
-	public var mediaProperties: MediaProperties
-	public var pageProperties: PageProperties
-	public var sessionDetails: [Int: TrackingValue]
-	public var userProperties: UserProperties
 	public var variables: [String : String]
 
 
@@ -44,22 +36,18 @@ public struct GlobalProperties {
 		userProperties: UserProperties = UserProperties(birthday: nil),
 		variables: [String : String] = [:]
 	) {
-		self.actionProperties = actionProperties
-		self.advertisementProperties = advertisementProperties
-		self.crossDeviceProperties = crossDeviceProperties
-		self.ecommerceProperties = ecommerceProperties
-		self.ipAddress = ipAddress
-		self.mediaProperties = mediaProperties
-		self.pageProperties = pageProperties
-		self.sessionDetails = sessionDetails
-		self.userProperties = userProperties
-		self.variables = variables
+        self.crossDeviceProperties = crossDeviceProperties
+        self.variables = variables
+        super.init(actionProperties: actionProperties, advertisementProperties: advertisementProperties,
+                   ecommerceProperties: ecommerceProperties, ipAddress: ipAddress,
+                   mediaProperties: mediaProperties, pageProperties: pageProperties,
+                   sessionDetails: sessionDetails, userProperties: userProperties)
 	}
 
 
 	
 	internal func merged(over other: GlobalProperties) -> GlobalProperties {
-		return GlobalProperties(
+		var global = GlobalProperties(
 			actionProperties:        actionProperties.merged(over: other.actionProperties),
 			advertisementProperties: advertisementProperties.merged(over: other.advertisementProperties),
 			crossDeviceProperties:   crossDeviceProperties.merged(over: other.crossDeviceProperties),
@@ -71,5 +59,8 @@ public struct GlobalProperties {
 			userProperties:          userProperties.merged(over: other.userProperties),
 			variables:               variables.merged(over: other.variables)
 		)
+        
+        global.trackingParameters = self.trackingParameters ?? other.trackingParameters
+        return global
 	}
 }

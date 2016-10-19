@@ -38,12 +38,6 @@ public struct UserProperties {
 	public var street: String?
 	public var streetNumber: String?
 	public var zipCode: String?
-    var emailAddressConfig: PropertyValue?
-    var emailReceiverIdConfig: PropertyValue?
-    var birthdayConfig: PropertyValue?
-    var genderConfig: PropertyValue?
-    var idConfig: PropertyValue?
-    
 
     public init(
         birthday: Birthday? = nil,
@@ -79,44 +73,9 @@ public struct UserProperties {
         self.zipCode = zipCode
     }
     
-    
- 	init(
-		birthdayConfig: PropertyValue? = nil,
-		city: String? = nil,
-		country: String? = nil,
-		details: [Int: TrackingValue]? = nil,
-		emailAddressConfig: PropertyValue? = nil,
-		emailReceiverIdConfig: PropertyValue? = nil,
-		firstName: String? = nil,
-		genderConfig: PropertyValue? = nil,
-		idConfig: PropertyValue? = nil,
-		lastName: String? = nil,
-		newsletterSubscribed: Bool? = nil,
-		phoneNumber: String? = nil,
-		street: String? = nil,
-		streetNumber: String? = nil,
-		zipCode: String? = nil
-	) {
-		self.birthdayConfig = birthdayConfig
-		self.city = city
-		self.country = country
-		self.details = details
-		self.emailAddressConfig = emailAddressConfig
-		self.emailReceiverIdConfig = emailReceiverIdConfig
-		self.firstName = firstName
-		self.genderConfig = genderConfig
-		self.idConfig = idConfig
-		self.lastName = lastName
-		self.newsletterSubscribed = newsletterSubscribed
-		self.phoneNumber = phoneNumber
-		self.street = street
-		self.streetNumber = streetNumber
-		self.zipCode = zipCode
-	}
-    
-	
+	@warn_unused_result
 	internal func merged(over other: UserProperties) -> UserProperties {
-		 var new = UserProperties(
+		 return UserProperties(
 			birthday:             birthday ?? other.birthday,
 			city:                 city ?? other.city,
 			country:              country ?? other.country,
@@ -133,13 +92,6 @@ public struct UserProperties {
 			streetNumber:         streetNumber ?? other.streetNumber,
 			zipCode:              zipCode ?? other.zipCode
 		)
-        
-        new.birthdayConfig = birthdayConfig ?? other.birthdayConfig
-        new.emailAddressConfig = emailAddressConfig ?? other.emailAddressConfig
-        new.emailReceiverIdConfig = emailReceiverIdConfig ?? other.emailReceiverIdConfig
-        new.genderConfig = genderConfig ?? other.genderConfig
-        new.idConfig = idConfig ?? other.idConfig
-        return new
 	}
 
 
@@ -198,22 +150,8 @@ public struct UserProperties {
  	}
     
     
-    mutating func processKeys(_ event: TrackingEvent){
-        if let birthday = Birthday(raw: birthdayConfig?.serialized(for: event)) {
-            self.birthday = birthday
-        }
-        if let emailAddress = emailAddressConfig?.serialized(for: event) {
-            self.emailAddress = emailAddress
-        }
-        if let emailReceiverId = emailReceiverIdConfig?.serialized(for: event) {
-            self.emailReceiverId = emailReceiverId
-        }
-        if let id = idConfig?.serialized(for: event) {
-            self.id = id
-        }
-        if let gender = Gender(raw: genderConfig?.serialized(for: event)) {
-            self.gender = gender
-        }
+    func convertNewsLetter(raw: String) -> Bool{
+        return raw == "1"
     }
 
 }

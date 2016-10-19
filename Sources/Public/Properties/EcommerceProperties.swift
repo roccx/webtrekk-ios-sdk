@@ -29,13 +29,6 @@ public struct EcommerceProperties {
 	public var status: Status?
 	public var totalValue: String?
 	public var voucherValue: String?
-    var currencyCodeConfig: PropertyValue?
-    var orderNumberConfig: PropertyValue?
-    var statusConfig: PropertyValue?
-    var voucherValueConfig: PropertyValue?
-    var totalValueConfig: PropertyValue?
-    var productConf: Product?
-
 
 	public init(
 		currencyCode: String? = nil,
@@ -55,47 +48,91 @@ public struct EcommerceProperties {
 		self.voucherValue = voucherValue
 	}
 
-    init(
-        currencyCodeConfig: PropertyValue?,
-        details: [Int: TrackingValue]? = nil,
-        orderNumberConfig:PropertyValue? = nil,
-        products: [Product]? = nil,
-        statusConfig: PropertyValue? = nil,
-        totalValueConfig: PropertyValue? = nil,
-        voucherValueConfig: PropertyValue? = nil,
-        productConf: Product? = nil
-        ) {
-        self.currencyCodeConfig = currencyCodeConfig
-        self.details = details
-        self.orderNumberConfig = orderNumberConfig
-        self.products = products
-        self.statusConfig = statusConfig
-        self.totalValueConfig = totalValueConfig
-        self.voucherValueConfig = voucherValueConfig
-        self.productConf = productConf
-    }
-	
-	
 	internal func merged(over other: EcommerceProperties) -> EcommerceProperties {
-		var new = EcommerceProperties(
+		return EcommerceProperties(
 			currencyCode: currencyCode ?? other.currencyCode,
 			details:      details.merged(over: other.details),
 			orderNumber:  orderNumber ?? other.orderNumber,
-			products:     products ?? other.products,
+			products:     mergedProducts(products: products, over: other.products),
 			status:       status ?? other.status,
 			totalValue:   totalValue ?? other.totalValue,
 			voucherValue: voucherValue ?? other.voucherValue
 		)
-        new.currencyCodeConfig = currencyCodeConfig ?? other.currencyCodeConfig
-        new.orderNumberConfig = orderNumberConfig ?? other.orderNumberConfig
-        new.statusConfig = statusConfig ?? other.statusConfig
-        new.totalValueConfig = totalValueConfig ?? other.totalValueConfig
-        new.voucherValueConfig = voucherValueConfig ?? other.voucherValueConfig
-        new.productConf = productConf ?? other.productConf
-        return new
 	}
+    
+    internal func mergedProducts(products: [Product]?, over: [Product]?) -> [Product]?{
+        
+        guard let products = products else {
+            return over
+        }
+        
+        guard let over = over else {
+            return products
+        }
+        var names: [String] = [] , overNames: [String] = [], mergedNames: [String]
+        var prices: [String] = [], overPrices: [String] = [], mergedPrices : [String]
+        var quantities : [Int] = [], overQuantities : [Int] = [], mergedQuantities : [Int]
+        var categories: [[Int: TrackingValue]] = [], overCategories: [[Int: TrackingValue]] = [], mergedCategories: [[Int: TrackingValue]] = []
 
-
+        var overProducts = over
+        
+        transformFromProductList(products: products, names: &names, prices: &prices, quantities: &quantities, categories: &categories)
+        transformFromProductList(products: over, names: &overNames, prices: &overPrices, quantities: &overQuantities, categories: &overCategories)
+        
+        mergedNames = !names.isEmpty ? names : overNames
+        mergedPrices = !prices.isEmpty ? prices : overPrices
+        mergedQuantities = !quantities.isEmpty ? quantities : overQuantities
+        
+        for cat in categories {
+            overCategories.forEach{mergedCategories.append(cat.merged(over: $0))}
+        }
+        
+        return transformToProductList(names: mergedNames, prices: mergedPrices, quantities: mergedQuantities, categories: mergedCategories)
+    }
+    
+    private func transformFromProductList(products: [Product], names: inout [String], prices: inout [String], quantities: inout [Int], categories localCategories: inout [[Int: TrackingValue]]){
+        
+        guard products.count > 0 else {
+            return
+        }
+        
+        for product in products {
+            if let name = product.name , !name.isEmpty {
+                names.append(name)
+            }
+            if let price = product.price {
+                prices.append(price)
+            }
+            if let quantity = product.quantity {
+                quantities.append(quantity)
+            }
+            if let categories = product.categories {
+                localCategories.append(categories)
+            }
+        }
+    }
+    
+    // assume that array is size of names size
+    private func transformToProductList(names: [String], prices: [String], quantities: [Int],
+                                  categories: [[Int: TrackingValue]]) -> [Product]? {
+       
+        let size = max (names.count, prices.count, quantities.count, !categories.isEmpty ? 1 : 0)
+        
+        guard size > 0 else {
+            return nil
+        }
+        
+        var products: [Product] = []
+        
+        for i in 0..<size {
+            products.append(Product(name: names.count > i ? names[i]: "",
+                categories: categories.count > i ? categories[i] : nil,
+                price: prices.count > i ? prices[i]: nil,
+                quantity: quantities.count > i ? quantities[i] : nil))
+        }
+        
+        return products
+    }
 
 	public struct Product {
 
@@ -103,9 +140,6 @@ public struct EcommerceProperties {
 		public var name: String?
 		public var price: String?
 		public var quantity: Int?
-        var nameConfig: PropertyValue?
-        var priceConfig: PropertyValue?
-        var quantityConfig: PropertyValue?
 
 		public init(
 			name: String,
@@ -119,93 +153,27 @@ public struct EcommerceProperties {
 			self.quantity = quantity
 		}
 
-
-        init(
-            nameConfig: PropertyValue? = nil,
-            categories: [Int: TrackingValue]? = nil,
-            priceConfig: PropertyValue? = nil,
-            quantityConfig: PropertyValue? = nil
-            ) {
-            self.categories = categories
-            self.nameConfig = nameConfig
-            self.priceConfig = priceConfig
-            self.quantityConfig = quantityConfig
-        }
-		
         
         
 		internal func merged(over other: Product) -> Product {
-			var new = Product()
+            var new = Product(name: "")
             
             new.name = name ?? other.name
             new.categories = categories.merged(over: other.categories)
             new.price = price ?? other.price
             new.quantity = quantity ?? other.quantity
-            new.nameConfig = nameConfig ?? other.nameConfig
-            new.priceConfig = priceConfig ?? other.priceConfig
-            new.quantityConfig = quantityConfig ?? other.quantityConfig
             return new
 		}
-        
-        
-        fileprivate mutating func processKeys(_ event: TrackingEvent){
-            if let name = nameConfig?.serialized(for: event) {
-                self.name = name
-            }
-            if let price = priceConfig?.serialized(for: event) {
-                self.price = price
-            }
-            
-            if let quantity = self.quantityConfig?.serialized(for: event) {
-                    if quantity.isQuantity{
-                        self.quantity = Int(quantity)
-                    }
-            }
-        }
-	}
+    }
 
     public enum Status: String{
 		case addedToBasket = "add"
 		case purchased = "conf"
 		case viewed = "view"
 	}
-    
-    mutating func processKeys(_ event: TrackingEvent){
-        if let currencyCode = currencyCodeConfig?.serialized(for: event) {
-            self.currencyCode = currencyCode
-        }
-        if let orderNumber = orderNumberConfig?.serialized(for: event) {
-            self.orderNumber = orderNumber
-        }
-        if let staus = statusConfig?.serialized(for: event) {
-                self.status = Status(rawValue: staus)
-        }
-        
-        if let totalValue = totalValueConfig?.serialized(for: event) {
-            self.totalValue = totalValue
-        }
-        
-        if let voucherValue = voucherValueConfig?.serialized(for: event) {
-            self.voucherValue = voucherValue
-        }
-        
-        if let _ = self.productConf {
-            self.productConf?.processKeys(event)
-        }
-//            if let _ = self.products{
-//                for (index, value) in (self.products?.enumerate())! {
-//                    var productNew = self.productConf!
-//                    productNew.merged(over: value)
-//                    self.products?[index] = productNew
-//                }
-//            }else {
-//                self.products?.append(self.productConf!)
-//            }
-//        }
-    }
 }
 
-private extension String  {
+extension String  {
     var isQuantity : Bool {
         get{
             return characters.count > 0 && self.rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil

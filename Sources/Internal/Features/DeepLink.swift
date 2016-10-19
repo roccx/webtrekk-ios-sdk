@@ -37,6 +37,13 @@ class DeepLink: NSObject{
             return
         }
         
+        let methodCheck = class_getInstanceMethod(delegateClass, replacedSel)
+        
+        // check if there is no such method. Otherwise exit as no repeat operation can be done
+        guard  methodCheck == nil else {
+            return
+        }
+        
         //get all methods of delegeta class
         var methods = class_copyMethodList(delegateClass, &methodCount)
         
@@ -66,7 +73,7 @@ class DeepLink: NSObject{
                             WebtrekkTracking.defaultLogger.logError("Cann't swizzle Deep Link")
                         }
                     } else {
-                        WebtrekkTracking.defaultLogger.logError("Can't add new method to delegate class")
+                        WebtrekkTracking.defaultLogger.logError("Can't add new method to delegate class.")
                     }
                     
                     break;

@@ -25,7 +25,13 @@ class ParameterTest: WTBaseTestNew {
     
     var mainViewController: ViewController!
     
-    func testVariablesParameterGlobal()
+    
+    override func getCongigName() -> String?{
+        return String("webtrekk_config_no_autoTrack")
+    }
+
+    
+    func atestVariablesParameterGlobal()
     {
         
                 doURLSendTestAction(){
@@ -92,7 +98,7 @@ class ParameterTest: WTBaseTestNew {
                 }
     }
     
-    func testVariablesParameterScreen()
+    func atestVariablesParameterScreen()
     {
         if self.mainViewController == nil {
             self.mainViewController = ViewController()
@@ -180,6 +186,9 @@ class ParameterTest: WTBaseTestNew {
             self.mainViewController.beginAppearanceTransition(true, animated: false)
             let tracker = WebtrekkTracking.trackerForAutotrackedViewController(self.mainViewController)
             WebtrekkTracking.instance().pageURL = nil
+            tracker["CURRENCYOver"] = "CURRENCY"
+            tracker["CURRENCY"] = "GlobalIgnore"
+
             //uncomment after fix with default memberwise initializer is done.
             tracker.userProperties.birthday = UserProperties.Birthday(day: 11, month: 4, year: 1986)
             tracker.userProperties.city = "CITY"
@@ -198,7 +207,7 @@ class ParameterTest: WTBaseTestNew {
             tracker.userProperties.zipCode = "10115"
             
             
-            tracker.ecommerceProperties.currencyCode = "CURRENCY"
+            tracker.ecommerceProperties.currencyCode = "CURRENCYCodeIgnore"
             tracker.ecommerceProperties.details = [10 : "ecomeCustomField10"]
             tracker.ecommerceProperties.orderNumber = "ORDER_NUMBER"
             tracker.ecommerceProperties.products = [EcommerceProperties.Product(name: "productName1", categories: [11: "productCat11", 12: "productCat12"], price:"100", quantity: 1),
@@ -270,12 +279,21 @@ class ParameterTest: WTBaseTestNew {
         
         doURLSendTestAction(){
             let tracker = WebtrekkTracking.instance()
+            
+            tracker.global.userProperties.details = [3: "customUser3"]
+            tracker.global.sessionDetails = [1: "shouldBeIgnored"]
+            tracker.global.pageProperties.internalSearch = "ShouldBeIgnoredIS"
+            tracker.global.advertisementProperties.details = [23: "customAdv23"]
+            
+            tracker["CURRENCY"] = "CURRENCYGlobalParIgnore"
+            tracker["INTERN_SEARCH"] = "InternalSearch"
+            
             tracker.pageURL = nil
             let pagePropertiesL = PageProperties(
                 name: "pageNameNotauto",
                 details: [30: "pageCustom30", 31: "pageCustom31"],
                 groups: [10: "pageCat10", 11: "pageCat11"],
-                internalSearch: "InternalSearch",
+                internalSearch: nil,
                 url: "http://www.webrekk.com")
             let userPropertiesL = UserProperties(
                 birthday: UserProperties.Birthday(day: 11, month: 4, year: 1986),
@@ -363,8 +381,11 @@ class ParameterTest: WTBaseTestNew {
             expect(parametersArr["mca"]).to(equal("ADVERTISEMENT_ACTION"))
             expect(parametersArr["cc10"]).to(equal("advertCustom10"))
             expect(parametersArr["cc11"]).to(equal("advertCustom11"))
+            expect(parametersArr["cc23"]).to(equal("customAdv23"))
             expect(parametersArr["cs10"]).to(equal("sessionCustom10"))
-            expect(parametersArr["cs11"]).to(equal("sessionCustom11"))
+            expect(parametersArr["cs1"]).to(equal("test_sessionparam1"))
+            expect(parametersArr["uc3"]).to(equal("customUser3"))
+            
         }
         
     }

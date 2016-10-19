@@ -55,7 +55,7 @@ internal final class DefaultTracker: Tracker {
     private let campaign: Campaign
     private let deepLink = DeepLink()
     /**this value override pu parameter if it is setup from code in any other way or configuraion xml*/
-    public var pageURL: String?
+    var pageURL: String?
 
 	internal var global = GlobalProperties()
 	internal var plugins = [TrackerPlugin]()
@@ -164,6 +164,7 @@ internal final class DefaultTracker: Tracker {
 			if let applicationWillResignActiveObserver = applicationWillResignActiveObserver {
 				notificationCenter.removeObserver(applicationWillResignActiveObserver)
 			}
+            
 		#endif
 	}
 
@@ -379,7 +380,9 @@ internal final class DefaultTracker: Tracker {
 	internal func enqueueRequestForEvent(_ event: TrackingEvent) {
 		checkIsOnMainThread()
 
-		var event = eventByApplyingGlobalProperties(to: event)
+        //merge lowest priority global properties over request properties.
+        
+        var event = globalPropertiesByApplyingEvent(from: event)
 
 		#if !os(watchOS)
 			event = eventByApplyingAutomaticPageTracking(to: event)
@@ -495,133 +498,129 @@ internal final class DefaultTracker: Tracker {
 
 		guard let
 			viewControllerType = event.viewControllerType,
-			let page = configuration.automaticallyTrackedPageForViewControllerType(viewControllerType)
+			let pageProperties = configuration.automaticallyTrackedPageForViewControllerType(viewControllerType)
 		else {
 			return event
 		}
-
-		var event = event
-		event.ipAddress = page.ipAddress ?? event.ipAddress
-		event.pageName = page.pageProperties.name ?? event.pageName
-
-		guard !(event is ActionEvent) else {
-			return event
-		}
-
-		if var eventWithActionProperties = event as? TrackingEventWithActionProperties, let actionProperties = page.actionProperties {
-			eventWithActionProperties.actionProperties = actionProperties.merged(over: eventWithActionProperties.actionProperties)
-			event = eventWithActionProperties
-		}
-		if var eventWithAdvertisementProperties = event as? TrackingEventWithAdvertisementProperties, let advertisementProperties = page.advertisementProperties {
-			eventWithAdvertisementProperties.advertisementProperties = advertisementProperties.merged(over: eventWithAdvertisementProperties.advertisementProperties)
-			event = eventWithAdvertisementProperties
-		}
-		if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties, let ecommerceProperties = page.ecommerceProperties {
-			eventWithEcommerceProperties.ecommerceProperties = ecommerceProperties.merged(over: eventWithEcommerceProperties.ecommerceProperties)
-            eventWithEcommerceProperties.ecommerceProperties.processKeys(event)
-            let eventEcommerceProducts = eventWithEcommerceProperties.ecommerceProperties.products
-			if let products = ecommerceProperties.products , !products.isEmpty, let product = products.first {
-				if let eventProducts = eventEcommerceProducts , !eventProducts.isEmpty {
-					var mergedProducts: [EcommerceProperties.Product] = []
-					for eventProduct in eventProducts {
-						mergedProducts.append(product.merged(over: eventProduct))
-					}
-					eventWithEcommerceProperties.ecommerceProperties.products = mergedProducts
-				}
-				else {
-					eventWithEcommerceProperties.ecommerceProperties.products = products
-				}
-			}
-			event = eventWithEcommerceProperties
-		}
-		if var eventWithMediaProperties = event as? TrackingEventWithMediaProperties, let mediaProperties = page.mediaProperties {
-			eventWithMediaProperties.mediaProperties = mediaProperties.merged(over: eventWithMediaProperties.mediaProperties)
-			event = eventWithMediaProperties
-		}
-		if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
-			eventWithPageProperties.pageProperties = page.pageProperties.merged(over: eventWithPageProperties.pageProperties)
-            eventWithPageProperties.pageProperties.processKeys(event)
-			event = eventWithPageProperties
-		}
-		if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails, let sessionDetails = page.sessionDetails {
-			eventWithSessionDetails.sessionDetails = sessionDetails.merged(over: eventWithSessionDetails.sessionDetails)
-			event = eventWithSessionDetails
-		}
-		if var eventWithUserProperties = event as? TrackingEventWithUserProperties, let userProperties = page.userProperties {
-			eventWithUserProperties.userProperties = userProperties.merged(over: eventWithUserProperties.userProperties)
-            eventWithUserProperties.userProperties.processKeys(event)
-			event = eventWithUserProperties
-		}
-
-		return event
+        
+        if let page = applyKeys(keys: event.variables, properties: pageProperties) as? TrackerConfiguration.Page {
+            return mergeProperties(event: event, properties: page, rewriteEvent: true)
+        } else {
+            WebtrekkTracking.logger.logError("incorect type of return value from apply Keys for page parameters")
+            return event
+        }
 	}
 	#endif
 
 
-	private func eventByApplyingGlobalProperties(to event: TrackingEvent) -> TrackingEvent {
+	private func globalPropertiesByApplyingEvent(from event: TrackingEvent) -> TrackingEvent {
 		checkIsOnMainThread()
+        
+        var event = event
+        
+        event.variables = self.global.variables.merged(over: event.variables)
+        
+        if let globalSettings = applyKeys(keys: event.variables, properties: configuration.globalProperties) as? GlobalProperties {
 
-		let global = configuration.globalProperties.merged(over: self.global)
+            let global = globalSettings.merged(over: self.global)
 
-		var event = event
-		event.ipAddress = global.ipAddress ?? event.ipAddress
-		event.pageName = global.pageProperties.name ?? event.pageName
-		event.variables = global.variables.merged(over: event.variables)
-
-		guard !(event is ActionEvent) else {
-			return event
-		}
-
-		if var eventWithActionProperties = event as? TrackingEventWithActionProperties {
-			eventWithActionProperties.actionProperties = global.actionProperties.merged(over: eventWithActionProperties.actionProperties)
-			event = eventWithActionProperties
-		}
-		if var eventWithAdvertisementProperties = event as? TrackingEventWithAdvertisementProperties {
-			eventWithAdvertisementProperties.advertisementProperties = global.advertisementProperties.merged(over: eventWithAdvertisementProperties.advertisementProperties)
-			event = eventWithAdvertisementProperties
-		}
-		if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties {
-			eventWithEcommerceProperties.ecommerceProperties = global.ecommerceProperties.merged(over: eventWithEcommerceProperties.ecommerceProperties)
-            eventWithEcommerceProperties.ecommerceProperties.processKeys(event)
-            let eventEcommerceProducts = eventWithEcommerceProperties.ecommerceProperties.products
-			if let products = global.ecommerceProperties.products , !products.isEmpty, let product = products.first {
-				if let eventProducts = eventEcommerceProducts , !eventProducts.isEmpty {
-					var mergedProducts: [EcommerceProperties.Product] = []
-					for eventProduct in eventProducts {
-						mergedProducts.append(product.merged(over: eventProduct))
-					}
-					eventWithEcommerceProperties.ecommerceProperties.products = mergedProducts
-				}
-				else {
-					eventWithEcommerceProperties.ecommerceProperties.products = products
-				}
-			}
-			event = eventWithEcommerceProperties
-		}
-		if var eventWithMediaProperties = event as? TrackingEventWithMediaProperties {
-			eventWithMediaProperties.mediaProperties = global.mediaProperties.merged(over: eventWithMediaProperties.mediaProperties)
-			event = eventWithMediaProperties
-		}
-		if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
-			eventWithPageProperties.pageProperties = global.pageProperties.merged(over: eventWithPageProperties.pageProperties)
-            eventWithPageProperties.pageProperties.processKeys(event)
-			event = eventWithPageProperties
-		}
-		if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails {
-			eventWithSessionDetails.sessionDetails = global.sessionDetails.merged(over: eventWithSessionDetails.sessionDetails)
-			event = eventWithSessionDetails
-		}
-		if var eventWithUserProperties = event as? TrackingEventWithUserProperties {
-			eventWithUserProperties.userProperties = global.userProperties.merged(over: eventWithUserProperties.userProperties)
-            eventWithUserProperties.userProperties.processKeys(event)
-			event = eventWithUserProperties
-		}
-
-		return event
+            return mergeProperties(event: event, properties: global, rewriteEvent: false)
+        } else {
+            WebtrekkTracking.logger.logError("incorect type of return value from apply Keys for global parameters")
+            return event
+        }
 	}
-
+    
+    private func mergeProperties(event: TrackingEvent, properties: BaseProperties, rewriteEvent: Bool) -> TrackingEvent {
+        
+        let mergeTool = PropertyMerger()
+        var event = event
+        
+        if rewriteEvent {
+            event.ipAddress = properties.ipAddress ?? event.ipAddress
+            event.pageName = properties.pageProperties.name ?? event.pageName
+        }else{
+            event.ipAddress = event.ipAddress ?? properties.ipAddress
+            event.pageName = event.pageName ?? properties.pageProperties.name
+        }
+        
+        guard !(event is ActionEvent) else {
+            return event
+        }
+        
+        if var eventWithActionProperties = event as? TrackingEventWithActionProperties {
+            eventWithActionProperties.actionProperties = mergeTool.mergeProperties(first: properties.actionProperties, second: eventWithActionProperties.actionProperties, from1Over2: rewriteEvent)
+            event = eventWithActionProperties
+        }
+        if var eventWithAdvertisementProperties = event as? TrackingEventWithAdvertisementProperties {
+            eventWithAdvertisementProperties.advertisementProperties = mergeTool.mergeProperties(first: properties.advertisementProperties, second: eventWithAdvertisementProperties.advertisementProperties, from1Over2: rewriteEvent)
+            event = eventWithAdvertisementProperties
+        }
+        if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties {
+            eventWithEcommerceProperties.ecommerceProperties = mergeTool.mergeProperties(first: properties.ecommerceProperties, second: eventWithEcommerceProperties.ecommerceProperties, from1Over2: rewriteEvent)
+            event = eventWithEcommerceProperties
+        }
+        if var eventWithMediaProperties = event as? TrackingEventWithMediaProperties {
+            eventWithMediaProperties.mediaProperties = mergeTool.mergeProperties(first: properties.mediaProperties, second: eventWithMediaProperties.mediaProperties, from1Over2: rewriteEvent)
+            event = eventWithMediaProperties
+        }
+        if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
+            eventWithPageProperties.pageProperties = mergeTool.mergeProperties(first: properties.pageProperties, second: eventWithPageProperties.pageProperties, from1Over2: rewriteEvent)
+            event = eventWithPageProperties
+        }
+        if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails {
+            eventWithSessionDetails.sessionDetails = mergeTool.mergeProperties(first: properties.sessionDetails, second: eventWithSessionDetails.sessionDetails, from1Over2: rewriteEvent)
+            event = eventWithSessionDetails
+        }
+        if var eventWithUserProperties = event as? TrackingEventWithUserProperties {
+            eventWithUserProperties.userProperties = mergeTool.mergeProperties(first: properties.userProperties, second: eventWithUserProperties.userProperties, from1Over2: rewriteEvent)
+            event = eventWithUserProperties
+        }
+        
+        return event
+    }
+    
+    private func applyKeys(keys: [String:String], properties: BaseProperties) -> BaseProperties{
+        
+        guard let trackingParameter = properties.trackingParameters else {
+            WebtrekkTracking.defaultLogger.logError("no tracking parameters for properties")
+            return properties
+        }
+        
+        if let globalProperties = properties as? GlobalProperties {
+            return GlobalProperties(actionProperties: trackingParameter.actionProperties(variables: keys),
+                                    advertisementProperties: trackingParameter.advertisementProperties(variables: keys),
+                                    crossDeviceProperties: globalProperties.crossDeviceProperties,
+                                    ecommerceProperties: trackingParameter.ecommerceProperties(variables: keys),
+                                    ipAddress: trackingParameter.resolveIPAddress(variables: keys),
+                                    mediaProperties: trackingParameter.mediaProperties(variables: keys),
+                                    pageProperties: trackingParameter.pageProperties(variables: keys),
+                                    sessionDetails: trackingParameter.sessionDetails(variables: keys),
+                                    userProperties: trackingParameter.userProperties(variables: keys),
+                                    variables: globalProperties.variables)
+        } else if let pageProperties = properties as? TrackerConfiguration.Page {
+            
+            var page = trackingParameter.pageProperties(variables: keys)
+            //override name from xml
+            page.name = pageProperties.pageProperties.name
+            
+            return TrackerConfiguration.Page(viewControllerTypeNamePattern: pageProperties.viewControllerTypeNamePattern,
+                                             pageProperties: page,
+                                             actionProperties: trackingParameter.actionProperties(variables: keys),
+                                             advertisementProperties: trackingParameter.advertisementProperties(variables: keys),
+                                             ecommerceProperties: trackingParameter.ecommerceProperties(variables: keys),
+                                             ipAddress: trackingParameter.resolveIPAddress(variables: keys),
+                                             mediaProperties: trackingParameter.mediaProperties(variables: keys),
+                                             sessionDetails: trackingParameter.sessionDetails(variables: keys),
+                                             userProperties: trackingParameter.userProperties(variables: keys))
+        } else {
+            WebtrekkTracking.logger.logError("Unsupported type of properties")
+            return properties
+        }
+    }
+    
     /** get and set everID. If you set Ever ID it started to use new value for all requests*/
-    public var everId: String {
+    var everId: String {
         get {
             checkIsOnMainThread()
             
@@ -1032,13 +1031,13 @@ internal final class DefaultTracker: Tracker {
 		let handler = DefaultTracker._autotrackingEventHandler
 
 		if configuration.automaticallyTrackedPages.isEmpty {
-			if let index = handler.trackers.index(where: { $0 === self}) {
+			if let index = handler.trackers.index(where: { [weak self] in $0 === self}) {
 				handler.trackers.remove(at: index)
 			}
 		}
 		else {
-			if !handler.trackers.contains(where: { $0 === self }) {
-				handler.trackers.append(self)
+			if !handler.trackers.contains(where: {[weak self] in $0 === self }) {
+				handler.trackers.append(WeakReference(self))
 			}
 
 			UIViewController.setUpAutomaticTracking()
@@ -1201,7 +1200,7 @@ internal final class DefaultTracker: Tracker {
 	}
     
     /** set media code. Media code will be sent with next page request only. Only setter is working. Getter always returns ""d*/
-    public var mediaCode: String {
+    var mediaCode: String {
         get {
             return ""
         }
@@ -1286,14 +1285,14 @@ extension DefaultTracker: RequestManager.Delegate {
 #if !os(watchOS)
 	private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHandler, PageViewEventHandler {
 
-		fileprivate var trackers = [DefaultTracker]()
+		fileprivate var trackers = [WeakReference<DefaultTracker>]()
 
 
 		private func broadcastEvent<Event: TrackingEvent>(_ event: Event, handler: (DefaultTracker) -> (Event) -> Void) {
 			var event = event
 
-			for tracker in trackers {
-				guard let viewControllerType = event.viewControllerType
+			for trackerOpt in trackers {
+				guard let viewControllerType = event.viewControllerType, let tracker = trackerOpt.target
 					, tracker.configuration.automaticallyTrackedPageForViewControllerType(viewControllerType) != nil
 				else {
 					continue
@@ -1340,4 +1339,81 @@ struct DefaultsKeys {
 	fileprivate static let isOptedOut = "optedOut"
 	fileprivate static let migrationCompleted = "migrationCompleted"
 	fileprivate static let samplingRate = "samplingRate"
+}
+
+private extension TrackingValue {
+    
+    mutating func resolve(variables: [String: String]) -> Bool {
+        switch self {
+        case let .customVariable(key):
+            if let value = variables[key] {
+                self = .constant(value)
+                return true
+            }
+        default:
+            return false
+        }
+        return false
+    }
+    
+}
+
+private class PropertyMerger {
+    
+    func mergeProperties(first property1: ActionProperties, second property2: ActionProperties, from1Over2: Bool) -> ActionProperties{
+        if from1Over2 {
+            return property1.merged(over: property2)
+        } else {
+            return property2.merged(over: property1)
+        }
+    }
+    
+    func mergeProperties(first property1: AdvertisementProperties, second property2: AdvertisementProperties, from1Over2: Bool) -> AdvertisementProperties{
+        if from1Over2 {
+            return property1.merged(over: property2)
+        } else {
+            return property2.merged(over: property1)
+        }
+    }
+    
+    func mergeProperties(first property1: EcommerceProperties, second property2: EcommerceProperties, from1Over2: Bool) -> EcommerceProperties{
+        
+        if from1Over2 {
+            return property1.merged(over: property2)
+        } else {
+            return property2.merged(over: property1)
+        }
+    }
+    
+    func mergeProperties(first property1: MediaProperties, second property2: MediaProperties, from1Over2: Bool) -> MediaProperties{
+        if from1Over2 {
+            return property1.merged(over: property2)
+        } else {
+            return property2.merged(over: property1)
+        }
+    }
+    
+    func mergeProperties(first property1: PageProperties, second property2: PageProperties, from1Over2: Bool) -> PageProperties{
+        if from1Over2 {
+            return property1.merged(over: property2)
+        } else {
+            return property2.merged(over: property1)
+        }
+    }
+    
+    func mergeProperties(first property1: [Int: TrackingValue], second property2: [Int: TrackingValue], from1Over2: Bool) -> [Int: TrackingValue]{
+        if from1Over2 {
+            return property1.merged(over: property2)
+        } else {
+            return property2.merged(over: property1)
+        }
+    }
+    
+    func mergeProperties(first property1: UserProperties, second property2: UserProperties, from1Over2: Bool) -> UserProperties{
+        if from1Over2 {
+            return property1.merged(over: property2)
+        } else {
+            return property2.merged(over: property1)
+        }
+    }
 }

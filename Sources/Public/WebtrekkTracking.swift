@@ -37,7 +37,7 @@ public class WebtrekkTracking {
 	public static var migratesFromLibraryV3 = true
     
     /** Main track object */
-    private static var tracker: Tracker?
+    internal static var tracker: Tracker?
     
      /** Get main shared Webtrekk instance. */
     public static func instance() -> Tracker

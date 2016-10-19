@@ -45,7 +45,7 @@ internal class XmlTrackerConfigurationParser {
 	private var automaticallyTracksInterfaceOrientation: Bool?
 	#endif
 
-	private var globalScreenTrackingParameter: ScreenTrackingParameter?
+	private var globalScreenTrackingParameter: TrackingParameter?
 
 
 	internal func parse(xml data: Data) throws -> TrackerConfiguration {
@@ -53,8 +53,8 @@ internal class XmlTrackerConfigurationParser {
 	}
 
 
-	private func parseScreenTrackingParameter(_ xmlElement: XmlElement) -> ScreenTrackingParameter {
-		var categories = [String: [Int: CategoryElement]]()
+	private func parseScreenTrackingParameter(xmlElement: XmlElement) -> TrackingParameter {
+		var categories = [String: [Int: PropertyValue]]()
 
 		var parameters = [PropertyName: PropertyValue]()
 		for child in xmlElement.children {
@@ -65,20 +65,20 @@ internal class XmlTrackerConfigurationParser {
 				}
 				parameters[element.0] = element.1
 
-			case "actionParameter":   categories["actionParameter"] = readFromCategoryElement(child)
-			case "adParameter":       categories["adParameter"] = readFromCategoryElement(child)
-			case "ecomParameter":     categories["ecomParameter"] = readFromCategoryElement(child)
-			case "mediaCategories":   categories["mediaCategories"] = readFromCategoryElement(child)
-			case "pageCategories":    categories["pageCategories"] = readFromCategoryElement(child)
-			case "pageParameter":     categories["pageParameter"] = readFromCategoryElement(child)
-			case "productCategories": categories["productCategories"] = readFromCategoryElement(child)
-			case "sessionParameter":  categories["sessionParameter"] = readFromCategoryElement(child)
-			case "userCategories":    categories["userCategories"] = readFromCategoryElement(child)
+			case "actionParameter":   categories["actionParameter"] = readFromCategoryElement(xmlElement: child)
+			case "adParameter":       categories["adParameter"] = readFromCategoryElement(xmlElement: child)
+			case "ecomParameter":     categories["ecomParameter"] = readFromCategoryElement(xmlElement: child)
+			case "mediaCategories":   categories["mediaCategories"] = readFromCategoryElement(xmlElement: child)
+			case "pageCategories":    categories["pageCategories"] = readFromCategoryElement(xmlElement: child)
+			case "pageParameter":     categories["pageParameter"] = readFromCategoryElement(xmlElement: child)
+			case "productCategories": categories["productCategories"] = readFromCategoryElement(xmlElement: child)
+			case "sessionParameter":  categories["sessionParameter"] = readFromCategoryElement(xmlElement: child)
+			case "userCategories":    categories["userCategories"] = readFromCategoryElement(xmlElement: child)
 
 			default: break
 			}
 		}
-		return ScreenTrackingParameter(categories: categories, parameters: parameters)
+		return TrackingParameter(categories: categories, parameters: parameters)
 	}
 
 
@@ -89,7 +89,7 @@ internal class XmlTrackerConfigurationParser {
 		guard !xmlElement.children.isEmpty else {
 			return
 		}
-		globalScreenTrackingParameter = parseScreenTrackingParameter(xmlElement)
+		globalScreenTrackingParameter = parseScreenTrackingParameter(xmlElement: xmlElement)
 	}
 
 
@@ -204,16 +204,8 @@ internal class XmlTrackerConfigurationParser {
 		#endif
 
 		if let globalParameter = globalScreenTrackingParameter {
-			trackerConfiguration.globalProperties = GlobalProperties(
-				actionProperties: globalParameter.actionProperties(),
-				advertisementProperties: globalParameter.advertisementProperties(),
-				ecommerceProperties: globalParameter.ecommerceProperties(),
-				ipAddress: globalParameter.parameters[.ipAddress]?.serialized(),
-				mediaProperties: globalParameter.mediaProperties(),
-				pageProperties: globalParameter.pageProperties(),
-				sessionDetails: globalParameter.sessionDetails(),
-				userProperties: globalParameter.userProperties()
-			)
+            trackerConfiguration.globalProperties = GlobalProperties()
+            trackerConfiguration.globalProperties.trackingParameters = globalParameter
 		}
 		return trackerConfiguration
 	}
@@ -231,13 +223,13 @@ internal class XmlTrackerConfigurationParser {
 		var viewControllerType: String?
 		var pageName: String?
 		var autoTracked: Bool?
-		var screenTrackingParameter: ScreenTrackingParameter?
+		var screenTrackingParameter: TrackingParameter?
 		for child in xmlElement.children {
 			switch child.name {
 			case "classname": viewControllerType = try parseString(child.text, emptyAllowed: false)
 			case "mappingname": pageName = try parseString(child.text, emptyAllowed: false)
 			case "autoTracked": autoTracked = try parseBool(child.text)
-			case "screenTrackingParameter": screenTrackingParameter = try readFromScreenTrackingParameterElement(child)
+			case "screenTrackingParameter": screenTrackingParameter = try readFromScreenTrackingParameterElement(xmlElement: child)
 			default: break
 			}
 		}
@@ -275,28 +267,21 @@ internal class XmlTrackerConfigurationParser {
 		var page: TrackerConfiguration.Page
 		do {
 			let pattern = try NSRegularExpression(pattern: patternString, options: [])
-			page = TrackerConfiguration.Page(viewControllerTypeNamePattern: pattern, pageProperties: PageProperties(name: pageName))
+            page = TrackerConfiguration.Page(viewControllerTypeNamePattern: pattern, pageProperties: PageProperties(name: pageName))
 		}
 		catch let error {
 			throw TrackerError(message: "invalid regular expression: \(error)")
 		}
 
 		if let screenParameter = screenTrackingParameter {
-			page.actionProperties = screenParameter.actionProperties()
-			page.advertisementProperties = screenParameter.advertisementProperties()
-			page.ecommerceProperties = screenParameter.ecommerceProperties()
-			page.ipAddress = screenParameter.parameters[.ipAddress]?.serialized()
-			page.mediaProperties = screenParameter.mediaProperties()
-			page.pageProperties = page.pageProperties.merged(over: screenParameter.pageProperties())
-			page.sessionDetails = screenParameter.sessionDetails()
-			page.userProperties = screenParameter.userProperties()
+            page.trackingParameters = screenParameter
 		}
-
+        
 		automaticallyTrackedPages.append(page)
 	}
 
 
-	fileprivate func readFromScreenTrackingParameterElement(_ xmlElement: XmlElement) throws -> ScreenTrackingParameter? {
+	private func readFromScreenTrackingParameterElement(xmlElement: XmlElement) throws -> TrackingParameter? {
 		guard xmlElement.name == "screenTrackingParameter" else {
 			throw TrackerError(message: "screenTrackingParameter nodes needs to be screenTrackingParameter")
 		}
@@ -304,21 +289,25 @@ internal class XmlTrackerConfigurationParser {
 			return nil
 		}
 
-		return parseScreenTrackingParameter(xmlElement)
+		return parseScreenTrackingParameter(xmlElement: xmlElement)
 	}
 	#endif
 
 
-	private func readFromCategoryElement(_ xmlElement: XmlElement) -> [Int: CategoryElement]? {
+	private func readFromCategoryElement(xmlElement: XmlElement) -> [Int: PropertyValue]? {
 		guard !xmlElement.children.isEmpty else {
 			return nil
 		}
-		var xmlCategoryElements = [Int: CategoryElement]()
+		var xmlCategoryElements = [Int: PropertyValue]()
 		for child in xmlElement.children where child.name == "parameter" {
 			guard let indexString = child.attributes["id"], let index = Int(indexString) else {
 				continue
 			}
-			xmlCategoryElements[index] = CategoryElement(key: child.attributes["key"], value: child.text)
+            if let key = child.attributes["key"] {
+                xmlCategoryElements[index] = .key(key)
+            }else{
+                xmlCategoryElements[index] = .value(child.text)
+            }
 		}
 		return xmlCategoryElements
 	}
@@ -415,243 +404,5 @@ internal class XmlTrackerConfigurationParser {
 		}
 
 		return value
-	}
-	
-
-
-	private enum PropertyName:String {
-		case advertisementId = "ADVERTISEMENT"
-		case advertisementAction = "ADVERTISEMENT_ACTION"
-		case birthday = "BIRTHDAY"
-		case city = "CITY"
-		case country = "COUNTRY"
-		case currencyCode = "CURRENCY"
-		case customerId = "CUSTOMER_ID"
-		case emailAddress = "EMAIL"
-		case emailReceiverId = "EMAIL_RID"
-		case firstName = "GNAME"
-		case gender = "GENDER"
-		case internalSearch = "INTERN_SEARCH"
-		case ipAddress = "IP_ADDRESS"
-		case lastName = "SNAME"
-		case newsletterSubscribed = "NEWSLETTER"
-		case orderNumber = "ORDER_NUMBER"
-		case pageUrl = "PAGE_URL"
-		case phoneNumber = "PHONE"
-		case productName = "PRODUCT"
-		case productPrice = "PRODUCT_COST"
-		case productQuantity = "PRODUCT_COUNT"
-		case productStatus = "PRODUCT_STATUS"
-		case street = "STREET"
-		case streetNumber = "STREETNUMBER"
-		case totalValue = "ORDER_TOTAL"
-		case voucherValue = "VOUCHER_VALUE"
-		case zipCode = "ZIP"
-	}
-
-
-	fileprivate class ScreenTrackingParameter {
-		var categories: [String: [Int: CategoryElement]]
-		var parameters: [PropertyName: PropertyValue]
-
-		init(categories: [String: [Int: CategoryElement]], parameters: [PropertyName: PropertyValue]) {
-			self.categories = categories
-			self.parameters = parameters
-		}
-
-		private func resolved(_ elements: [Int: CategoryElement]) -> [Int: TrackingValue]? {
-			var result = [Int: TrackingValue]()
-			for (index, element) in elements {
-				if let key = element.key {
-					switch key {
-					case  "advertiserId":        result[index] = .defaultVariable(.advertisingId)
-					case  "advertisingOptOut":   result[index] = .defaultVariable(.advertisingTrackingEnabled)
-					case  "appVersion":          result[index] = .defaultVariable(.appVersion)
-					case  "connectionType":      result[index] = .defaultVariable(.connectionType)
-					case  "screenOrientation":   result[index] = .defaultVariable(.interfaceOrientation)
-					case  "appUpdated":          result[index] = .defaultVariable(.isFirstEventAfterAppUpdate)
-					case  "requestUrlStoreSize": result[index] = .defaultVariable(.requestQueueSize)
-					default:                     result[index] = .customVariable(name: key)
-					}
-				}
-				else {
-					result[index] = .constant(element.value)
-				}
-			}
-			return result.isEmpty ? nil : result
-		}
-
-
-		fileprivate func actionProperties() -> ActionProperties {
-			return ActionProperties(name: nil, details: categories["actionParameter"].flatMap { resolved($0) })
-		}
-
-
-		fileprivate func advertisementProperties() -> AdvertisementProperties {
-			var advertisementId: String? = nil
-			if let id = parameters[.advertisementId]?.serialized() {
-				advertisementId = id
-			}
-			var advertisementAction: String? = nil
-			if let action = parameters[.advertisementAction]?.serialized() {
-				advertisementAction = action
-			}
-			var details: [Int: TrackingValue]? = nil
-			if let elements = categories["adParameter"], let advertisementDetails = resolved(elements) {
-				details = advertisementDetails
-			}
-
-			return AdvertisementProperties(id: advertisementId, action: advertisementAction, details: details)
-		}
-
-		
-		fileprivate func ecommerceProperties() -> EcommerceProperties {
-        
-            var ecommerceProperties = EcommerceProperties()
-			
-            if let currencyCodeConfig = parameters[.currencyCode] {
-				ecommerceProperties.currencyCodeConfig = currencyCodeConfig
-			}
-            
-			if let orderNumberConfig = parameters[.orderNumber] {
-				ecommerceProperties.orderNumberConfig = orderNumberConfig
-			}
-            
-			if let statusConfig = parameters[.productStatus] {
-                ecommerceProperties.statusConfig = statusConfig
-			}
-
-            if let totalValueConfig = parameters[.totalValue] {
-                ecommerceProperties.totalValueConfig = totalValueConfig
-            }
-
-            if let voucherValueConfig = parameters[.voucherValue] {
-                ecommerceProperties.voucherValueConfig = voucherValueConfig
-            }
-        
-			if let elements = categories["ecomParameter"], let ecommerceDetails = resolved(elements) {
-				ecommerceProperties.details = ecommerceDetails
-			}
-
-			if let productConf = productProperties() {
-				ecommerceProperties.productConf = productConf
-			}
-
-			return ecommerceProperties
-		}
-
-
-		fileprivate func mediaProperties() -> MediaProperties {
-			return MediaProperties(name: nil, groups: categories["mediaCategories"].flatMap { resolved($0) })
-		}
-
-
-		fileprivate func pageProperties() -> PageProperties {
-			var pageProperties = PageProperties(name: nil)
-			if let internalSearchConfig = parameters[.internalSearch] {
-                pageProperties.internalSearchConfig = internalSearchConfig
-			}
-			if let url = parameters[.pageUrl]?.serialized() {
-				pageProperties.url = url
-			}
-			if let elements = categories["pageParameter"], let pageDetails = resolved(elements) {
-				pageProperties.details = pageDetails
-			}
-			if let elements = categories["pageCategories"], let pageGroups = resolved(elements) {
-				pageProperties.groups = pageGroups
-			}
-
-			return pageProperties
-		}
-
-
-		private func productProperties() -> EcommerceProperties.Product? {
-            
-            var productNameConfig: PropertyValue? = nil
-			if let nameConfig = parameters[.productName] {
-				productNameConfig = nameConfig
-			}
-			var productPriceConfig: PropertyValue? = nil
-			if let priceConfig = parameters[.productPrice] {
-				productPriceConfig = priceConfig
-            }
-			var productQuantityConfig: PropertyValue? = nil
-			if let quantityConfig = parameters[.productQuantity] {
-				productQuantityConfig = quantityConfig
-			}
-			var productCategories: [Int: TrackingValue]? = nil
-			if let elements = categories["productCategories"], let productCategoriesElements = resolved(elements) {
-				productCategories = productCategoriesElements
-			}
-
-			guard productNameConfig != nil || productPriceConfig != nil || productQuantityConfig != nil || productCategories != nil else {
-				return nil
-			}
-
-			return EcommerceProperties.Product(nameConfig: productNameConfig, categories: productCategories, priceConfig: productPriceConfig, quantityConfig: productQuantityConfig)
-		}
-
-
-		fileprivate func sessionDetails() -> [Int: TrackingValue] {
-			return categories["sessionParameter"].flatMap { resolved($0) } ?? [:]
-		}
-
-
-		fileprivate func userProperties() -> UserProperties {
-			var userProperties = UserProperties(birthday: nil)
-			if let categoryElements = categories["userCategories"], let details = resolved(categoryElements) {
-				userProperties.details = details
-			}
-			if let bithdayConfig = parameters[.birthday]  {
-				userProperties.birthdayConfig = bithdayConfig
-			}
-			if let city = parameters[.city]?.serialized() {
-				userProperties.city = city
-			}
-			if let country = parameters[.country]?.serialized() {
-				userProperties.country = country
-			}
-			if let idConfig = parameters[.customerId] {
-				userProperties.idConfig = idConfig
-			}
-			if let emailAddressConfig = parameters[.emailAddress] {
-				userProperties.emailAddressConfig = emailAddressConfig
-			}
-			if let emailReceiverIdConfig = parameters[.emailReceiverId] {
-				userProperties.emailReceiverIdConfig = emailReceiverIdConfig
-			}
-			if let firstName = parameters[.firstName]?.serialized() {
-				userProperties.city = firstName
-			}
-			if let genderConfig = parameters[.gender] {
-                userProperties.genderConfig = genderConfig
-            }
-			if let lastName = parameters[.lastName]?.serialized() {
-				userProperties.city = lastName
-			}
-			if let newsletterSubscribed = parameters[.newsletterSubscribed]?.serialized() {
-				userProperties.city = newsletterSubscribed
-			}
-			if let phoneNumber = parameters[.phoneNumber]?.serialized() {
-				userProperties.city = phoneNumber
-			}
-			if let street = parameters[.street]?.serialized() {
-				userProperties.city = street
-			}
-			if let streetNumber = parameters[.streetNumber]?.serialized() {
-				userProperties.city = streetNumber
-			}
-			if let zipCode = parameters[.zipCode]?.serialized() {
-				userProperties.zipCode = zipCode
-			}
-			return userProperties
-		}
-	}
-
-
-
-	struct CategoryElement {
-		internal var key: String?
-		internal var value: String
 	}
 }

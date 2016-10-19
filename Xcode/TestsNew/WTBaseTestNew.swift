@@ -18,7 +18,8 @@
 //
 
 import XCTest
-import Webtrekk
+@testable import Webtrekk
+import Foundation
 
 class WTBaseTestNew: HttpBaseTestNew {
 
@@ -32,6 +33,10 @@ class WTBaseTestNew: HttpBaseTestNew {
         super.tearDown()
     }
     
+    func getCongigName() -> String?{
+        return nil
+    }
+    
     private func initWebtrekk(){
         
         guard !WebtrekkTracking.isInitialized() else{
@@ -40,10 +45,30 @@ class WTBaseTestNew: HttpBaseTestNew {
         
         WebtrekkTracking.defaultLogger.minimumLevel = .debug
         
-        try! WebtrekkTracking.initTrack()
+        if let configName = getCongigName(){
+            let configFileURL = Bundle.main.url(forResource: configName, withExtension: "xml")
+            try! WebtrekkTracking.initTrack(configFileURL)
+        }else {
+            try! WebtrekkTracking.initTrack()
+        }
     }
     
     private func releaseWebtrekk(){
-        //WTBaseTestNew.tracker = nil
+        rollBackAutoTrackingMethodsSwizz()
+        resetWebtrackInstance()
+    }
+    
+    private func resetWebtrackInstance()
+    {
+        weak var weakTracker = WebtrekkTracking.tracker
+        WebtrekkTracking.tracker = nil
+        
+        while weakTracker != nil {
+            RunLoop.current.run(mode: .defaultRunLoopMode, before: Date(timeIntervalSinceNow:2))
+        }
+    }
+        
+    private func rollBackAutoTrackingMethodsSwizz(){
+        UIViewController.setUpAutomaticTracking()
     }
 }

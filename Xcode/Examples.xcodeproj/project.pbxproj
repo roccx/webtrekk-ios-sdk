@@ -57,6 +57,7 @@
 		9F95D4071DAE424B0068E8F8 /* WTBaseTestNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F1E1D5C7C6D002CB83F /* WTBaseTestNew.swift */; };
 		9F95D40B1DAE7A1E0068E8F8 /* PageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F1B1D5C7C6D002CB83F /* PageTest.swift */; };
 		9F95D40C1DAE7B160068E8F8 /* ParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F1C1D5C7C6D002CB83F /* ParameterTest.swift */; };
+		9FE81AC71DB76BF80065E4EE /* webtrekk_config_no_autoTrack.xml in Resources */ = {isa = PBXBuildFile; fileRef = 9FC69CF91DB65D5700D3A614 /* webtrekk_config_no_autoTrack.xml */; };
 		A9C514BF2D2B3FEF8F5D2490 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCAD442E0E40245586E3D3E2 /* Pods_Tests.framework */; };
 		B0547FC902E3C7899B2603FE /* Pods_SampleTVAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 049BBFD71B759A0D96F0E4BE /* Pods_SampleTVAppTests.framework */; };
 		B72368BB1D3F643100D64C63 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B72368BA1D3F643100D64C63 /* AdSupport.framework */; };
@@ -198,6 +199,7 @@
 		9F95D40E1DAE7FC10068E8F8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SampleTVAppTests/Info.plist; sourceTree = "<group>"; };
 		9FC183801DAE1D64000F6106 /* SampleTVApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleTVApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC183901DAE1D64000F6106 /* SampleTVAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleTVAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FC69CF91DB65D5700D3A614 /* webtrekk_config_no_autoTrack.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = webtrekk_config_no_autoTrack.xml; sourceTree = "<group>"; };
 		AC86ED3C67C08C21A1B1750D /* Pods-TestsOld.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestsOld.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TestsOld/Pods-TestsOld.debug.xcconfig"; sourceTree = "<group>"; };
 		B72368BA1D3F643100D64C63 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		B73DB2301D49ECC200F0C8DD /* iOS Example */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "iOS Example"; path = "Sources/iOS Example"; sourceTree = "<group>"; };
@@ -377,6 +379,7 @@
 		9F415EFF1D5C7C59002CB83F /* ModuleTest */ = {
 			isa = PBXGroup;
 			children = (
+				9FC69CF91DB65D5700D3A614 /* webtrekk_config_no_autoTrack.xml */,
 				9F415F001D5C7C59002CB83F /* AppDelegate.swift */,
 				9F415F011D5C7C59002CB83F /* LaunchScreen.xib */,
 				9F415F031D5C7C59002CB83F /* Main.storyboard */,
@@ -733,6 +736,7 @@
 				9F415F6F1D5CAD35002CB83F /* LaunchScreen.xib in Resources */,
 				9F415F6E1D5CAD30002CB83F /* Main.storyboard in Resources */,
 				9F415F6C1D5CAD21002CB83F /* webtrekk_config.xml in Resources */,
+				9FE81AC71DB76BF80065E4EE /* webtrekk_config_no_autoTrack.xml in Resources */,
 				9F415F6D1D5CAD2A002CB83F /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -83,7 +83,7 @@ class PageTest: WTBaseTestNew {
             expect(parametersArr["uc2"]).to(equal("value2"))
             //expect(parametersArr["mg2"]).to(equal("value2"))
             
-            expect(parametersArr["cp20"]).to(equal("test_pageparam2"))
+            expect(parametersArr["cp20"]).to(equal("cp20Override"))
             expect(parametersArr["cb1"]).to(equal("test_ecomparam1"))
             expect(parametersArr["cc1"]).to(equal("test_adparam1"))
             expect(parametersArr["cs1"]).to(equal("test_sessionparam1"))

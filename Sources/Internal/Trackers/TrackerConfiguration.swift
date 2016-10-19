@@ -119,24 +119,7 @@ internal struct TrackerConfiguration {
 	/**
 	Representation of an automatically tracked page.
 	*/
-	internal struct Page {
-
-		internal var actionProperties: ActionProperties?
-
-		internal var advertisementProperties: AdvertisementProperties?
-
-		internal var ecommerceProperties: EcommerceProperties?
-
-		internal var ipAddress: String?
-
-		internal var mediaProperties: MediaProperties?
-
-		/** Page Properties that should be tracked if not overwritten manually. */
-		internal var pageProperties: PageProperties
-
-		internal var sessionDetails: [Int: TrackingValue]?
-
-		internal var userProperties: UserProperties?
+    internal class Page: BaseProperties {
 
 		/** A Regular Expression to determine a view controller for automatic tracking. */
 		internal var viewControllerTypeNamePattern: NSRegularExpression
@@ -158,15 +141,12 @@ internal struct TrackerConfiguration {
 			sessionDetails: [Int: TrackingValue]? = nil,
 			userProperties: UserProperties? = nil
 		) {
-			self.actionProperties = actionProperties
-			self.advertisementProperties = advertisementProperties
-			self.ecommerceProperties = ecommerceProperties
-			self.ipAddress = ipAddress
-			self.mediaProperties = mediaProperties
-			self.pageProperties = pageProperties
-			self.sessionDetails = sessionDetails
-			self.userProperties = userProperties
-			self.viewControllerTypeNamePattern = viewControllerTypeNamePattern
+            self.viewControllerTypeNamePattern = viewControllerTypeNamePattern
+            super.init(actionProperties: actionProperties ?? ActionProperties(name: nil),
+                       advertisementProperties: advertisementProperties ?? AdvertisementProperties(id: nil),
+                       ecommerceProperties: ecommerceProperties ?? EcommerceProperties(), ipAddress: ipAddress,
+                       mediaProperties: mediaProperties ?? MediaProperties(name: nil), pageProperties: pageProperties ?? PageProperties(name: nil),
+                       sessionDetails: sessionDetails ?? [ : ], userProperties: userProperties ?? UserProperties(birthday: nil))
 		}
 
 

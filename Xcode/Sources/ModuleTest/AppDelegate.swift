@@ -28,8 +28,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions:[UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        WebtrekkTracking.defaultLogger.minimumLevel = .debug
-        try! WebtrekkTracking.initTrack()
+        //WebtrekkTracking.defaultLogger.minimumLevel = .debug
+        //try! WebtrekkTracking.initTrack()
         return true
     }
 

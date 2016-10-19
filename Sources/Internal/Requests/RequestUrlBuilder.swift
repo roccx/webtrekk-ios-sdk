@@ -331,50 +331,30 @@ private extension EcommerceProperties {
 	}
 
 
-	func mergeProductQueryItems(for request: TrackerRequest) -> [URLQueryItem] {
+	private func mergeProductQueryItems(for request: TrackerRequest) -> [URLQueryItem] {
 		
-        if self.products == nil && self.productConf == nil {
+        if self.products == nil {
                 return []
 		}
 
 		var items = [URLQueryItem]()
 
-        if let confName = self.productConf?.name {
-            items.append(URLQueryItem(name: "ba", value: confName))
-        } else {
-            if let names = products?.map({ $0.name ?? "" }) , names.joined(separator: "").nonEmpty != nil {
-                items.append(URLQueryItem(name: "ba", value: names.joined(separator: ";")))
-            }
+        if let names = products?.map({ $0.name ?? "" }) , names.joined(separator: "").nonEmpty != nil {
+            items.append(URLQueryItem(name: "ba", value: names.joined(separator: ";")))
         }
 		
-        if let confPrice = self.productConf?.price {
-            items.append(URLQueryItem(name: "co", value: confPrice))
-        } else {
-            if let prices = products?.map({ $0.price ?? "" }) , prices.joined(separator: "").nonEmpty != nil {
-                items.append(URLQueryItem(name: "co", value: prices.joined(separator: ";")))
-            }
+        if let prices = products?.map({ $0.price ?? "" }) , prices.joined(separator: "").nonEmpty != nil {
+            items.append(URLQueryItem(name: "co", value: prices.joined(separator: ";")))
         }
         
-        if let confQuantity = self.productConf?.quantity {
-            items.append(URLQueryItem(name: "qn", value: String(confQuantity)))
-        } else {
-            if let quantity = products?.map({ $0.quantity.map { String($0) } ?? "" }) , quantity.joined(separator: "").nonEmpty != nil {
-                items.append(URLQueryItem(name: "qn", value: quantity.joined(separator: ";")))
-            }
+        if let quantity = products?.map({ $0.quantity.map { String($0) } ?? "" }) , quantity.joined(separator: "").nonEmpty != nil {
+            items.append(URLQueryItem(name: "qn", value: quantity.joined(separator: ";")))
         }
 
 		var categoryIndexes = Set(products?.flatMap { $0.categories.map { Array($0.keys) } ?? [] } ?? [])
         
-        if let _ = productConf?.categories?.keys {
-            categoryIndexes = categoryIndexes.union(productConf?.categories.map{ Array($0.keys) } ?? [])
-        }
-        
 		for categoryIndex in categoryIndexes {
-            var value: String? = self.productConf?.categories?[categoryIndex]?.serialized(for: request)
-            
-            if value == nil {
-                value = products?.map({ $0.categories?[categoryIndex]?.serialized(for: request) ?? "" }).joined(separator: ";")
-            }
+            let value = products?.map({ $0.categories?[categoryIndex]?.serialized(for: request) ?? "" }).joined(separator: ";")
             
             if let _ = value {
                 items.append(URLQueryItem(name: "ca\(categoryIndex)", value: value))

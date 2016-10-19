@@ -35,10 +35,8 @@ public struct PageProperties {
             }
         }
     }
-    var internalSearchConfig: PropertyValue?
-
-
-	public init(
+	
+    public init(
 		name: String?,
 		details: [Int: TrackingValue]? = nil,
 		groups: [Int: TrackingValue]? = nil,
@@ -49,7 +47,7 @@ public struct PageProperties {
 		self.groups = groups
 		self.name = name
 		self.internalSearch = internalSearch
-        setUpURL(url)
+        setUpURL(url: url)
 	}
 
 
@@ -63,46 +61,23 @@ public struct PageProperties {
 		self.details = details
 		self.groups = groups
 		self.internalSearch = internalSearch
-		setUpURL(url)
+		setUpURL(url: url)
 		self.viewControllerType = viewControllerType
 	}
     
     
-    init(
-        nameComplex: String?,
-        details: [Int: TrackingValue]? = nil,
-        groups: [Int: TrackingValue]? = nil,
-        internalSearchConfig: PropertyValue? = nil,
-        url: String? = nil
-        ) {
-        self.details = details
-        self.groups = groups
-        self.name = nameComplex
-        self.internalSearchConfig = internalSearchConfig
-        setUpURL(url)
-    }
-	
-	
     internal func merged(over other: PageProperties) -> PageProperties {
 		var new = self
 		new.details = details.merged(over: other.details)
 		new.groups = groups.merged(over: other.groups)
 		new.name = name ?? other.name
-        new.internalSearchConfig = internalSearchConfig ?? other.internalSearchConfig
         new.internalSearch = internalSearch ?? other.internalSearch
 		new.viewControllerType = viewControllerType ?? other.viewControllerType
 		new.url = url ?? other.url
 		return new
 	}
     
-    mutating func processKeys(_ event: TrackingEvent)
-    {
-        if let internalSearch = internalSearchConfig?.serialized(for: event) {
-            self.internalSearch = internalSearch
-        }
-    }
-    
-    mutating fileprivate func setUpURL(_ url: String?){
+    mutating private func setUpURL(url: String?){
     
     if isURLCanBeSet(url) {
         self.url = url

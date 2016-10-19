@@ -287,8 +287,6 @@ internal final class RequestManager {
 			currentRequest = url
 		}
 
-		logDebug("Sending: \(url)")
-
 		pendingTask = fetch(url: url) { data, error in
 			self.pendingTask = nil
 
@@ -325,8 +323,6 @@ internal final class RequestManager {
 			self.currentFailureCount = 0
 			self.currentRequest = nil
 			let _ = self.queue.removeFirstEqual(url)
-
-			logDebug("Sent: \(url)")
 
 			self.delegate?.requestManager(self, didSendRequest: url)
 
