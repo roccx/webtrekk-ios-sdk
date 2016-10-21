@@ -171,6 +171,9 @@ internal class XmlTrackerConfigurationParser {
 		if let maximumSendDelay = maximumSendDelay {
 			trackerConfiguration.maximumSendDelay = maximumSendDelay
             logDebug("sendDelay is:\(maximumSendDelay)")
+            if maximumSendDelay == 0 {
+                logInfo("sendDelay is equal to 0, please use sendPendingEvents for manual message send")
+            }
 		}
 
 		if let version = version {
