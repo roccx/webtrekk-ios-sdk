@@ -33,6 +33,7 @@ internal final class RequestManager {
 	private var pendingTask: URLSessionDataTask?
 	private var sendNextRequestTimer: Timer?
 	private let urlSession: URLSession
+    private let manualStart: Bool
 
 	#if !os(watchOS)
 	private let reachability: Reachability?
@@ -45,11 +46,12 @@ internal final class RequestManager {
 	internal weak var delegate: Delegate?
 
 
-	internal init(queueLimit: Int) {
+    internal init(queueLimit: Int, manualStart: Bool) {
 		checkIsOnMainThread()
 
 		self.queueLimit = queueLimit
 		self.urlSession = RequestManager.createUrlSession()
+        self.manualStart = manualStart
 
 		#if !os(watchOS)
         
@@ -122,9 +124,11 @@ internal final class RequestManager {
 
 		queue.append(request)
 
-		logInfo("Queued: \(request)")
+        logDebug("Queued: \(request.absoluteString.replacingOccurrences(of: "&", with: "  "))")
 
-		sendNextRequest(maximumDelay: maximumDelay)
+        if !manualStart {
+            sendNextRequest(maximumDelay: maximumDelay)
+        }
 	}
 
 
@@ -319,8 +323,10 @@ internal final class RequestManager {
 				self.sendNextRequest(maximumDelay: retryDelay)
 				return
 			}
-
-			self.currentFailureCount = 0
+            
+            logDebug("Request has been sent successefully")
+			
+            self.currentFailureCount = 0
 			self.currentRequest = nil
 			let _ = self.queue.removeFirstEqual(url)
 
@@ -337,11 +343,7 @@ internal final class RequestManager {
 		guard !queue.isEmpty else {
 			return
 		}
-		guard maximumDelay > 0 else {
-			sendAllRequests()
-			return
-		}
-
+		
 		if let sendNextRequestTimer = sendNextRequestTimer {
 			let fireDate = Date(timeIntervalSinceNow: maximumDelay)
 			if fireDate.compare(sendNextRequestTimer.fireDate) == ComparisonResult.orderedAscending {
@@ -367,7 +369,9 @@ internal final class RequestManager {
 
 		started = true
 
-		sendNextRequest()
+        if !manualStart {
+            sendNextRequest()
+        }
 	}
 
 

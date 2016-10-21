@@ -46,22 +46,39 @@ class HttpBaseTestNew: XCTestCase {
             return
         }
         
+        addNormalStub(process: {HttpBaseTestNew.request = $0})
+    }
+    
+    
+    func addNormalStub(process closure: @escaping (_ query: URLRequest)->())
+    {
         HttpBaseTestNew.stubDescription = stub(condition: isHost("q3.webtrekk.net")){ request in
             
-            HttpBaseTestNew.request = request
+            closure(request)
             
             let stubPath = OHPathForFile("stub.jpg", type(of: self))
             return fixture(filePath: stubPath!, headers: ["Content-Type" as NSObject:"image/jpeg" as AnyObject])
         }
-        
     }
     
-    func releaseHTTPServer()
-    {
+    func removeStub(){
         if let stubDescr = HttpBaseTestNew.stubDescription {
             OHHTTPStubs.removeStub(stubDescr)
             HttpBaseTestNew.stubDescription = nil
         }
+    }
+    
+    func addConnectionInterruptionStub(){
+        HttpBaseTestNew.stubDescription = stub(condition: isHost("q3.webtrekk.net")){ request in
+            
+            let notConnectedError = NSError(domain:NSURLErrorDomain, code:NSURLErrorNotConnectedToInternet, userInfo:nil)
+            return OHHTTPStubsResponse(error:notConnectedError)
+        }
+    }
+
+    func releaseHTTPServer()
+    {
+        removeStub()
     }
     
     func doURLSendTestAction(_ closure: ()->()){
@@ -69,7 +86,7 @@ class HttpBaseTestNew: XCTestCase {
         closure()
     }
     
-    private func getReceivedURLParameters(_ query: String) -> [String:String]
+    func getReceivedURLParameters(_ query: String) -> [String:String]
     {
         let valueKeys = query.characters.split(separator: "&")
         var keyValueMap = [String: String]()

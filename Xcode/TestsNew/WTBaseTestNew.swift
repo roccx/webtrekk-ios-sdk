@@ -20,15 +20,18 @@
 import XCTest
 @testable import Webtrekk
 import Foundation
+import Nimble
 
 class WTBaseTestNew: HttpBaseTestNew {
 
     override func setUp() {
         super.setUp()
         initWebtrekk()
+        checkStartCondition()
     }
     
     override func tearDown() {
+        checkFinishCondition()
         releaseWebtrekk()
         super.tearDown()
     }
@@ -46,7 +49,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         WebtrekkTracking.defaultLogger.minimumLevel = .debug
         
         if let configName = getCongigName(){
-            let configFileURL = Bundle.main.url(forResource: configName, withExtension: "xml")
+            let configFileURL = Bundle.main.url(forResource: configName, withExtension: "xml", subdirectory: "Configurations/")
             try! WebtrekkTracking.initTrack(configFileURL)
         }else {
             try! WebtrekkTracking.initTrack()
@@ -71,4 +74,55 @@ class WTBaseTestNew: HttpBaseTestNew {
     private func rollBackAutoTrackingMethodsSwizz(){
         UIViewController.setUpAutomaticTracking()
     }
+    
+    private func checkStartCondition(){
+        expect(self.isBackupFileExists()).to(equal(false))
+    }
+    
+    private func checkFinishCondition(){
+        expect(self.isBackupFileExists()).to(equal(false))
+    }
+    
+    private func isBackupFileExists() -> Bool{
+        let file = WTBaseTestNew.requestQueueBackupFileForWebtrekkId("123451234512345")
+        
+        return FileManager.default.itemExistsAtURL(file!)
+    }
+    
+    static func requestQueueBackupFileForWebtrekkId(_ webtrekkId: String) -> URL? {
+        
+        let searchPathDirectory: FileManager.SearchPathDirectory
+        #if os(iOS) || os(OSX) || os(watchOS)
+            searchPathDirectory = .applicationSupportDirectory
+        #elseif os(tvOS)
+            searchPathDirectory = .cachesDirectory
+        #endif
+        
+        let fileManager = FileManager.default
+        
+        var directory: URL
+        do {
+            directory = try fileManager.url(for: searchPathDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        }
+        catch let error {
+            WebtrekkTracking.defaultLogger.logError("Test: Cannot find directory for storing request queue backup file: \(error)")
+            return nil
+        }
+        
+        directory = directory.appendingPathComponent("Webtrekk")
+        directory = directory.appendingPathComponent(webtrekkId)
+        
+        if !fileManager.itemExistsAtURL(directory) {
+            do {
+                try fileManager.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [URLResourceKey.isExcludedFromBackupKey.rawValue: true])
+            }
+            catch let error {
+                WebtrekkTracking.defaultLogger.logError("Test: Cannot create directory at '\(directory)' for storing request queue backup file: \(error)")
+                return nil
+            }
+        }
+        
+        return directory.appendingPathComponent("requestQueue.archive")
+    }
+
 }

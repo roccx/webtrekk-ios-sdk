@@ -31,7 +31,7 @@ class ParameterTest: WTBaseTestNew {
     }
 
     
-    func atestVariablesParameterGlobal()
+    func testVariablesParameterGlobal()
     {
         
                 doURLSendTestAction(){
@@ -98,7 +98,7 @@ class ParameterTest: WTBaseTestNew {
                 }
     }
     
-    func atestVariablesParameterScreen()
+    func testVariablesParameterScreen()
     {
         if self.mainViewController == nil {
             self.mainViewController = ViewController()

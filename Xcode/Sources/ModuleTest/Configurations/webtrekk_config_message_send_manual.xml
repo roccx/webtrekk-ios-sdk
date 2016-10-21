@@ -11,13 +11,13 @@
     <!-- measure only a subset of the users -->
     <sampling>0</sampling>
     <!-- interval between the requests are send in seconds -->
-    <sendDelay>5</sendDelay>
+    <sendDelay>0</sendDelay>
     <!--maximum amoount of requests to store when the user is offline -->
     <maxRequests>5000</maxRequests>
     
     <!--optional settings -->
     <!--automaticly track activities onStart method -->
-    <autoTracked>true</autoTracked>
+    <autoTracked>false</autoTracked>
     
     
     <!--track if there was an application update -->
@@ -112,6 +112,7 @@
         <adParameter>
             <parameter id="1">test_adparam1</parameter>
             <parameter id="2" key="Key2"></parameter>
+            <parameter id="23" key="Key23"></parameter>
         </adParameter>
         <actionParameter>
             <parameter id="1">test_actionparam1</parameter>
@@ -134,7 +135,7 @@
     <screen>
         <classname>com.Webtrekk.SDKTest.MainActivity</classname>
         <mappingname>Startseite</mappingname>
-        <autoTracked>true</autoTracked>
+        <autoTracked>false</autoTracked>
         
         <!--screen tracking parameter -->
         <screenTrackingParameter>
@@ -180,7 +181,7 @@
     <screen>
         <classname>ViewController</classname>
         <mappingname>autoPageName</mappingname>
-        <autoTracked>true</autoTracked>
+        <autoTracked>false</autoTracked>
         <screenTrackingParameter>
                 <parameter id="CURRENCY" key="CURRENCYOver"></parameter>
                 <parameter id="PRODUCT" key="PRODUCT"></parameter>

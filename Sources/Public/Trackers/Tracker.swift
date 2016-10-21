@@ -37,6 +37,8 @@ public protocol Tracker: class {
 	func applicationDidFinishLaunching()
 	#endif
 
+    /**Functions sends all request from cache to server. Function can be used only for manual send mode, when <sendDelay>0</sendDelay>
+     otherwise it returns false. It returns true if asynchronus command for sending is done*/
 	func sendPendingEvents()
 
 	func trackAction(_ event: ActionEvent)

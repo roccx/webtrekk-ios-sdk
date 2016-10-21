@@ -48,12 +48,12 @@ internal final class DefaultTracker: Tracker {
 	private var isFirstEventOfSession = true
 	private var isSampling = false
 	fileprivate let requestManager: RequestManager
-	private var requestManagerStartTimer: Timer?
 	private let requestQueueBackupFile: URL?
 	private var requestQueueLoaded = false
 	private let requestUrlBuilder: RequestUrlBuilder
     private let campaign: Campaign
     private let deepLink = DeepLink()
+    private var manualStart: Bool?;
     /**this value override pu parameter if it is setup from code in any other way or configuraion xml*/
     var pageURL: String?
 
@@ -118,7 +118,8 @@ internal final class DefaultTracker: Tracker {
 		self.defaults = defaults
 		self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
 		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
-		self.requestManager = RequestManager(queueLimit: configuration.requestQueueLimit)
+        self.manualStart = configuration.maximumSendDelay == 0
+        self.requestManager = RequestManager(queueLimit: configuration.requestQueueLimit, manualStart: self.manualStart!)
 		self.requestQueueBackupFile = DefaultTracker.requestQueueBackupFileForWebtrekkId(configuration.webtrekkId)
 		self.requestUrlBuilder = RequestUrlBuilder(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId)
 
@@ -173,40 +174,25 @@ internal final class DefaultTracker: Tracker {
 	internal func applicationDidFinishLaunching() {
 		checkIsOnMainThread()
 
-		if requestManagerStartTimer == nil {
-			requestManagerStartTimer = NSTimer.scheduledTimerWithTimeInterval(configuration.maximumSendDelay) {
-				self.startRequestManager()
-			}
-		}
-
 		NSTimer.scheduledTimerWithTimeInterval(15) {
 			self.updateConfiguration()
 		}
 	}
 	#else
+    
 	internal func initTimers() {
 		checkIsOnMainThread()
 
-		if requestManagerStartTimer == nil {
-			requestManagerStartTimer = Timer.scheduledTimerWithTimeInterval(configuration.maximumSendDelay) {
-				self.startRequestManager()
-			}
-		}
-
-		let _ = Timer.scheduledTimerWithTimeInterval(15) {
+        startRequestManager()
+		
+        let _ = Timer.scheduledTimerWithTimeInterval(15) {
 			self.updateConfiguration()
 		}
 	}
-
-
+    
+    
 	private func applicationDidBecomeActive() {
 		checkIsOnMainThread()
-
-		if requestManagerStartTimer == nil {
-			requestManagerStartTimer = Timer.scheduledTimerWithTimeInterval(configuration.maximumSendDelay) {
-				self.startRequestManager()
-			}
-		}
 
 		if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
 			application.endBackgroundTask(backgroundTaskIdentifier)
@@ -235,14 +221,8 @@ internal final class DefaultTracker: Tracker {
 			}
 		}
 
-		if let requestManagerStartTimer = requestManagerStartTimer {
-			self.requestManagerStartTimer = nil
-			requestManagerStartTimer.fire()
-		}
-
 		if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
 			saveRequestQueue()
-			requestManager.sendAllRequests()
 		}
 		else {
 			stopRequestManager()
@@ -583,7 +563,6 @@ internal final class DefaultTracker: Tracker {
     private func applyKeys(keys: [String:String], properties: BaseProperties) -> BaseProperties{
         
         guard let trackingParameter = properties.trackingParameters else {
-            WebtrekkTracking.defaultLogger.logError("no tracking parameters for properties")
             return properties
         }
         
@@ -846,13 +825,17 @@ internal final class DefaultTracker: Tracker {
 		return directory.appendingPathComponent("requestQueue.archive")
 	}
 
-
+    /**Functions sends all request from cache to server. Function can be used only for manual send mode, when <sendDelay>0</sendDelay>
+     otherwise it produce error log and don't do anything*/
 	internal func sendPendingEvents() {
 		checkIsOnMainThread()
 
-		startRequestManager()
-
-		requestManager.sendAllRequests()
+        guard let manualStart = self.manualStart, manualStart else {
+            WebtrekkTracking.defaultLogger.logError("No manual send mode (sendDelay == 0). Command is ignored. ")
+            return
+        }
+        
+        requestManager.sendAllRequests()
 	}
 
 
@@ -937,18 +920,9 @@ internal final class DefaultTracker: Tracker {
 	fileprivate func startRequestManager() {
 		checkIsOnMainThread()
 
-		requestManagerStartTimer?.invalidate()
-		requestManagerStartTimer = nil
-
 		guard !requestManager.started else {
 			return
 		}
-
-		#if !os(watchOS)
-			guard application.applicationState == .active else {
-				return
-			}
-		#endif
 
 		loadRequestQueue()
 		requestManager.start()
@@ -1256,7 +1230,7 @@ extension DefaultTracker: RequestManager.Delegate {
 	internal func requestManager(_ requestManager: RequestManager, didSendRequest request: URL) {
 		checkIsOnMainThread()
 
-		requestManagerDidFinishRequest()
+		//requestManagerDidFinishRequest()
 	}
 
 

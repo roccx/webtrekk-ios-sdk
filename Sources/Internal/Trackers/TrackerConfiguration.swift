@@ -24,7 +24,7 @@ import UIKit
 internal struct TrackerConfiguration {
 
 	/** Allowed values for sendDelay */
-	internal static let allowedMaximumSendDelays: ClosedRange<TimeInterval> = 5 ... .infinity
+	internal static let allowedMaximumSendDelays: ClosedRange<TimeInterval> = 0 ... .infinity
 
 	/** Allowed values for requestQueueLimit */
 	internal static let allowedRequestQueueLimits: ClosedRange<Int> = 1 ... .max
@@ -56,7 +56,7 @@ internal struct TrackerConfiguration {
 	/** Url of the remote configuration. */
 	internal var configurationUpdateUrl: URL? = nil
 
-	/** Delay after which the event request is send to the server. */
+	/** Timeout between sending message to server. */
 	internal var maximumSendDelay = TimeInterval(5 * 60)
 
 	/** Maxiumum number of request which are stored before sending. */

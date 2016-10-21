@@ -142,6 +142,9 @@ internal class XmlTrackerConfigurationParser {
 		guard let webtrekkId = webtrekkId, let serverUrl = serverUrl else {
 			throw TrackerError(message: "trackId and trackDomain must be set.")
 		}
+        
+        logDebug("track domain is:\(serverUrl)")
+        logDebug("trackID is:\(webtrekkId)")
 
 		var trackerConfiguration = TrackerConfiguration(webtrekkId: webtrekkId, serverUrl: serverUrl)
 
@@ -167,6 +170,7 @@ internal class XmlTrackerConfigurationParser {
 
 		if let maximumSendDelay = maximumSendDelay {
 			trackerConfiguration.maximumSendDelay = maximumSendDelay
+            logDebug("sendDelay is:\(maximumSendDelay)")
 		}
 
 		if let version = version {
