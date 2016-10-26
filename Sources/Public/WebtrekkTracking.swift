@@ -37,22 +37,27 @@ public class WebtrekkTracking {
 	public static var migratesFromLibraryV3 = true
     
     /** Main track object */
-    internal static var tracker: Tracker?
+    internal static var tracker: Tracker? = nil
     
      /** Get main shared Webtrekk instance. */
     public static func instance() -> Tracker
     {
-        guard tracker != nil else
-        {
-            logger.logError("Tracker isn't initialized. Please call initTrack() first. Application will crash")
-            return tracker!
+        if tracker == nil {
+            tracker = DefaultTracker()
         }
+        
         return tracker!
     }
     
     /** return true if Webtrekk is already initialized. */
     public static func isInitialized()->Bool{
-        return tracker != nil
+        
+        guard instance() != nil else {
+            return false
+        }
+        
+        let tracker = self.tracker as! DefaultTracker
+        return tracker.isInitialited
     }
 
     /** initialize tracking. It should be called before invoking instance() function
@@ -61,18 +66,13 @@ public class WebtrekkTracking {
      and xml extension*/
     public static func initTrack(_ configurationFile: URL? = nil) throws
     {
-        guard tracker == nil else {
-            logger.logWarning("Tracker is arleady initialized. No twice initialization done.")
-            return
-        }
-        
         guard let confFile = configurationFile ?? Bundle.main.url(forResource: "webtrekk_config", withExtension: "xml") else {
             throw TrackerError(message: "Cannot locate webtrekk_config.xml in '\(Bundle.main.bundlePath)'. Either place the file there or use WebtrekkTracking.createTracker(configurationFile:) to specify the file's location.")
         }
         
         checkIsOnMainThread()
         
-        tracker = try createTracker(configurationFile: confFile)
+        try createTracker(configurationFile: confFile)
     }
 
 	/**
@@ -89,7 +89,8 @@ public class WebtrekkTracking {
 		}
 
 		do {
-			let tracker = DefaultTracker(configuration: try XmlTrackerConfigurationParser().parse(xml: configurationData))
+			let tracker = instance() as! DefaultTracker
+            tracker.initializeTracking(configuration: try XmlTrackerConfigurationParser().parse(xml: configurationData))
             
             tracker.initTimers()
             

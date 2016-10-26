@@ -31,7 +31,7 @@ import UIKit
 #endif
 
 
-internal final class DefaultTracker: Tracker {
+final class DefaultTracker: Tracker {
 
 	private static var instances = [ObjectIdentifier: WeakReference<DefaultTracker>]()
 	private static let sharedDefaults = UserDefaults.standardDefaults.child(namespace: "webtrekk")
@@ -44,112 +44,135 @@ internal final class DefaultTracker: Tracker {
 	fileprivate var backgroundTaskIdentifier = UIBackgroundTaskInvalid
 	#endif
 
-	private let defaults: UserDefaults
+	private var defaults: UserDefaults?
 	private var isFirstEventOfSession = true
 	private var isSampling = false
-	fileprivate let requestManager: RequestManager
-	private let requestQueueBackupFile: URL?
+	fileprivate var requestManager: RequestManager?
+	private var requestQueueBackupFile: URL?
 	private var requestQueueLoaded = false
-	private let requestUrlBuilder: RequestUrlBuilder
-    private let campaign: Campaign
+	private var requestUrlBuilder: RequestUrlBuilder?
+    private var campaign: Campaign?
     private let deepLink = DeepLink()
-    private var manualStart: Bool?;
+    private var manualStart: Bool = false;
+    var isInitialited: Bool = false
     /**this value override pu parameter if it is setup from code in any other way or configuraion xml*/
     var pageURL: String?
 
 	internal var global = GlobalProperties()
 	internal var plugins = [TrackerPlugin]()
-
-
-	internal init(configuration: TrackerConfiguration) {
-		checkIsOnMainThread()
-
-		let sharedDefaults = DefaultTracker.sharedDefaults
-		var defaults = sharedDefaults.child(namespace: configuration.webtrekkId)
-
-		var migratedRequestQueue: [URL]?
-		if let webtrekkId = configuration.webtrekkId.nonEmpty , !(sharedDefaults.boolForKey(DefaultsKeys.migrationCompleted) ?? false) {
-			sharedDefaults.set(key: DefaultsKeys.migrationCompleted, to: true)
-
-			if WebtrekkTracking.migratesFromLibraryV3, let migration = Migration.migrateFromLibraryV3(webtrekkId: webtrekkId) {
-
-				sharedDefaults.set(key: DefaultsKeys.everId, to: migration.everId)
-
-				if let appVersion = migration.appVersion {
-					defaults.set(key: DefaultsKeys.appVersion, to: appVersion)
-				}
-				if !DefaultTracker.isOptedOutWasSetManually, let isOptedOut = migration.isOptedOut {
-					sharedDefaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
-				}
-				if let samplingRate = migration.samplingRate, let isSampling = migration.isSampling {
-					defaults.set(key: DefaultsKeys.isSampling, to: isSampling)
-					defaults.set(key: DefaultsKeys.samplingRate, to: samplingRate)
-				}
-
-				migratedRequestQueue = migration.requestQueue as [URL]?
-
-				logInfo("Migrated from Webtrekk Library v3: \(migration)")
-			}
-		}
-
-		var configuration = configuration
-		if let configurationData = defaults.dataForKey(DefaultsKeys.configuration) {
-			do {
-				let savedConfiguration = try XmlTrackerConfigurationParser().parse(xml: configurationData)
-				if savedConfiguration.version > configuration.version {
-					logDebug("Using saved configuration (version \(savedConfiguration.version)).")
-					configuration = savedConfiguration
-				}
-			}
-			catch let error {
-				logError("Cannot load saved configuration. Will fall back to initial configuration. Error: \(error)")
-			}
-		}
-
-		let validatedConfiguration = DefaultTracker.validatedConfiguration(configuration)
-
-		if validatedConfiguration.webtrekkId != configuration.webtrekkId {
-			defaults = sharedDefaults.child(namespace: validatedConfiguration.webtrekkId)
-		}
-
-		configuration = validatedConfiguration
-
-		self.configuration = configuration
-		self.defaults = defaults
-		self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
-		self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
+    
+    
+    func initializeTracking(configuration: TrackerConfiguration) -> Bool{
+        
+        checkIsOnMainThread()
+        
+        guard !self.isInitialited else {
+            logError("Webtrekk SDK has been already initialized.")
+            return false
+        }
+        
+        let sharedDefaults = DefaultTracker.sharedDefaults
+        var defaults = DefaultTracker.sharedDefaults.child(namespace: configuration.webtrekkId)
+        
+        var migratedRequestQueue: [URL]?
+        if let webtrekkId = configuration.webtrekkId.nonEmpty , !(DefaultTracker.sharedDefaults.boolForKey(DefaultsKeys.migrationCompleted) ?? false) {
+            DefaultTracker.sharedDefaults.set(key: DefaultsKeys.migrationCompleted, to: true)
+            
+            if WebtrekkTracking.migratesFromLibraryV3, let migration = Migration.migrateFromLibraryV3(webtrekkId: webtrekkId) {
+                
+                DefaultTracker.sharedDefaults.set(key: DefaultsKeys.everId, to: migration.everId)
+                
+                if let appVersion = migration.appVersion {
+                    defaults.set(key: DefaultsKeys.appVersion, to: appVersion)
+                }
+                if !DefaultTracker.isOptedOutWasSetManually, let isOptedOut = migration.isOptedOut {
+                    DefaultTracker.sharedDefaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
+                }
+                if let samplingRate = migration.samplingRate, let isSampling = migration.isSampling {
+                    defaults.set(key: DefaultsKeys.isSampling, to: isSampling)
+                    defaults.set(key: DefaultsKeys.samplingRate, to: samplingRate)
+                }
+                
+                migratedRequestQueue = migration.requestQueue as [URL]?
+                
+                logInfo("Migrated from Webtrekk Library v3: \(migration)")
+            }
+        }
+        
+        var configuration = configuration
+        if let configurationData = defaults.dataForKey(DefaultsKeys.configuration) {
+            do {
+                let savedConfiguration = try XmlTrackerConfigurationParser().parse(xml: configurationData)
+                if savedConfiguration.version > configuration.version {
+                    logDebug("Using saved configuration (version \(savedConfiguration.version)).")
+                    configuration = savedConfiguration
+                }
+            }
+            catch let error {
+                logError("Cannot load saved configuration. Will fall back to initial configuration. Error: \(error)")
+            }
+        }
+        
+        guard let validatedConfiguration = DefaultTracker.validatedConfiguration(configuration) else {
+            logError("Invalid configuration initialization error")
+            return false
+        }
+        
+        if validatedConfiguration.webtrekkId != configuration.webtrekkId {
+            defaults = DefaultTracker.sharedDefaults.child(namespace: validatedConfiguration.webtrekkId)
+        }
+        
+        configuration = validatedConfiguration
+        
+        checkForAppUpdate()
+        
+        self.configuration = configuration
+        self.defaults = defaults
+        self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
+        self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
         self.manualStart = configuration.maximumSendDelay == 0
-        self.requestManager = RequestManager(queueLimit: configuration.requestQueueLimit, manualStart: self.manualStart!)
-		self.requestQueueBackupFile = DefaultTracker.requestQueueBackupFileForWebtrekkId(configuration.webtrekkId)
-		self.requestUrlBuilder = RequestUrlBuilder(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId)
-
+        self.requestManager = RequestManager(queueLimit: configuration.requestQueueLimit, manualStart: self.manualStart)
+        self.requestQueueBackupFile = DefaultTracker.requestQueueBackupFileForWebtrekkId(configuration.webtrekkId)
+        self.requestUrlBuilder = RequestUrlBuilder(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId)
+        
         self.campaign = Campaign(trackID: configuration.webtrekkId)
         
-        campaign.processCampaign()
-		
+        campaign?.processCampaign()
+        
         DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
-
-		requestManager.delegate = self
-
-		if let migratedRequestQueue = migratedRequestQueue , !DefaultTracker.isOptedOut {
-			requestManager.prependRequests(migratedRequestQueue)
-		}
-
-		setUp()
-
-		checkForDuplicateTrackers()
-
-	}
+        
+        requestManager?.delegate = self
+        
+        if let migratedRequestQueue = migratedRequestQueue , !DefaultTracker.isOptedOut {
+            requestManager?.prependRequests(migratedRequestQueue)
+        }
+        
+        setUp()
+        
+        checkForDuplicateTrackers()
+        
+        logInfo("Initialization is completed")
+        self.isInitialited = true
+        return true
+    }
+    
+    
+    func checkIfInitialized() -> Bool{
+        if !self.isInitialited {
+            logError("Webtrekk SDK isn't initialited")
+        }
+        
+        return self.isInitialited
+    }
 
 
 	deinit {
 		let id = ObjectIdentifier(self)
-		let requestManager = self.requestManager
-
-		onMainQueue(synchronousIfPossible: true) {
+		
+        onMainQueue(synchronousIfPossible: true) {
 			DefaultTracker.instances[id] = nil
 
-			if requestManager.started {
+			if let requestManager = self.requestManager, requestManager.started {
 				requestManager.stop()
 			}
 		}
@@ -203,8 +226,12 @@ internal final class DefaultTracker: Tracker {
 
 	private func applicationWillResignActive() {
 		checkIsOnMainThread()
+        
+        guard checkIfInitialized() else {
+            return
+        }
 
-		defaults.set(key: DefaultsKeys.appHibernationDate, to: Date())
+		defaults?.set(key: DefaultsKeys.appHibernationDate, to: Date())
 
 		if backgroundTaskIdentifier == UIBackgroundTaskInvalid {
 			backgroundTaskIdentifier = application.beginBackgroundTask(withName: "Webtrekk Tracker #\(configuration.webtrekkId)") { [weak self] in
@@ -212,7 +239,7 @@ internal final class DefaultTracker: Tracker {
 					return
 				}
 
-				if self.requestManager.started {
+				if let started = self.requestManager?.started, started {
 					self.stopRequestManager()
 				}
 
@@ -232,8 +259,12 @@ internal final class DefaultTracker: Tracker {
 
 	private func applicationWillEnterForeground() {
 		checkIsOnMainThread()
+        
+        guard self.checkIfInitialized() else {
+            return
+        }
 
-		if let hibernationDate = defaults.dateForKey(DefaultsKeys.appHibernationDate) , -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
+		if let hibernationDate = defaults?.dateForKey(DefaultsKeys.appHibernationDate) , -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
 			isFirstEventOfSession = false
 		}
 		else {
@@ -254,9 +285,9 @@ internal final class DefaultTracker: Tracker {
 	private func checkForAppUpdate() {
 		checkIsOnMainThread()
 
-		let lastCheckedAppVersion = defaults.stringForKey(DefaultsKeys.appVersion)
+		let lastCheckedAppVersion = defaults?.stringForKey(DefaultsKeys.appVersion)
 		if lastCheckedAppVersion != Environment.appVersion {
-			defaults.set(key: DefaultsKeys.appVersion, to: Environment.appVersion)
+			defaults?.set(key: DefaultsKeys.appVersion, to: Environment.appVersion)
 
 			if lastCheckedAppVersion != nil {
 				isFirstEventAfterAppUpdate = true
@@ -273,16 +304,14 @@ internal final class DefaultTracker: Tracker {
 	}
 
 
-	internal fileprivate(set) var configuration: TrackerConfiguration {
+	internal fileprivate(set) var configuration: TrackerConfiguration! {
 		didSet {
 			checkIsOnMainThread()
+            
+			requestManager?.queueLimit = configuration.requestQueueLimit
 
-			self.configuration = DefaultTracker.validatedConfiguration(configuration)
-
-			requestManager.queueLimit = configuration.requestQueueLimit
-
-			requestUrlBuilder.serverUrl = configuration.serverUrl
-			requestUrlBuilder.webtrekkId = configuration.webtrekkId
+			requestUrlBuilder?.serverUrl = configuration.serverUrl
+			requestUrlBuilder?.webtrekkId = configuration.webtrekkId
 
 			updateSampling()
 
@@ -299,6 +328,10 @@ internal final class DefaultTracker: Tracker {
 		guard validateEvent(event) else {
 			return nil
 		}
+        
+        guard self.checkIfInitialized() else {
+            return nil
+        }
 
 		var requestProperties = TrackerRequest.Properties(
 			everId:       everId,
@@ -336,7 +369,7 @@ internal final class DefaultTracker: Tracker {
 			requestProperties.appVersion = Environment.appVersion
 		}
 		if configuration.automaticallyTracksRequestQueueSize {
-			requestProperties.requestQueueSize = requestManager.queue.count
+			requestProperties.requestQueueSize = requestManager?.queue.count
 		}
 
 		#if !os(watchOS) && !os(tvOS)
@@ -360,6 +393,10 @@ internal final class DefaultTracker: Tracker {
 	internal func enqueueRequestForEvent(_ event: TrackingEvent) {
 		checkIsOnMainThread()
 
+        guard self.checkIfInitialized() else {
+            return
+        }
+        
         //merge lowest priority global properties over request properties.
         
         var event = globalPropertiesByApplyingEvent(from: event)
@@ -382,8 +419,8 @@ internal final class DefaultTracker: Tracker {
 			request = plugin.tracker(self, requestForQueuingRequest: request)
 		}
 
-		if shouldEnqueueNewEvents, let requestUrl = requestUrlBuilder.urlForRequest(request) {
-			requestManager.enqueueRequest(requestUrl, maximumDelay: configuration.maximumSendDelay)
+		if shouldEnqueueNewEvents, let requestUrl = requestUrlBuilder?.urlForRequest(request) {
+			requestManager?.enqueueRequest(requestUrl, maximumDelay: configuration.maximumSendDelay)
 		}
 
 		for plugin in plugins {
@@ -425,7 +462,7 @@ internal final class DefaultTracker: Tracker {
                 return nil
         }
         
-        if let mc = campaign.getAndDeletSavedMediaCode() {
+        if let mc = self.campaign?.getAndDeletSavedMediaCode() {
                 var returnEvent = event
                     
                 var eventWithAdvertisementProperties = returnEvent as! TrackingEventWithAdvertisementProperties
@@ -478,7 +515,7 @@ internal final class DefaultTracker: Tracker {
 
 		guard let
 			viewControllerType = event.viewControllerType,
-			let pageProperties = configuration.automaticallyTrackedPageForViewControllerType(viewControllerType)
+			let pageProperties = self.configuration.automaticallyTrackedPageForViewControllerType(viewControllerType)
 		else {
 			return event
 		}
@@ -636,7 +673,7 @@ internal final class DefaultTracker: Tracker {
     //cash for ever id
     private var everIdInternal: String?
     
-    private var isFirstEventAfterAppUpdate: Bool {
+    private var isFirstEventAfterAppUpdate: Bool = false {
 		didSet {
 			checkIsOnMainThread()
 
@@ -644,12 +681,12 @@ internal final class DefaultTracker: Tracker {
 				return
 			}
 
-			defaults.set(key: DefaultsKeys.isFirstEventAfterAppUpdate, to: isFirstEventAfterAppUpdate)
+			defaults?.set(key: DefaultsKeys.isFirstEventAfterAppUpdate, to: isFirstEventAfterAppUpdate)
 		}
 	}
 
 
-	private var isFirstEventOfApp: Bool {
+	private var isFirstEventOfApp: Bool = true {
 		didSet {
 			checkIsOnMainThread()
 
@@ -657,7 +694,7 @@ internal final class DefaultTracker: Tracker {
 				return
 			}
 
-			defaults.set(key: DefaultsKeys.isFirstEventOfApp, to: isFirstEventOfApp)
+			defaults?.set(key: DefaultsKeys.isFirstEventOfApp, to: isFirstEventOfApp)
 		}
 	}
 
@@ -676,7 +713,7 @@ internal final class DefaultTracker: Tracker {
 
 			if isOptedOut {
 				for trackerReference in instances.values {
-					trackerReference.target?.requestManager.clearPendingRequests()
+					trackerReference.target?.requestManager?.clearPendingRequests()
 				}
 			}
 		}
@@ -693,6 +730,10 @@ internal final class DefaultTracker: Tracker {
 
 	private func loadRequestQueue() {
 		checkIsOnMainThread()
+
+        guard self.checkIfInitialized() else {
+            return
+        }
 
 		guard !requestQueueLoaded else {
 			return
@@ -746,7 +787,7 @@ internal final class DefaultTracker: Tracker {
 		}
 
 		logDebug("Loaded \(queue.count) queued request(s) from '\(file)'.")
-		requestManager.prependRequests(queue)
+		requestManager?.prependRequests(queue)
 	}
 
 
@@ -829,13 +870,17 @@ internal final class DefaultTracker: Tracker {
      otherwise it produce error log and don't do anything*/
 	internal func sendPendingEvents() {
 		checkIsOnMainThread()
+        
+        guard checkIfInitialized() else {
+            return
+        }
 
-        guard let manualStart = self.manualStart, manualStart else {
+        guard self.manualStart else {
             WebtrekkTracking.defaultLogger.logError("No manual send mode (sendDelay == 0). Command is ignored. ")
             return
         }
         
-        requestManager.sendAllRequests()
+        self.requestManager?.sendAllRequests()
 	}
 
 
@@ -879,19 +924,22 @@ internal final class DefaultTracker: Tracker {
 
 	fileprivate func saveRequestQueue() {
 		checkIsOnMainThread()
+        
+        guard self.checkIfInitialized() else {
+            return
+        }
 
 		guard let file = requestQueueBackupFile else {
 			return
 		}
-		guard requestQueueLoaded || !requestManager.queue.isEmpty else {
+		guard requestQueueLoaded || !(requestManager?.queue.isEmpty)! else {
 			return
 		}
 
 		// make sure backup is loaded before overwriting it
 		loadRequestQueue()
 
-		let queue = requestManager.queue
-		guard !queue.isEmpty else {
+		guard let queue = requestManager?.queue, !queue.isEmpty else {
 			let fileManager = FileManager.default
 			if fileManager.itemExistsAtURL(file) {
 				do {
@@ -919,24 +967,32 @@ internal final class DefaultTracker: Tracker {
 
 	fileprivate func startRequestManager() {
 		checkIsOnMainThread()
+        
+        guard checkIfInitialized() else {
+            return
+        }
 
-		guard !requestManager.started else {
+		guard let started = requestManager?.started, !started else {
 			return
 		}
 
 		loadRequestQueue()
-		requestManager.start()
+		requestManager?.start()
 	}
 
 
 	fileprivate func stopRequestManager() {
 		checkIsOnMainThread()
+        
+        guard checkIfInitialized() else {
+            return
+        }
 
-		guard requestManager.started else {
+		guard (requestManager?.started)! else {
 			return
 		}
 
-		requestManager.stop()
+		requestManager?.stop()
 		saveRequestQueue()
 	}
 
@@ -1004,7 +1060,7 @@ internal final class DefaultTracker: Tracker {
 
 		let handler = DefaultTracker._autotrackingEventHandler
 
-		if configuration.automaticallyTrackedPages.isEmpty {
+		if self.configuration.automaticallyTrackedPages.isEmpty {
 			if let index = handler.trackers.index(where: { [weak self] in $0 === self}) {
 				handler.trackers.remove(at: index)
 			}
@@ -1023,11 +1079,11 @@ internal final class DefaultTracker: Tracker {
 	private func updateConfiguration() {
 		checkIsOnMainThread()
 
-		guard let updateUrl = configuration.configurationUpdateUrl else {
+		guard let updateUrl = self.configuration.configurationUpdateUrl else {
 			return
 		}
 
-		let _ = requestManager.fetch(url: updateUrl) { data, error in
+		let _ = requestManager?.fetch(url: updateUrl) { data, error in
 			if let error = error {
 				logError("Cannot load configuration from \(updateUrl): \(error)")
 				return
@@ -1037,7 +1093,7 @@ internal final class DefaultTracker: Tracker {
 				return
 			}
 
-			let configuration: TrackerConfiguration
+			var configuration: TrackerConfiguration
 			do {
 				configuration = try XmlTrackerConfigurationParser().parse(xml: data)
 			}
@@ -1050,13 +1106,21 @@ internal final class DefaultTracker: Tracker {
 				logInfo("Local configuration is up-to-date with version \(self.configuration.version).")
 				return
 			}
+
+            guard let validatedConfiguration = DefaultTracker.validatedConfiguration(configuration) else {
+                logError("Invalid updated configuration initialization error")
+                return
+            }
+            
+            configuration = validatedConfiguration
+            
 			guard configuration.webtrekkId == self.configuration.webtrekkId else {
 				logError("Cannot apply new configuration located at \(updateUrl): Current webtrekkId (\(self.configuration.webtrekkId)) does not match new webtrekkId (\(configuration.webtrekkId)).")
 				return
 			}
 
 			logInfo("Updating from configuration version \(self.configuration.version) to version \(configuration.version) located at \(updateUrl).")
-			self.defaults.set(key: DefaultsKeys.configuration, to: data)
+			self.defaults?.set(key: DefaultsKeys.configuration, to: data)
 
 			self.configuration = configuration
 		}
@@ -1066,7 +1130,7 @@ internal final class DefaultTracker: Tracker {
 	private func updateSampling() {
 		checkIsOnMainThread()
 
-		if let isSampling = defaults.boolForKey(DefaultsKeys.isSampling), let samplingRate = defaults.intForKey(DefaultsKeys.samplingRate) , samplingRate == configuration.samplingRate {
+		if let isSampling = defaults?.boolForKey(DefaultsKeys.isSampling), let samplingRate = defaults?.intForKey(DefaultsKeys.samplingRate) , samplingRate == configuration.samplingRate {
 			self.isSampling = isSampling
 		}
 		else {
@@ -1077,8 +1141,8 @@ internal final class DefaultTracker: Tracker {
 				self.isSampling = true
 			}
 
-			defaults.set(key: DefaultsKeys.isSampling, to: isSampling)
-			defaults.set(key: DefaultsKeys.samplingRate, to: configuration.samplingRate)
+			defaults?.set(key: DefaultsKeys.isSampling, to: isSampling)
+			defaults?.set(key: DefaultsKeys.samplingRate, to: configuration.samplingRate)
 		}
 	}
 
@@ -1096,19 +1160,26 @@ internal final class DefaultTracker: Tracker {
 	}()
 
 
-	private static func validatedConfiguration(_ configuration: TrackerConfiguration) -> TrackerConfiguration {
+	private static func validatedConfiguration(_ configuration: TrackerConfiguration) -> TrackerConfiguration? {
 		checkIsOnMainThread()
 
 		var configuration = configuration
 		var problems = [String]()
 		var isError = false
 
-		if configuration.webtrekkId.isEmpty {
+		guard !configuration.webtrekkId.isEmpty else {
 			configuration.webtrekkId = "ERROR"
 			problems.append("webtrekkId must not be empty!! -> changed to 'ERROR'")
 
-			isError = true
+            return nil
 		}
+        
+        guard !configuration.serverUrl.absoluteString.isEmpty else {
+            
+            problems.append("trackDomain must not be empty!! -> changed to 'ERROR'")
+            
+            return nil
+        }
 
 		#if !os(watchOS)
 			var pageIndex = 0
@@ -1236,11 +1307,15 @@ extension DefaultTracker: RequestManager.Delegate {
 
 	private func requestManagerDidFinishRequest() {
 		checkIsOnMainThread()
-
-		saveRequestQueue()
+        
+        guard self.checkIfInitialized() else {
+            return
+        }
+		
+        saveRequestQueue()
 
 		#if !os(watchOS)
-			if requestManager.queue.isEmpty {
+			if requestManager!.queue.isEmpty {
 				if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
 					application.endBackgroundTask(backgroundTaskIdentifier)
 					backgroundTaskIdentifier = UIBackgroundTaskInvalid

@@ -48,14 +48,21 @@ class WTBaseTestNew: HttpBaseTestNew {
         
         WebtrekkTracking.defaultLogger.minimumLevel = .debug
         
-        if let configName = getCongigName(){
-            let configFileURL = Bundle.main.url(forResource: configName, withExtension: "xml", subdirectory: "Configurations/")
-            try! WebtrekkTracking.initTrack(configFileURL)
-        }else {
-            try! WebtrekkTracking.initTrack()
+        do {
+            if let configName = getCongigName(){
+                let configFileURL = Bundle.main.url(forResource: configName, withExtension: "xml", subdirectory: "Configurations/")
+                try WebtrekkTracking.initTrack(configFileURL)
+            }else {
+                try WebtrekkTracking.initTrack()
+            }
+        }catch let error as TrackerError {
+            WebtrekkTracking.defaultLogger.logError("Error Webtrekk SDK initialization: \(error.message)")
+        }catch {
+            WebtrekkTracking.defaultLogger.logError("Unkown error during Webtrekk SDK initialization")
         }
-    }
     
+    }
+
     private func releaseWebtrekk(){
         rollBackAutoTrackingMethodsSwizz()
         resetWebtrackInstance()
