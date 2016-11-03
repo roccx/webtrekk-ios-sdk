@@ -118,7 +118,7 @@ class RecommendationTableViewController: UITableViewController, RecommendationCa
     
         for productItem in product.values {
             let textItem = UILabel()
-            textItem.text = "id:\(productItem.key) type:\(productItem.value.type) value:\(productItem.value.value)"
+            textItem.text = "id:\(productItem.key) type:\(productItem.value.type) value:\(product[productItem.key]!.value)"
             textItem.translatesAutoresizingMaskIntoConstraints = false
             textItem.numberOfLines = 0
             textItem.font = UIFont.systemFont(ofSize: 4.0)
