@@ -89,6 +89,8 @@ internal struct TrackerConfiguration {
 	#endif
 
 	internal var globalProperties = GlobalProperties()
+    
+    internal var recommendations : [String: URL]? = nil
 
 
 	/** 

@@ -74,7 +74,7 @@ class MessageSendTest: WTBaseTestNew {
         }
     }
     
-    func atestConnectionInterruption() {
+    func testConnectionInterruption() {
         removeStub()
         addConnectionInterruptionStub()
         
@@ -137,8 +137,14 @@ class MessageSendTest: WTBaseTestNew {
         
         expect(currentId).toEventually(beGreaterThan(1), timeout:1)
         
+        #if !os(tvOS)
+            let timeout = 0.01
+        #else
+            let timeout = 0.02
+        #endif
+        
         for i in maxRequestsFirst..<maxRequestSecond {
-            expect(currentId).toEventually(beGreaterThan(1), timeout:0.01)
+            expect(currentId).toEventually(beGreaterThan(1), timeout:timeout)
             tracker.trackPageView(PageProperties(
                 name: "intrupConnection",
                 details: [100: .constant("\(i)")],

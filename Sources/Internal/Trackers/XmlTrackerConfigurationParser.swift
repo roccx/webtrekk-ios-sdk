@@ -100,6 +100,9 @@ internal class XmlTrackerConfigurationParser {
 		guard !xmlElement.children.isEmpty else {
 			throw TrackerError(message: "\(xmlElement.path.joined(separator: ".")) webtrekkConfiguration can not be empty")
 		}
+        
+        var recommendationsL: [String: URL]?
+        
 		for child in xmlElement.children {
 			do {
 				switch child.name {
@@ -121,6 +124,7 @@ internal class XmlTrackerConfigurationParser {
 				case "autoTrackRequestUrlStoreSize": automaticallyTracksRequestQueueSize = try parseBool(child.text)
 
 				case "globalTrackingParameter" : try readFromGlobalElement(child)
+                case "recommendations" : try recommendationsL = readRecommendations(xmlElement: child)
 
 				default:
 					#if !os(watchOS)
@@ -199,6 +203,11 @@ internal class XmlTrackerConfigurationParser {
 		if let automaticallyTracksRequestQueueSize = automaticallyTracksRequestQueueSize {
 			trackerConfiguration.automaticallyTracksRequestQueueSize = automaticallyTracksRequestQueueSize
 		}
+        
+        if let recommendations = recommendationsL {
+            trackerConfiguration.recommendations = recommendations
+        }
+        
 		#if !os(watchOS)
 			if let automaticallyTracksConnectionType = automaticallyTracksConnectionType {
 				trackerConfiguration.automaticallyTracksConnectionType = automaticallyTracksConnectionType
@@ -286,6 +295,27 @@ internal class XmlTrackerConfigurationParser {
         
 		automaticallyTrackedPages.append(page)
 	}
+    
+    private func readRecommendations(xmlElement recomendParent: XmlElement) throws -> [String: URL]?{
+        guard !recomendParent.children.isEmpty else {
+            return nil
+        }
+        
+        var recommendations: [String: URL] = [:]
+        
+        for child in recomendParent.children where child.name == "recommendation" {
+            if let name = child.attributes["name"], let url = try parseUrl(child.text, emptyAllowed: false) {
+                recommendations[name] = url
+            }
+        }
+        
+        guard !recommendations.isEmpty else {
+            return nil
+        }
+        
+        return recommendations
+    }
+
 
 
 	private func readFromScreenTrackingParameterElement(xmlElement: XmlElement) throws -> TrackingParameter? {

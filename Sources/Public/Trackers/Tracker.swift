@@ -62,6 +62,9 @@ public protocol Tracker: class {
     
     /**this value override pu parameter if it is setup from code in any other way or configuraion xml */
     var pageURL: String? { get set }
+    
+    /** return recommendation class instance for getting recommendations. Each call returns new instance. Returns nil if SDK isn't initialized*/
+    func getRecommendations() -> Recommendation?
 }
 
 

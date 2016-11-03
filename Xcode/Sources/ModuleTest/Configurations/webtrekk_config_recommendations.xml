@@ -47,13 +47,13 @@
     <errorLogEnable>true</errorLogEnable>
     <!--set log level to do loging 1- only fatals 2 - fatal and catched, 3- all logs. By default = 3 -->
     <errorLogLevel>3</errorLogLevel>
-
+    
     <recommendations>
         <recommendation name="complexReco">https://reco.webtrekk.com/dmp/recos/v1/?accountId=238713152098253&amp;placementId=39876</recommendation>
         <recommendation name="simpleReco">https://reco.webtrekk.com/dmp/recos/v1/?accountId=238713152098253&amp;placementId=39879</recommendation>
         <recommendation name="emptyTest">https://reco.webtrekk.com/dmp/recos/v1/?accountId=238713152098253&amp;placementId=40056</recommendation>
     </recommendations>
-
+    
     <!--global tracking parameter -->
     <globalTrackingParameter>
         <!--define global tracking parameter which are send with every request, the key has to match a valid parameter name!

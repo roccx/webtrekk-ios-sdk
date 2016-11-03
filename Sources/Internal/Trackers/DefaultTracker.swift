@@ -642,15 +642,8 @@ final class DefaultTracker: Tracker {
             
             // cash ever id in internal parameter to avoid multiple request to setting.
             if everIdInternal == nil {
-                
-                everIdInternal = DefaultTracker.sharedDefaults.stringForKey(DefaultsKeys.everId)
-                
-                //generate ever id if it isn't exist
-                return everIdInternal ?? {
-                    let everId = String(format: "6%010.0f%08lu", arguments: [Date().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
-                    DefaultTracker.sharedDefaults.set(key: DefaultsKeys.everId, to: everId)
-                    return everId
-                    }()
+                everIdInternal = try? DefaultTracker.generateEverId()
+                return everIdInternal!
             } else {
                 return everIdInternal!
             }
@@ -668,6 +661,28 @@ final class DefaultTracker: Tracker {
                 WebtrekkTracking.defaultLogger.logError("Incorrect ever id format: \(newEverID)")
             }
         }
+    }
+    
+    static func generateEverId() throws -> String {
+        
+        var everId = DefaultTracker.sharedDefaults.stringForKey(DefaultsKeys.everId)
+        
+        if everId != nil  {
+            return everId!
+        }else {
+            everId = String(format: "6%010.0f%08lu", arguments: [Date().timeIntervalSince1970, arc4random_uniform(99999999) + 1])
+            DefaultTracker.sharedDefaults.set(key: DefaultsKeys.everId, to: everId)
+            
+            guard everId != nil else {
+                let msg = "Can't generate ever id"
+                TrackerError(message: msg)
+                return ""
+            }
+            
+            return everId!
+        }
+        
+        
     }
     
     //cash for ever id
@@ -1044,6 +1059,16 @@ final class DefaultTracker: Tracker {
 
 		return DefaultPageTracker(handler: self, pageName: pageName)
 	}
+    
+    /** return recommendation class instance for getting recommendations. Each call returns new instance. Returns nil if SDK isn't initialized*/
+    func getRecommendations() -> Recommendation? {
+        guard checkIfInitialized() else {
+            return nil
+        }
+        
+        return RecomendationImpl(configuration: self.configuration)
+    }
+
 
     #if !os(watchOS)
     fileprivate func setupAutoDeepLinkTrack()

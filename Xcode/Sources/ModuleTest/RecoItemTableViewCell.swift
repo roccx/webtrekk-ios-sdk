@@ -14,26 +14,25 @@
 //CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//  Created by arsen.vartbaronov on 26/10/16.
+//  Created by arsen.vartbaronov on 01/11/16.
 //
 
-import Nimble
-import Webtrekk
+import UIKit
 
-class InitializationTest: WTBaseTestNew {
+class RecoItemTableViewCell: UITableViewCell {
+
+    @IBOutlet weak var title: UILabel!
+    @IBOutlet weak var id: UILabel!
     
-    override func getCongigName() -> String? {
-        return String("webtrekk_bad_config")
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
     }
-    
-    //will crash if test not passed.
-    func testIncorrectConfig(){
-        
-        let tracker = WebtrekkTracking.instance()
-    
-        doURLSendTestAction(){
-            tracker.trackPageView("IncorrectConfig")
-        }
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+
+        // Configure the view for the selected state
     }
+
 }
-
