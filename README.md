@@ -11,13 +11,18 @@ Requirements
 |-----------|-------------------:|
 | `iOS`     |             `8.0+` |
 | `tvOS`    |             `9.0+` |
-| `watchOs` | planned for `2.0+` |
+| `watchOs` |             `2.0+` |
 
 Xcode 7.3+ and Swift 2.2 for versions below and equal to 4.0.1
 
 Xcode 8.0+ and Swift 3.0 starting with version 4.1.0
 
-tvOS support starting with verison 4.2.0
+tvOS support starting with verison 4.2.0 with the follow limitation:
+No screen resolution and network status automatic tracing support.
+
+watchOS support starting with verison 4.3.0 with the follow limiation
+1. No screen resolution and network status automatic tracing support.
+2. No deep link and campaign support.
 
 Installation
 ============

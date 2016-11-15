@@ -27,7 +27,7 @@ internal final class DefaultMediaTracker: MediaTracker {
 	internal var mediaProperties: MediaProperties
 	internal var pageName: String?
 	internal var variables = [String : String]()
-	internal var viewControllerType: UIViewController.Type?
+	internal var viewControllerType: AnyObject.Type?
 
 
 	internal init(handler: MediaEventHandler, mediaName: String, pageName: String?) {

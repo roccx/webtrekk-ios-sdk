@@ -62,9 +62,11 @@ internal final class RequestUrlBuilder {
 
 		let properties = request.properties
 		let screenSize = "\(properties.screenSize?.width ?? 0)x\(properties.screenSize?.height ?? 0)"
+        let libraryVersionOriginal = Bundle.init(for: RequestUrlBuilder.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "9.9.9"
+        let libraryVersionParced = libraryVersionOriginal.replacingOccurrences(of: ".", with: "")
 
 		var parameters = [URLQueryItem]()
-        append(arr: &parameters, name: "p", value: "400,\(pageName),0,\(screenSize),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0")
+        append(arr: &parameters, name: "p", value: libraryVersionParced + ",\(pageName),0,\(screenSize),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0")
 		append(arr: &parameters, name: "eid", value: properties.everId)
 		append(arr: &parameters, name: "fns", value: properties.isFirstEventOfSession ? "1" : "0")
 		append(arr: &parameters, name: "mts", value: String(Int64(properties.timestamp.timeIntervalSince1970 * 1000)))
@@ -351,7 +353,7 @@ private extension EcommerceProperties {
             items.append(URLQueryItem(name: "qn", value: quantity.joined(separator: ";")))
         }
 
-		var categoryIndexes = Set(products?.flatMap { $0.categories.map { Array($0.keys) } ?? [] } ?? [])
+		let categoryIndexes = Set(products?.flatMap { $0.categories.map { Array($0.keys) } ?? [] } ?? [])
         
 		for categoryIndex in categoryIndexes {
             let value = products?.map({ $0.categories?[categoryIndex]?.serialized(for: request) ?? "" }).joined(separator: ";")
@@ -521,7 +523,7 @@ private extension TrackingValue {
 			case .appVersion:                 return request.properties.appVersion
 			case .connectionType:             return request.properties.connectionType?.serialized
             case .interfaceOrientation:
-            #if os(tvOS)
+            #if !os(iOS)
                 return "undefined"
             #else
                 return request.properties.interfaceOrientation?.serialized

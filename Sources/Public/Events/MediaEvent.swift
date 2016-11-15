@@ -27,7 +27,7 @@ public struct MediaEvent: TrackingEventWithMediaProperties {
 	public var mediaProperties: MediaProperties
 	public var pageName: String?
 	public var variables: [String : String]
-	public var viewControllerType: UIViewController.Type?
+	public var viewControllerType: AnyObject.Type?
 
 
 	public init(
@@ -46,7 +46,7 @@ public struct MediaEvent: TrackingEventWithMediaProperties {
 	public init(
 		action: Action,
 		mediaProperties: MediaProperties,
-		viewControllerType: UIViewController.Type?,
+		viewControllerType: AnyObject.Type?,
 		variables: [String : String] = [:]
 	) {
 		self.action = action

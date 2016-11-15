@@ -34,7 +34,7 @@ public extension TrackingEventWithPageProperties {
 	}
 
 
-	public var viewControllerType: UIViewController.Type? {
+	public var viewControllerType: AnyObject.Type? {
 		get { return pageProperties.viewControllerType }
 		mutating set { pageProperties.viewControllerType = newValue }
 	}

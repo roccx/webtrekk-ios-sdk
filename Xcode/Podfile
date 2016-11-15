@@ -20,7 +20,7 @@ abstract_target "iOS" do
                 end
             end
 		end
-	end
+    end
 end
 
 abstract_target "tvOS" do
@@ -38,6 +38,18 @@ abstract_target "tvOS" do
     end
 end
 
+abstract_target "watchOS" do
+    platform :watchos, "2.0"
+    
+    target "WatchApp" do
+        target "WatchApp Extension" do
+            inherit! :search_paths
+            pod "Webtrekk", :path => ".."
+            pod 'OHHTTPStubs', '~> 5.2.1'
+            pod 'OHHTTPStubs/Swift', '~> 5.2.1'
+        end
+    end
+end
 
 post_install do |installer|
     installer.pods_project.targets.each do |target|
@@ -46,10 +58,3 @@ post_install do |installer|
         end
     end
 end
-
-
-#abstract_target "watchOS" do
-#	platform :watchos, "2.0"
-#
-#	target "WatchKit Extension"
-#end

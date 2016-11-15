@@ -27,67 +27,23 @@ class DeepLink: NSObject{
     // add wt_application to delegation class in runtime and switch implementation with application func
     @nonobjc
     func deepLinkInit(){
-        let replacedSel = #selector(wt_application(_:continueUserActivity:restorationHandler:))
-        
-        var methodCount: UInt32 = 0
+        let replacedSel = #selector(wt_application(_:continue:restorationHandler:))
+        let originalSel = #selector(UIApplicationDelegate.application(_:continue:restorationHandler:))
         
         // get class of delegate instance
-        guard let delgate = UIApplication.shared.delegate,
-              let delegateClass = object_getClass(delgate) else {
+        guard let delegate = UIApplication.shared.delegate,
+              let delegateClass = object_getClass(delegate) else {
             return
         }
         
-        let methodCheck = class_getInstanceMethod(delegateClass, replacedSel)
-        
-        // check if there is no such method. Otherwise exit as no repeat operation can be done
-        guard  methodCheck == nil else {
-            return
+        if !replaceImplementationFromAnotherClass(toClass: delegateClass, methodChanged: originalSel, fromClass: DeepLink.self, methodAdded: replacedSel) {
+            logError("Deep link functionality initialization error.")
         }
-        
-        //get all methods of delegeta class
-        var methods = class_copyMethodList(delegateClass, &methodCount)
-        
-        if methods != nil {
-            let count = Int(methodCount)
-            
-            defer {
-                methods!.deinitialize()
-                methods!.deallocate(capacity: count)
-            }
-            // go throught all methods
-            for i in 0..<count {
-                let method : Method = methods![i]!
-                let methodSel = method_getName(method)
-                let methodName = String(cString: sel_getName(methodSel))
-                
-                //if appplication with continueUserActivity found replace this method
-                if methodName == "application:continueUserActivity:restorationHandler:" {
-                    // firstly add method to delegate class
-                    if addMethodFromAnotherClass(toClass: delegateClass,
-                      methodSelector:replacedSel, fromClass: DeepLink.self) {
-                    
-                        // next change implementation of two methods
-                        if swizzleMethod(ofType: delegateClass, fromSelector: methodSel!, toSelector: replacedSel) {
-                            WebtrekkTracking.defaultLogger.logDebug("swizzle Deep Link successfully")
-                        } else {
-                            WebtrekkTracking.defaultLogger.logError("Cann't swizzle Deep Link")
-                        }
-                    } else {
-                        WebtrekkTracking.defaultLogger.logError("Can't add new method to delegate class.")
-                    }
-                    
-                    break;
-                }
-            }
-        }
-        
-        
     }
     
     // method that replaces application in delegate
-    @objc(wt_application:continueUserActivity:restorationHandler:)
     dynamic func wt_application(_ application: UIApplication,
-                     continueUserActivity userActivity: NSUserActivity,
+                     continue userActivity: NSUserActivity,
                                           restorationHandler: ([AnyObject]?) -> Void) -> Bool {
         
         // test if this is deep link
@@ -125,8 +81,11 @@ class DeepLink: NSObject{
                 }
             }
         }
-        
-        return self.wt_application(application, continueUserActivity: userActivity, restorationHandler: restorationHandler)
+        if class_respondsToSelector(object_getClass(self), #selector(wt_application(_:continue:restorationHandler:))) {
+            return self.wt_application(application, continue: userActivity, restorationHandler: restorationHandler)
+        } else {
+            return true
+        }
     }
     
     // returns media code and delete it from settings

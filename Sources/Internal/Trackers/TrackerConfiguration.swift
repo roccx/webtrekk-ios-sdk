@@ -77,10 +77,10 @@ internal struct TrackerConfiguration {
 	/** The unique identifier of your webtrekk account. */
 	internal var webtrekkId: String
 
-	#if !os(watchOS)
 	/** Automatically attaches tracker instances to the corresponding view controller if possible. */
 	internal var automaticallyTrackedPages = [Page]()
 
+    #if !os(watchOS)
 	/** If enabled automatically attaches the connection type to each request. */
 	internal var automaticallyTracksConnectionType = true
 
@@ -107,17 +107,12 @@ internal struct TrackerConfiguration {
 	}
 
 
-	#if !os(watchOS)
-	internal func automaticallyTrackedPageForViewControllerType(_ viewControllerType: UIViewController.Type) -> Page? {
+	internal func automaticallyTrackedPageForViewControllerType(_ viewControllerType: AnyObject.Type) -> Page? {
 		let typeName = String(reflecting: viewControllerType)
 
 		return automaticallyTrackedPages.firstMatching(predicate: { $0.matches(viewControllerTypeName: typeName) })
 	}
-	#endif
 
-
-	
-	#if !os(watchOS)
 	/**
 	Representation of an automatically tracked page.
 	*/
@@ -147,7 +142,7 @@ internal struct TrackerConfiguration {
             super.init(actionProperties: actionProperties ?? ActionProperties(name: nil),
                        advertisementProperties: advertisementProperties ?? AdvertisementProperties(id: nil),
                        ecommerceProperties: ecommerceProperties ?? EcommerceProperties(), ipAddress: ipAddress,
-                       mediaProperties: mediaProperties ?? MediaProperties(name: nil), pageProperties: pageProperties ?? PageProperties(name: nil),
+                       mediaProperties: mediaProperties ?? MediaProperties(name: nil), pageProperties: pageProperties,
                        sessionDetails: sessionDetails ?? [ : ], userProperties: userProperties ?? UserProperties(birthday: nil))
 		}
 
@@ -156,5 +151,4 @@ internal struct TrackerConfiguration {
 			return viewControllerTypeNamePattern.rangeOfFirstMatch(in: viewControllerTypeName, options: [], range: NSRange(forString: viewControllerTypeName)).location != NSNotFound
 		}
 	}
-	#endif
 }

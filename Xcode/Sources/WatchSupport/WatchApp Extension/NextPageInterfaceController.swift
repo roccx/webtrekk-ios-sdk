@@ -14,29 +14,38 @@
 //CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//  Created by Widgetlabs
+//  Created by arsen.vartbaronov on 10/11/16.
 //
-
 import WatchKit
 import Foundation
+import Webtrekk
 
 
-class InterfaceController: WKInterfaceController {
-
-    override func awakeWithContext(context: AnyObject?) {
-        super.awakeWithContext(context)
+class NextPageInterfaceController: WKInterfaceController {
+    
+    var doPop: Bool = true
+    
+    override func awake(withContext context: Any?) {
+        super.awake(withContext: context)
+        
+        doPop = context == nil
         
         // Configure interface objects here.
     }
-
+    
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
     }
-
+    
     override func didDeactivate() {
         // This method is called when watch view controller is no longer visible
         super.didDeactivate()
     }
-
+    
+    override func didAppear(){
+        if doPop {
+            pop()
+        }
+    }
 }

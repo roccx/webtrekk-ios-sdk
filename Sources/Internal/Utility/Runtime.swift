@@ -65,7 +65,7 @@ internal func swizzleMethod(ofType type: AnyClass, fromSelector: Selector, toSel
 }
 
 // function adds method to class from another class
-func addMethodFromAnotherClass(toClass: AnyClass, methodSelector: Selector, fromClass: AnyClass) -> Bool{
+func addMethodFromAnotherClass(toClass: AnyClass, selectorToUse: Selector, methodSelector: Selector, fromClass: AnyClass) -> Bool{
     
     //get method object
     
@@ -89,5 +89,38 @@ func addMethodFromAnotherClass(toClass: AnyClass, methodSelector: Selector, from
         return false
     }
     
-    return class_addMethod(toClass, methodSelector, methodImpl, methodTypes)
+    return class_addMethod(toClass, selectorToUse, methodImpl, methodTypes)
+}
+// use method from another class, add it to required class and replace implementation
+func replaceImplementationFromAnotherClass(toClass: AnyClass, methodChanged: Selector, fromClass: AnyClass, methodAdded: Selector) -> Bool {
+    
+    // method is already added
+    guard !class_respondsToSelector(toClass, methodAdded) else {
+        return true
+    }
+    
+    let methodName = String(cString: sel_getName(methodChanged))
+    
+    //no such method just add, no need to replace
+    if !class_respondsToSelector(toClass, methodChanged) {
+        // just add this function
+        guard addMethodFromAnotherClass(toClass: toClass, selectorToUse: methodChanged, methodSelector:methodAdded, fromClass: fromClass) else {
+            WebtrekkTracking.defaultLogger.logError("Can't add original method \(methodName) to class.")
+            return false
+        }
+    } else {
+        guard addMethodFromAnotherClass(toClass: toClass, selectorToUse: methodAdded, methodSelector:methodAdded, fromClass: fromClass) else {
+            WebtrekkTracking.defaultLogger.logError("Can't add method \(methodName) to delegate class.")
+            return false
+        }
+
+        if swizzleMethod(ofType: toClass, fromSelector: methodChanged, toSelector: methodAdded) {
+            WebtrekkTracking.defaultLogger.logDebug("swizzle extention delegate method \(methodName) successfully")
+        } else {
+            WebtrekkTracking.defaultLogger.logError("Cann't swizzle method \(methodName)")
+            return false
+        }
+    }
+    
+    return true
 }

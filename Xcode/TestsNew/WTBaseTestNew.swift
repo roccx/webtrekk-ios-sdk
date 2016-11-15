@@ -23,6 +23,8 @@ import Foundation
 import Nimble
 
 class WTBaseTestNew: HttpBaseTestNew {
+    
+    var libraryVersion: String?
 
     override func setUp() {
         super.setUp()
@@ -60,7 +62,10 @@ class WTBaseTestNew: HttpBaseTestNew {
         }catch {
             WebtrekkTracking.defaultLogger.logError("Unkown error during Webtrekk SDK initialization")
         }
-    
+        
+        
+        let libraryVersionOriginal = Bundle.init(for: WebtrekkTracking.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "9.9.9"
+        self.libraryVersion = libraryVersionOriginal.replacingOccurrences(of: ".", with: "")
     }
 
     private func releaseWebtrekk(){

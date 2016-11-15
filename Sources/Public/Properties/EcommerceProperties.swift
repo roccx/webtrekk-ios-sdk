@@ -74,8 +74,6 @@ public struct EcommerceProperties {
         var quantities : [Int] = [], overQuantities : [Int] = [], mergedQuantities : [Int]
         var categories: [[Int: TrackingValue]] = [], overCategories: [[Int: TrackingValue]] = [], mergedCategories: [[Int: TrackingValue]] = []
 
-        var overProducts = over
-        
         transformFromProductList(products: products, names: &names, prices: &prices, quantities: &quantities, categories: &categories)
         transformFromProductList(products: over, names: &overNames, prices: &overPrices, quantities: &overQuantities, categories: &overCategories)
         

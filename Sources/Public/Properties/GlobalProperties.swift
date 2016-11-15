@@ -47,7 +47,7 @@ public class GlobalProperties: BaseProperties {
 
 	
 	internal func merged(over other: GlobalProperties) -> GlobalProperties {
-		var global = GlobalProperties(
+		let global = GlobalProperties(
 			actionProperties:        actionProperties.merged(over: other.actionProperties),
 			advertisementProperties: advertisementProperties.merged(over: other.advertisementProperties),
 			crossDeviceProperties:   crossDeviceProperties.merged(over: other.crossDeviceProperties),

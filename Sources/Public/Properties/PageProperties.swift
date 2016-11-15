@@ -27,7 +27,7 @@ public struct PageProperties {
 	public var groups: [Int: TrackingValue]?
 	public var name: String?
 	public var internalSearch: String?
-	public var viewControllerType: UIViewController.Type?
+	public var viewControllerType: AnyObject.Type?
     public var url: String? {
         didSet {
             if !isURLCanBeSet(self.url) {
@@ -52,7 +52,7 @@ public struct PageProperties {
 
 
 	public init(
-		viewControllerType: UIViewController.Type?,
+		viewControllerType: AnyObject.Type?,
 		details: [Int: TrackingValue]? = nil,
 		groups: [Int: TrackingValue]? = nil,
 		internalSearch: String? = nil,

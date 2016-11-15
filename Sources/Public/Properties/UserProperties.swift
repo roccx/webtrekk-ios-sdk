@@ -73,7 +73,6 @@ public struct UserProperties {
         self.zipCode = zipCode
     }
     
-	@warn_unused_result
 	internal func merged(over other: UserProperties) -> UserProperties {
 		 return UserProperties(
 			birthday:             birthday ?? other.birthday,

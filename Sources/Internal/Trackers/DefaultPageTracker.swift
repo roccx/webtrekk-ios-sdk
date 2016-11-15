@@ -47,7 +47,7 @@ internal final class DefaultPageTracker: PageTracker {
 	}
 
 
-	internal init(handler: Handler, viewControllerType: UIViewController.Type) {
+	internal init(handler: Handler, viewControllerType: AnyObject.Type) {
 		checkIsOnMainThread()
 
 		self.handler = handler

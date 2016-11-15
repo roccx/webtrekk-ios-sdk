@@ -38,21 +38,20 @@ final class DefaultTracker: Tracker {
 
 	#if !os(watchOS)
 	fileprivate let application = UIApplication.shared
-	fileprivate var applicationDidBecomeActiveObserver: NSObjectProtocol?
-	fileprivate var applicationWillEnterForegroundObserver: NSObjectProtocol?
-	fileprivate var applicationWillResignActiveObserver: NSObjectProtocol?
-	fileprivate var backgroundTaskIdentifier = UIBackgroundTaskInvalid
-	#endif
-
+    private let deepLink = DeepLink()
+    #else
+    internal var isApplicationActive = false
+    #endif
+    
+    fileprivate var flowObserver: UIFlowObserver!
 	private var defaults: UserDefaults?
 	private var isFirstEventOfSession = true
 	private var isSampling = false
-	fileprivate var requestManager: RequestManager?
+	var requestManager: RequestManager?
 	private var requestQueueBackupFile: URL?
 	private var requestQueueLoaded = false
 	private var requestUrlBuilder: RequestUrlBuilder?
     private var campaign: Campaign?
-    private let deepLink = DeepLink()
     private var manualStart: Bool = false;
     var isInitialited: Bool = false
     /**this value override pu parameter if it is setup from code in any other way or configuraion xml*/
@@ -66,27 +65,29 @@ final class DefaultTracker: Tracker {
         
         checkIsOnMainThread()
         
+        self.flowObserver = UIFlowObserver(tracker: self)
+        
         guard !self.isInitialited else {
             logError("Webtrekk SDK has been already initialized.")
             return false
         }
         
         let sharedDefaults = DefaultTracker.sharedDefaults
-        var defaults = DefaultTracker.sharedDefaults.child(namespace: configuration.webtrekkId)
+        var defaults = sharedDefaults.child(namespace: configuration.webtrekkId)
         
         var migratedRequestQueue: [URL]?
-        if let webtrekkId = configuration.webtrekkId.nonEmpty , !(DefaultTracker.sharedDefaults.boolForKey(DefaultsKeys.migrationCompleted) ?? false) {
-            DefaultTracker.sharedDefaults.set(key: DefaultsKeys.migrationCompleted, to: true)
+        if let webtrekkId = configuration.webtrekkId.nonEmpty , !(sharedDefaults.boolForKey(DefaultsKeys.migrationCompleted) ?? false) {
+            sharedDefaults.set(key: DefaultsKeys.migrationCompleted, to: true)
             
             if WebtrekkTracking.migratesFromLibraryV3, let migration = Migration.migrateFromLibraryV3(webtrekkId: webtrekkId) {
                 
-                DefaultTracker.sharedDefaults.set(key: DefaultsKeys.everId, to: migration.everId)
+                sharedDefaults.set(key: DefaultsKeys.everId, to: migration.everId)
                 
                 if let appVersion = migration.appVersion {
                     defaults.set(key: DefaultsKeys.appVersion, to: appVersion)
                 }
                 if !DefaultTracker.isOptedOutWasSetManually, let isOptedOut = migration.isOptedOut {
-                    DefaultTracker.sharedDefaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
+                    sharedDefaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
                 }
                 if let samplingRate = migration.samplingRate, let isSampling = migration.isSampling {
                     defaults.set(key: DefaultsKeys.isSampling, to: isSampling)
@@ -147,7 +148,9 @@ final class DefaultTracker: Tracker {
             requestManager?.prependRequests(migratedRequestQueue)
         }
         
-        setUp()
+        guard setUp() else {
+            return false
+        }
         
         checkForDuplicateTrackers()
         
@@ -176,111 +179,36 @@ final class DefaultTracker: Tracker {
 				requestManager.stop()
 			}
 		}
-
-		#if !os(watchOS)
-			let notificationCenter = NotificationCenter.default
-			if let applicationDidBecomeActiveObserver = applicationDidBecomeActiveObserver {
-				notificationCenter.removeObserver(applicationDidBecomeActiveObserver)
-			}
-			if let applicationWillEnterForegroundObserver = applicationWillEnterForegroundObserver {
-				notificationCenter.removeObserver(applicationWillEnterForegroundObserver)
-			}
-			if let applicationWillResignActiveObserver = applicationWillResignActiveObserver {
-				notificationCenter.removeObserver(applicationWillResignActiveObserver)
-			}
-            
-		#endif
 	}
 
-
-	#if os(watchOS)
-	internal func applicationDidFinishLaunching() {
-		checkIsOnMainThread()
-
-		NSTimer.scheduledTimerWithTimeInterval(15) {
-			self.updateConfiguration()
-		}
-	}
-	#else
+    func initHibertationDate(){
+        
+        defaults?.set(key: DefaultsKeys.appHibernationDate, to: Date())
+    }
     
-	internal func initTimers() {
-		checkIsOnMainThread()
-
+    func updateFirstSession(){
+        if let hibernationDate = defaults?.dateForKey(DefaultsKeys.appHibernationDate) , -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
+            isFirstEventOfSession = false
+        }
+        else {
+            isFirstEventOfSession = true
+        }
+    }
+    
+    internal func initTimers() {
+        checkIsOnMainThread()
+        
         startRequestManager()
-		
+        
         let _ = Timer.scheduledTimerWithTimeInterval(15) {
-			self.updateConfiguration()
-		}
-	}
-    
-    
-	private func applicationDidBecomeActive() {
-		checkIsOnMainThread()
-
-		if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
-			application.endBackgroundTask(backgroundTaskIdentifier)
-			backgroundTaskIdentifier = UIBackgroundTaskInvalid
-		}
-	}
-
-
-	private func applicationWillResignActive() {
-		checkIsOnMainThread()
-        
-        guard checkIfInitialized() else {
-            return
+            self.updateConfiguration()
         }
-
-		defaults?.set(key: DefaultsKeys.appHibernationDate, to: Date())
-
-		if backgroundTaskIdentifier == UIBackgroundTaskInvalid {
-			backgroundTaskIdentifier = application.beginBackgroundTask(withName: "Webtrekk Tracker #\(configuration.webtrekkId)") { [weak self] in
-				guard let `self` = self else {
-					return
-				}
-
-				if let started = self.requestManager?.started, started {
-					self.stopRequestManager()
-				}
-
-				self.application.endBackgroundTask(self.backgroundTaskIdentifier)
-				self.backgroundTaskIdentifier = UIBackgroundTaskInvalid
-			}
-		}
-
-		if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
-			saveRequestQueue()
-		}
-		else {
-			stopRequestManager()
-		}
-	}
+    }
 
 
-	private func applicationWillEnterForeground() {
-		checkIsOnMainThread()
-        
-        guard self.checkIfInitialized() else {
-            return
-        }
 
-		if let hibernationDate = defaults?.dateForKey(DefaultsKeys.appHibernationDate) , -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
-			isFirstEventOfSession = false
-		}
-		else {
-			isFirstEventOfSession = true
-		}
-	}
-	#endif
-
-
-	#if !os(watchOS)
-	private static let _autotrackingEventHandler = AutotrackingEventHandler()
-	internal static var autotrackingEventHandler: ActionEventHandler & MediaEventHandler & PageViewEventHandler {
-		return _autotrackingEventHandler
-	}
-	#endif
-
+    typealias AutoEventHandler = ActionEventHandler & MediaEventHandler & PageViewEventHandler
+    static let autotrackingEventHandler: AutoEventHandler = AutotrackingEventHandler()
 
 	private func checkForAppUpdate() {
 		checkIsOnMainThread()
@@ -315,9 +243,7 @@ final class DefaultTracker: Tracker {
 
 			updateSampling()
 
-			#if !os(watchOS)
-				updateAutomaticTracking()
-			#endif
+			updateAutomaticTracking()
 		}
 	}
 
@@ -343,7 +269,7 @@ final class DefaultTracker: Tracker {
 		requestProperties.locale = Locale.current
 
 		#if os(watchOS)
-			let device = WKInterfaceDevice.currentDevice()
+			let device = WKInterfaceDevice.current()
 			requestProperties.screenSize = (width: Int(device.screenBounds.width * device.screenScale), height: Int(device.screenBounds.height * device.screenScale))
 		#else
 			let screen = UIScreen.main
@@ -401,13 +327,13 @@ final class DefaultTracker: Tracker {
         
         var event = globalPropertiesByApplyingEvent(from: event)
 
-		#if !os(watchOS)
-			event = eventByApplyingAutomaticPageTracking(to: event)
-		#endif
+		event = eventByApplyingAutomaticPageTracking(to: event)
 
         event = campaignOverride(to :event) ?? event
         
-        event = deepLinkOverride(to: event) ?? event
+        #if !os(watchOS)
+            event = deepLinkOverride(to: event) ?? event
+        #endif
         
         event = pageURLOverride(to: event) ?? event
 		
@@ -434,6 +360,7 @@ final class DefaultTracker: Tracker {
     
     // override media code in request in case of deeplink
     
+    #if !os(watchOS)
     private func deepLinkOverride(to event: TrackingEvent) -> TrackingEvent? {
         
         guard var _ = event as? TrackingEventWithAdvertisementProperties,
@@ -453,6 +380,7 @@ final class DefaultTracker: Tracker {
         
         return nil
     }
+    #endif
     
     // override some parameter in request if campaign is completed
     private func campaignOverride(to event: TrackingEvent) -> TrackingEvent? {
@@ -509,7 +437,6 @@ final class DefaultTracker: Tracker {
     }
     
 
-	#if !os(watchOS)
 	private func eventByApplyingAutomaticPageTracking(to event: TrackingEvent) -> TrackingEvent {
 		checkIsOnMainThread()
 
@@ -527,8 +454,6 @@ final class DefaultTracker: Tracker {
             return event
         }
 	}
-	#endif
-
 
 	private func globalPropertiesByApplyingEvent(from event: TrackingEvent) -> TrackingEvent {
 		checkIsOnMainThread()
@@ -614,7 +539,8 @@ final class DefaultTracker: Tracker {
                                     sessionDetails: trackingParameter.sessionDetails(variables: keys),
                                     userProperties: trackingParameter.userProperties(variables: keys),
                                     variables: globalProperties.variables)
-        } else if let pageProperties = properties as? TrackerConfiguration.Page {
+        }
+        if let pageProperties = properties as? TrackerConfiguration.Page {
             
             var page = trackingParameter.pageProperties(variables: keys)
             //override name from xml
@@ -629,10 +555,10 @@ final class DefaultTracker: Tracker {
                                              mediaProperties: trackingParameter.mediaProperties(variables: keys),
                                              sessionDetails: trackingParameter.sessionDetails(variables: keys),
                                              userProperties: trackingParameter.userProperties(variables: keys))
-        } else {
-            WebtrekkTracking.logger.logError("Unsupported type of properties")
-            return properties
         }
+        
+        WebtrekkTracking.logger.logError("Unsupported type of properties")
+        return properties
     }
     
     /** get and set everID. If you set Ever ID it started to use new value for all requests*/
@@ -675,7 +601,7 @@ final class DefaultTracker: Tracker {
             
             guard everId != nil else {
                 let msg = "Can't generate ever id"
-                TrackerError(message: msg)
+                let _ = TrackerError(message: msg)
                 return ""
             }
             
@@ -899,36 +825,21 @@ final class DefaultTracker: Tracker {
 	}
 
 
-	private func setUp() {
+	private func setUp() -> Bool {
 		checkIsOnMainThread()
 
-		#if !os(watchOS)
-			setUpObservers()
-			updateAutomaticTracking()
+        guard self.flowObserver.setup() else {
+            return false
+        }
+		
+        #if !os(watchOS)
             setupAutoDeepLinkTrack()
 		#endif
 
 		updateSampling()
+        
+        return true
 	}
-
-
-	#if !os(watchOS)
-	private func setUpObservers() {
-		checkIsOnMainThread()
-
-		let notificationCenter = NotificationCenter.default
-		applicationDidBecomeActiveObserver = notificationCenter.addObserver(forName: NSNotification.Name.UIApplicationDidBecomeActive, object: nil, queue: nil) { [weak self] _ in
-			self?.applicationDidBecomeActive()
-		}
-		applicationWillEnterForegroundObserver = notificationCenter.addObserver(forName: NSNotification.Name.UIApplicationWillEnterForeground, object: nil, queue: nil) { [weak self] _ in
-			self?.applicationWillEnterForeground()
-		}
-		applicationWillResignActiveObserver = notificationCenter.addObserver(forName: NSNotification.Name.UIApplicationWillResignActive, object: nil, queue: nil) { [weak self] _ in
-			self?.applicationWillResignActive()
-		}
-	}
-	#endif
-
 
 	private var shouldEnqueueNewEvents: Bool {
 		checkIsOnMainThread()
@@ -937,7 +848,7 @@ final class DefaultTracker: Tracker {
 	}
 
 
-	fileprivate func saveRequestQueue() {
+	func saveRequestQueue() {
 		checkIsOnMainThread()
         
         guard self.checkIfInitialized() else {
@@ -980,7 +891,7 @@ final class DefaultTracker: Tracker {
 	}
 
 
-	fileprivate func startRequestManager() {
+	func startRequestManager() {
 		checkIsOnMainThread()
         
         guard checkIfInitialized() else {
@@ -996,7 +907,7 @@ final class DefaultTracker: Tracker {
 	}
 
 
-	fileprivate func stopRequestManager() {
+	func stopRequestManager() {
 		checkIsOnMainThread()
         
         guard checkIfInitialized() else {
@@ -1079,29 +990,31 @@ final class DefaultTracker: Tracker {
     #endif
     
 
-	#if !os(watchOS)
 	fileprivate func updateAutomaticTracking() {
 		checkIsOnMainThread()
 
-		let handler = DefaultTracker._autotrackingEventHandler
+		let handler = DefaultTracker.autotrackingEventHandler as! AutotrackingEventHandler
 
 		if self.configuration.automaticallyTrackedPages.isEmpty {
-			if let index = handler.trackers.index(where: { [weak self] in $0 === self}) {
+			if let index = handler.trackers.index(where: { [weak self] in $0.target === self}) {
 				handler.trackers.remove(at: index)
 			}
 		}
 		else {
-			if !handler.trackers.contains(where: {[weak self] in $0 === self }) {
+			if !handler.trackers.contains(where: {[weak self] in $0.target === self }) {
 				handler.trackers.append(WeakReference(self))
 			}
 
+            #if !os(watchOS)
 			UIViewController.setUpAutomaticTracking()
+            #else
+            WKInterfaceController.setUpAutomaticTracking()
+            #endif
 		}
 	}
-	#endif
 
 
-	private func updateConfiguration() {
+	func updateConfiguration() {
 		checkIsOnMainThread()
 
 		guard let updateUrl = self.configuration.configurationUpdateUrl else {
@@ -1206,19 +1119,18 @@ final class DefaultTracker: Tracker {
             return nil
         }
 
-		#if !os(watchOS)
-			var pageIndex = 0
-			configuration.automaticallyTrackedPages = configuration.automaticallyTrackedPages.filter { page in
-				defer { pageIndex += 1 }
+        var pageIndex = 0
+        configuration.automaticallyTrackedPages = configuration.automaticallyTrackedPages.filter { page in
+            defer { pageIndex += 1 }
 
-				guard page.pageProperties.name?.nonEmpty != nil else {
-					problems.append("automaticallyTrackedPages[\(pageIndex)] must not be empty")
-					return false
-				}
+            guard page.pageProperties.name?.nonEmpty != nil else {
+                problems.append("automaticallyTrackedPages[\(pageIndex)] must not be empty")
+                isError = true
+                return false
+            }
 
-				return true
-			}
-		#endif
+            return true
+        }
 
 		func checkProperty<Value: Comparable>(_ name: String, value: Value, allowedValues: ClosedRange<Value>) -> Value {
 			guard !allowedValues.contains(value) else {
@@ -1227,6 +1139,7 @@ final class DefaultTracker: Tracker {
 
 			let newValue = allowedValues.clamp(value)
 			problems.append("\(name) (\(value)) must be \(TrackerConfiguration.allowedMaximumSendDelays.conditionText) -> was corrected to \(newValue)")
+            isError = true
 			return newValue
 		}
 
@@ -1269,6 +1182,8 @@ final class DefaultTracker: Tracker {
 		return true
 	}
     
+    #if !os(watchOS)
+
     /** set media code. Media code will be sent with next page request only. Only setter is working. Getter always returns ""d*/
     var mediaCode: String {
         get {
@@ -1280,6 +1195,7 @@ final class DefaultTracker: Tracker {
             deepLink.setMediaCode(newMediaCode)
         }
     }
+    #endif
     
 }
 
@@ -1325,8 +1241,6 @@ extension DefaultTracker: RequestManager.Delegate {
 
 	internal func requestManager(_ requestManager: RequestManager, didSendRequest request: URL) {
 		checkIsOnMainThread()
-
-		//requestManagerDidFinishRequest()
 	}
 
 
@@ -1341,10 +1255,8 @@ extension DefaultTracker: RequestManager.Delegate {
 
 		#if !os(watchOS)
 			if requestManager!.queue.isEmpty {
-				if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
-					application.endBackgroundTask(backgroundTaskIdentifier)
-					backgroundTaskIdentifier = UIBackgroundTaskInvalid
-				}
+                
+                self.flowObserver.finishBackroundTask()
 
 				if application.applicationState != .active {
 					stopRequestManager()
@@ -1356,48 +1268,46 @@ extension DefaultTracker: RequestManager.Delegate {
 
 
 
-#if !os(watchOS)
-	private final class AutotrackingEventHandler: ActionEventHandler, MediaEventHandler, PageViewEventHandler {
+fileprivate final class AutotrackingEventHandler: ActionEventHandler, MediaEventHandler, PageViewEventHandler {
 
-		fileprivate var trackers = [WeakReference<DefaultTracker>]()
-
-
-		private func broadcastEvent<Event: TrackingEvent>(_ event: Event, handler: (DefaultTracker) -> (Event) -> Void) {
-			var event = event
-
-			for trackerOpt in trackers {
-				guard let viewControllerType = event.viewControllerType, let tracker = trackerOpt.target
-					, tracker.configuration.automaticallyTrackedPageForViewControllerType(viewControllerType) != nil
-				else {
-					continue
-				}
-
-				handler(tracker)(event)
-			}
-		}
+    fileprivate var trackers = [WeakReference<DefaultTracker>]()
 
 
-		fileprivate func handleEvent(_ event: ActionEvent) {
-			checkIsOnMainThread()
+    private func broadcastEvent<Event: TrackingEvent>(_ event: Event, handler: (DefaultTracker) -> (Event) -> Void) {
+        var event = event
 
-			broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
-		}
+        for trackerOpt in trackers {
+            guard let viewControllerType = event.viewControllerType, let tracker = trackerOpt.target
+                , tracker.configuration.automaticallyTrackedPageForViewControllerType(viewControllerType) != nil
+            else {
+                continue
+            }
+
+            handler(tracker)(event)
+        }
+    }
 
 
-		fileprivate func handleEvent(_ event: MediaEvent) {
-			checkIsOnMainThread()
+    fileprivate func handleEvent(_ event: ActionEvent) {
+        checkIsOnMainThread()
 
-			broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
-		}
+        broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
+    }
 
 
-		fileprivate func handleEvent(_ event: PageViewEvent) {
-			checkIsOnMainThread()
+    fileprivate func handleEvent(_ event: MediaEvent) {
+        checkIsOnMainThread()
 
-			broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
-		}
-	}
-#endif
+        broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
+    }
+
+
+    fileprivate func handleEvent(_ event: PageViewEvent) {
+        checkIsOnMainThread()
+
+        broadcastEvent(event, handler: DefaultTracker.handleEvent(_:))
+    }
+}
 
 
 

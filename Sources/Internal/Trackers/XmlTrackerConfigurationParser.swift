@@ -37,10 +37,9 @@ internal class XmlTrackerConfigurationParser {
 	private var serverUrl: URL?
 	private var version: Int?
 	private var webtrekkId: String?
-
-
-	#if !os(watchOS)
 	private var automaticallyTrackedPages = Array<TrackerConfiguration.Page>()
+    
+    #if !os(watchOS)
 	private var automaticallyTracksConnectionType: Bool?
 	private var automaticallyTracksInterfaceOrientation: Bool?
 	#endif
@@ -125,17 +124,23 @@ internal class XmlTrackerConfigurationParser {
 
 				case "globalTrackingParameter" : try readFromGlobalElement(child)
                 case "recommendations" : try recommendationsL = readRecommendations(xmlElement: child)
+                case "screen": try readFromScreenElement(child)
+                case "autoTrackConnectionType":
+                    #if !os(watchOS) && !os(tvOS)
+                    automaticallyTracksConnectionType = try parseBool(child.text)
+                    #else
+                    logError("autoTrackConnectionType isn't supported for watchOS and tvOS")
+                    #endif
+                case "autoTrackScreenOrientation":
+                    #if !os(watchOS) && !os(tvOS)
+                    automaticallyTracksInterfaceOrientation = try parseBool(child.text)
+                    #else
+                    logError("autoTrackScreenOrientation isn't supported for watchOS and tvOS")
+                    #endif
 
 				default:
-					#if !os(watchOS)
-						switch child.name {
-						case "autoTrackConnectionType":    automaticallyTracksConnectionType = try parseBool(child.text)
-						case "autoTrackScreenOrientation": automaticallyTracksInterfaceOrientation = try parseBool(child.text)
-						case "screen": try readFromScreenElement(child)
-						default: break
-						}
-					#endif
-					// TODO: Log not found elements?
+                        logError("Element \(child.name) not found")
+                        break
 				}
 			}
 			catch let error as TrackerError {
@@ -216,10 +221,11 @@ internal class XmlTrackerConfigurationParser {
 			if let automaticallyTracksInterfaceOrientation = automaticallyTracksInterfaceOrientation {
 				trackerConfiguration.automaticallyTracksInterfaceOrientation = automaticallyTracksInterfaceOrientation
 			}
-			trackerConfiguration.automaticallyTrackedPages = automaticallyTrackedPages
 		#endif
 
-		if let globalParameter = globalScreenTrackingParameter {
+        trackerConfiguration.automaticallyTrackedPages = automaticallyTrackedPages
+		
+        if let globalParameter = globalScreenTrackingParameter {
             trackerConfiguration.globalProperties = GlobalProperties()
             trackerConfiguration.globalProperties.trackingParameters = globalParameter
 		}
@@ -227,7 +233,6 @@ internal class XmlTrackerConfigurationParser {
 	}
 
 
-	#if !os(watchOS)
 	fileprivate func readFromScreenElement(_ xmlElement: XmlElement) throws {
 		guard xmlElement.name == "screen" else {
 			throw TrackerError(message: "\(xmlElement.path.joined(separator: ".")) nodes needs to be screen")
@@ -296,6 +301,18 @@ internal class XmlTrackerConfigurationParser {
 		automaticallyTrackedPages.append(page)
 	}
     
+	private func readFromScreenTrackingParameterElement(xmlElement: XmlElement) throws -> TrackingParameter? {
+		guard xmlElement.name == "screenTrackingParameter" else {
+			throw TrackerError(message: "screenTrackingParameter nodes needs to be screenTrackingParameter")
+		}
+		guard !xmlElement.children.isEmpty else {
+			return nil
+		}
+
+		return parseScreenTrackingParameter(xmlElement: xmlElement)
+	}
+
+
     private func readRecommendations(xmlElement recomendParent: XmlElement) throws -> [String: URL]?{
         guard !recomendParent.children.isEmpty else {
             return nil
@@ -316,22 +333,7 @@ internal class XmlTrackerConfigurationParser {
         return recommendations
     }
 
-
-
-	private func readFromScreenTrackingParameterElement(xmlElement: XmlElement) throws -> TrackingParameter? {
-		guard xmlElement.name == "screenTrackingParameter" else {
-			throw TrackerError(message: "screenTrackingParameter nodes needs to be screenTrackingParameter")
-		}
-		guard !xmlElement.children.isEmpty else {
-			return nil
-		}
-
-		return parseScreenTrackingParameter(xmlElement: xmlElement)
-	}
-	#endif
-
-
-	private func readFromCategoryElement(xmlElement: XmlElement) -> [Int: PropertyValue]? {
+    private func readFromCategoryElement(xmlElement: XmlElement) -> [Int: PropertyValue]? {
 		guard !xmlElement.children.isEmpty else {
 			return nil
 		}

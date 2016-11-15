@@ -32,11 +32,6 @@ public protocol Tracker: class {
 	var global: GlobalProperties { get set }
 	var plugins: [TrackerPlugin] { get set }
 
-
-	#if os(watchOS)
-	func applicationDidFinishLaunching()
-	#endif
-
     /**Functions sends all request from cache to server. Function can be used only for manual send mode, when <sendDelay>0</sendDelay>
      otherwise it returns false. It returns true if asynchronus command for sending is done*/
 	func sendPendingEvents()
@@ -57,8 +52,10 @@ public protocol Tracker: class {
 	
 	func trackerForPage(_ pageName: String) -> PageTracker
     
+    #if !os(watchOS)
     /** set media code. Media code will be sent with next page request only. Only setter is working. Getter always returns ""*/
     var mediaCode: String { get set }
+    #endif
     
     /**this value override pu parameter if it is setup from code in any other way or configuraion xml */
     var pageURL: String? { get set }
@@ -93,7 +90,7 @@ public extension Tracker {
 
 	public func trackAction(
 		_ actionName: String,
-		viewControllerType: UIViewController.Type,
+		viewControllerType: AnyObject.Type,
 		advertisementProperties: AdvertisementProperties = AdvertisementProperties(id: nil),
 		ecommerceProperties: EcommerceProperties = EcommerceProperties(),
 		sessionDetails: [Int: TrackingValue] = [:],

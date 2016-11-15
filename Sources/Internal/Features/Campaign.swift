@@ -82,15 +82,15 @@ class Campaign{
                 
                 // parc response
                 guard let dataG = data, let json = try? JSONSerialization.jsonObject(with: dataG, options: .allowFragments) as! [String:Any],
-                    let jsonMedia = json["mediacode"] as? String , jsonMedia.characters.split(separator: "=").count == 2 else {
+                    let jsonMedia = json["mediacode"] as? String else {
             
-                    WebtrekkTracking.logger.logError("Incorrect JSON response:\(data)")
+                    WebtrekkTracking.logger.logError("Incorrect JSON response for Campaign tracking:\(data)")
                     return
                 }
             
                WebtrekkTracking.logger.logDebug("Media code is received:\(jsonMedia)")
             
-               let mc = String(jsonMedia.characters.split(separator: "=")[1])
+               let mc = String(jsonMedia.characters.split(separator: "=", maxSplits:1)[1])
                 
                 guard !mc.isEmpty else {
                     WebtrekkTracking.logger.logError("media code length is zero")

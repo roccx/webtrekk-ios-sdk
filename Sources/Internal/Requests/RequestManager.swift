@@ -330,7 +330,9 @@ internal final class RequestManager {
 			self.currentRequest = nil
 			let _ = self.queue.removeFirstEqual(url)
 
-			self.delegate?.requestManager(self, didSendRequest: url)
+            if let delegate = self.delegate {
+                delegate.requestManager(self, didSendRequest: url)
+            }
 
 			self.sendNextRequest()
 		}

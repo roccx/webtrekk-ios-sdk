@@ -20,6 +20,10 @@
 import Foundation
 import UIKit
 
+#if os(watchOS)
+import WatchKit
+#endif
+
 
 public class WebtrekkTracking {
 
@@ -52,7 +56,7 @@ public class WebtrekkTracking {
     /** return true if Webtrekk is already initialized. */
     public static func isInitialized()->Bool{
         
-        guard instance() != nil else {
+        guard self.tracker != nil else {
             return false
         }
         
@@ -72,7 +76,7 @@ public class WebtrekkTracking {
         
         checkIsOnMainThread()
         
-        try createTracker(configurationFile: confFile)
+        let _ = try createTracker(configurationFile: confFile)
     }
 
 	/**
@@ -90,7 +94,9 @@ public class WebtrekkTracking {
 
 		do {
 			let tracker = instance() as! DefaultTracker
-            tracker.initializeTracking(configuration: try XmlTrackerConfigurationParser().parse(xml: configurationData))
+            guard tracker.initializeTracking(configuration: try XmlTrackerConfigurationParser().parse(xml: configurationData)) else {
+                throw TrackerError(message: "Cannot initialize Webtrekk tracking see log above for details")
+            }
             
             tracker.initTimers()
             
@@ -108,12 +114,22 @@ public class WebtrekkTracking {
 	}
 
 
-	#if !os(watchOS)
-	/** Returns a `PageTracker` for a corresponding `UIViewController` which were configured by the xml. */
+	/** Returns a `PageTracker` for a corresponding `UIViewController` or WKInterfaceController for watchOS which were configured by the xml. */
+    #if !os(watchOS)
 	public static func trackerForAutotrackedViewController(_ viewController: UIViewController) -> PageTracker {
 		checkIsOnMainThread()
 
 		return viewController.automaticTracker
 	}
-	#endif
+    
+    #else
+
+    public static func trackerForAutotrackedViewController(_ viewController: WKInterfaceController) -> PageTracker {
+        checkIsOnMainThread()
+        
+        return viewController.automaticTracker
+    }
+    
+    #endif
+
 }

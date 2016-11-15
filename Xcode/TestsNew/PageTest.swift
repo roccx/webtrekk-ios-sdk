@@ -228,7 +228,10 @@ class PageTest: WTBaseTestNew {
         
         self.timeout = 10
             doURLSendTestCheck(){parametersArr in
+                
+                
                 expect(parametersArr["p"]).to(contain("autoPageName"))
+                expect(parametersArr["p"]).to(contain(self.libraryVersion!))
             }
 
     }

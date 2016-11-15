@@ -14,17 +14,19 @@
 //CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//  Created by Widgetlabs
+//  Created by arsen.vartbaronov on 04/11/16.
 //
 
 import WatchKit
 import Foundation
+import UserNotifications
 
 
-class GlanceController: WKInterfaceController {
+class NotificationController: WKUserNotificationInterfaceController {
 
-    override func awakeWithContext(context: AnyObject?) {
-        super.awakeWithContext(context)
+    override init() {
+        // Initialize variables here.
+        super.init()
         
         // Configure interface objects here.
     }
@@ -39,4 +41,14 @@ class GlanceController: WKInterfaceController {
         super.didDeactivate()
     }
 
+    /*
+    override func didReceive(_ notification: UNNotification, withCompletion completionHandler: @escaping (WKUserNotificationInterfaceType) -> Swift.Void) {
+        // This method is called when a notification needs to be presented.
+        // Implement it if you use a dynamic notification interface.
+        // Populate your dynamic notification interface as quickly as possible.
+        //
+        // After populating your dynamic notification interface call the completion block.
+        completionHandler(.custom)
+    }
+    */
 }

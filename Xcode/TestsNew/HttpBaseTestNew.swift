@@ -19,105 +19,43 @@
 
 import XCTest
 import Nimble
-import OHHTTPStubs
 
 class HttpBaseTestNew: XCTestCase {
     
-    static var request: URLRequest?
     var timeout: TimeInterval = 12
-    static var stubDescription: OHHTTPStubsDescriptor?
-
+    let httpTester = HTTPTester()
 
     override func setUp() {
         super.setUp()
-        initHTTPServer()
+        httpTester.initHTTPServer()
         print("Test \""+self.name!+"\" is started----------------------------------")
     }
     
     override func tearDown() {
-        releaseHTTPServer()
+        httpTester.releaseHTTPServer()
         print("Test \""+self.name!+"\" is finished----------------------------------")
         super.tearDown()
     }
-
-    func initHTTPServer()
-    {
-        guard HttpBaseTestNew.stubDescription == nil else{
-            return
-        }
-        
-        addNormalStub(process: {HttpBaseTestNew.request = $0})
-    }
-    
-    
-    func addNormalStub(process closure: @escaping (_ query: URLRequest)->())
-    {
-        HttpBaseTestNew.stubDescription = stub(condition: isHost("q3.webtrekk.net")){ request in
-            
-            closure(request)
-            
-            let stubPath = OHPathForFile("stub.jpg", type(of: self))
-            return fixture(filePath: stubPath!, headers: ["Content-Type" as NSObject:"image/jpeg" as AnyObject])
-        }
-    }
-    
-    func removeStub(){
-        if let stubDescr = HttpBaseTestNew.stubDescription {
-            OHHTTPStubs.removeStub(stubDescr)
-            HttpBaseTestNew.stubDescription = nil
-        }
-    }
-    
-    func addConnectionInterruptionStub(){
-        HttpBaseTestNew.stubDescription = stub(condition: isHost("q3.webtrekk.net")){ request in
-            
-            let notConnectedError = NSError(domain:NSURLErrorDomain, code:NSURLErrorNotConnectedToInternet, userInfo:nil)
-            return OHHTTPStubsResponse(error:notConnectedError)
-        }
-    }
-
-    func releaseHTTPServer()
-    {
-        removeStub()
-    }
     
     func doURLSendTestAction(_ closure: ()->()){
-        HttpBaseTestNew.request = nil
+        HTTPTester.request = nil
         closure()
     }
     
-    func getReceivedURLParameters(_ query: String) -> [String:String]
-    {
-        let valueKeys = query.characters.split(separator: "&")
-        var keyValueMap = [String: String]()
-        
-        for valueKey in valueKeys{
-            let keyValueArray:[AnySequence<Character>] = valueKey.split(separator: "=")
-            if (keyValueArray.count == 2){
-                keyValueMap[String(keyValueArray[0])] = String(keyValueArray[1])
-            }else
-            {
-                print("incorrect parameter:"+String(valueKey))
-            }
-        }
-        
-        return keyValueMap
-    }
-    
     func doURLnotSendTestCheck(_ timeout: TimeInterval = 10){
-        expect(HttpBaseTestNew.request).toEventually(beNil(), timeout:timeout)
+        expect(HTTPTester.request).toEventually(beNil(), timeout:timeout)
         
     }
     
     func doURLSendTestCheck(_ closure: (_ parameters: [String: String])->())
     {
-        expect(HttpBaseTestNew.request).toEventuallyNot(beNil(), timeout:self.timeout)
+        expect(HTTPTester.request).toEventuallyNot(beNil(), timeout:self.timeout)
         
-        guard let _ = HttpBaseTestNew.request else{
+        guard let _ = HTTPTester.request else{
             return
         }
-        NSLog("Send URL is:"+(HttpBaseTestNew.request?.url?.absoluteString)!)
+        NSLog("Send URL is:"+(HTTPTester.request?.url?.absoluteString)!)
         
-        closure(getReceivedURLParameters((HttpBaseTestNew.request?.url?.query)!))
+        closure(httpTester.getReceivedURLParameters((HTTPTester.request?.url?.query)!))
     }
 }

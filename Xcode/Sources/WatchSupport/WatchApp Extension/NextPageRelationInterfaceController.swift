@@ -14,24 +14,32 @@
 //CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//  Created by Widgetlabs
+//  Created by arsen.vartbaronov on 15/11/16.
 //
 
+import WatchKit
 import Foundation
 import Webtrekk
 
 
-extension WebtrekkTracking {
-
-	static let sharedTracker: Tracker = {
-		WebtrekkTracking.defaultLogger.minimumLevel = .debug
-
-		var configuration = TrackerConfiguration(
-			webtrekkId: "289053685367929",
-			serverUrl:  NSURL(string: "https://q3.webtrekk.net")!
-		)
-		configuration.maximumSendDelay = 30
-
-		return WebtrekkTracking.tracker(configuration: configuration)
-	}()
+class NextPageRelationInterfaceController: WKInterfaceController {
+    
+    override func awake(withContext context: Any?) {
+        super.awake(withContext: context)
+        
+        // Configure interface objects here.
+    }
+    
+    override func willActivate() {
+        // This method is called when watch view controller is about to be visible to user
+        super.willActivate()
+    }
+    
+    override func didDeactivate() {
+        // This method is called when watch view controller is no longer visible
+        super.didDeactivate()
+    }
+    
+    override func didAppear(){
+    }
 }

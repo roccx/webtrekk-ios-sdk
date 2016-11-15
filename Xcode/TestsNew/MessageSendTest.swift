@@ -75,8 +75,8 @@ class MessageSendTest: WTBaseTestNew {
     }
     
     func testConnectionInterruption() {
-        removeStub()
-        addConnectionInterruptionStub()
+        httpTester.removeStub()
+        httpTester.addConnectionInterruptionStub()
         
         
         let tracker = WebtrekkTracking.instance()
@@ -94,9 +94,9 @@ class MessageSendTest: WTBaseTestNew {
         var currentId = 0
         
         self.doURLSendTestAction(){
-            self.removeStub()
-            self.addNormalStub(){query in
-                let parameters = self.getReceivedURLParameters((query.url?.query!)!)
+            self.httpTester.removeStub()
+            self.httpTester.addNormalStub(){query in
+                let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
                 
                 expect(parameters["cp100"]).to(equal("\(currentId)"))
                 currentId += 1
@@ -107,8 +107,8 @@ class MessageSendTest: WTBaseTestNew {
     }
     
     func testConnectionInterruptionComplex() {
-        removeStub()
-        addConnectionInterruptionStub()
+        self.httpTester.removeStub()
+        self.httpTester.addConnectionInterruptionStub()
         
         
         let tracker = WebtrekkTracking.instance()
@@ -126,9 +126,9 @@ class MessageSendTest: WTBaseTestNew {
         var currentId = 0
         
         self.doURLSendTestAction(){
-            self.removeStub()
-            self.addNormalStub(){query in
-                let parameters = self.getReceivedURLParameters((query.url?.query!)!)
+            self.httpTester.removeStub()
+            self.httpTester.addNormalStub(){query in
+                let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
                 
                 expect(parameters["cp100"]).to(equal("\(currentId)"))
                 currentId += 1
