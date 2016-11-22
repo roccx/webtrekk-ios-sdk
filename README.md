@@ -21,10 +21,10 @@ tvOS support starting with verison 4.2.0 with the follow limitation:
 No screen resolution and network status automatic tracing support.
 
 watchOS support starting with verison 4.3.0 with the follow limiation
-1. No screen resolution and network status automatic tracing support.
+1. No screen resolution and network status automatic tracking support.
 2. No deep link and campaign support.
 
-Installation
+Installation
 ============
 
 Using [CocoaPods](htttp://cocoapods.org) the installation of the Webtrekk SDK is done by simply adding it to your project's `Podfile`:

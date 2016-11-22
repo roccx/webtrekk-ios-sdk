@@ -49,12 +49,16 @@ enum PropertyName:String {
     case zipCode = "ZIP"
 }
 
+enum CustomParType: String{
+    case actionParameter, adParameter, ecomParameter, mediaCategories, pageCategories, pageParameter, productCategories, sessionParameter, userCategories
+}
+
 
 class TrackingParameter {
-    private var categories: [String: [Int: PropertyValue]]
+    var categories: [CustomParType: [Int: PropertyValue]]
     private var parameters: [PropertyName: PropertyValue]
     
-    init(categories: [String: [Int: PropertyValue]], parameters: [PropertyName: PropertyValue]) {
+    init(categories: [CustomParType: [Int: PropertyValue]], parameters: [PropertyName: PropertyValue]) {
         self.categories = categories
         self.parameters = parameters
     }
@@ -84,7 +88,7 @@ class TrackingParameter {
     
     
     func actionProperties(variables: [String : String]) -> ActionProperties {
-        return ActionProperties(name: nil, details: categories["actionParameter"].flatMap { resolved(elements: $0, variables: variables) })
+        return ActionProperties(name: nil, details: categories[.actionParameter].flatMap { resolved(elements: $0, variables: variables) })
     }
     
     
@@ -98,7 +102,7 @@ class TrackingParameter {
             advertisementAction = action
         }
         var details: [Int: TrackingValue]? = nil
-        if let elements = categories["adParameter"], let advertisementDetails = resolved(elements: elements, variables: variables) {
+        if let elements = categories[.adParameter], let advertisementDetails = resolved(elements: elements, variables: variables) {
             details = advertisementDetails
         }
         
@@ -133,7 +137,7 @@ class TrackingParameter {
             ecommerceProperties.voucherValue = voucherValue
         }
         
-        if let elements = categories["ecomParameter"], let ecommerceDetails = resolved(elements: elements, variables: variables) {
+        if let elements = categories[.ecomParameter], let ecommerceDetails = resolved(elements: elements, variables: variables) {
             ecommerceProperties.details = ecommerceDetails
         }
         
@@ -146,7 +150,7 @@ class TrackingParameter {
     
     
     func mediaProperties(variables: [String : String]) -> MediaProperties {
-        return MediaProperties(name: nil, groups: categories["mediaCategories"].flatMap { resolved(elements: $0, variables: variables) })
+        return MediaProperties(name: nil, groups: categories[.mediaCategories].flatMap { resolved(elements: $0, variables: variables) })
     }
     
     
@@ -158,10 +162,10 @@ class TrackingParameter {
         if let url = parameters[.pageUrl]?.serialized() {
             pageProperties.url = url
         }
-        if let elements = categories["pageParameter"], let pageDetails = resolved(elements: elements, variables: variables) {
+        if let elements = categories[.pageParameter], let pageDetails = resolved(elements: elements, variables: variables) {
             pageProperties.details = pageDetails
         }
-        if let elements = categories["pageCategories"], let pageGroups = resolved(elements: elements, variables: variables) {
+        if let elements = categories[.pageCategories], let pageGroups = resolved(elements: elements, variables: variables) {
             pageProperties.groups = pageGroups
         }
         
@@ -181,7 +185,7 @@ class TrackingParameter {
         }
         
         var productCategories: [Int: TrackingValue]? = nil
-        if let elements = categories["productCategories"], let productCategoriesElements = resolved(elements: elements, variables: variables) {
+        if let elements = categories[.productCategories], let productCategoriesElements = resolved(elements: elements, variables: variables) {
             productCategories = productCategoriesElements
         }
         
@@ -194,13 +198,13 @@ class TrackingParameter {
     
     
     func sessionDetails(variables: [String : String]) -> [Int: TrackingValue] {
-        return categories["sessionParameter"].flatMap { resolved(elements: $0, variables: variables) } ?? [:]
+        return categories[.sessionParameter].flatMap { resolved(elements: $0, variables: variables) } ?? [:]
     }
     
     
     func userProperties(variables: [String : String]) -> UserProperties {
         var userProperties = UserProperties(birthday: nil)
-        if let categoryElements = categories["userCategories"], let details = resolved(elements: categoryElements, variables: variables) {
+        if let categoryElements = categories[.userCategories], let details = resolved(elements: categoryElements, variables: variables) {
             userProperties.details = details
         }
         if let bithday = parameters[.birthday]?.serialized(variables: variables)  {

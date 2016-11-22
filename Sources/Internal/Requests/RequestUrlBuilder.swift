@@ -97,32 +97,7 @@ internal final class RequestUrlBuilder {
 			append(arr: &parameters, name: "mk", value: actionId)
 		}
 		else {
-			if let requestQueueSize = properties.requestQueueSize {
-				append(arr: &parameters, name: "cp784", value: String(requestQueueSize))
-			}
-			if let appVersion = properties.appVersion {
-				append(arr: &parameters, name: "cs804", value: appVersion)
-			}
-			if let connectionType = properties.connectionType {
-				append(arr: &parameters, name: "cs807", value: connectionType.serialized)
-			}
-			if let advertisingId = properties.advertisingId {
-				append(arr: &parameters, name: "cs809", value: advertisingId.uuidString)
-			}
-			if let advertisingTrackingEnabled = properties.advertisingTrackingEnabled {
-				append(arr: &parameters, name: "cs813", value: advertisingTrackingEnabled ? "1" : "0")
-			}
-			if properties.isFirstEventAfterAppUpdate {
-				append(arr: &parameters, name: "cs815", value: "1")
-			}
-
 			parameters += request.crossDeviceProperties.asQueryItems()
-
-			#if !os(watchOS) && !os(tvOS)
-				if let interfaceOrientation = properties.interfaceOrientation {
-					append(arr: &parameters, name: "cp783", value: interfaceOrientation.serialized)
-				}
-			#endif
 		}
 
 		if let actionProperties = (event as? TrackingEventWithActionProperties)?.actionProperties {
@@ -492,9 +467,7 @@ private extension UserProperties {
 	}
 }
 
-
-
-private extension TrackerRequest.Properties.ConnectionType {
+extension TrackerRequest.Properties.ConnectionType {
 
 	var serialized: String {
 		switch self {
@@ -552,7 +525,7 @@ private extension URLQueryItem {
 
 
 #if !os(watchOS) && !os(tvOS)
-private extension UIInterfaceOrientation {
+extension UIInterfaceOrientation {
 
 	var serialized: String {
         switch self {

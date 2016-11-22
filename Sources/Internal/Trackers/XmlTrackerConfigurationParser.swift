@@ -53,7 +53,7 @@ internal class XmlTrackerConfigurationParser {
 
 
 	private func parseScreenTrackingParameter(xmlElement: XmlElement) -> TrackingParameter {
-		var categories = [String: [Int: PropertyValue]]()
+		var categories = [CustomParType: [Int: PropertyValue]]()
 
 		var parameters = [PropertyName: PropertyValue]()
 		for child in xmlElement.children {
@@ -64,15 +64,15 @@ internal class XmlTrackerConfigurationParser {
 				}
 				parameters[element.0] = element.1
 
-			case "actionParameter":   categories["actionParameter"] = readFromCategoryElement(xmlElement: child)
-			case "adParameter":       categories["adParameter"] = readFromCategoryElement(xmlElement: child)
-			case "ecomParameter":     categories["ecomParameter"] = readFromCategoryElement(xmlElement: child)
-			case "mediaCategories":   categories["mediaCategories"] = readFromCategoryElement(xmlElement: child)
-			case "pageCategories":    categories["pageCategories"] = readFromCategoryElement(xmlElement: child)
-			case "pageParameter":     categories["pageParameter"] = readFromCategoryElement(xmlElement: child)
-			case "productCategories": categories["productCategories"] = readFromCategoryElement(xmlElement: child)
-			case "sessionParameter":  categories["sessionParameter"] = readFromCategoryElement(xmlElement: child)
-			case "userCategories":    categories["userCategories"] = readFromCategoryElement(xmlElement: child)
+			case CustomParType.actionParameter.rawValue:   categories[.actionParameter] = readFromCategoryElement(xmlElement: child)
+            case CustomParType.adParameter.rawValue:   categories[.adParameter] = readFromCategoryElement(xmlElement: child)
+            case CustomParType.ecomParameter.rawValue:   categories[.ecomParameter] = readFromCategoryElement(xmlElement: child)
+            case CustomParType.mediaCategories.rawValue:   categories[.mediaCategories] = readFromCategoryElement(xmlElement: child)
+            case CustomParType.pageCategories.rawValue:   categories[.pageCategories] = readFromCategoryElement(xmlElement: child)
+            case CustomParType.pageParameter.rawValue:   categories[.pageParameter] = readFromCategoryElement(xmlElement: child)
+            case CustomParType.productCategories.rawValue:   categories[.productCategories] = readFromCategoryElement(xmlElement: child)
+            case CustomParType.sessionParameter.rawValue:   categories[.sessionParameter] = readFromCategoryElement(xmlElement: child)
+            case CustomParType.userCategories.rawValue:   categories[.userCategories] = readFromCategoryElement(xmlElement: child)
 
 			default: break
 			}

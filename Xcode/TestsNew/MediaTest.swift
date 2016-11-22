@@ -50,7 +50,7 @@ class MediaTest: WTBaseTestNew {
             expect(parametersArr["vol"]).to(equal("990"))
             expect(parametersArr["mg20"]).to(equal("group20"))
             expect(parametersArr["mi"]).to(equal("mpName"))
-            expect(parametersArr["x"]).notTo(beNil())
+            expect(parametersArr["x"]).toNot(beNil())
             expect(parametersArr["mut"]).to(equal("1"))
         }
     }

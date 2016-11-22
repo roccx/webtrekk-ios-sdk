@@ -138,21 +138,6 @@ class PageTest: WTBaseTestNew {
         }
     }
     
-    func testAutoParameter()
-    {
-        doURLSendTestAction(){
-            WebtrekkTracking.instance().trackPageView("pageName")
-        }
-        
-        doURLSendTestCheck(){parametersArr in
-            expect(parametersArr["cs804"]).to(equal("1.0"))
-            #if !os(tvOS)
-            expect(parametersArr["cs807"]).to(equal("WIFI"))
-            #endif
-        }
-    }
-    
-    
     //To be done
     private func oneTest()
     {
