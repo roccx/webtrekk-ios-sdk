@@ -803,12 +803,18 @@ final class DefaultTracker: Tracker {
 				logError("Cannot load configuration from \(updateUrl): \(error)")
 				return
 			}
-			guard let data = data else {
+			guard let data = data, data.count > 0 else {
 				logError("Cannot load configuration from \(updateUrl): Server returned no data.")
 				return
 			}
-
-			var configuration: TrackerConfiguration
+            let maxSize = 1024*1024
+            
+            guard data.count < maxSize else {
+                logError("Error load configuration xml. Exceeded size \(maxSize)")
+                return
+            }
+			
+            var configuration: TrackerConfiguration
 			do {
 				configuration = try XmlTrackerConfigurationParser().parse(xml: data)
 			}

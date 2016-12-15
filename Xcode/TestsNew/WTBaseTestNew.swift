@@ -34,6 +34,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     
     override func tearDown() {
         checkFinishCondition()
+        clearCashedConf()
         releaseWebtrekk()
         super.tearDown()
     }
@@ -79,7 +80,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         WebtrekkTracking.tracker = nil
         
         while weakTracker != nil {
-            RunLoop.current.run(mode: .defaultRunLoopMode, before: Date(timeIntervalSinceNow:2))
+            doSmartWait(sec: 2)
         }
     }
         
@@ -96,9 +97,36 @@ class WTBaseTestNew: HttpBaseTestNew {
     }
     
     private func isBackupFileExists() -> Bool{
-        let file = WTBaseTestNew.requestQueueBackupFileForWebtrekkId("123451234512345")
+        let file = WTBaseTestNew.requestQueueBackupFileForWebtrekkId(getConfID());
         
         return FileManager.default.itemExistsAtURL(file!)
+    }
+    
+    func doSmartWait(sec: Double){
+        RunLoop.current.run(mode: .defaultRunLoopMode, before: Date(timeIntervalSinceNow:sec))
+    }
+    
+    
+    private func getConfID() -> String{
+        return "123451234512345"
+    }
+    
+    
+    private func clearCashedConf(){
+        removeDefSetting(setting: "configuration")
+    }
+    
+    private func removeDefSetting(setting: String) {
+        Foundation.UserDefaults.standard.removeObject(forKey: getKeyForDefSetting(setting: setting))
+    }
+    
+    func checkDefSetting(setting: String)-> Bool{
+        let object = Foundation.UserDefaults.standard.object(forKey: getKeyForDefSetting(setting: setting))
+        return object != nil
+    }
+    
+    private func getKeyForDefSetting(setting: String)->String {
+        return "webtrekk.\(getConfID()).\(setting)"
     }
     
     static func requestQueueBackupFileForWebtrekkId(_ webtrekkId: String) -> URL? {

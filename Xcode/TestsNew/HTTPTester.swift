@@ -33,7 +33,7 @@ class HTTPTester {
     
     func addNormalStub(process closure: @escaping (_ query: URLRequest)->())
     {
-        HTTPTester.stubDescription = stub(condition: isHost("q3.webtrekk.net")){ request in
+        HTTPTester.stubDescription = stub(condition: filterConditions()){ request in
             
             closure(request)
             
@@ -49,8 +49,14 @@ class HTTPTester {
         }
     }
     
+    func filterConditions()->OHHTTPStubsTestBlock{
+        return {req in req.url?.host == "q3.webtrekk.net" || (req.url?.host == "localhost" && req.url?.port == 8080)}
+    }
+    
+    
+    
     func addConnectionInterruptionStub(){
-        HTTPTester.stubDescription = stub(condition: isHost("q3.webtrekk.net")){ request in
+        HTTPTester.stubDescription = stub(condition: filterConditions()){ request in
             
             let notConnectedError = NSError(domain:NSURLErrorDomain, code:NSURLErrorNotConnectedToInternet, userInfo:nil)
             return OHHTTPStubsResponse(error:notConnectedError)
