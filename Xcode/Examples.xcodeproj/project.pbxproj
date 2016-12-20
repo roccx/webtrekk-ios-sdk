@@ -12,7 +12,6 @@
 		28178808EE741308C90A2105 /* Pods_tvOS_SampleTVApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C545A3285EEC349D19BBAFE5 /* Pods_tvOS_SampleTVApp.framework */; };
 		495162121D1DFBC30006A82D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495161E61D1DFB9C0006A82D /* LaunchScreen.storyboard */; };
 		495162131D1DFBC30006A82D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 495161E71D1DFB9C0006A82D /* Main.storyboard */; };
-		495162151D1DFBC30006A82D /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495161E91D1DFB9C0006A82D /* Video.mp4 */; };
 		4E5CDE7B178AC071E41B18DC /* Pods_WatchApp_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D69B1D268FC4FC9375115AC4 /* Pods_WatchApp_Extension.framework */; };
 		6E99EB9F814BBECBBEB91478 /* Pods_watchOS_WatchApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AADB103160F53E54F123F1A5 /* Pods_watchOS_WatchApp.framework */; };
 		85A5EDCC2EFFB3DBB509277A /* Pods_iOS_Example_ModuleTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB547C7EFB209290DC1F091E /* Pods_iOS_Example_ModuleTest.framework */; };
@@ -62,6 +61,7 @@
 		9F63E7831DC0D52B0001D72E /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F76E59E1D85917200B9597A /* DeepLink.swift */; };
 		9F63E7851DC0E9580001D72E /* InitializationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F63E7841DC0E9580001D72E /* InitializationTest.swift */; };
 		9F63E7881DC0EB180001D72E /* InitializationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F63E7841DC0E9580001D72E /* InitializationTest.swift */; };
+		9F82A7EC1E0816EB00B8E9A9 /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495161E91D1DFB9C0006A82D /* Video.mp4 */; };
 		9F95D3F31DAE41050068E8F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F001D5C7C59002CB83F /* AppDelegate.swift */; };
 		9F95D3FA1DAE41370068E8F8 /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 9F415F091D5C7C59002CB83F /* webtrekk_config.xml */; };
 		9F95D3FF1DAE423E0068E8F8 /* ActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F161D5C7C6D002CB83F /* ActionTest.swift */; };
@@ -935,7 +935,6 @@
 			files = (
 				B73DB2431D49ED4F00F0C8DD /* webtrekk_config.xml in Resources */,
 				495162131D1DFBC30006A82D /* Main.storyboard in Resources */,
-				495162151D1DFBC30006A82D /* Video.mp4 in Resources */,
 				B73DB2311D49ECC200F0C8DD /* iOS Example in Resources */,
 				495162121D1DFBC30006A82D /* LaunchScreen.storyboard in Resources */,
 			);
@@ -958,6 +957,7 @@
 				9F415F6C1D5CAD21002CB83F /* webtrekk_config.xml in Resources */,
 				9FED05741DB8F56600008C01 /* Configurations in Resources */,
 				9F415F6D1D5CAD2A002CB83F /* Images.xcassets in Resources */,
+				9F82A7EC1E0816EB00B8E9A9 /* Video.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

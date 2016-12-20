@@ -80,7 +80,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         WebtrekkTracking.tracker = nil
         
         while weakTracker != nil {
-            doSmartWait(sec: 2)
+            doSmartWaitIter(sec: 2)
         }
     }
         
@@ -102,8 +102,17 @@ class WTBaseTestNew: HttpBaseTestNew {
         return FileManager.default.itemExistsAtURL(file!)
     }
     
-    func doSmartWait(sec: Double){
+    func doSmartWaitIter(sec: Double){
         RunLoop.current.run(mode: .defaultRunLoopMode, before: Date(timeIntervalSinceNow:sec))
+    }
+    
+    
+    func doSmartWait(sec: Double){
+        let date: Date = Date(timeIntervalSinceNow: TimeInterval(sec))
+        
+        while date > Date() {
+        doSmartWaitIter(sec: 1)
+        }
     }
     
     

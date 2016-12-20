@@ -22,6 +22,12 @@ import Nimble
 import Webtrekk
 
 class MediaTest: WTBaseTestNew {
+    
+    var mainViewController: ViewController!
+    
+    override func getCongigName() -> String?{
+        return String("webtrekk_config_no_completely_autoTrack")
+    }
 
     func testMedia() {
         
@@ -54,5 +60,101 @@ class MediaTest: WTBaseTestNew {
             expect(parametersArr["mut"]).to(equal("1"))
         }
     }
+    #if !os(tvOS)
+    func testAVPlayer(){
+        
+        if self.mainViewController == nil {
+            self.mainViewController = ViewController()
+        }
+        
+        guard let videoUrl = Bundle.main.url(forResource: "Video", withExtension: "mp4") else {
+            return
+        }
+        
+        let player = AVPlayer(url: videoUrl)
+        
+        let playerLayer = AVPlayerLayer(player: player)
+        
+        self.mainViewController.beginAppearanceTransition(true, animated: false)
+        self.mainViewController.endAppearanceTransition()
+
+        
+        playerLayer.frame = self.mainViewController.view.bounds
+        self.mainViewController.view.layer.addSublayer(playerLayer)
+        
+        let tracker = WebtrekkTracking.instance()
+        
+        tracker["Key2"] = "KeyValueFor_Key2"
+        
+        var requestNumber: Int = 1
+        enum TestPhase { case _init, play, pause, pos, finish}
+        var platPhase: TestPhase = ._init
+        
+        
+        self.httpTester.removeStub()
+        self.httpTester.addNormalStub(){query in
+            let parametersArr = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
+            
+            expect(parametersArr["mg2"]).to(equal("KeyValueFor_Key2"))
+            expect(parametersArr["p"]).to(contain("mediaPageName"))
+            expect(parametersArr["mi"]).to(equal("mediaName"))
+            
+            switch (platPhase, requestNumber){
+            case (._init, 1):
+                expect(parametersArr["mk"]).to(equal("init"))
+                expect(parametersArr["mt1"]).to(equal("0"))
+                expect(parametersArr["mt2"]).to(equal("0"))
+            case (._init, 2):
+                expect(parametersArr["mk"]).to(equal("play"))
+                expect(parametersArr["mt1"]).to(equal("0"))
+                expect(parametersArr["mt2"]).to(equal("135"))
+            case (.pause, 3):
+                expect(parametersArr["mt2"]).to(equal("135"))
+                expect(Int(parametersArr["mt1"]!)).to(beGreaterThan(0))
+                expect(parametersArr["mk"]).to(equal("pause"))
+            case (.play, 4):
+                expect(parametersArr["mt2"]).to(equal("135"))
+                expect(Int(parametersArr["mt1"]!)).to(beGreaterThan(0))
+                expect(parametersArr["mk"]).to(equal("play"))
+            case (.pos, 5):
+                expect(parametersArr["mt2"]).to(equal("135"))
+                expect(Int(parametersArr["mt1"]!)).to(beGreaterThan(0))
+                expect(parametersArr["mk"]).to(equal("pos"))
+            case (.finish, 6):
+                expect(parametersArr["mt2"]).to(equal("135"))
+                expect(Int(parametersArr["mt1"]!)).to(beGreaterThan(0))
+                expect(parametersArr["mk"]).to(equal("finish"))
+            default:
+                break;
+            }
+            
+            requestNumber = requestNumber + 1
+        }
+
+        
+        let _ = tracker.trackerForMedia("mediaName", pageName: "mediaPageName", automaticallyTrackingPlayer: player)
+        
+        // start play
+        player.play()
+        doSmartWait(sec: 3)
+        // test pause
+        platPhase = .pause
+        player.rate = 0.0
+        doSmartWait(sec: 3)
+        // start play again quickly
+        platPhase = .play
+        player.rate = 4.0
+        // wait to fix play state
+        doSmartWait(sec: 4)
+        platPhase = .pos
+        //wait to fix pos state
+        doSmartWait(sec: 30)
+        platPhase = .finish
+        // wait to fix finish
+        doSmartWait(sec: 10)
+        // finish test
+        playerLayer.player = nil
+    }
+    #endif
 
 }

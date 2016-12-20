@@ -24,7 +24,7 @@ import ObjectiveC
 internal final class AVPlayerTracker: NSObject {
 
 	private var itemDidPlayToEndTimeObserver: NSObjectProtocol?
-	private var parent: MediaTracker
+	private let parent: MediaTracker
 	private var pauseDetectionTimer: Timer?
 	private var playbackState = PlaybackState.stopped
 	private weak var player: AVPlayer?
