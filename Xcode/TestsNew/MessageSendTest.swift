@@ -146,7 +146,7 @@ class MessageSendTest: WTBaseTestNew {
         for i in maxRequestsFirst..<maxRequestSecond {
             expect(currentId).toEventually(beGreaterThan(1), timeout:timeout)
             tracker.trackPageView(PageProperties(
-                name: "intrupConnection",
+                name: "interruptConnection",
                 details: [100: .constant("\(i)")],
                 groups: nil,
                 internalSearch: nil,

@@ -159,7 +159,7 @@ class TrackingParameter {
         if let internalSearch = parameters[.internalSearch]?.serialized(variables: variables) {
             pageProperties.internalSearch = internalSearch
         }
-        if let url = parameters[.pageUrl]?.serialized() {
+        if let url = parameters[.pageUrl]?.serialized(variables: variables) {
             pageProperties.url = url
         }
         if let elements = categories[.pageParameter], let pageDetails = resolved(elements: elements, variables: variables) {
@@ -246,7 +246,7 @@ class TrackingParameter {
         if let streetNumber = parameters[.streetNumber]?.serialized(variables: variables) {
             userProperties.streetNumber = streetNumber
         }
-        if let zipCode = parameters[.zipCode]?.serialized() {
+        if let zipCode = parameters[.zipCode]?.serialized(variables: variables) {
             userProperties.zipCode = zipCode
         }
         return userProperties

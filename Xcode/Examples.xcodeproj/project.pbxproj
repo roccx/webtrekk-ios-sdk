@@ -19,6 +19,7 @@
 		9F06B91E1DD4AB00003D15EC /* HTTPTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */; };
 		9F06B9201DD4AB02003D15EC /* HTTPTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */; };
 		9F06B9211DD4AD4E003D15EC /* HTTPTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */; };
+		9F0FB5BB1E0A7ED300957440 /* ParametersPriorityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */; };
 		9F12A9401DC899530006B44F /* RecoItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */; };
 		9F415F291D5C7C81002CB83F /* AAMigrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F151D5C7C6D002CB83F /* AAMigrationTest.swift */; };
 		9F415F2C1D5C7C81002CB83F /* HttpBaseTestNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F181D5C7C6D002CB83F /* HttpBaseTestNew.swift */; };
@@ -80,6 +81,7 @@
 		9FEB51761DC8A7C000C7DBCB /* RecommendationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */; };
 		9FED05741DB8F56600008C01 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FED05731DB8F56600008C01 /* Configurations */; };
 		9FED05751DB8F59400008C01 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FED05731DB8F56600008C01 /* Configurations */; };
+		9FF81B391E1FF58A00D0C5AD /* ParametersPriorityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */; };
 		9FFB526B1DC906FB000E4519 /* RecommendationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFB526A1DC906FB000E4519 /* RecommendationTest.swift */; };
 		9FFB526D1DC909A1000E4519 /* RecommendationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFB526A1DC906FB000E4519 /* RecommendationTest.swift */; };
 		9FFB526E1DC909CF000E4519 /* RecommendationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */; };
@@ -234,6 +236,7 @@
 		9B2224592D22F3F194B56D61 /* Pods-iOS-Example-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Example-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Example-Tests/Pods-iOS-Example-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		9F06B9191DD48837003D15EC /* NextPageInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextPageInterfaceController.swift; sourceTree = "<group>"; };
 		9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPTester.swift; sourceTree = "<group>"; };
+		9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParametersPriorityTest.swift; sourceTree = "<group>"; };
 		9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecoItemTableViewCell.swift; sourceTree = "<group>"; };
 		9F16F2BD1DB8C9CB007CFB71 /* MessageSendTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageSendTest.swift; sourceTree = "<group>"; };
 		9F415F001D5C7C59002CB83F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -509,6 +512,7 @@
 				9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */,
 				9F5A604B1DE2EC6D00EF84E0 /* AutoParameterTest.swift */,
 				9F5B66451E0163D000F1B917 /* RemoteConfTest.swift */,
+				9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */,
 			);
 			path = TestsNew;
 			sourceTree = "<group>";
@@ -1393,6 +1397,7 @@
 				9F63E7851DC0E9580001D72E /* InitializationTest.swift in Sources */,
 				9F63E77B1DC0D4B30001D72E /* WTBaseTestNew.swift in Sources */,
 				9F415F2C1D5C7C81002CB83F /* HttpBaseTestNew.swift in Sources */,
+				9F0FB5BB1E0A7ED300957440 /* ParametersPriorityTest.swift in Sources */,
 				9F63E7801DC0D5180001D72E /* PageTest.swift in Sources */,
 				9F63E77D1DC0D50A0001D72E /* CDBTest.swift in Sources */,
 			);
@@ -1442,6 +1447,7 @@
 				9F5A604D1DE2ECD100EF84E0 /* AutoParameterTest.swift in Sources */,
 				9F9710271DCB882700AB3872 /* MessageSendTest.swift in Sources */,
 				9F95D4001DAE423E0068E8F8 /* CDBTest.swift in Sources */,
+				9FF81B391E1FF58A00D0C5AD /* ParametersPriorityTest.swift in Sources */,
 				9F95D3FF1DAE423E0068E8F8 /* ActionTest.swift in Sources */,
 				9FFB526D1DC909A1000E4519 /* RecommendationTest.swift in Sources */,
 				9F06B9201DD4AB02003D15EC /* HTTPTester.swift in Sources */,

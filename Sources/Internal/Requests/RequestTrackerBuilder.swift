@@ -168,12 +168,14 @@ final class RequestTrackerBuilder {
         event.variables = self.global.variables.merged(over: event.variables)
         
         if let globalSettings = applyKeys(keys: event.variables, properties: configuration.globalProperties) as? GlobalProperties {
-            // merge global from code and from configuration.
-            let globalMerged = globalSettings.merged(over: self.global)
             
             // merge autoParameters
             let autoProperties = getAutoParameters(requestProperties: requestProperties)
-            let global = globalMerged.merged(over: autoProperties)
+            let globalAndAuto = autoProperties.merged(over: self.global)
+            
+            // merge global from code and from configuration.
+            let global = globalSettings.merged(over: globalAndAuto)
+            
             
             return mergeProperties(event: event, properties: global, rewriteEvent: false)
         } else {

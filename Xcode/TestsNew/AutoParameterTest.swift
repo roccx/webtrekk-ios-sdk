@@ -65,7 +65,7 @@ class AutoParameterTest: WTBaseTestNew {
         
         doURLSendTestAction(){
             WebtrekkTracking.instance()[over804Key] = over804
-            WebtrekkTracking.instance().trackPageView("pageName",                                                      sessionDetails:[809: .constant(over809)])
+            WebtrekkTracking.instance().trackPageView("pageName", sessionDetails:[809: .constant(over809)])
         }
         
         doURLSendTestCheck(){parametersArr in
