@@ -75,6 +75,7 @@
 		9F95D40C1DAE7B160068E8F8 /* ParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F1C1D5C7C6D002CB83F /* ParameterTest.swift */; };
 		9F9710271DCB882700AB3872 /* MessageSendTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F16F2BD1DB8C9CB007CFB71 /* MessageSendTest.swift */; };
 		9FAFC0651DC79EF300A80671 /* NextScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F071D5C7C59002CB83F /* NextScreenController.swift */; };
+		9FB10A041E28E6E9005D6656 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB10A031E28E6E9005D6656 /* AdSupport.framework */; };
 		9FBA48111DD1FECA00956ACF /* WatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 9FFF2E7D1DCCC5CB00DB0F84 /* WatchApp.app */; };
 		9FBA48161DD20A2A00956ACF /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 9FBA48141DD209B200956ACF /* webtrekk_config.xml */; };
 		9FC171D91DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC171D81DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift */; };
@@ -279,6 +280,7 @@
 		9F8354871D6F1E2400887BEA /* LICENSE.MD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = LICENSE.MD; path = ../LICENSE.MD; sourceTree = "<group>"; };
 		9F9487C01D7DB8060072CB0B /* ModuleTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ModuleTest.entitlements; sourceTree = "<group>"; };
 		9F95D40E1DAE7FC10068E8F8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SampleTVAppTests/Info.plist; sourceTree = "<group>"; };
+		9FB10A031E28E6E9005D6656 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/AdSupport.framework; sourceTree = DEVELOPER_DIR; };
 		9FBA48141DD209B200956ACF /* webtrekk_config.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = webtrekk_config.xml; path = "Sources/WatchSupport/WatchApp Extension/webtrekk_config.xml"; sourceTree = SOURCE_ROOT; };
 		9FC171D81DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextPageRelationInterfaceController.swift; sourceTree = "<group>"; };
 		9FC183801DAE1D64000F6106 /* SampleTVApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleTVApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -379,6 +381,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FB10A041E28E6E9005D6656 /* AdSupport.framework in Frameworks */,
 				28178808EE741308C90A2105 /* Pods_tvOS_SampleTVApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -593,6 +596,7 @@
 		A3DFB00630AF1B828E7E41A9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9FB10A031E28E6E9005D6656 /* AdSupport.framework */,
 				9F4160021D5CE337002CB83F /* Pods_TestsOld.framework */,
 				9F415FC21D5CDCCB002CB83F /* Nimble.framework */,
 				9F415F9C1D5CCD6B002CB83F /* Pods_iOS_Example_ModuleTest.framework */,
