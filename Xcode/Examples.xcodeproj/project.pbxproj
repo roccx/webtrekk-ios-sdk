@@ -19,6 +19,7 @@
 		9F06B91E1DD4AB00003D15EC /* HTTPTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */; };
 		9F06B9201DD4AB02003D15EC /* HTTPTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */; };
 		9F06B9211DD4AD4E003D15EC /* HTTPTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */; };
+		9F0E36851E29224900E815CA /* AttributionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0E36841E29224900E815CA /* AttributionTest.swift */; };
 		9F0FB5BB1E0A7ED300957440 /* ParametersPriorityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */; };
 		9F12A9401DC899530006B44F /* RecoItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */; };
 		9F415F291D5C7C81002CB83F /* AAMigrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F151D5C7C6D002CB83F /* AAMigrationTest.swift */; };
@@ -237,6 +238,7 @@
 		9B2224592D22F3F194B56D61 /* Pods-iOS-Example-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Example-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Example-Tests/Pods-iOS-Example-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		9F06B9191DD48837003D15EC /* NextPageInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextPageInterfaceController.swift; sourceTree = "<group>"; };
 		9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPTester.swift; sourceTree = "<group>"; };
+		9F0E36841E29224900E815CA /* AttributionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributionTest.swift; sourceTree = "<group>"; };
 		9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParametersPriorityTest.swift; sourceTree = "<group>"; };
 		9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecoItemTableViewCell.swift; sourceTree = "<group>"; };
 		9F16F2BD1DB8C9CB007CFB71 /* MessageSendTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageSendTest.swift; sourceTree = "<group>"; };
@@ -516,6 +518,7 @@
 				9F5A604B1DE2EC6D00EF84E0 /* AutoParameterTest.swift */,
 				9F5B66451E0163D000F1B917 /* RemoteConfTest.swift */,
 				9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */,
+				9F0E36841E29224900E815CA /* AttributionTest.swift */,
 			);
 			path = TestsNew;
 			sourceTree = "<group>";
@@ -1394,6 +1397,7 @@
 				9F63E77F1DC0D5150001D72E /* MediaTest.swift in Sources */,
 				9F63E7831DC0D52B0001D72E /* DeepLink.swift in Sources */,
 				9F5A604C1DE2EC6D00EF84E0 /* AutoParameterTest.swift in Sources */,
+				9F0E36851E29224900E815CA /* AttributionTest.swift in Sources */,
 				9F63E77E1DC0D50D0001D72E /* ActionTest.swift in Sources */,
 				9F63E7791DC0B3240001D72E /* ViewController.swift in Sources */,
 				9F63E7821DC0D5230001D72E /* MessageSendTest.swift in Sources */,
