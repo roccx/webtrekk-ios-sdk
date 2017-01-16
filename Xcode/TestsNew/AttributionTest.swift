@@ -42,7 +42,13 @@ class AttributionTest: WTBaseTestNew {
         if advID != "00000000-0000-0000-0000-000000000000" {
             url = url + "&aid=" + advID
         }
-        WebtrekkTracking.defaultLogger.logDebug("open url"+url)
+        WebtrekkTracking.defaultLogger.logDebug("open url:"+url)
         UIApplication.shared.openURL(URL(string:url)!)
+        
+        let argument = UserDefaults.standard.value(forKey: "startAttributionTest")
+        let argument2 = UserDefaults.standard.value(forKey: "startAttributionTest")
+        WebtrekkTracking.defaultLogger.logDebug("startAttributionTest= \(argument)")
+        WebtrekkTracking.defaultLogger.logDebug("-startAttributionTest= \(argument2)")
+        
     }
 }

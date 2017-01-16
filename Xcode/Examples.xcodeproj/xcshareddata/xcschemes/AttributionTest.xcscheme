@@ -88,7 +88,7 @@
       </Testables>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-startAttributionTest"
+            argument = "-startAttributionTest yes"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
