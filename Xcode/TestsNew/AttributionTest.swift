@@ -42,7 +42,7 @@ class AttributionTest: WTBaseTestNew {
         if advID != "00000000-0000-0000-0000-000000000000" {
             url = url + "&aid=" + advID
         }
-        
+        WebtrekkTracking.defaultLogger.logDebug("open url"+url)
         UIApplication.shared.openURL(URL(string:url)!)
     }
 }
