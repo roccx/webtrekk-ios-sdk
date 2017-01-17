@@ -26,29 +26,64 @@ import AdSupport
 
 class AttributionTest: WTBaseTestNew {
     
-    let mediaCode = "media_code"
+    private let mediaCode = "media_code"
+    
+    override func getCongigName() -> String?{
+        return "webtrekk_config_no_completely_autoTrack"
+    }
     
     //do just global parameter test
-    func testStartAttibutionTest(){
-       // get track id
-       let trackerID = "123451234512345"
+    func testStartWithIDFA(){
+        startAttributionTest(useIDFA: true)
+    }
+    
+    //do just global parameter test
+    func testWithoutIDFA(){
+        startAttributionTest(useIDFA: false)
+    }
+    
+    private func startAttributionTest(useIDFA: Bool){
+        // get track id
+        let trackerID = "123451234512345"
         
-       // get adv
-       let advID = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+        // get adv
+        let advID = ASIdentifierManager.shared().advertisingIdentifier.uuidString
         
         
-       var url = "http://appinstall.webtrekk.net/appinstall/v1/redirect?mc="+mediaCode+"&trackid="+trackerID+"&as1=https%3A//itunes.apple.com/de/app/apple-store/id375380948%3Fmt%3D8"
+        var url = "http://appinstall.webtrekk.net/appinstall/v1/redirect?mc="+mediaCode+"&trackid="+trackerID+"&as1=https%3A//itunes.apple.com/de/app/apple-store/id375380948%3Fmt%3D8"
         
-        if advID != "00000000-0000-0000-0000-000000000000" {
+        if useIDFA && advID != "00000000-0000-0000-0000-000000000000" {
             url = url + "&aid=" + advID
         }
-        WebtrekkTracking.defaultLogger.logDebug("open url:"+url)
+        
+        WebtrekkTracking.defaultLogger.logDebug("open url for installation test:"+url)
         UIApplication.shared.openURL(URL(string:url)!)
+    }
+    
+    func testInstallation() {
         
-        let argument = UserDefaults.standard.value(forKey: "startAttributionTest")
-        let argument2 = UserDefaults.standard.value(forKey: "startAttributionTest")
-        WebtrekkTracking.defaultLogger.logDebug("startAttributionTest= \(argument)")
-        WebtrekkTracking.defaultLogger.logDebug("-startAttributionTest= \(argument2)")
+        // wait for receiving media code
         
+        // wait for update configuration
+        var attempt: Int = 0
+        
+        WebtrekkTracking.defaultLogger.logDebug("start wait for campaign process")
+        
+        while (!checkDefSetting(setting: "campaignHasProcessed") && attempt < 16){
+            doSmartWait(sec: 2)
+            attempt += 1
+        }
+        
+        WebtrekkTracking.defaultLogger.logDebug("end wait for campaign process: isSuccess=\(checkDefSetting(setting: "campaignHasProcessed"))")
+        
+        doURLSendTestAction(){
+            WebtrekkTracking.instance().trackPageView("pageName")
+        }
+        
+        doURLSendTestCheck(){parametersArr in
+            expect(parametersArr["mc"]).to(equal(mediaCode))
+            expect(parametersArr["mca"]).to(equal("c"))
+            expect(parametersArr["uc900"]).to(equal("1"))
+        }
     }
 }

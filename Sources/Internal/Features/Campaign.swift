@@ -97,8 +97,8 @@ class Campaign{
                     return
                 }
                 
-                self.sharedDefaults.set(key: Campaign.campaignHasProcessed, to: true)
                 self.sharedDefaults.set(key: Campaign.savedMediaCode, to: mc)
+                self.sharedDefaults.set(key: Campaign.campaignHasProcessed, to: true)
             }
         })
         
