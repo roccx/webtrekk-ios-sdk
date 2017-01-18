@@ -56,24 +56,9 @@ class AttributionTest: WTBaseTestNew {
             url = url + "&aid=" + advID
         }
         
-        //WebtrekkTracking.defaultLogger.logDebug("open url for installation test:"+url)
+        WebtrekkTracking.defaultLogger.logDebug("open url for installation test:"+url)
         
-        let webV = UIWebView(frame: CGRect(x: 0.0, y: 0.0, width: 10.0, height: 10.0))
-        
-
-        let originalAgent = webV.stringByEvaluatingJavaScript(from: "navigator.userAgent")!
-        let secretAgent = originalAgent.replacingCharacters(in: originalAgent.range(of: "iPhone")!, with: "iOS Simulator")
-/*
-        UserDefaults.standard.register(defaults: ["UserAgent" : secretAgent])
-
-        WebtrekkTracking.defaultLogger.logDebug("user agent is:\(webV.stringByEvaluatingJavaScript(from: "navigator.userAgent"))")
-        
-        WebtrekkTracking.defaultLogger.logDebug("user agent should be:\(secretAgent)")
-*/
-        let myURLRequest = NSMutableURLRequest(url: URL(string: url)!)
-        myURLRequest.setValue(secretAgent, forHTTPHeaderField: "User-Agent")
-        webV.loadRequest(myURLRequest as URLRequest)
-        WebtrekkTracking.defaultLogger.logDebug("user agent is:\(webV.stringByEvaluatingJavaScript(from: "navigator.userAgent"))")
+        UIApplication.shared.openURL(URL(string:url)!)
     }
     
 

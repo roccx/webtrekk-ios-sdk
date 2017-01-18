@@ -29,13 +29,7 @@ internal struct Environment {
 		#if os(watchOS)
 			return WKInterfaceDevice.current().model
 		#else
-			let device = UIDevice.current
-			if device.isSimulator {
-				return "\(operatingSystemName) Simulator"
-			}
-			else {
-				return device.modelIdentifier
-			}
+			return UIDevice.current.model
 		#endif
 	}()
 
