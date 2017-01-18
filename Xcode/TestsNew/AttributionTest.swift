@@ -50,7 +50,7 @@ class AttributionTest: WTBaseTestNew {
         let advID = ASIdentifierManager.shared().advertisingIdentifier.uuidString
         
         
-        var url = "http://appinstall.webtrekk.net/appinstall/v1/redirect?mc="+mediaCode+"&trackid="+trackerID+"&as1=https%3A//itunes.apple.com/de/app/apple-store/id375380948%3Fmt%3D8"
+        var url = "http://appinstall.webtrekk.net/appinstall/v1/redirect?mc="+mediaCode+"&trackid="+trackerID+"&as2=https%3A//itunes.apple.com/de/app/apple-store/id375380948%3Fmt%3D8"
         
         if useIDFA && advID != "00000000-0000-0000-0000-000000000000" {
             url = url + "&aid=" + advID
