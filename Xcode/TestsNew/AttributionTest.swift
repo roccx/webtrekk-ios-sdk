@@ -18,27 +18,27 @@
 //
 
 import XCTest
-import Nimble
-@testable import Webtrekk
-
 import Foundation
 import AdSupport
+import Nimble
+import UIKit
 
 class AttributionTest: WTBaseTestNew {
     
     private let mediaCode = "media_code"
     
+
     override func getCongigName() -> String?{
         return "webtrekk_config_no_completely_autoTrack"
     }
     
     //do just global parameter test
-    func testStartWithIDFA(){
+    func testStartAttributionWithIDFA(){
         startAttributionTest(useIDFA: true)
     }
     
     //do just global parameter test
-    func testWithoutIDFA(){
+    func testStartAttributionWithoutIDFA(){
         startAttributionTest(useIDFA: false)
     }
     
@@ -60,6 +60,7 @@ class AttributionTest: WTBaseTestNew {
         UIApplication.shared.openURL(URL(string:url)!)
     }
     
+
     func testInstallation() {
         
         // wait for receiving media code
@@ -83,7 +84,7 @@ class AttributionTest: WTBaseTestNew {
         doURLSendTestCheck(){parametersArr in
             expect(parametersArr["mc"]).to(equal(mediaCode))
             expect(parametersArr["mca"]).to(equal("c"))
-            expect(parametersArr["uc900"]).to(equal("1"))
+            expect(parametersArr["cb900"]).to(equal("1"))
         }
     }
 }
