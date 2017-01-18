@@ -50,14 +50,26 @@ class AttributionTest: WTBaseTestNew {
         let advID = ASIdentifierManager.shared().advertisingIdentifier.uuidString
         
         
-        var url = "http://appinstall.webtrekk.net/appinstall/v1/redirect?mc="+mediaCode+"&trackid="+trackerID+"&as2=https%3A//itunes.apple.com/de/app/apple-store/id375380948%3Fmt%3D8"
+        var url = "https://appinstall.webtrekk.net/appinstall/v1/redirect?mc="+mediaCode+"&trackid="+trackerID+"&as2=https%3A//itunes.apple.com/de/app/apple-store/id375380948%3Fmt%3D8"
         
         if useIDFA && advID != "00000000-0000-0000-0000-000000000000" {
             url = url + "&aid=" + advID
         }
         
-        WebtrekkTracking.defaultLogger.logDebug("open url for installation test:"+url)
-        UIApplication.shared.openURL(URL(string:url)!)
+        //WebtrekkTracking.defaultLogger.logDebug("open url for installation test:"+url)
+        
+        let webV = UIWebView(frame: CGRect(x: 0.0, y: 0.0, width: 10.0, height: 10.0))
+        
+        let originalAgent = webV.stringByEvaluatingJavaScript(from: "navigator.userAgent")!
+        let secretAgent = originalAgent.replacingCharacters(in: originalAgent.range(of: "iPhone")!, with: "iOS Simulator")
+        
+        UserDefaults.standard.register(defaults: ["UserAgent" : secretAgent])
+
+        WebtrekkTracking.defaultLogger.logDebug("user agent is:\(webV.stringByEvaluatingJavaScript(from: "navigator.userAgent"))")
+        
+        WebtrekkTracking.defaultLogger.logDebug("user agent should be:\(secretAgent)")
+        
+        webV.loadRequest(URLRequest(url: URL(string: url)!))
     }
     
 
