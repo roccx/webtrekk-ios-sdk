@@ -28,7 +28,7 @@ import WatchKit
 public class WebtrekkTracking {
 
 	/** Current version of the sdk */
-    public static let version : String = Bundle.init(for: WebtrekkTracking.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "9.9.9"
+	public static let version = "4.0"
 	
 
 	/** the default implementation of `TrackingLogger` used for the sdk */
