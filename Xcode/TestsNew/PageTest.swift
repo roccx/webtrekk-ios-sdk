@@ -19,7 +19,7 @@
 
 import XCTest
 import Nimble
-import Webtrekk
+@testable import Webtrekk
 
 
 class PageTest: WTBaseTestNew {
@@ -92,6 +92,33 @@ class PageTest: WTBaseTestNew {
             expect(parametersArr["cg1"]).to(equal("test_pagecategory1"))
             expect(parametersArr["uc1"]).to(equal("test_usercategory1"))
             //expect(parametersArr["mg1"]).to(equal("test_mediacategory1"))
+        }
+    }
+    
+    func testUserAgent(){
+        doURLSendTestAction(){
+            let defTracker = WebtrekkTracking.instance()
+            defTracker.trackPageView("pageName")
+        }
+        
+        
+        let operatingSystemName: String = {
+            #if os(iOS)
+                return "iOS"
+            #elseif os(watchOS)
+                return "watchOS"
+            #elseif os(tvOS)
+                return "tvOS"
+            #elseif os(OSX)
+                return "macOS"
+            #endif
+        }()
+        
+        let version = ProcessInfo().operatingSystemVersion
+
+        
+        doURLSendTestCheck(){parametersArr in
+            expect(parametersArr["X-WT-UA"]?.removingPercentEncoding!).to(equal("Tracking Library \(WebtrekkTracking.version) (\(UIDevice.current.model); \(operatingSystemName) \(version.majorVersion).\(version.minorVersion)\(version.patchVersion == 0 ? "":".\(version.patchVersion)"); \(Locale.current.identifier))"))
         }
     }
     

@@ -62,7 +62,7 @@ internal final class RequestUrlBuilder {
 
 		let properties = request.properties
 		let screenSize = "\(properties.screenSize?.width ?? 0)x\(properties.screenSize?.height ?? 0)"
-        let libraryVersionOriginal = Bundle.init(for: RequestUrlBuilder.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "9.9.9"
+        let libraryVersionOriginal = WebtrekkTracking.version
         let libraryVersionParced = libraryVersionOriginal.replacingOccurrences(of: ".", with: "")
 
 		var parameters = [URLQueryItem]()
