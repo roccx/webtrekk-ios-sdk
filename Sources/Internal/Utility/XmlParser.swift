@@ -26,7 +26,10 @@ internal struct XmlElement {
 internal final class XmlParser {
 
 	internal func parse(xml data: Data) throws -> XmlElement {
-		return try ActualParser(xml: data).rootElement
+		
+        let parser = try ActualParser(xml: data)
+        
+        return parser.rootElement
 	}
 }
 
@@ -39,7 +42,7 @@ private final class ActualParser: NSObject {
 	fileprivate var elementPath = [String]()
 	fileprivate var error: Error?
 	fileprivate let parser: XMLParser
-	fileprivate lazy var rootElement: XmlElement = lazyPlaceholder()
+	fileprivate var rootElement: XmlElement!
 
 
 	fileprivate init(xml data: Data) throws {
@@ -51,9 +54,13 @@ private final class ActualParser: NSObject {
 		parser.parse()
 		parser.delegate = nil
 
-		if let error = error {
+		if let error = self.error {
 			throw error
 		}
+        
+        if self.rootElement == nil {
+            throw TrackerError(message: "Configuration xml is invalid. Its probably don't have xml content to parce")
+        }
 	}
 
 

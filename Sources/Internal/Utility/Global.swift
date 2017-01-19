@@ -18,11 +18,6 @@ internal func checkIsOnMainThread(function: StaticString = #function, file: Stat
 }
 
 
-internal func lazyPlaceholder<T>(_ file: StaticString = #file, line: UInt = #line) -> T {
-	fatalError("Lazy variable accessed before being initialized.", file: file, line: line)
-}
-
-
 internal func logDebug(_ message: @autoclosure () -> String) {
 	WebtrekkTracking.logger.logDebug(message)
 }
