@@ -27,6 +27,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     let httpTester = HTTPTester()
     var currentTestNumber = 0
     var originDelegate: RequestManager.Delegate?
+    var userAgent: String!
     
     private typealias Parameters = [String: String]
     private typealias TestData = [(parName: String, expected: String)]
@@ -42,6 +43,10 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         super.init()
         //httpTester.initHTTPServer()
         self.initSpecficStub()
+        
+        let version = ProcessInfo().operatingSystemVersion
+        self.userAgent = "Tracking Library \(WebtrekkTracking.version) (Apple Watch; watchOS \(version.majorVersion).\(version.minorVersion)\(version.patchVersion == 0 ? "":".\(version.patchVersion)"); \(Locale.current.identifier))"
+        
     }
     
     override func awake(withContext context: Any?) {
@@ -64,8 +69,9 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
                 WebtrekkTracking.instance().trackPageView("SimpleWatchPage")
             }
         } else {
+            
             finishTest(){parameters in
-                let testData: TestData = [("fns", "0"),("X-WT-UA", "Tracking%20Library%204.0%20(Apple%20Watch;%20watchOS%203.0;%20en_US)"),
+                let testData: TestData = [("fns", "0"),("X-WT-UA", self.userAgent),
                                           ("cg1", "test_pagecategory1Override"), ("uc1", "test_usercategory1Override")]
                 
                 if self.parameterTests(values: testData, parameters: parameters) && parameters["p"]?.contains("autoWatchPageName") ?? false {
@@ -91,7 +97,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         finishTest(){parameters in
             // add checking parameters
             
-            let testData: TestData = [("fns", "1"),("X-WT-UA", "Tracking%20Library%204.0%20(Apple%20Watch;%20watchOS%203.0;%20en_US)"),
+            let testData: TestData = [("fns", "1"),("X-WT-UA", self.userAgent),
                                       ("ca1", "test_productcategory1"), ("uc1", "test_usercategory1")]
             
             if self.parameterTests(values: testData, parameters: parameters) && parameters["p"]?.contains("SimpleWatchPage") ?? false {
@@ -116,7 +122,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         var returnValue = true
         
         for value in values {
-            let actual = parameters[value.parName]
+            let actual = parameters[value.parName]?.removingPercentEncoding
             if actual == nil || actual != value.expected {
                print("Test Error: expected parameter \(value.parName)=\(value.expected), but actual value:\(actual ?? "nil")")
                 returnValue = false
