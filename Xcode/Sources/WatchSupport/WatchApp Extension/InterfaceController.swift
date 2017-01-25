@@ -71,13 +71,20 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         } else {
             
             finishTest(){parameters in
+                guard let parameters = parameters else{
+                    self.logTestResult(isPassed: false, testNum: 2)
+                    return
+                }
+
                 let testData: TestData = [("fns", "0"),("X-WT-UA", self.userAgent),
                                           ("cg1", "test_pagecategory1Override"), ("uc1", "test_usercategory1Override")]
                 
                 if self.parameterTests(values: testData, parameters: parameters) && parameters["p"]?.contains("autoWatchPageName") ?? false {
                     self.test2Label.setText("Test 2 Passed")
+                    self.logTestResult(isPassed: true, testNum: 2)
                 } else {
                     self.test2Label.setText("Test 2 Failed")
+                    self.logTestResult(isPassed: false, testNum: 2)
                 }
                 
                 self.currentTestNumber = 3
@@ -96,6 +103,11 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         }
         finishTest(){parameters in
             // add checking parameters
+
+            guard let parameters = parameters else{
+                self.logTestResult(isPassed: false, testNum: 1)
+                return
+            }
             
             let testData: TestData = [("fns", "1"),("X-WT-UA", self.userAgent),
                                       ("ca1", "test_productcategory1"), ("uc1", "test_usercategory1")]
@@ -104,6 +116,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
                 self.test1Label.setText("Test 1 Passed")
             } else {
                 self.test1Label.setText("Test 1 Failed")
+                self.logTestResult(isPassed: false, testNum: 1)
             }
             self.startTest(){
                 self.currentTestNumber = 2
@@ -124,7 +137,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         for value in values {
             let actual = parameters[value.parName]?.removingPercentEncoding
             if actual == nil || actual != value.expected {
-               print("Test Error: expected parameter \(value.parName)=\(value.expected), but actual value:\(actual ?? "nil")")
+               NSLog("Test Error: expected parameter \(value.parName)=\(value.expected), but actual value:\(actual ?? "nil")")
                 returnValue = false
             }
         }
@@ -133,21 +146,22 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     }
     
     
-    private func finishTest(action: @escaping (_ parameters: Parameters)->()){
+    private func finishTest(action: @escaping (_ parameters: Parameters?)->()){
         
         DispatchQueue.global().async() {
-            let date = Date(timeIntervalSinceNow: 25)
+            let date = Date(timeIntervalSinceNow: 600)
             
             while HTTPTester.request == nil && date.compare(Date()) == .orderedDescending {
                 sleep(1)
             }
             
             guard let _ = HTTPTester.request else{
-                print("Test execution error")
+                NSLog("Test execution error")
+                action(nil)
                 return
             }
             
-            print("WatchOS. Send URL has been received")
+            NSLog("WatchOS. Send URL has been received")
             
             DispatchQueue.main.async(){
                 action(self.httpTester.getReceivedURLParameters((HTTPTester.request?.url?.query)!))}
@@ -168,8 +182,13 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     }
     
     func requestManager (_ requestManager: RequestManager, didFailToSendRequest request: URL, error: RequestManager.ConnectionError){
-        print ("failed request with error\(error)")
+        NSLog ("failed request with error\(error)")
         originDelegate?.requestManager(requestManager, didFailToSendRequest: request, error: error)
+    }
+    
+    private func logTestResult(isPassed: Bool, testNum: Int = 0){
+        NSLog("Test \(testNum) result")
+        NSLog("Webtrekk WatchApp Test \(isPassed ? "passed":"failed")")
     }
  }
 
@@ -179,6 +198,6 @@ class RequestManagerDelegate: RequestManager.Delegate {
         HTTPTester.request = URLRequest(url: request)
     }
     func requestManager (_ requestManager: RequestManager, didFailToSendRequest request: URL, error: RequestManager.ConnectionError){
-        print ("failed request with error\(error)")
+        NSLog ("failed request with error\(error)")
     }
 }
