@@ -137,14 +137,7 @@ class MessageSendTest: WTBaseTestNew {
         
         expect(currentId).toEventually(beGreaterThan(1), timeout:1)
         
-        #if !os(tvOS)
-            let timeout = 0.01
-        #else
-            let timeout = 0.02
-        #endif
-        
         for i in maxRequestsFirst..<maxRequestSecond {
-            expect(currentId).toEventually(beGreaterThan(1), timeout:timeout)
             tracker.trackPageView(PageProperties(
                 name: "interruptConnection",
                 details: [100: .constant("\(i)")],
