@@ -58,6 +58,7 @@ public struct TrackerRequest {
 		public var timeZone: TimeZone
 		public var timestamp: Date
 		public var userAgent: String
+        public var adClearId: UInt64?
 
 		#if !os(watchOS) && !os(tvOS)
 		public var interfaceOrientation: UIInterfaceOrientation?

@@ -23,16 +23,17 @@ import Webtrekk
 
 class ActionTest: WTBaseTestNew {
     
-    func testAction(){
+    func testAction() {
         
-        doURLSendTestAction(){
-        let track = WebtrekkTracking.instance()
+        doURLSendTestAction() {
+            let track = WebtrekkTracking.instance()
         
-        track.trackAction(ActionEvent(actionProperties: ActionProperties(name: "actionName", details: [1: "actionpar1", 2: "actionPar2"]), pageProperties: PageProperties(name: "someName"),
-            sessionDetails: [1: "sessionpar1", 2: "sessionpar2"]))
+            track.trackAction(ActionEvent(actionProperties: ActionProperties(name: "actionName", details: [1: "actionpar1", 2: "actionPar2"]),
+                                          pageProperties: PageProperties(name: "someName"),
+                                          sessionDetails: [1: "sessionpar1", 2: "sessionpar2"]))
         }
         
-        doURLSendTestCheck(){parametersArr in
+        doURLSendTestCheck() { parametersArr in
             expect(parametersArr["ct"]).to(equal("actionName"))
             expect(parametersArr["ck1"]).to(equal("actionpar1"))
             expect(parametersArr["ck2"]).to(equal("actionPar2"))

@@ -503,6 +503,7 @@ private extension TrackingValue {
             #endif
 			case .isFirstEventAfterAppUpdate: return request.properties.isFirstEventAfterAppUpdate ? "1" : "0"
 			case .requestQueueSize:           return request.properties.requestQueueSize.map { String($0) }
+            case .adClearId:                  return String(describing: request.properties.adClearId)
 			}
 
 		case let .customVariable(name):

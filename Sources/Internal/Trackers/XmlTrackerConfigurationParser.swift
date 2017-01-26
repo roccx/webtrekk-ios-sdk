@@ -38,6 +38,7 @@ internal class XmlTrackerConfigurationParser {
 	private var version: Int?
 	private var webtrekkId: String?
 	private var automaticallyTrackedPages = Array<TrackerConfiguration.Page>()
+    private var automaticallyTracksAdClearId: Bool?
     
     #if !os(watchOS)
 	private var automaticallyTracksConnectionType: Bool?
@@ -45,7 +46,6 @@ internal class XmlTrackerConfigurationParser {
 	#endif
 
 	private var globalScreenTrackingParameter: TrackingParameter?
-
 
 	internal func parse(xml data: Data) throws -> TrackerConfiguration {
 		return try readFromRootElement(XmlParser().parse(xml: data))
@@ -122,6 +122,8 @@ internal class XmlTrackerConfigurationParser {
 				case "autoTrackAppVersionName":      automaticallyTracksAppVersion = try parseBool(child.text)
 				case "autoTrackRequestUrlStoreSize": automaticallyTracksRequestQueueSize = try parseBool(child.text)
 
+                case "autoTrackAdClearId": automaticallyTracksAdClearId = try parseBool(child.text)
+                    
 				case "globalTrackingParameter" : try readFromGlobalElement(child)
                 case "recommendations" : try recommendationsL = readRecommendations(xmlElement: child)
                 case "screen": try readFromScreenElement(child)
@@ -208,6 +210,10 @@ internal class XmlTrackerConfigurationParser {
 		if let automaticallyTracksRequestQueueSize = automaticallyTracksRequestQueueSize {
 			trackerConfiguration.automaticallyTracksRequestQueueSize = automaticallyTracksRequestQueueSize
 		}
+        
+        if let automaticallyTracksAdClearId = automaticallyTracksAdClearId {
+            trackerConfiguration.automaticallyTracksAdClearId = automaticallyTracksAdClearId
+        }
         
         if let recommendations = recommendationsL {
             trackerConfiguration.recommendations = recommendations

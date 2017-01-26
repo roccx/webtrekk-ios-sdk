@@ -76,6 +76,7 @@ class TrackingParameter {
                 case  "screenOrientation":   result[index] = .defaultVariable(.interfaceOrientation)
                 case  "appUpdated":          result[index] = .defaultVariable(.isFirstEventAfterAppUpdate)
                 case  "requestUrlStoreSize": result[index] = .defaultVariable(.requestQueueSize)
+                case  "adClearId":           result[index] = .defaultVariable(.adClearId)
                 default:                     if let variable = variables[key] {result[index] = .constant(variable)}
                 }
             case let .value(value):

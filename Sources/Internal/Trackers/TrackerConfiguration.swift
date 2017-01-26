@@ -52,7 +52,10 @@ internal struct TrackerConfiguration {
 
 	/** If enabled automatically attaches the current request queue size to each request. */
 	internal var automaticallyTracksRequestQueueSize = true
-
+    
+    /** If enabled automatically tracks adclear id. */
+    internal var automaticallyTracksAdClearId = false
+    
 	/** Url of the remote configuration. */
 	internal var configurationUpdateUrl: URL? = nil
 

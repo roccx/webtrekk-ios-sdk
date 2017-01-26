@@ -24,9 +24,7 @@ public enum TrackingValue {
 	case defaultVariable(DefaultVariable)
 
 
-
 	public enum DefaultVariable {
-
 		case advertisingId
 		case advertisingTrackingEnabled
 		case appVersion
@@ -34,6 +32,7 @@ public enum TrackingValue {
 		case interfaceOrientation
 		case isFirstEventAfterAppUpdate
 		case requestQueueSize
+        case adClearId
 	}
 }
 
