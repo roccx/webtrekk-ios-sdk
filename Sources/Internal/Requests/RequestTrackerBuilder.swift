@@ -48,139 +48,119 @@ final class RequestTrackerBuilder {
     // create mergedTrackerRequest
     func createRequest(_ event: TrackingEvent, requestProperties: TrackerRequest.Properties)-> TrackerRequest? {
 
-        var event = globalPropertiesByApplyingEvent(from: event, requestProperties: requestProperties)
+        var event = event
         
-        event = eventByApplyingAutomaticPageTracking(to: event)
+        globalPropertiesByApplyingEvent(from: &event, requestProperties: requestProperties)
         
-        event = campaignOverride(to :event) ?? event
+        eventByApplyingAutomaticPageTracking(to: &event)
+        
+        campaignOverride(to: &event)
         
         #if !os(watchOS)
-            event = deepLinkOverride(to: event) ?? event
+            deepLinkOverride(to: &event)
         #endif
         
-        event = pageURLOverride(to: event) ?? event
+        pageURLOverride(to: &event)
         
         return createRequestForEvent(event, requestProperties: requestProperties)
-}
+    }
     
     // override media code in request in case of deeplink
     
     #if !os(watchOS)
-    private func deepLinkOverride(to event: TrackingEvent) -> TrackingEvent? {
-        
+    private func deepLinkOverride(to event: inout TrackingEvent){
         guard var _ = event as? TrackingEventWithAdvertisementProperties,
-            let _ = event as? TrackingEventWithEcommerceProperties else{
-                return nil
+            let _ = event as? TrackingEventWithEcommerceProperties else {
+                return
         }
         
         if let mc = self.deepLink.getAndDeletSavedDeepLinkMediaCode() {
-            var returnEvent = event
             
-            var eventWithAdvertisementProperties = returnEvent as! TrackingEventWithAdvertisementProperties
+            var eventWithAdvertisementProperties = event as! TrackingEventWithAdvertisementProperties
             eventWithAdvertisementProperties.advertisementProperties.id = mc
-            returnEvent = eventWithAdvertisementProperties
-            
-            return returnEvent
         }
-        
-        return nil
     }
     #endif
     
     // override some parameter in request if campaign is completed
-    private func campaignOverride(to event: TrackingEvent) -> TrackingEvent? {
+    private func campaignOverride(to event: inout TrackingEvent){
         
         guard var _ = event as? TrackingEventWithAdvertisementProperties,
             let _ = event as? TrackingEventWithEcommerceProperties else{
-                return nil
+                return
         }
         
         if let mc = self.campaign.getAndDeletSavedMediaCode() {
-            var returnEvent = event
             
-            var eventWithAdvertisementProperties = returnEvent as! TrackingEventWithAdvertisementProperties
+            var eventWithAdvertisementProperties = event as! TrackingEventWithAdvertisementProperties
             eventWithAdvertisementProperties.advertisementProperties.id = mc
             eventWithAdvertisementProperties.advertisementProperties.action = "c"
-            returnEvent = eventWithAdvertisementProperties
             
-            var eventWithEcommerceProperties = returnEvent as! TrackingEventWithEcommerceProperties
+            var eventWithEcommerceProperties = event as! TrackingEventWithEcommerceProperties
             var detailsToAdd = eventWithEcommerceProperties.ecommerceProperties.details ?? [Int: TrackingValue]()
             detailsToAdd[900] = "1"
             eventWithEcommerceProperties.ecommerceProperties.details = detailsToAdd
-            returnEvent = eventWithEcommerceProperties
-            
-            return returnEvent
         }
-        
-        return nil
     }
     
     //override PageURLParameter
-    private func pageURLOverride(to event:TrackingEvent) -> TrackingEvent? {
+    private func pageURLOverride(to event: inout TrackingEvent){
         
         guard var _ = event as? TrackingEventWithPageProperties else{
-            return nil
+            return
         }
         
         if let pageURL = self.pageURL {
             
             guard pageURL.isValidURL() else {
                 WebtrekkTracking.defaultLogger.logError("Invalid URL \(pageURL) for override pu parameter")
-                return nil
+                return
             }
             
-            var returnEvent = event
-            
-            var eventWithPageProperties = returnEvent as! TrackingEventWithPageProperties
+            var eventWithPageProperties = event as! TrackingEventWithPageProperties
             eventWithPageProperties.pageProperties.url = pageURL
-            returnEvent = eventWithPageProperties
-            
-            return returnEvent
         }
-        
-        return nil
     }
     
     
-    private func eventByApplyingAutomaticPageTracking(to event: TrackingEvent) -> TrackingEvent {
+    private func eventByApplyingAutomaticPageTracking(to event: inout TrackingEvent){
         checkIsOnMainThread()
         
         guard let
             viewControllerType = event.viewControllerType,
             let pageProperties = self.configuration.automaticallyTrackedPageForViewControllerType(viewControllerType)
             else {
-                return event
+                return
         }
         
         if let page = applyKeys(keys: event.variables, properties: pageProperties) as? TrackerConfiguration.Page {
-            return mergeProperties(event: event, properties: page, rewriteEvent: true)
+            mergeProperties(event: &event, properties: page, rewriteEvent: true)
         } else {
             WebtrekkTracking.logger.logError("incorect type of return value from apply Keys for page parameters")
-            return event
         }
     }
     
-    private func globalPropertiesByApplyingEvent(from event: TrackingEvent, requestProperties: TrackerRequest.Properties) -> TrackingEvent {
+    private func globalPropertiesByApplyingEvent(from event: inout TrackingEvent, requestProperties: TrackerRequest.Properties){
         checkIsOnMainThread()
-        
-        var event = event
         
         event.variables = self.global.variables.merged(over: event.variables)
         
         if let globalSettings = applyKeys(keys: event.variables, properties: configuration.globalProperties) as? GlobalProperties {
             
             // merge autoParameters
-            let autoProperties = getAutoParameters(requestProperties: requestProperties)
-            let globalAndAuto = autoProperties.merged(over: self.global)
+            let autoProperties = getAutoParameters(event: event, requestProperties: requestProperties)
+            mergeProperties(event: &event, properties: globalSettings, rewriteEvent: false)
+            mergeProperties(event: &event, properties: autoProperties, rewriteEvent: false)
+            mergeProperties(event: &event, properties: self.global, rewriteEvent: false)
+            //let globalAndAuto = autoProperties.merged(over: self.global)
             
             // merge global from code and from configuration.
-            let global = globalSettings.merged(over: globalAndAuto)
+            //let global = globalSettings.merged(over: globalAndAuto)
             
             
-            return mergeProperties(event: event, properties: global, rewriteEvent: false)
+            //return event//mergeProperties(event: event, properties: global, rewriteEvent: false)
         } else {
             WebtrekkTracking.logger.logError("incorect type of return value from apply Keys for global parameters")
-            return event
         }
     }
     
@@ -263,10 +243,9 @@ final class RequestTrackerBuilder {
         return true
     }
     
-    private func mergeProperties(event: TrackingEvent, properties: BaseProperties, rewriteEvent: Bool) -> TrackingEvent {
+    private func mergeProperties(event: inout TrackingEvent, properties: BaseProperties, rewriteEvent: Bool){
         
         let mergeTool = PropertyMerger()
-        var event = event
         
         if rewriteEvent {
             event.ipAddress = properties.ipAddress ?? event.ipAddress
@@ -276,41 +255,39 @@ final class RequestTrackerBuilder {
             event.pageName = event.pageName ?? properties.pageProperties.name
         }
         
-        guard !(event is ActionEvent) else {
-            return event
+        guard !(event is ActionEvent) || properties is AutoParametersProperties else {
+            return
         }
         
         if var eventWithActionProperties = event as? TrackingEventWithActionProperties {
             eventWithActionProperties.actionProperties = mergeTool.mergeProperties(first: properties.actionProperties, second: eventWithActionProperties.actionProperties, from1Over2: rewriteEvent)
-            event = eventWithActionProperties
         }
         if var eventWithAdvertisementProperties = event as? TrackingEventWithAdvertisementProperties {
             eventWithAdvertisementProperties.advertisementProperties = mergeTool.mergeProperties(first: properties.advertisementProperties, second: eventWithAdvertisementProperties.advertisementProperties, from1Over2: rewriteEvent)
-            event = eventWithAdvertisementProperties
         }
         if var eventWithEcommerceProperties = event as? TrackingEventWithEcommerceProperties {
             eventWithEcommerceProperties.ecommerceProperties = mergeTool.mergeProperties(first: properties.ecommerceProperties, second: eventWithEcommerceProperties.ecommerceProperties, from1Over2: rewriteEvent)
-            event = eventWithEcommerceProperties
         }
         if var eventWithMediaProperties = event as? TrackingEventWithMediaProperties {
             eventWithMediaProperties.mediaProperties = mergeTool.mergeProperties(first: properties.mediaProperties, second: eventWithMediaProperties.mediaProperties, from1Over2: rewriteEvent)
-            event = eventWithMediaProperties
         }
         if var eventWithPageProperties = event as? TrackingEventWithPageProperties {
             eventWithPageProperties.pageProperties = mergeTool.mergeProperties(first: properties.pageProperties, second: eventWithPageProperties.pageProperties, from1Over2: rewriteEvent)
-            event = eventWithPageProperties
-        }
-        if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails {
-            eventWithSessionDetails.sessionDetails = mergeTool.mergeProperties(first: properties.sessionDetails, second: eventWithSessionDetails.sessionDetails, from1Over2: rewriteEvent)
-            event = eventWithSessionDetails
         }
         if var eventWithUserProperties = event as? TrackingEventWithUserProperties {
             eventWithUserProperties.userProperties = mergeTool.mergeProperties(first: properties.userProperties, second: eventWithUserProperties.userProperties, from1Over2: rewriteEvent)
-            event = eventWithUserProperties
         }
         
-        return event
+        if var eventWithSessionDetails = event as? TrackingEventWithSessionDetails {
+            eventWithSessionDetails.sessionDetails = mergeTool.mergeProperties(first: properties.sessionDetails, second: eventWithSessionDetails.sessionDetails, from1Over2: rewriteEvent)
+        }
     }
+    
+    
+    private class AutoParametersProperties: GlobalProperties{
+        
+    }
+    
     
     private enum autoParametersAttrNumbers: Int {
         case screenOrientation = 783, requestQueueSize
@@ -319,48 +296,54 @@ final class RequestTrackerBuilder {
         case advertisingId = 809
         case advertisingTrackingEnabled = 813
         case isFirstEventAfterAppUpdate = 815
+        case adClearId = 808
     }
     
     private static let autoParameters: [autoParametersAttrNumbers:CustomParType] =
         [.screenOrientation: .pageParameter, .requestQueueSize: .pageParameter, .appVersion: .sessionParameter, .connectionType: .sessionParameter,
-         .advertisingId: .sessionParameter, .advertisingTrackingEnabled: .sessionParameter, .isFirstEventAfterAppUpdate: .sessionParameter]
+         .advertisingId: .sessionParameter, .advertisingTrackingEnabled: .sessionParameter, .isFirstEventAfterAppUpdate: .sessionParameter, .adClearId: .sessionParameter]
     
-    
-    private func getAutoParameters (requestProperties properties: TrackerRequest.Properties) -> GlobalProperties{
-        
+    private func getAutoParameters (event: TrackingEvent, requestProperties properties: TrackerRequest.Properties) -> AutoParametersProperties{
         
         var sessionDetails: [Int : TrackingValue] = [:]
         var pageDetails: [Int : TrackingValue] = [:]
         
-        #if !os(watchOS) && !os(tvOS)
-            if let interfaceOrientation = properties.interfaceOrientation {
-                pageDetails[autoParametersAttrNumbers.screenOrientation.rawValue] = .constant(interfaceOrientation.serialized)
-            }
-
-            if let connectionType = properties.connectionType {
-                sessionDetails[autoParametersAttrNumbers.connectionType.rawValue] = .constant(connectionType.serialized)
-            }
-        #endif
+        if !(event is ActionEvent) {
         
-        if let requestQueueSize = properties.requestQueueSize {
-            pageDetails[autoParametersAttrNumbers.requestQueueSize.rawValue] = .constant(String(requestQueueSize))
+            #if !os(watchOS) && !os(tvOS)
+                if let interfaceOrientation = properties.interfaceOrientation {
+                    pageDetails[autoParametersAttrNumbers.screenOrientation.rawValue] = .constant(interfaceOrientation.serialized)
+                }
+
+                if let connectionType = properties.connectionType {
+                    sessionDetails[autoParametersAttrNumbers.connectionType.rawValue] = .constant(connectionType.serialized)
+                }
+            #endif
+        
+            if let requestQueueSize = properties.requestQueueSize {
+                pageDetails[autoParametersAttrNumbers.requestQueueSize.rawValue] = .constant(String(requestQueueSize))
+            }
+            if let appVersion = properties.appVersion {
+                sessionDetails[autoParametersAttrNumbers.appVersion.rawValue] = .constant(appVersion)
+            }
+            if let advertisingId = properties.advertisingId {
+                sessionDetails[autoParametersAttrNumbers.advertisingId.rawValue] = .constant(advertisingId.uuidString)
+            }
+            if let advertisingTrackingEnabled = properties.advertisingTrackingEnabled {
+                sessionDetails[autoParametersAttrNumbers.advertisingTrackingEnabled.rawValue] = .constant(advertisingTrackingEnabled ? "1" : "0")
+            }
+            if properties.isFirstEventAfterAppUpdate {
+                sessionDetails[autoParametersAttrNumbers.isFirstEventAfterAppUpdate.rawValue] = .constant("1")
+            }
         }
-        if let appVersion = properties.appVersion {
-            sessionDetails[autoParametersAttrNumbers.appVersion.rawValue] = .constant(appVersion)
-        }
-        if let advertisingId = properties.advertisingId {
-            sessionDetails[autoParametersAttrNumbers.advertisingId.rawValue] = .constant(advertisingId.uuidString)
-        }
-        if let advertisingTrackingEnabled = properties.advertisingTrackingEnabled {
-            sessionDetails[autoParametersAttrNumbers.advertisingTrackingEnabled.rawValue] = .constant(advertisingTrackingEnabled ? "1" : "0")
-        }
-        if properties.isFirstEventAfterAppUpdate {
-            sessionDetails[autoParametersAttrNumbers.isFirstEventAfterAppUpdate.rawValue] = .constant("1")
+        
+        if let adClearId = properties.adClearId {
+            sessionDetails[autoParametersAttrNumbers.adClearId.rawValue] = .constant(String(adClearId))
         }
         
         let pageProp = PageProperties(name: nil, details: pageDetails.count == 0 ? nil: pageDetails)
         
-        return GlobalProperties(pageProperties: pageProp, sessionDetails: sessionDetails)
+        return AutoParametersProperties(pageProperties: pageProp, sessionDetails: sessionDetails)
     }
     
     static func produceWarningForProperties(properties: BaseProperties){
@@ -377,7 +360,6 @@ final class RequestTrackerBuilder {
 }
 
 private class PropertyMerger {
-    
     func mergeProperties(first property1: ActionProperties, second property2: ActionProperties, from1Over2: Bool) -> ActionProperties{
         if from1Over2 {
             return property1.merged(over: property2)

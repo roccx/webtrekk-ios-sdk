@@ -20,7 +20,7 @@
 import UIKit
 
 
-public struct MediaEvent: TrackingEventWithMediaProperties {
+public class MediaEvent: TrackingEventWithMediaProperties {
 
 	public var action: Action
 	public var ipAddress: String?

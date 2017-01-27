@@ -38,11 +38,14 @@ internal final class UserDefaults {
 	internal func intForKey(_ key: String) -> Int? {
 		return objectForKey(key) as? Int
 	}
-
-
+    
 	internal func objectForKey(_ key: String) -> AnyObject? {
 		return source.object(forKey: keyPrefix + key) as AnyObject?
 	}
+
+    internal func uInt64ForKey(_ key: String) -> UInt64? {
+        return objectForKey(key) as? UInt64
+    }
 
 
 	internal func remove(key: String) {
@@ -83,4 +86,8 @@ internal final class UserDefaults {
 	internal func set(key: String, to value: String?) {
 		set(key: key, to: value as AnyObject?)
 	}
+    
+    internal func set(key: String, to value: UInt64?) {
+        set(key: key, to: value as AnyObject?)
+    }
 }

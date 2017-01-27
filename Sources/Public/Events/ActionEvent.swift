@@ -17,7 +17,7 @@
 //  Created by Widgetlabs
 //
 
-public struct ActionEvent:
+public class ActionEvent:
 	TrackingEventWithActionProperties,
 	TrackingEventWithAdvertisementProperties,
 	TrackingEventWithEcommerceProperties,

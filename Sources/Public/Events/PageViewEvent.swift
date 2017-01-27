@@ -17,7 +17,7 @@
 //  Created by Widgetlabs
 //
 
-public struct PageViewEvent:
+public class PageViewEvent:
 	TrackingEventWithAdvertisementProperties,
 	TrackingEventWithEcommerceProperties,
 	TrackingEventWithPageProperties,

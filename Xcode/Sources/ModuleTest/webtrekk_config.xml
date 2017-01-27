@@ -102,6 +102,7 @@
         <sessionParameter>
             <parameter id="1">test_sessionparam1</parameter>
             <parameter id="2" key="Key2"></parameter>
+            <parameter id="34">test_sessionparam34</parameter>
         </sessionParameter>
         <ecomParameter>
             <parameter id="1">test_ecomparam1</parameter>

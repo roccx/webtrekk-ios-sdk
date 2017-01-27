@@ -108,6 +108,8 @@
 		B73DB2421D49ED4F00F0C8DD /* VoucherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB23A1D49ED4F00F0C8DD /* VoucherViewController.swift */; };
 		B73DB2431D49ED4F00F0C8DD /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = B73DB23B1D49ED4F00F0C8DD /* webtrekk_config.xml */; };
 		B73DB2441D49ED4F00F0C8DD /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB23C1D49ED4F00F0C8DD /* WebtrekkTracking.swift */; };
+		DF46AEB01E3209F6001EB97A /* AdClearID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF46AEAE1E32060C001EB97A /* AdClearID.swift */; };
+		DF46AEB11E320A02001EB97A /* AdClearID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF46AEAE1E32060C001EB97A /* AdClearID.swift */; };
 		E08EAF21BCAD72549F2E2F67 /* Pods_iOS_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F05209EDDBE65B58F6F92233 /* Pods_iOS_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -324,6 +326,7 @@
 		D49B2D8EE47100648A70BF66 /* Pods_WatchAppExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WatchAppExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D69B1D268FC4FC9375115AC4 /* Pods_WatchApp_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WatchApp_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9550D87BD74A73547C55348 /* Pods-iOS-Manual Tracking Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Manual Tracking Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Manual Tracking Example/Pods-iOS-Manual Tracking Example.debug.xcconfig"; sourceTree = "<group>"; };
+		DF46AEAE1E32060C001EB97A /* AdClearID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdClearID.swift; sourceTree = "<group>"; };
 		DF77C2281330383F23731B32 /* Pods-iOS-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Example/Pods-iOS-Example.release.xcconfig"; sourceTree = "<group>"; };
 		DF7C9975F0D0FBA88A2F762A /* Pods-tvOS-SampleTVApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tvOS-SampleTVApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-tvOS-SampleTVApp/Pods-tvOS-SampleTVApp.release.xcconfig"; sourceTree = "<group>"; };
 		E180FA5BFFCEAECEC8A01F8A /* Pods-iOS-Example-ModuleTest-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS-Example-ModuleTest-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS-Example-ModuleTest-Tests/Pods-iOS-Example-ModuleTest-Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -519,6 +522,7 @@
 				9F5B66451E0163D000F1B917 /* RemoteConfTest.swift */,
 				9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */,
 				9F0E36841E29224900E815CA /* AttributionTest.swift */,
+				DF46AEAE1E32060C001EB97A /* AdClearID.swift */,
 			);
 			path = TestsNew;
 			sourceTree = "<group>";
@@ -1404,6 +1408,7 @@
 				9FFB526E1DC909CF000E4519 /* RecommendationTableViewController.swift in Sources */,
 				9F63E7851DC0E9580001D72E /* InitializationTest.swift in Sources */,
 				9F63E77B1DC0D4B30001D72E /* WTBaseTestNew.swift in Sources */,
+				DF46AEB01E3209F6001EB97A /* AdClearID.swift in Sources */,
 				9F415F2C1D5C7C81002CB83F /* HttpBaseTestNew.swift in Sources */,
 				9F0FB5BB1E0A7ED300957440 /* ParametersPriorityTest.swift in Sources */,
 				9F63E7801DC0D5180001D72E /* PageTest.swift in Sources */,
@@ -1450,6 +1455,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F95D40B1DAE7A1E0068E8F8 /* PageTest.swift in Sources */,
+				DF46AEB11E320A02001EB97A /* AdClearID.swift in Sources */,
 				9F5B66471E0163D800F1B917 /* RemoteConfTest.swift in Sources */,
 				9F95D4011DAE423E0068E8F8 /* HttpBaseTestNew.swift in Sources */,
 				9F5A604D1DE2ECD100EF84E0 /* AutoParameterTest.swift in Sources */,

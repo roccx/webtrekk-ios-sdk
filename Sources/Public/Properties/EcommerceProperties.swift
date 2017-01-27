@@ -81,8 +81,14 @@ public struct EcommerceProperties {
         mergedPrices = !prices.isEmpty ? prices : overPrices
         mergedQuantities = !quantities.isEmpty ? quantities : overQuantities
         
-        for cat in categories {
-            overCategories.forEach{mergedCategories.append(cat.merged(over: $0))}
+        let size = max(overCategories.count, categories.count)
+        
+        for i in 0..<size {
+            if i >= overCategories.count {
+                mergedCategories.append(categories[i])
+            } else{
+                mergedCategories.append(i < categories.count ? categories[i].merged(over:overCategories[i]) : overCategories[i])
+            }
         }
         
         return transformToProductList(names: mergedNames, prices: mergedPrices, quantities: mergedQuantities, categories: mergedCategories)

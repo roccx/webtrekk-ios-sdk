@@ -286,6 +286,10 @@ final class DefaultTracker: Tracker {
         if configuration.automaticallyTracksRequestQueueSize {
             requestProperties.requestQueueSize = requestManager?.queue.count
         }
+        if configuration.automaticallyTracksAdClearId {
+            requestProperties.adClearId = adClearId
+        }
+
         
         #if !os(watchOS) && !os(tvOS)
             if configuration.automaticallyTracksConnectionType, let connectionType = retrieveConnectionType(){
@@ -337,6 +341,25 @@ final class DefaultTracker: Tracker {
 		isFirstEventOfApp = false
 		isFirstEventOfSession = false
 	}
+    
+    /*
+     * AdClear ID
+     */
+    private var adClearIdInternal:UInt64?
+    
+    var adClearId: UInt64 {
+        get {
+            checkIsOnMainThread()
+            
+            if adClearIdInternal == nil {
+                adClearIdInternal = try? AdClearId.getAdClearId()
+            }
+            
+            return adClearIdInternal!
+        }
+    }
+    
+    
     
     /** get and set everID. If you set Ever ID it started to use new value for all requests*/
     var everId: String {
@@ -1085,6 +1108,7 @@ struct DefaultsKeys {
 	fileprivate static let isOptedOut = "optedOut"
 	fileprivate static let migrationCompleted = "migrationCompleted"
 	fileprivate static let samplingRate = "samplingRate"
+    static let adClearId = "adClearId"
 }
 
 private extension TrackingValue {
