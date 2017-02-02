@@ -65,17 +65,17 @@ The `Xcode` directory contains all files necessary to
 -	run examples
 
 ```shell
-# install CocoaPods 1.0.1 or newer (unless you already did)
+# install CocoaPods 1.2.0 or newer (unless you already did)
 sudo gem install cocoapods
 
 # clone this repository
-git clone https://bitbucket.org/widgetlabs/webtrekk-library.git && cd webtrekk-library
+https://github.com/Webtrekk/webtrekk-ios-sdk.git
 
 # examples & tests are located in the directory 'Xcode' …
 cd Xcode
 
 # … and are set up with CocoaPods
-pod update
+pod install
 
 # 'Examples.xcworkspace' is the file you'll use from now on
 open Examples.xcworkspace
