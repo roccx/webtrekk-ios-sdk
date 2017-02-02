@@ -300,9 +300,9 @@ internal final class AVPlayerTracker: NSObject {
 
 
 
-extension AVPlayer {
+fileprivate extension AVPlayer {
 
-	private struct AssociatedKeys {
+	fileprivate struct AssociatedKeys {
 
 		fileprivate static var trackers = UInt8()
 	}
@@ -328,7 +328,7 @@ extension AVPlayer {
 
 
 
-	private final class Trackers {
+	fileprivate final class Trackers {
 
 		private var trackers = [AVPlayerTracker]()
 		private let player: Unmanaged<AVPlayer>

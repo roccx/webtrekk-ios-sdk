@@ -125,7 +125,7 @@ extension DefaultPageTracker: ActionEventHandler {
 	internal func handleEvent(_ event: ActionEvent) {
 		checkIsOnMainThread()
 
-		var event = event
+		let event = event
 		event.advertisementProperties = event.advertisementProperties.merged(over: advertisementProperties)
 		event.ecommerceProperties = event.ecommerceProperties.merged(over: ecommerceProperties)
 		event.pageProperties = event.pageProperties.merged(over: pageProperties)
@@ -143,7 +143,7 @@ extension DefaultPageTracker: MediaEventHandler {
 	internal func handleEvent(_ event: MediaEvent) {
 		checkIsOnMainThread()
 
-		var event = event
+		let event = event
 		event.pageName = event.pageName ?? pageProperties.name
 		event.viewControllerType = event.viewControllerType ?? pageProperties.viewControllerType
 		event.variables = event.variables.merged(over: variables)

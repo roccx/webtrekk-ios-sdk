@@ -352,7 +352,7 @@ final class DefaultTracker: Tracker {
             checkIsOnMainThread()
             
             if adClearIdInternal == nil {
-                adClearIdInternal = try? AdClearId.getAdClearId()
+                adClearIdInternal = AdClearId.getAdClearId()
             }
             
             return adClearIdInternal!

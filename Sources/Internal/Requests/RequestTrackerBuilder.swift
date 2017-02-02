@@ -349,7 +349,6 @@ final class RequestTrackerBuilder {
     static func produceWarningForProperties(properties: BaseProperties){
         
         for (num, type) in autoParameters {
-            var doWarning: Bool = false
             let value = properties.trackingParameters?.categories[type]?[num.rawValue]
             
             if value != nil {
