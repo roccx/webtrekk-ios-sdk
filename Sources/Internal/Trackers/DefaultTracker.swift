@@ -65,13 +65,13 @@ final class DefaultTracker: Tracker {
         
         checkIsOnMainThread()
         
-        self.flowObserver = UIFlowObserver(tracker: self)
-        
         guard !self.isInitialited else {
             logError("Webtrekk SDK has been already initialized.")
             return false
         }
         
+        self.flowObserver = UIFlowObserver(tracker: self)
+
         let sharedDefaults = DefaultTracker.sharedDefaults
         var defaults = sharedDefaults.child(namespace: configuration.webtrekkId)
         

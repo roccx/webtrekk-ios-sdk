@@ -55,6 +55,9 @@
                <Test
                   Identifier = "AttributionTest">
                </Test>
+               <Test
+                  Identifier = "BackToForegroundTest">
+               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>

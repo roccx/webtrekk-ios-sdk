@@ -45,6 +45,9 @@
                   Identifier = "ActionTest">
                </Test>
                <Test
+                  Identifier = "AdClearIDTest">
+               </Test>
+               <Test
                   Identifier = "AutoParameterTest">
                </Test>
                <Test

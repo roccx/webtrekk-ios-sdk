@@ -80,6 +80,7 @@
 		9FBA48111DD1FECA00956ACF /* WatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 9FFF2E7D1DCCC5CB00DB0F84 /* WatchApp.app */; };
 		9FBA48161DD20A2A00956ACF /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 9FBA48141DD209B200956ACF /* webtrekk_config.xml */; };
 		9FC171D91DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC171D81DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift */; };
+		9FDEA0461E3F8DDD00DC6F32 /* BackToForegroundTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */; };
 		9FEB51761DC8A7C000C7DBCB /* RecommendationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */; };
 		9FED05741DB8F56600008C01 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FED05731DB8F56600008C01 /* Configurations */; };
 		9FED05751DB8F59400008C01 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FED05731DB8F56600008C01 /* Configurations */; };
@@ -289,6 +290,7 @@
 		9FC171D81DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextPageRelationInterfaceController.swift; sourceTree = "<group>"; };
 		9FC183801DAE1D64000F6106 /* SampleTVApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleTVApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC183901DAE1D64000F6106 /* SampleTVAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleTVAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackToForegroundTest.swift; sourceTree = "<group>"; };
 		9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecommendationTableViewController.swift; sourceTree = "<group>"; };
 		9FED05731DB8F56600008C01 /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 		9FFB526A1DC906FB000E4519 /* RecommendationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecommendationTest.swift; sourceTree = "<group>"; };
@@ -501,6 +503,7 @@
 		9F415F141D5C7C6D002CB83F /* TestsNew */ = {
 			isa = PBXGroup;
 			children = (
+				9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */,
 				9F415F9E1D5CD57B002CB83F /* Bridging-Header.h */,
 				9F415F331D5C8090002CB83F /* WebtrekkOld.framework */,
 				9F415F151D5C7C6D002CB83F /* AAMigrationTest.swift */,
@@ -1402,6 +1405,7 @@
 				9F63E7831DC0D52B0001D72E /* DeepLink.swift in Sources */,
 				9F5A604C1DE2EC6D00EF84E0 /* AutoParameterTest.swift in Sources */,
 				9F0E36851E29224900E815CA /* AttributionTest.swift in Sources */,
+				9FDEA0461E3F8DDD00DC6F32 /* BackToForegroundTest.swift in Sources */,
 				9F63E77E1DC0D50D0001D72E /* ActionTest.swift in Sources */,
 				9F63E7791DC0B3240001D72E /* ViewController.swift in Sources */,
 				9F63E7821DC0D5230001D72E /* MessageSendTest.swift in Sources */,

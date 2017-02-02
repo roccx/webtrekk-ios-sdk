@@ -19,16 +19,18 @@
 
 import XCTest
 @testable import Webtrekk
-import Foundation
+import AVFoundation
 import Nimble
 
 class WTBaseTestNew: HttpBaseTestNew {
     
     var libraryVersion: String?
+    static var lifeCicleIsInited = false
 
     override func setUp() {
         super.setUp()
         initWebtrekk()
+        doInitiateApplicationLifecycleOneMoreTimeTwice()
         checkStartCondition()
     }
     
@@ -94,6 +96,19 @@ class WTBaseTestNew: HttpBaseTestNew {
     
     private func checkFinishCondition(){
         expect(self.isBackupFileExists()).to(equal(false))
+    }
+    
+    private func doInitiateApplicationLifecycleOneMoreTimeTwice(){
+        
+        guard !WTBaseTestNew.lifeCicleIsInited else {
+            return
+        }
+        
+        let nc = NotificationCenter.default
+        
+        nc.post(name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+        nc.post(name: Notification.Name.UIApplicationWillEnterForeground, object: nil)
+        WTBaseTestNew.lifeCicleIsInited = true
     }
     
     private func isBackupFileExists() -> Bool{
