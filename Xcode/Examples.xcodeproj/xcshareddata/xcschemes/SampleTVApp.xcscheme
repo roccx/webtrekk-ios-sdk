@@ -37,6 +37,20 @@
                BlueprintName = "SampleTVAppTests"
                ReferencedContainer = "container:Examples.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testAfterExceptionCrash()">
+               </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testAfterSignalCrash()">
+               </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testCrashException()">
+               </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testCrashSignal()">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>

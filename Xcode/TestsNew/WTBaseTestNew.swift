@@ -26,17 +26,19 @@ class WTBaseTestNew: HttpBaseTestNew {
     
     var libraryVersion: String?
     static var lifeCicleIsInited = false
+    var initWebtrekkManualy = false
 
     override func setUp() {
         super.setUp()
+        
+        guard !initWebtrekkManualy else {
+            return
+        }
+        
         initWebtrekk()
-        doInitiateApplicationLifecycleOneMoreTimeTwice()
-        checkStartCondition()
     }
     
     override func tearDown() {
-        checkFinishCondition()
-        clearCashedConf()
         releaseWebtrekk()
         super.tearDown()
     }
@@ -45,7 +47,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         return nil
     }
     
-    private func initWebtrekk(){
+    func initWebtrekk(){
         
         guard !WebtrekkTracking.isInitialized() else{
             return
@@ -69,9 +71,14 @@ class WTBaseTestNew: HttpBaseTestNew {
         
         let libraryVersionOriginal = Bundle.init(for: WebtrekkTracking.self).object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "9.9.9"
         self.libraryVersion = libraryVersionOriginal.replacingOccurrences(of: ".", with: "")
+        
+        doInitiateApplicationLifecycleOneMoreTime()
+        checkStartCondition()
     }
 
     private func releaseWebtrekk(){
+        checkFinishCondition()
+        clearCashedConf()
         rollBackAutoTrackingMethodsSwizz()
         resetWebtrackInstance()
     }
@@ -98,7 +105,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         expect(self.isBackupFileExists()).to(equal(false))
     }
     
-    private func doInitiateApplicationLifecycleOneMoreTimeTwice(){
+    private func doInitiateApplicationLifecycleOneMoreTime(){
         
         guard !WTBaseTestNew.lifeCicleIsInited else {
             return

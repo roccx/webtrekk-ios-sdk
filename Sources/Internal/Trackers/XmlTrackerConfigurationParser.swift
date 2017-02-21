@@ -39,6 +39,7 @@ internal class XmlTrackerConfigurationParser {
 	private var webtrekkId: String?
 	private var automaticallyTrackedPages = Array<TrackerConfiguration.Page>()
     private var automaticallyTracksAdClearId: Bool?
+    private var errorLogLevel: Int?
     
     #if !os(watchOS)
 	private var automaticallyTracksConnectionType: Bool?
@@ -105,43 +106,46 @@ internal class XmlTrackerConfigurationParser {
 		for child in xmlElement.children {
 			do {
 				switch child.name {
-				case "enableRemoteConfiguration": enableRemoteConfiguration = try parseBool(child.text)
-				case "maxRequests":               requestQueueLimit = try parseInt(child.text, allowedRange: TrackerConfiguration.allowedRequestQueueLimits)
-				case "resendOnStartEventTime":    resendOnStartEventTime = try parseDouble(child.text, allowedRange: TrackerConfiguration.allowedResendOnStartEventTimes)
-				case "sampling":                  samplingRate = try parseInt(child.text, allowedRange: TrackerConfiguration.allowedSamplingRates)
-				case "sendDelay":                 maximumSendDelay = try parseDouble(child.text, allowedRange: TrackerConfiguration.allowedMaximumSendDelays)
-				case "trackingConfigurationUrl":  configurationUpdateUrl = try parseUrl(child.text, emptyAllowed: true)
-				case "trackDomain":               serverUrl = try parseUrl(child.text, emptyAllowed: false)
-				case "trackId":                   webtrekkId = try parseString(child.text, emptyAllowed: false)
-				case "version":                   version = try parseInt(child.text, allowedRange: TrackerConfiguration.allowedVersions)
+				case "enableRemoteConfiguration": self.enableRemoteConfiguration = try parseBool(child.text)
+				case "maxRequests":               self.requestQueueLimit = try parseInt(child.text, allowedRange: TrackerConfiguration.allowedRequestQueueLimits)
+				case "resendOnStartEventTime":    self.resendOnStartEventTime = try parseDouble(child.text, allowedRange: TrackerConfiguration.allowedResendOnStartEventTimes)
+				case "sampling":                  self.samplingRate = try parseInt(child.text, allowedRange: TrackerConfiguration.allowedSamplingRates)
+				case "sendDelay":                 self.maximumSendDelay = try parseDouble(child.text, allowedRange: TrackerConfiguration.allowedMaximumSendDelays)
+				case "trackingConfigurationUrl":  self.configurationUpdateUrl = try parseUrl(child.text, emptyAllowed: true)
+				case "trackDomain":               self.serverUrl = try parseUrl(child.text, emptyAllowed: false)
+				case "trackId":                   self.webtrekkId = try parseString(child.text, emptyAllowed: false)
+				case "version":                   self.version = try parseInt(child.text, allowedRange: TrackerConfiguration.allowedVersions)
 
-				case "autoTracked":                  autoTracked = try parseBool(child.text)
-				case "autoTrackAdvertiserId":        automaticallyTracksAdvertisingId = try parseBool(child.text)
-				case "autoTrackAdvertisementOptOut": automaticallyTracksAdvertisingOptOut = try parseBool(child.text)
-				case "autoTrackAppUpdate":           automaticallyTracksAppUpdates = try parseBool(child.text)
-				case "autoTrackAppVersionName":      automaticallyTracksAppVersion = try parseBool(child.text)
-				case "autoTrackRequestUrlStoreSize": automaticallyTracksRequestQueueSize = try parseBool(child.text)
+				case "autoTracked":                  self.autoTracked = try parseBool(child.text)
+				case "autoTrackAdvertiserId":        self.automaticallyTracksAdvertisingId = try parseBool(child.text)
+				case "autoTrackAdvertisementOptOut": self.automaticallyTracksAdvertisingOptOut = try parseBool(child.text)
+				case "autoTrackAppUpdate":           self.automaticallyTracksAppUpdates = try parseBool(child.text)
+				case "autoTrackAppVersionName":      self.automaticallyTracksAppVersion = try parseBool(child.text)
+				case "autoTrackRequestUrlStoreSize": self.automaticallyTracksRequestQueueSize = try parseBool(child.text)
 
-                case "autoTrackAdClearId": automaticallyTracksAdClearId = try parseBool(child.text)
+                case "autoTrackAdClearId": self.automaticallyTracksAdClearId = try parseBool(child.text)
                     
 				case "globalTrackingParameter" : try readFromGlobalElement(child)
                 case "recommendations" : try recommendationsL = readRecommendations(xmlElement: child)
                 case "screen": try readFromScreenElement(child)
                 case "autoTrackConnectionType":
                     #if !os(watchOS) && !os(tvOS)
-                    automaticallyTracksConnectionType = try parseBool(child.text)
+                    self.automaticallyTracksConnectionType = try parseBool(child.text)
                     #else
                     logError("autoTrackConnectionType isn't supported for watchOS and tvOS")
                     #endif
                 case "autoTrackScreenOrientation":
                     #if !os(watchOS) && !os(tvOS)
-                    automaticallyTracksInterfaceOrientation = try parseBool(child.text)
+                    self.automaticallyTracksInterfaceOrientation = try parseBool(child.text)
                     #else
                     logError("autoTrackScreenOrientation isn't supported for watchOS and tvOS")
                     #endif
-
+                case "errorLogLevel": self.errorLogLevel = try parseInt(child.text, allowedRange: 1...3)
+                case "errorLogEnable": if let enable = try parseBool(child.text){
+                    self.errorLogLevel = enable ? self.errorLogLevel : 0
+                    }
 				default:
-                        logError("Element \(child.name) not found")
+                        logWarning("Element \(child.name) not found")
                         break
 				}
 			}
@@ -191,27 +195,27 @@ internal class XmlTrackerConfigurationParser {
 			trackerConfiguration.version = version
 		}
 
-		if let automaticallyTracksAdvertisingId = automaticallyTracksAdvertisingId {
+		if let automaticallyTracksAdvertisingId = self.automaticallyTracksAdvertisingId {
 			trackerConfiguration.automaticallyTracksAdvertisingId = automaticallyTracksAdvertisingId
 		}
 
-		if let automaticallyTracksAdvertisingOptOut = automaticallyTracksAdvertisingOptOut {
+		if let automaticallyTracksAdvertisingOptOut = self.automaticallyTracksAdvertisingOptOut {
 			trackerConfiguration.automaticallyTracksAdvertisingOptOut = automaticallyTracksAdvertisingOptOut
 		}
 
-		if let automaticallyTracksAppUpdates = automaticallyTracksAppUpdates {
+		if let automaticallyTracksAppUpdates = self.automaticallyTracksAppUpdates {
 			trackerConfiguration.automaticallyTracksAppUpdates = automaticallyTracksAppUpdates
 		}
 
-		if let automaticallyTracksAppVersion = automaticallyTracksAppVersion {
+		if let automaticallyTracksAppVersion = self.automaticallyTracksAppVersion {
 			trackerConfiguration.automaticallyTracksAppVersion = automaticallyTracksAppVersion
 		}
 
-		if let automaticallyTracksRequestQueueSize = automaticallyTracksRequestQueueSize {
+		if let automaticallyTracksRequestQueueSize = self.automaticallyTracksRequestQueueSize {
 			trackerConfiguration.automaticallyTracksRequestQueueSize = automaticallyTracksRequestQueueSize
 		}
         
-        if let automaticallyTracksAdClearId = automaticallyTracksAdClearId {
+        if let automaticallyTracksAdClearId = self.automaticallyTracksAdClearId {
             trackerConfiguration.automaticallyTracksAdClearId = automaticallyTracksAdClearId
         }
         
@@ -219,7 +223,11 @@ internal class XmlTrackerConfigurationParser {
             trackerConfiguration.recommendations = recommendations
         }
         
-		#if !os(watchOS)
+        if let errorLogLevel = self.errorLogLevel {
+            trackerConfiguration.errorLogLevel = errorLogLevel
+        }
+		
+        #if !os(watchOS)
 			if let automaticallyTracksConnectionType = automaticallyTracksConnectionType {
 				trackerConfiguration.automaticallyTracksConnectionType = automaticallyTracksConnectionType
 			}

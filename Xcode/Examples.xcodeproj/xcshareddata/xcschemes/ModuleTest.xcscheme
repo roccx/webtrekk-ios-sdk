@@ -58,6 +58,18 @@
                <Test
                   Identifier = "BackToForegroundTest">
                </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testAfterExceptionCrash()">
+               </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testAfterSignalCrash()">
+               </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testCrashException()">
+               </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testCrashSignal()">
+               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>

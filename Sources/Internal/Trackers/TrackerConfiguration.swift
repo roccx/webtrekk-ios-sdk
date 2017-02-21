@@ -91,10 +91,14 @@ internal struct TrackerConfiguration {
 	internal var automaticallyTracksInterfaceOrientation = true
 	#endif
 
-	internal var globalProperties = GlobalProperties()
-    
+    //list of recommendations
     internal var recommendations : [String: URL]? = nil
-
+	
+    //error tracking
+    internal var errorLogLevel: Int? = nil
+    
+    internal var globalProperties = GlobalProperties()
+    
 
 	/** 
 	Configuration for a Tracker

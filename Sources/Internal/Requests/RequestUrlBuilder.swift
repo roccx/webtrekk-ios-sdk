@@ -53,9 +53,11 @@ internal final class RequestUrlBuilder {
         arr.append(URLQueryItem(name: name, value: value))
     }
 
-	internal func urlForRequest(_ request: TrackerRequest) -> URL? {
+    internal func urlForRequest(_ request: TrackerRequest, type: DefaultTracker.RequestType) -> URL? {
 		let event = request.event
-		guard let pageName = event.pageName?.nonEmpty else {
+		let pageNameOpt = event.pageName?.nonEmpty
+        
+        if pageNameOpt == nil && type == .normal {
 			logError("Tracking event must contain a page name: \(request)")
 			return nil
 		}
@@ -66,20 +68,32 @@ internal final class RequestUrlBuilder {
         let libraryVersionParced = libraryVersionOriginal.replacingOccurrences(of: ".", with: "")
 
 		var parameters = [URLQueryItem]()
-        append(arr: &parameters, name: "p", value: libraryVersionParced + ",\(pageName),0,\(screenSize),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0")
-		append(arr: &parameters, name: "eid", value: properties.everId)
-		append(arr: &parameters, name: "fns", value: properties.isFirstEventOfSession ? "1" : "0")
-		append(arr: &parameters, name: "mts", value: String(Int64(properties.timestamp.timeIntervalSince1970 * 1000)))
-		append(arr: &parameters, name: "one", value: properties.isFirstEventOfApp ? "1" : "0")
-		append(arr: &parameters, name: "ps", value: String(properties.samplingRate))
-		append(arr: &parameters, name: "tz", value: String(Double(properties.timeZone.secondsFromGMT()) / 60 / 60))
-		append(arr: &parameters, name: "X-WT-UA", value: properties.userAgent)
+        
+        switch type {
+        case .normal:
+            // it has to b not null based on previous check for normal
+            guard let pageName = pageNameOpt else {
+                return nil
+            }
+            
+            append(arr: &parameters, name: "p", value: libraryVersionParced + ",\(pageName),0,\(screenSize),32,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0")
+            append(arr: &parameters, name: "eid", value: properties.everId)
+            append(arr: &parameters, name: "fns", value: properties.isFirstEventOfSession ? "1" : "0")
+            append(arr: &parameters, name: "mts", value: String(Int64(properties.timestamp.timeIntervalSince1970 * 1000)))
+            append(arr: &parameters, name: "one", value: properties.isFirstEventOfApp ? "1" : "0")
+            append(arr: &parameters, name: "ps", value: String(properties.samplingRate))
+            append(arr: &parameters, name: "tz", value: String(Double(properties.timeZone.secondsFromGMT()) / 60 / 60))
+            append(arr: &parameters, name: "X-WT-UA", value: properties.userAgent)
+            
+            if let language = (properties.locale as NSLocale?)?.object(forKey: NSLocale.Key.languageCode) as? String {
+                append(arr: &parameters, name: "la", value: language)
+            }
+        case .exceptionTracking:
+            append(arr: &parameters, name: "p", value: libraryVersionParced + ",,0,,,0,\(Int64(properties.timestamp.timeIntervalSince1970 * 1000)),0,0,0")
+        }
 
 		if let ipAddress = event.ipAddress {
 			append(arr: &parameters, name: "X-WT-IP", value: ipAddress)
-		}
-		if let language = (properties.locale as NSLocale?)?.object(forKey: NSLocale.Key.languageCode) as? String {
-			append(arr: &parameters, name: "la", value: language)
 		}
 
 		if let event = event as? MediaEvent {
@@ -112,7 +126,8 @@ internal final class RequestUrlBuilder {
 				parameters += details.mapNotNil { URLQueryItem(name: "ck", property: $0, for: request) }
 			}
 		}
-		if let advertisementProperties = (event as? TrackingEventWithAdvertisementProperties)?.advertisementProperties {
+		
+        if let advertisementProperties = (event as? TrackingEventWithAdvertisementProperties)?.advertisementProperties {
 			if let action = advertisementProperties.action {
 				append(arr: &parameters, name: "mca", value: action)
 			}
@@ -123,10 +138,12 @@ internal final class RequestUrlBuilder {
 				parameters += details.mapNotNil { URLQueryItem(name: "cc", property: $0, for: request) }
 			}
 		}
-		if let ecommerceProperties = (event as? TrackingEventWithEcommerceProperties)?.ecommerceProperties {
+		
+        if let ecommerceProperties = (event as? TrackingEventWithEcommerceProperties)?.ecommerceProperties {
 			parameters += ecommerceProperties.asQueryItems(for: request)
 		}
-		if let mediaProperties = (event as? TrackingEventWithMediaProperties)?.mediaProperties {
+		
+        if let mediaProperties = (event as? TrackingEventWithMediaProperties)?.mediaProperties {
 			guard mediaProperties.name?.nonEmpty != nil else {
 				logError("Tracking event must contain a media name: \(request)")
 				return nil
@@ -134,13 +151,16 @@ internal final class RequestUrlBuilder {
 
 			parameters += mediaProperties.asQueryItems(for: request)
 		}
-		if let pageProperties = (event as? TrackingEventWithPageProperties)?.pageProperties {
+		
+        if let pageProperties = (event as? TrackingEventWithPageProperties)?.pageProperties {
 			parameters += pageProperties.asQueryItems(for: request)
 		}
-		if let sessionDetails = (event as? TrackingEventWithSessionDetails)?.sessionDetails {
+		
+        if let sessionDetails = (event as? TrackingEventWithSessionDetails)?.sessionDetails {
 			parameters += sessionDetails.mapNotNil { URLQueryItem(name: "cs", property: $0, for: request) }
 		}
-		if let userProperties = (event as? TrackingEventWithUserProperties)?.userProperties {
+		
+        if let userProperties = (event as? TrackingEventWithUserProperties)?.userProperties {
 			parameters += userProperties.asQueryItems(for: request)
 		}
 

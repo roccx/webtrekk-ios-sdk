@@ -22,6 +22,7 @@
 		9F0E36851E29224900E815CA /* AttributionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0E36841E29224900E815CA /* AttributionTest.swift */; };
 		9F0FB5BB1E0A7ED300957440 /* ParametersPriorityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */; };
 		9F12A9401DC899530006B44F /* RecoItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */; };
+		9F30E2021E4CB04000F7BB99 /* ExceptionTrackingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */; };
 		9F415F291D5C7C81002CB83F /* AAMigrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F151D5C7C6D002CB83F /* AAMigrationTest.swift */; };
 		9F415F2C1D5C7C81002CB83F /* HttpBaseTestNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F181D5C7C6D002CB83F /* HttpBaseTestNew.swift */; };
 		9F415F311D5C7C81002CB83F /* stub.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F415F1D1D5C7C6D002CB83F /* stub.jpg */; };
@@ -80,7 +81,10 @@
 		9FBA48111DD1FECA00956ACF /* WatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 9FFF2E7D1DCCC5CB00DB0F84 /* WatchApp.app */; };
 		9FBA48161DD20A2A00956ACF /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 9FBA48141DD209B200956ACF /* webtrekk_config.xml */; };
 		9FC171D91DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC171D81DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift */; };
+		9FC3E1EB1E5C7D14000D7B43 /* ExceptionTrackingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */; };
+		9FC3E1EC1E5C80CE000D7B43 /* ExceptionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE852141E51F1A100F5915D /* ExceptionCreator.m */; };
 		9FDEA0461E3F8DDD00DC6F32 /* BackToForegroundTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */; };
+		9FE852151E51F1A100F5915D /* ExceptionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE852141E51F1A100F5915D /* ExceptionCreator.m */; };
 		9FEB51761DC8A7C000C7DBCB /* RecommendationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */; };
 		9FED05741DB8F56600008C01 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FED05731DB8F56600008C01 /* Configurations */; };
 		9FED05751DB8F59400008C01 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FED05731DB8F56600008C01 /* Configurations */; };
@@ -245,6 +249,7 @@
 		9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParametersPriorityTest.swift; sourceTree = "<group>"; };
 		9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecoItemTableViewCell.swift; sourceTree = "<group>"; };
 		9F16F2BD1DB8C9CB007CFB71 /* MessageSendTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageSendTest.swift; sourceTree = "<group>"; };
+		9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExceptionTrackingTest.swift; sourceTree = "<group>"; };
 		9F415F001D5C7C59002CB83F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9F415F021D5C7C59002CB83F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		9F415F041D5C7C59002CB83F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -291,6 +296,8 @@
 		9FC183801DAE1D64000F6106 /* SampleTVApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleTVApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC183901DAE1D64000F6106 /* SampleTVAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleTVAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackToForegroundTest.swift; sourceTree = "<group>"; };
+		9FE852131E51F1A100F5915D /* ExceptionCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCreator.h; sourceTree = "<group>"; };
+		9FE852141E51F1A100F5915D /* ExceptionCreator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExceptionCreator.m; sourceTree = "<group>"; };
 		9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecommendationTableViewController.swift; sourceTree = "<group>"; };
 		9FED05731DB8F56600008C01 /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 		9FFB526A1DC906FB000E4519 /* RecommendationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecommendationTest.swift; sourceTree = "<group>"; };
@@ -526,6 +533,9 @@
 				9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */,
 				9F0E36841E29224900E815CA /* AttributionTest.swift */,
 				DF46AEAE1E32060C001EB97A /* AdClearID.swift */,
+				9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */,
+				9FE852131E51F1A100F5915D /* ExceptionCreator.h */,
+				9FE852141E51F1A100F5915D /* ExceptionCreator.m */,
 			);
 			path = TestsNew;
 			sourceTree = "<group>";
@@ -1407,6 +1417,7 @@
 				9F0E36851E29224900E815CA /* AttributionTest.swift in Sources */,
 				9FDEA0461E3F8DDD00DC6F32 /* BackToForegroundTest.swift in Sources */,
 				9F63E77E1DC0D50D0001D72E /* ActionTest.swift in Sources */,
+				9FE852151E51F1A100F5915D /* ExceptionCreator.m in Sources */,
 				9F63E7791DC0B3240001D72E /* ViewController.swift in Sources */,
 				9F63E7821DC0D5230001D72E /* MessageSendTest.swift in Sources */,
 				9FFB526E1DC909CF000E4519 /* RecommendationTableViewController.swift in Sources */,
@@ -1414,6 +1425,7 @@
 				9F63E77B1DC0D4B30001D72E /* WTBaseTestNew.swift in Sources */,
 				DF46AEB01E3209F6001EB97A /* AdClearID.swift in Sources */,
 				9F415F2C1D5C7C81002CB83F /* HttpBaseTestNew.swift in Sources */,
+				9F30E2021E4CB04000F7BB99 /* ExceptionTrackingTest.swift in Sources */,
 				9F0FB5BB1E0A7ED300957440 /* ParametersPriorityTest.swift in Sources */,
 				9F63E7801DC0D5180001D72E /* PageTest.swift in Sources */,
 				9F63E77D1DC0D50A0001D72E /* CDBTest.swift in Sources */,
@@ -1462,6 +1474,7 @@
 				DF46AEB11E320A02001EB97A /* AdClearID.swift in Sources */,
 				9F5B66471E0163D800F1B917 /* RemoteConfTest.swift in Sources */,
 				9F95D4011DAE423E0068E8F8 /* HttpBaseTestNew.swift in Sources */,
+				9FC3E1EC1E5C80CE000D7B43 /* ExceptionCreator.m in Sources */,
 				9F5A604D1DE2ECD100EF84E0 /* AutoParameterTest.swift in Sources */,
 				9F9710271DCB882700AB3872 /* MessageSendTest.swift in Sources */,
 				9F95D4001DAE423E0068E8F8 /* CDBTest.swift in Sources */,
@@ -1470,6 +1483,7 @@
 				9FFB526D1DC909A1000E4519 /* RecommendationTest.swift in Sources */,
 				9F06B9201DD4AB02003D15EC /* HTTPTester.swift in Sources */,
 				9F5FF0CD1DCB7C8E00F53B22 /* RecoItemTableViewCell.swift in Sources */,
+				9FC3E1EB1E5C7D14000D7B43 /* ExceptionTrackingTest.swift in Sources */,
 				9F5FF0CF1DCB7C9100F53B22 /* RecommendationTableViewController.swift in Sources */,
 				9F95D4071DAE424B0068E8F8 /* WTBaseTestNew.swift in Sources */,
 				9F95D4031DAE423E0068E8F8 /* MediaTest.swift in Sources */,
@@ -1918,6 +1932,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "TestsNew/Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SampleTVApp.app/SampleTVApp";
 				TVOS_DEPLOYMENT_TARGET = 10.0;
@@ -1942,6 +1957,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.webtrekk.SampleTVAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "TestsNew/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SampleTVApp.app/SampleTVApp";

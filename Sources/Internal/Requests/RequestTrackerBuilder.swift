@@ -221,11 +221,6 @@ final class RequestTrackerBuilder {
     private func validateEvent(_ event: TrackingEvent) -> Bool {
         checkIsOnMainThread()
         
-        guard event.pageName?.nonEmpty != nil else {
-            logError("Cannot track event without .pageName set: \(event)")
-            return false
-        }
-        
         if let event = event as? TrackingEventWithActionProperties {
             guard event.actionProperties.name?.nonEmpty != nil else {
                 logError("Cannot track event without .actionProperties.name set: \(event)")

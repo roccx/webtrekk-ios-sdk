@@ -62,6 +62,9 @@ public protocol Tracker: class {
     
     /** return recommendation class instance for getting recommendations. Each call returns new instance. Returns nil if SDK isn't initialized*/
     func getRecommendations() -> Recommendation?
+    
+    /** return exceptoin tracking object that can be used for exception and error tracking in application */
+    var exceptionTracker: ExceptionTracker { get }
 }
 
 

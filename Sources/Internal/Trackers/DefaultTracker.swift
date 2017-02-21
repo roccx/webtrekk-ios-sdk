@@ -60,6 +60,16 @@ final class DefaultTracker: Tracker {
 	internal var global = GlobalProperties()
 	internal var plugins = [TrackerPlugin]()
     
+    let exceptionTracker: ExceptionTracker = ExceptionTrackerImpl()
+    
+    var exceptionTrackingImpl: ExceptionTrackerImpl? {
+        return self.exceptionTracker as? ExceptionTrackerImpl
+    }
+    
+    enum RequestType {
+        case normal, exceptionTracking
+    }
+    
     
     func initializeTracking(configuration: TrackerConfiguration) -> Bool{
         
@@ -130,6 +140,7 @@ final class DefaultTracker: Tracker {
         
         checkForAppUpdate()
         
+        self.exceptionTrackingImpl?.initializeExceptionTracking(config: configuration)
         self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
         self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
         self.manualStart = configuration.maximumSendDelay == 0
@@ -155,8 +166,12 @@ final class DefaultTracker: Tracker {
         
         checkForDuplicateTrackers()
         
+        // exception tracking init
+
         logInfo("Initialization is completed")
         self.isInitialited = true
+        
+        self.exceptionTrackingImpl?.sendSavedException()
         return true
     }
     
@@ -168,8 +183,7 @@ final class DefaultTracker: Tracker {
         
         return self.isInitialited
     }
-
-
+    
 	deinit {
 		let id = ObjectIdentifier(self)
 		
@@ -305,7 +319,7 @@ final class DefaultTracker: Tracker {
     }
 
 
-	internal func enqueueRequestForEvent(_ event: TrackingEvent) {
+    internal func enqueueRequestForEvent(_ event: TrackingEvent, type: RequestType = .normal) {
 		checkIsOnMainThread()
 
         guard self.checkIfInitialized() else {
@@ -329,7 +343,7 @@ final class DefaultTracker: Tracker {
 			request = plugin.tracker(self, requestForQueuingRequest: request)
 		}
 
-		if shouldEnqueueNewEvents, let requestUrl = requestUrlBuilder?.urlForRequest(request) {
+		if shouldEnqueueNewEvents, let requestUrl = requestUrlBuilder?.urlForRequest(request, type: type) {
 			requestManager?.enqueueRequest(requestUrl, maximumDelay: configuration.maximumSendDelay)
 		}
 
@@ -981,7 +995,6 @@ final class DefaultTracker: Tracker {
         }
     }
     #endif
-    
 }
 
 

@@ -57,6 +57,21 @@
                   Identifier = "DeepLink">
                </Test>
                <Test
+                  Identifier = "ExceptionTrackingTest/testErrorLogDisable()">
+               </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testExceptionTracking()">
+               </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testInfoErrorLog()">
+               </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testNoErrorLog()">
+               </Test>
+               <Test
+                  Identifier = "ExceptionTrackingTest/testNoExceptionTracking()">
+               </Test>
+               <Test
                   Identifier = "HttpBaseTestNew">
                </Test>
                <Test
