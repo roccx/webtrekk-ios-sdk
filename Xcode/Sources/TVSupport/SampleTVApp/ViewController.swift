@@ -22,8 +22,6 @@ import UIKit
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
-        @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-        @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
@@ -35,10 +33,4 @@ class ViewController: UIViewController {
     @IBAction func adClearProcess(_ sender: Any) {
     }
     @IBOutlet weak var adClearProcess: UIButton!
-
-
 }
-
-@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
