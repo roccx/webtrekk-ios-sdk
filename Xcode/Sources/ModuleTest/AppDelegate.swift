@@ -18,19 +18,24 @@
 //
 
 import UIKit
-import Webtrekk
+@testable import Webtrekk
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    static let isAfterCrashSettings: String = "isAfterCrashSettings"
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions:[UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         if ProcessInfo.processInfo.environment["XCInjectBundleInto"] == nil {
-            WebtrekkTracking.defaultLogger.minimumLevel = .debug
-            try! WebtrekkTracking.initTrack()
+            if isAfterCrashStart() {
+                NSLog("Start after crash. Initialize crash configuration.")
+                initWithConfig(configName: "webtrekk_config_error_log_integration_test")
+            } else {
+                initWithConfig()
+            }
         }
         return true
     }
@@ -64,5 +69,48 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("Original Selector is called")
         
         return true
+    }
+    
+    func initWithConfig(configName name: String? = nil) {
+        
+        if let _ = WebtrekkTracking.tracker {
+            releaseWebtrekkInstance()
+        }
+        
+        do {
+            WebtrekkTracking.defaultLogger.minimumLevel = .debug
+            if let name = name {
+                let configFileURL = Bundle.main.url(forResource: name, withExtension: "xml", subdirectory: "Configurations/")
+                try WebtrekkTracking.initTrack(configFileURL)
+            } else {
+                try WebtrekkTracking.initTrack()
+            }
+        }catch let error as TrackerError {
+        WebtrekkTracking.defaultLogger.logError("Error Webtrekk SDK initialization: \(error.message)")
+        }catch {
+        WebtrekkTracking.defaultLogger.logError("Unkown error during Webtrekk SDK initialization")
+        }
+    }
+
+    private func releaseWebtrekkInstance(){
+        weak var weakTracker = WebtrekkTracking.tracker
+        WebtrekkTracking.tracker = nil
+        
+        while weakTracker != nil {
+             RunLoop.current.run(mode: .defaultRunLoopMode, before: Date(timeIntervalSinceNow:2))
+        }
+    }
+    
+    private func isAfterCrashStart() -> Bool{
+        if let value = UserDefaults.standard.object(forKey: AppDelegate.isAfterCrashSettings) as? Bool, value {
+            UserDefaults.standard.removeObject(forKey: AppDelegate.isAfterCrashSettings)
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func setAfterCrashMode(){
+         UserDefaults.standard.set(true, forKey: AppDelegate.isAfterCrashSettings)
     }
 }

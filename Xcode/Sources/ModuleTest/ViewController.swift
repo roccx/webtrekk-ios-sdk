@@ -18,6 +18,7 @@
 //
 
 import UIKit
+import Webtrekk
 
 class ViewController: UIViewController {
 
@@ -30,6 +31,35 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
+    #if TEST_APP
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBAction func adClearProcess(_ sender: UIButton) {
+        if let delegate = UIApplication.shared.delegate as? AppDelegate {
+        
+        self.activityIndicator.startAnimating()
+        
+        delegate.initWithConfig(configName: "webtrekk_config_AdClearId_integration_test")
+        WebtrekkTracking.instance().trackPageView("pageName")
+        WebtrekkTracking.instance().sendPendingEvents()
+        sleep(5)
+        delegate.initWithConfig()
+        self.activityIndicator.stopAnimating()
+        let alert = UIAlertController(title: "Alert", message: "AdClear URL has been sent", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func crashProceed(_ sender: UIButton) {
+        if let delegate = UIApplication.shared.delegate as? AppDelegate{
+            delegate.setAfterCrashMode()
+            DispatchQueue.global(qos: .background).async {
+                let exception = ExceptionCreator()
+                exception.throwCocoaPod()
+            }
+        }
+    }
+   #endif
 }
 

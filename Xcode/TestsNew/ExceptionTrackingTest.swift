@@ -74,6 +74,8 @@ class ExceptionTrackingTest: WTBaseTestNew {
         case _ where name?.range(of: "testCrashException") != nil:
             NSSetUncaughtExceptionHandler(exceptionHandler)
             signal(SIGABRT, signalHandler)
+        case _ where name?.range(of: "testAfterExceptionCrash") != nil:
+            self.initWebtrekkManualy = true
         default:
             break
         }
@@ -89,8 +91,6 @@ class ExceptionTrackingTest: WTBaseTestNew {
         case _ where name?.range(of: "testCrashException") != nil:
             NSSetUncaughtExceptionHandler(nil)
             signal(SIGABRT, SIG_DFL)
-        case _ where name?.range(of: "testAfterExceptionCrash") != nil:
-            self.initWebtrekkManualy = true
         default:
             break
         }
@@ -140,6 +140,7 @@ class ExceptionTrackingTest: WTBaseTestNew {
         
         self.httpTester.removeStub()
         var requestNum: Int = 0
+        var requestsAreDone = false
         
         self.httpTester.addNormalStub(){query in
             let parametersArr = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
@@ -157,6 +158,7 @@ class ExceptionTrackingTest: WTBaseTestNew {
             case 1:
                 expect(parametersArr["ck911"]).to(equal("Signal:%20SIGABRT"))
                 expect(parametersArr["ck913"]).toNot(beNil())
+                requestsAreDone = true
             default:
                 expect(true).to(equal(false), description: "To many request after exception")
             }
@@ -167,8 +169,10 @@ class ExceptionTrackingTest: WTBaseTestNew {
             initWebtrekk()
         }
         
-        // wait while all request is received
+        // wait while all requests are procedded
         doSmartWait(sec: 10)
+        
+        expect(requestsAreDone).to(equal(true))
     }
 
     func testAfterSignalCrash(){

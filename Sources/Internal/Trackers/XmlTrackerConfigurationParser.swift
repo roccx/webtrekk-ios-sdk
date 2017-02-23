@@ -145,6 +145,9 @@ internal class XmlTrackerConfigurationParser {
                     self.errorLogLevel = enable ? self.errorLogLevel : 0
                     }
 				default:
+                    guard child.name != "autoTrackAppVersionCode" else {
+                        break
+                    }
                         logWarning("Element \(child.name) not found")
                         break
 				}

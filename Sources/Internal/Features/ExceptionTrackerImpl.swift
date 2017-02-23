@@ -114,6 +114,12 @@ class ExceptionTrackerImpl: ExceptionTracker {
         
         NSSetUncaughtExceptionHandler(ExceptionTrackerImpl.previousExceptionHandler)
         ExceptionTrackerImpl.previousExceptionHandler = nil
+        
+        for signalNum in signals {
+            // restore signals back
+            signal(signalNum, ExceptionTrackerImpl.previousSignalHandlers[signalNum])
+        }
+        
         ExceptionTrackerImpl.initialized = false
     }
     
@@ -337,9 +343,8 @@ fileprivate class ExceptionSaveAndSendHelper{
             guard let array = NSArray(contentsOf: url) as? [NSString] else {
                 continue
             }
-            WebtrekkTracking.defaultLogger.logDebug("exception with data \(array) from file \(url) will be sent")
+
             // send action
-            
             track(logLevel: logLevel, name: array[0], stack: array[1], message: array[2], userInfo: array[3], stackReturnAddress: array[4])
         }
     }
