@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,74 +22,51 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Ouu-sL-MY7">
-                                <rect key="frame" x="259" y="74" width="83" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="87f-by-oQi">
-                                        <rect key="frame" x="0.0" y="0.0" width="83" height="30"/>
-                                        <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="hfm-ti-3fc">
-                                                <rect key="frame" x="0.0" y="0.0" width="83" height="30"/>
-                                                <subviews>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Ufb-Ws-P0i">
-                                                        <rect key="frame" x="0.0" y="0.0" width="83" height="30"/>
-                                                        <subviews>
-                                                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="14d-O9-it5">
-                                                                <rect key="frame" x="0.0" y="0.0" width="83" height="30"/>
-                                                                <subviews>
-                                                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="UtA-Ga-Q4z">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="83" height="30"/>
-                                                                        <subviews>
-                                                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2gB-R8-Cm3">
-                                                                                <rect key="frame" x="0.0" y="0.0" width="83" height="30"/>
-                                                                                <state key="normal" title="Next screen"/>
-                                                                                <connections>
-                                                                                    <segue destination="IZu-QF-9hp" kind="show" id="qky-dL-vAF"/>
-                                                                                </connections>
-                                                                            </button>
-                                                                        </subviews>
-                                                                    </stackView>
-                                                                </subviews>
-                                                            </stackView>
-                                                        </subviews>
-                                                    </stackView>
-                                                </subviews>
-                                            </stackView>
-                                        </subviews>
-                                    </stackView>
-                                </subviews>
-                            </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sy9-nk-aIT">
-                                <rect key="frame" x="237" y="142" width="128" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2gB-R8-Cm3">
+                                <rect key="frame" x="276" y="91" width="83" height="30"/>
+                                <state key="normal" title="Next screen"/>
+                                <connections>
+                                    <segue destination="IZu-QF-9hp" kind="show" id="qky-dL-vAF"/>
+                                </connections>
+                            </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="nxw-7B-m8d">
+                                <rect key="frame" x="177" y="323" width="20" height="20"/>
+                            </activityIndicatorView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sy9-nk-aIT">
+                                <rect key="frame" x="123" y="280" width="128" height="30"/>
                                 <state key="normal" title="Recommendations"/>
                                 <connections>
                                     <segue destination="Ira-IN-KGt" kind="show" id="QKo-kQ-cl2"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FVy-EP-RB4">
-                                <rect key="frame" x="237" y="180" width="128" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FVy-EP-RB4">
+                                <rect key="frame" x="123" y="318" width="128" height="30"/>
                                 <state key="normal" title="Crash"/>
                                 <connections>
                                     <action selector="crashProceed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="XXe-wC-ISq"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZLy-Lf-bel">
-                                <rect key="frame" x="237" y="218" width="128" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZLy-Lf-bel">
+                                <rect key="frame" x="123" y="356" width="128" height="30"/>
                                 <state key="normal" title="AdClearIDTest"/>
                                 <connections>
                                     <action selector="adClearProcess:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="RAL-fp-sky"/>
                                 </connections>
                             </button>
-                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="nxw-7B-m8d">
-                                <rect key="frame" x="177" y="323" width="20" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="2gB-R8-Cm3" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="27" id="2uJ-YV-YbS"/>
+                            <constraint firstItem="FVy-EP-RB4" firstAttribute="centerY" secondItem="kh9-bI-dsS" secondAttribute="centerY" id="6zE-cX-MMx"/>
+                            <constraint firstItem="ZLy-Lf-bel" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="Fj5-7r-6Vc"/>
+                            <constraint firstItem="sy9-nk-aIT" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="J1T-hr-IAX"/>
+                            <constraint firstItem="nxw-7B-m8d" firstAttribute="centerY" secondItem="kh9-bI-dsS" secondAttribute="centerY" id="LrG-34-cta"/>
+                            <constraint firstItem="FVy-EP-RB4" firstAttribute="top" secondItem="sy9-nk-aIT" secondAttribute="bottom" constant="8" id="PA0-Ra-ck6"/>
+                            <constraint firstItem="FVy-EP-RB4" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="R6G-SO-X4b"/>
+                            <constraint firstItem="ZLy-Lf-bel" firstAttribute="top" secondItem="FVy-EP-RB4" secondAttribute="bottom" constant="8" id="UYR-A5-YdZ"/>
+                            <constraint firstItem="nxw-7B-m8d" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="mfy-6U-FyK"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="2gB-R8-Cm3" secondAttribute="trailing" id="oIK-iM-BKf"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="ButtonNav" id="rDI-Xp-sm1">
                         <barButtonItem key="rightBarButtonItem" style="plain" id="QzY-oH-u87">
@@ -123,7 +101,7 @@
                                 <rect key="frame" x="0.0" y="28" width="375" height="150"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ekg-d4-TD9" id="30g-uu-RGq">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="150"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="149"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Title:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h94-io-bGP">
@@ -151,7 +129,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wTP-rT-jac">
-                                            <rect key="frame" x="108" y="0.0" width="259" height="150"/>
+                                            <rect key="frame" x="108" y="0.0" width="259" height="149"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="259" id="2iq-IR-dkv"/>
@@ -235,6 +213,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="qky-dL-vAF"/>
+        <segue reference="fVq-DO-bim"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -3,7 +3,7 @@
     <!--the version number for this configuration file -->
     <version>2</version>
     <!--the webtrekk trackDomain where the requests are send -->
-    <trackDomain>https://wt01.webtrekk.net</trackDomai>
+    <trackDomain>https://wt01.webtrekk.net</trackDomain>
 
     <!--customers trackid-->
     <trackId>294915650484552</trackId>
