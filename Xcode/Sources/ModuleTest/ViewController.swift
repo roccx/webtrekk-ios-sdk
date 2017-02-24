@@ -40,6 +40,7 @@ class ViewController: UIViewController {
         self.activityIndicator.startAnimating()
         
         delegate.initWithConfig(configName: "webtrekk_config_AdClearId_integration_test")
+        WebtrekkTracking.instance().mediaCode = "wt_mc=de.inapp.webtrekkiOSTest"
         WebtrekkTracking.instance().trackPageView("pageName")
         WebtrekkTracking.instance().sendPendingEvents()
         sleep(5)
