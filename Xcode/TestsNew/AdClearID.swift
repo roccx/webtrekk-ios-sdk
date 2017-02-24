@@ -62,7 +62,36 @@ class AdClearIDTest: WTBaseTestNew {
         
         doURLSendTestCheck() {
             parametersArr in
-            expect(parametersArr["cs808"]).toNot(beNil())
+            let adStr = parametersArr["cs808"]
+            expect(adStr).toNot(beNil())
+            
+            if let _ = adStr {
+                expect(UInt64(adStr!)).toNot(beNil())
+                if let adNum = UInt64(adStr!) {
+                    
+                    
+                    let maskAppID: UInt64 = ((UInt64(1) << 10) - 1) << 4
+                    let maskMilisek: UInt64 = ((UInt64(1) << 39) - 1) << 24
+                    
+                    expect((adNum & maskAppID) >> 4).to(equal(713))
+                    
+                    let miliSec = Double((adNum & maskMilisek) >> 24)
+                    
+                    var dateComponents = DateComponents()
+                    dateComponents.year = 2011
+                    dateComponents.month = 01
+                    dateComponents.day = 01
+                    dateComponents.timeZone = TimeZone.current
+                    dateComponents.hour = 0
+                    dateComponents.minute = 0
+                    
+                    let miliSecNow = Date().timeIntervalSince(Calendar.current.date(from: dateComponents)!) * 1000
+                    let miliSec5MinuteAgo = miliSecNow - 5*60*1000
+                    expect(miliSec).to(beGreaterThan(miliSec5MinuteAgo))
+                    expect(miliSec).to(beLessThan(miliSecNow + 1000))
+                }
+            }
+        
         }
     }
     

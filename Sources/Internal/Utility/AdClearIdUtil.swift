@@ -27,7 +27,6 @@ internal struct AdClearId {
     private static let bitShiftForApplication: UInt64 = bitsOfProcess
     private static let bitShiftForCounter: UInt64 = bitShiftForApplication + bitsOfApplication
     private static let bitShiftForTimestamp: UInt64 = bitShiftForCounter + bitsOfRandom
-    private static let milliSecondsUntil01122011: UInt64 = 1293840000000
     private static let applicationId = 713
     
     public static func getAdClearId() -> UInt64 {
@@ -44,7 +43,16 @@ internal struct AdClearId {
     }
     
     private static func generateAdClearId() -> UInt64 {
-        let diffInMilliseconds = UInt64(round(Date().timeIntervalSince1970 * 100000)) - milliSecondsUntil01122011
+        
+        var dateComponents = DateComponents()
+        dateComponents.year = 2011
+        dateComponents.month = 01
+        dateComponents.day = 01
+        dateComponents.timeZone = TimeZone.current
+        dateComponents.hour = 0
+        dateComponents.minute = 0
+        
+        let diffInMilliseconds = UInt64(Date().timeIntervalSince(Calendar.current.date(from: dateComponents)!) * 1000)
         let randomInt = UInt64(arc4random_uniform(99999999) + 1)
         let processId = UInt64(ProcessInfo().processIdentifier)
         
