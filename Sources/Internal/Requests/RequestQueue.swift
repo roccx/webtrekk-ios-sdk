@@ -41,6 +41,7 @@ class RequestQueue {
     private let flashAndDeleteLock = NSLock()
     private let sizeSettingName = "QUEU_SIZE"
     private let positionSettingName = "FILE_CURRENT_POSITION"
+    private var isLoaded: Bool = false
     
     private struct URLItem {
         let url: URL
@@ -69,6 +70,11 @@ class RequestQueue {
     
     // should be used weak reference for this closure
     func addURL(url: URL) {
+        
+        if !self.isLoaded {
+            self.load()
+        }
+        
         self.logDebug("addURL begin queue size: \(self.size.value). local queue size \(self.queue.count)")
         if self.pointer.value != nil {
             // read it from file
@@ -220,6 +226,11 @@ class RequestQueue {
     }
     
     func load(){
+        
+        guard !self.isLoaded else {
+            return
+        }
+        
         self.logDebug("load is started")
         self.pointer.value =  UserDefaults.standardDefaults.uInt64ForKey(self.positionSettingName)
         self.size.value = UserDefaults.standardDefaults.objectForKey(self.sizeSettingName) as? Int ?? 0
@@ -229,8 +240,8 @@ class RequestQueue {
                 self.fileHandler?.seek(toFileOffset: pointer)
             }
         }
-        
         self.refreshMemoryQueue()
+        self.isLoaded = true
     }
     
     // can be called for initial adding queue to file
