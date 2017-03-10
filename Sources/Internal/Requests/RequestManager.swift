@@ -241,7 +241,7 @@ internal final class RequestManager: NSObject, URLSessionTaskDelegate {
 		guard self.pendingTask == nil else {
 			return
 		}
-		guard !(self.queue.isEmpty && self.queue.isItemInQueueEmpty) else {
+		guard !self.queue.isEmpty else {
             WebtrekkTracking.defaultLogger.logDebug("queue is empty: finish send process")
 			return
 		}
