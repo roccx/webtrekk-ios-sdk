@@ -31,7 +31,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     override func setUp() {
         super.setUp()
         
-        guard !initWebtrekkManualy else {
+        guard !self.initWebtrekkManualy else {
             return
         }
         
@@ -76,11 +76,11 @@ class WTBaseTestNew: HttpBaseTestNew {
         checkStartCondition()
     }
 
-    private func releaseWebtrekk(){
-        checkFinishCondition()
+    func releaseWebtrekk(){
         clearCashedConf()
         rollBackAutoTrackingMethodsSwizz()
         resetWebtrackInstance()
+        checkFinishCondition()
     }
     
     private func resetWebtrackInstance()
@@ -102,7 +102,8 @@ class WTBaseTestNew: HttpBaseTestNew {
     }
     
     private func checkFinishCondition(){
-        expect(self.isBackupFileExists()).to(equal(false))
+        expect(self.isBackupFileExists()).to(equal(false), description: "check for saved urls in old format")
+        expect(WTBaseTestNew.requestNewQueueBackFileExists()).to(equal(false), description: "check for saved urls")
     }
     
     private func doInitiateApplicationLifecycleOneMoreTime(){
@@ -138,7 +139,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     }
     
     
-    private func getConfID() -> String{
+    func getConfID() -> String{
         return "123451234512345"
     }
     
@@ -194,6 +195,18 @@ class WTBaseTestNew: HttpBaseTestNew {
         }
         
         return directory.appendingPathComponent("requestQueue.archive")
+    }
+    
+    static func requestNewQueueBackFileExists() -> Bool{
+        
+        guard let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            WebtrekkTracking.defaultLogger.logError("requestNewQueueBackFileExists can't get application support dir for backup file url")
+            return false
+        }
+        
+        let fileURL = url.appendingPathComponent("Webtrekk").appendingPathComponent("webtrekk_url_buffer.txt")
+        
+        return FileManager.default.fileExists(atPath: fileURL.path)
     }
 
 }

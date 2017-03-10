@@ -31,7 +31,6 @@ internal class XmlTrackerConfigurationParser {
 	private var configurationUpdateUrl: URL?
 	private var enableRemoteConfiguration: Bool?
 	private var maximumSendDelay: TimeInterval?
-	private var requestQueueLimit: Int?
 	private var resendOnStartEventTime: TimeInterval?
 	private var samplingRate: Int?
 	private var serverUrl: URL?
@@ -107,7 +106,6 @@ internal class XmlTrackerConfigurationParser {
 			do {
 				switch child.name {
 				case "enableRemoteConfiguration": self.enableRemoteConfiguration = try parseBool(child.text)
-				case "maxRequests":               self.requestQueueLimit = try parseInt(child.text, allowedRange: TrackerConfiguration.allowedRequestQueueLimits)
 				case "resendOnStartEventTime":    self.resendOnStartEventTime = try parseDouble(child.text, allowedRange: TrackerConfiguration.allowedResendOnStartEventTimes)
 				case "sampling":                  self.samplingRate = try parseInt(child.text, allowedRange: TrackerConfiguration.allowedSamplingRates)
 				case "sendDelay":                 self.maximumSendDelay = try parseDouble(child.text, allowedRange: TrackerConfiguration.allowedMaximumSendDelays)
@@ -145,7 +143,7 @@ internal class XmlTrackerConfigurationParser {
                     self.errorLogLevel = enable ? self.errorLogLevel : 0
                     }
 				default:
-                    guard child.name != "autoTrackAppVersionCode" else {
+                    guard child.name != "autoTrackAppVersionCode" && child.name != "maxRequests" else {
                         break
                     }
                         logWarning("Element \(child.name) not found")
@@ -172,10 +170,6 @@ internal class XmlTrackerConfigurationParser {
 
 		if let enableRemoteConfiguration = enableRemoteConfiguration , !enableRemoteConfiguration {
 			trackerConfiguration.configurationUpdateUrl = nil
-		}
-
-		if let requestQueueLimit = requestQueueLimit {
-			trackerConfiguration.requestQueueLimit = requestQueueLimit
 		}
 
 		if let resendOnStartEventTime = resendOnStartEventTime {

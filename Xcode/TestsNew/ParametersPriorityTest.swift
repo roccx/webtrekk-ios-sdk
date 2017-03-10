@@ -243,7 +243,6 @@ class ParametersPriorityTest: WTBaseTestNew {
             setupGlobalConf(tracker: tracker)
             addScreenConf(tracker: tracker)
             
-            tracker.trackPageView(setupCodeConf())
             mainViewController.endAppearanceTransition()
         }
         

@@ -26,9 +26,6 @@ internal struct TrackerConfiguration {
 	/** Allowed values for sendDelay */
 	internal static let allowedMaximumSendDelays: ClosedRange<TimeInterval> = 0 ... .infinity
 
-	/** Allowed values for requestQueueLimit */
-	internal static let allowedRequestQueueLimits: ClosedRange<Int> = 1 ... .max
-
 	/** Allowed values for resendOnStartEventTime */
 	internal static let allowedResendOnStartEventTimes: ClosedRange<TimeInterval> = 0 ... .infinity
 
@@ -61,9 +58,6 @@ internal struct TrackerConfiguration {
 
 	/** Timeout between sending message to server. */
 	internal var maximumSendDelay = TimeInterval(5 * 60)
-
-	/** Maxiumum number of request which are stored before sending. */
-	internal var requestQueueLimit = 1000
 
 	/** The timout interval indicating when a new session should be tracked after an app went in the background. */
 	internal var resendOnStartEventTime = TimeInterval(30 * 60)

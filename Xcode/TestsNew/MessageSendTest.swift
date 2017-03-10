@@ -31,6 +31,8 @@ class MessageSendTest: WTBaseTestNew {
                 return "webtrekk_config_message_send_minimum_delay"
             } else if (name.range(of: "testConnectionInterruption") != nil) {
                 return "webtrekk_config_message_send_connection_interruption"
+            } else if (name.range(of: "testMigrationFromVersion440") != nil) {
+                return nil
             } else {
                 WebtrekkTracking.defaultLogger.logError("This test use incorrect configuration")
                 return nil
@@ -41,6 +43,18 @@ class MessageSendTest: WTBaseTestNew {
             return nil
         }
     }
+    
+    
+    override func setUp() {
+        switch self.name {
+        case _ where name?.range(of: "testMigrationFromVersion440") != nil:
+            self.initWebtrekkManualy = true
+        default:
+            break
+        }
+        super.setUp()
+    }
+
     
     func testManualSend(){
         let tracker = WebtrekkTracking.instance()
@@ -80,7 +94,7 @@ class MessageSendTest: WTBaseTestNew {
         
         
         let tracker = WebtrekkTracking.instance()
-        let maxRequests = 20000
+        let maxRequests = 10000
 
         for i in 0..<maxRequests {
             tracker.trackPageView(PageProperties(
@@ -92,6 +106,7 @@ class MessageSendTest: WTBaseTestNew {
         }
         
         var currentId = 0
+        WebtrekkTracking.defaultLogger.logDebug("Remove interrup connection stub")
         
         self.doURLSendTestAction(){
             self.httpTester.removeStub()
@@ -99,11 +114,12 @@ class MessageSendTest: WTBaseTestNew {
                 let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
                 
                 expect(parameters["cp100"]).to(equal("\(currentId)"))
+                WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp100"]) is received")
                 currentId += 1
             }
         }
         
-        expect(currentId).toEventually(equal(maxRequests), timeout:200)
+        expect(currentId).toEventually(equal(maxRequests), timeout:500, description: "check for max request received")
     }
     
     func testConnectionInterruptionComplex() {
@@ -112,7 +128,7 @@ class MessageSendTest: WTBaseTestNew {
         
         
         let tracker = WebtrekkTracking.instance()
-        let maxRequestsFirst = 10000, maxRequestSecond = maxRequestsFirst*2
+        let maxRequestsFirst = 5000, maxRequestSecond = maxRequestsFirst*2
         
         for i in 0..<maxRequestsFirst {
             tracker.trackPageView(PageProperties(
@@ -131,6 +147,7 @@ class MessageSendTest: WTBaseTestNew {
                 let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
                 
                 expect(parameters["cp100"]).to(equal("\(currentId)"))
+                WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp100"]) is received")
                 currentId += 1
             }
         }
@@ -146,7 +163,40 @@ class MessageSendTest: WTBaseTestNew {
                 url: nil))
         }
         
-        expect(currentId).toEventually(equal(maxRequestSecond), timeout:200)
+        expect(currentId).toEventually(equal(maxRequestSecond), timeout:500)
     }
+    
+    func testMigrationFromVersion440(){
+        //copy file
+        let source = Bundle.main.url(forResource: "requestQueue", withExtension: "archive")
+        let destination = WTBaseTestNew.requestQueueBackupFileForWebtrekkId(getConfID())
+        
+        WebtrekkTracking.defaultLogger.minimumLevel = .debug
+        
+        do {
+            WebtrekkTracking.logger.logDebug("source: \(source) destination: \(destination)")
+            try FileManager.default.copyItem(at: source!, to: destination!)
+        } catch let error {
+           WebtrekkTracking.logger.logError("can't copy file: \(error)")
+        }
+        
+        //do test
+        var currentId = 0
+        
+        // release webtrekk
+        self.doURLSendTestAction(){
+            self.httpTester.removeStub()
+            self.httpTester.addNormalStub(){query in
+                currentId += 1
+                let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
+                expect(parameters["p"]).to(contain("440,"))
+            }
+        }
+        
+        try! WebtrekkTracking.initTrack()
+    
+        //wait for some messages
+        expect(currentId).toEventually(equal(9), timeout:5)
+  }
     
 }

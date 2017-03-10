@@ -24,7 +24,7 @@ import Foundation
 #endif
 
 
-internal final class RequestManager {
+internal final class RequestManager: NSObject, URLSessionTaskDelegate {
 
 	internal typealias Delegate = _RequestManagerDelegate
 
@@ -32,7 +32,7 @@ internal final class RequestManager {
 	private var currentRequest: URL?
 	private var pendingTask: URLSessionDataTask?
 	private var sendNextRequestTimer: Timer?
-	private let urlSession: URLSession
+	private var urlSession: URLSession?
     private let manualStart: Bool
 
 	#if !os(watchOS)
@@ -40,31 +40,33 @@ internal final class RequestManager {
 	private var sendingInterruptedBecauseUnreachable = false
 	#endif
 
-	internal fileprivate(set) var queue = [URL]()
+	internal fileprivate(set) var queue = RequestQueue()
 	internal fileprivate(set) var started = false
+    private(set) var finishing = false
 
 	internal weak var delegate: Delegate?
 
 
-    internal init(queueLimit: Int, manualStart: Bool) {
+    internal init(manualStart: Bool) {
 		checkIsOnMainThread()
 
-		self.queueLimit = queueLimit
-		self.urlSession = RequestManager.createUrlSession()
         self.manualStart = manualStart
-
-		#if !os(watchOS)
         
-        reachability = Reachability.init()
+ 		#if !os(watchOS)
+            self.reachability = Reachability.init()
+        #endif
 
-		reachability?.whenReachable = { [weak self] reachability in
-			logDebug("Internet is reachable again!")
+        super.init()
+        
+        #if !os(watchOS)
+            self.reachability?.whenReachable = { [weak self] reachability in
+                logDebug("Internet is reachable again!")
 
-			reachability.stopNotifier()
-			self?.sendNextRequest()
-		}
-		#endif
-	}
+                reachability.stopNotifier()
+                self?.sendNextRequest()
+            }
+        #endif
+    }
 
 
 	#if !os(watchOS)
@@ -77,7 +79,7 @@ internal final class RequestManager {
 	fileprivate func cancelCurrentRequest() {
 		checkIsOnMainThread()
 
-		guard let pendingTask = pendingTask else {
+		guard let pendingTask = self.pendingTask else {
 			return
 		}
 
@@ -92,13 +94,13 @@ internal final class RequestManager {
 	internal func clearPendingRequests() {
 		checkIsOnMainThread()
 
-		logInfo("Clearing queue of \(queue.count) requests.")
+		logInfo("Clearing queue of \(self.queue.size) requests.")
 
-		queue.removeAll()
+		self.queue.deleteAll()
 	}
 
 
-	internal static func createUrlSession() -> URLSession {
+    internal static func createUrlSession(delegate: URLSessionDelegate? = nil) -> URLSession {
 		let configuration = URLSessionConfiguration.ephemeral
 		configuration.httpCookieAcceptPolicy = .never
 		configuration.httpShouldSetCookies = false
@@ -106,7 +108,7 @@ internal final class RequestManager {
 		configuration.urlCredentialStorage = nil
 		configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
 
-		let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
+		let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: OperationQueue.main)
 		session.sessionDescription = "Webtrekk Tracking"
 
 		return session
@@ -116,13 +118,8 @@ internal final class RequestManager {
 	internal func enqueueRequest(_ request: URL, maximumDelay: TimeInterval) {
 		checkIsOnMainThread()
 
-		if queue.count >= queueLimit {
-			logWarning("Too many requests in queue. Dropping oldest one.")
-
-			queue.removeFirst()
-		}
-
-		queue.append(request)
+        // add senNextRequest to closerue. So it will be called only after adding is done
+		self.queue.addURL(url: request)
 
         logDebug("Queued: \(request.absoluteString.replacingOccurrences(of: "&", with: "  "))")
 
@@ -132,10 +129,15 @@ internal final class RequestManager {
 	}
 
 
-	internal func fetch(url: URL, completion: @escaping (Data?, ConnectionError?) -> Void) -> URLSessionDataTask {
+    func fetch(url: URL, completion: @escaping (Data?, ConnectionError?) -> Void) -> URLSessionDataTask? {
 		checkIsOnMainThread()
-
-		let task = urlSession.dataTask(with: url, completionHandler: { data, response, error in
+        
+        guard let urlSession = self.urlSession else {
+            WebtrekkTracking.defaultLogger.logError("Error: session is nil during fetch")
+            return nil
+        }
+        
+		let task = urlSession.dataTask(with: url, completionHandler: {data, response, error in
 			if let error = error {
 				let retryable: Bool
 				let isCompletelyOffline: Bool
@@ -210,30 +212,13 @@ internal final class RequestManager {
 
 	internal func prependRequests(_ requests: [URL]) {
 		checkIsOnMainThread()
+        
+        // it can be done only on after application update at first start
+        guard self.queue.isEmpty else {
+            return
+        }
 
-		queue.insert(contentsOf: requests, at: 0)
-		
-		removeRequestsExceedingQueueLimit()
-	}
-
-
-	internal var queueLimit: Int {
-		didSet {
-			checkIsOnMainThread()
-
-			precondition(queueLimit > 0)
-
-			removeRequestsExceedingQueueLimit()
-		}
-	}
-
-
-	fileprivate func removeRequestsExceedingQueueLimit() {
-		checkIsOnMainThread()
-
-		if queueLimit < queue.count {
-			queue = Array(queue[(queue.count - queueLimit - 1) ..< queue.count])
-		}
+		self.queue.addArray(urls: requests)
 	}
 
 
@@ -253,10 +238,11 @@ internal final class RequestManager {
 		guard started else {
 			return
 		}
-		guard pendingTask == nil else {
+		guard self.pendingTask == nil else {
 			return
 		}
-		guard !queue.isEmpty else {
+		guard !self.queue.isEmpty else {
+            WebtrekkTracking.defaultLogger.logDebug("queue is empty: finish send process")
 			return
 		}
 
@@ -284,76 +270,92 @@ internal final class RequestManager {
 			}
 		#endif
 
-		let url = queue[0]
+        do {
+            try self.queue.getURL(){ url in
 
-		if url != currentRequest {
-			currentFailureCount = 0
-			currentRequest = url
-		}
+                if url != self.currentRequest {
+                    self.currentFailureCount = 0
+                    self.currentRequest = url
+                }
+                
+                guard let url = url else {
+                    return
+                }
+                
+                guard !self.finishing else {
+                    WebtrekkTracking.defaultLogger.logDebug("Interrupt get request. process is finishing")
+                    return
+                }
 
-		pendingTask = fetch(url: url) { data, error in
-			self.pendingTask = nil
+                self.pendingTask = self.fetch(url: url) { data, error in
+                    self.pendingTask = nil
 
-			if let error = error {
-				guard error.isTemporary else {
-					logError("Request \(url) failed and will not be retried: \(error)")
+                    if let error = error {
+                        guard error.isTemporary else {
+                            logError("Request \(url) failed and will not be retried: \(error)")
 
-					self.currentFailureCount = 0
-					self.currentRequest = nil
-					let _ = self.queue.removeFirstEqual(url)
+                            self.currentFailureCount = 0
+                            self.currentRequest = nil
+                            let _ = self.queue.deleteFirst()
 
-					self.delegate?.requestManager(self, didFailToSendRequest: url, error: error)
-					return
-				}
-				guard self.currentFailureCount < self.maximumNumberOfFailures(with: error) else {
-					logError("Request \(url) failed and will no longer be retried: \(error)")
+                            self.delegate?.requestManager(self, didFailToSendRequest: url, error: error)
+                            return
+                        }
+                        guard self.currentFailureCount < self.maximumNumberOfFailures(with: error) else {
+                            logError("Request \(url) failed and will no longer be retried: \(error)")
 
-					self.currentFailureCount = 0
-					self.currentRequest = nil
-					let _ = self.queue.removeFirstEqual(url)
+                            self.currentFailureCount = 0
+                            self.currentRequest = nil
+                            let _ = self.queue.deleteFirst()
 
-					self.delegate?.requestManager(self, didFailToSendRequest: url, error: error)
-					return
-				}
+                            self.delegate?.requestManager(self, didFailToSendRequest: url, error: error)
+                            return
+                        }
 
-				let retryDelay = Double(self.currentFailureCount * 5)
-				logDebug("Request \(url) failed temporarily and will be retried in \(retryDelay) seconds: \(error)")
+                        let retryDelay = Double(self.currentFailureCount * 5)
+                        logDebug("Request \(url) failed temporarily and will be retried in \(retryDelay) seconds: \(error)")
 
-				self.currentFailureCount += 1
-				self.sendNextRequest(maximumDelay: retryDelay)
-				return
-			}
-            
-            logDebug("Request has been sent successefully")
-			
-            self.currentFailureCount = 0
-			self.currentRequest = nil
-			let _ = self.queue.removeFirstEqual(url)
+                        self.currentFailureCount += 1
+                        self.sendNextRequest(maximumDelay: retryDelay)
+                        return
+                    }
+                    
+                    logDebug("Request has been sent successefully")
+                    
+                    self.currentFailureCount = 0
+                    self.currentRequest = nil
+                    let _ = self.queue.deleteFirst()
 
-            if let delegate = self.delegate {
-                delegate.requestManager(self, didSendRequest: url)
+                    if let delegate = self.delegate {
+                        delegate.requestManager(self, didSendRequest: url)
+                    }
+
+                    self.sendNextRequest()
+                }
             }
-
-			self.sendNextRequest()
-		}
+        } catch let error {
+            if let error = error as? TrackerError {
+                WebtrekkTracking.defaultLogger.logError("catched exception: \(error.message)")
+            }
+        }
 	}
 
 
 	fileprivate func sendNextRequest(maximumDelay: TimeInterval) {
 		checkIsOnMainThread()
 
-		guard !queue.isEmpty else {
+		guard !self.queue.isEmpty else {
 			return
 		}
 		
-		if let sendNextRequestTimer = sendNextRequestTimer {
+		if let sendNextRequestTimer = self.sendNextRequestTimer {
 			let fireDate = Date(timeIntervalSinceNow: maximumDelay)
 			if fireDate.compare(sendNextRequestTimer.fireDate) == ComparisonResult.orderedAscending {
 				sendNextRequestTimer.fireDate = fireDate
 			}
 		}
 		else {
-			sendNextRequestTimer = Timer.scheduledTimerWithTimeInterval(maximumDelay) {
+			self.sendNextRequestTimer = Timer.scheduledTimerWithTimeInterval(maximumDelay) {
 				self.sendNextRequestTimer = nil
 				self.sendAllRequests()
 			}
@@ -370,6 +372,10 @@ internal final class RequestManager {
 		}
 
 		started = true
+        
+        if self.urlSession == nil {
+            self.urlSession = RequestManager.createUrlSession(delegate: self)
+        }
 
         if !manualStart {
             sendNextRequest()
@@ -387,13 +393,22 @@ internal final class RequestManager {
 
 		started = false
 
-		sendNextRequestTimer?.invalidate()
-		sendNextRequestTimer = nil
+		self.sendNextRequestTimer?.invalidate()
+		self.sendNextRequestTimer = nil
 
 		#if !os(watchOS)
 			sendingInterruptedBecauseUnreachable = false
 			reachability?.stopNotifier()
 		#endif
+        
+        self.finishing = true
+        
+        if let pendingTask = self.pendingTask, pendingTask.state == .running {
+            WebtrekkTracking.defaultLogger.logDebug("URL request is in pending wait for finishing...")
+            self.urlSession?.finishTasksAndInvalidate()
+        } else {
+            self.queue.save()
+        }
 	}
 
 
@@ -413,8 +428,19 @@ internal final class RequestManager {
 			self.underlyingError = underlyingError
 		}
 	}
+    
+    // implement URLSessionDelegate
+    func urlSession(_ session: URLSession,
+                    didBecomeInvalidWithError error: Error?){
+        if self.finishing && error == nil {
+            WebtrekkTracking.defaultLogger.logDebug("URL request has been finished. Save all")
+            self.queue.save()
+            self.urlSession = nil
+            self.finishing = false
+        }
+    }
+    
 }
-
 
 internal protocol _RequestManagerDelegate: class {
 

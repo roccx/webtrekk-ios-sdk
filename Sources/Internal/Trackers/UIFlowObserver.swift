@@ -125,9 +125,9 @@ class UIFlowObserver: NSObject {
     tracker.startRequestManager()
     
     #if !os(watchOS)
-    if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
-        application.endBackgroundTask(backgroundTaskIdentifier)
-        backgroundTaskIdentifier = UIBackgroundTaskInvalid
+    if self.backgroundTaskIdentifier != UIBackgroundTaskInvalid {
+        application.endBackgroundTask(self.backgroundTaskIdentifier)
+        self.backgroundTaskIdentifier = UIBackgroundTaskInvalid
         }
     #endif
     }
@@ -136,9 +136,9 @@ class UIFlowObserver: NSObject {
     #if !os(watchOS)
     func finishBackroundTask(){
         
-        if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
-            application.endBackgroundTask(backgroundTaskIdentifier)
-            backgroundTaskIdentifier = UIBackgroundTaskInvalid
+        if self.backgroundTaskIdentifier != UIBackgroundTaskInvalid {
+            application.endBackgroundTask(self.backgroundTaskIdentifier)
+            self.backgroundTaskIdentifier = UIBackgroundTaskInvalid
         }
     }
 
@@ -151,7 +151,11 @@ class UIFlowObserver: NSObject {
             }
         }
         let tracker = WebtrekkTracking.instance() as! DefaultTracker
-        tracker.stopRequestManager()
+        
+        if let started = tracker.requestManager?.started, started {
+            tracker.stopRequestManager()
+        }
+        
         tracker.isApplicationActive = false
     }
     
@@ -179,14 +183,16 @@ class UIFlowObserver: NSObject {
         tracker.initHibertationDate()
         
         #if !os(watchOS)
-            if backgroundTaskIdentifier == UIBackgroundTaskInvalid {
-                backgroundTaskIdentifier = application.beginBackgroundTask(withName: "Webtrekk Tracker #\(self.tracker.configuration.webtrekkId)") { [weak self] in
+            if self.backgroundTaskIdentifier == UIBackgroundTaskInvalid {
+                self.backgroundTaskIdentifier = application.beginBackgroundTask(withName: "Webtrekk Tracker #\(self.tracker.configuration.webtrekkId)") { [weak self] in
                     guard let `self` = self else {
                         return
                     }
                     
-                    if let started = self.tracker.requestManager?.started, started {
-                        self.tracker.stopRequestManager()
+                    if let finishing = self.tracker.requestManager?.finishing, finishing,
+                        let isStarted = self.tracker.requestManager?.started, isStarted {
+                        // wait till finished
+                        //self.tracker.stopRequestManager()
                     }
                     
                     self.application.endBackgroundTask(self.backgroundTaskIdentifier)
@@ -194,12 +200,7 @@ class UIFlowObserver: NSObject {
                 }
             }
             
-            if backgroundTaskIdentifier != UIBackgroundTaskInvalid {
-                tracker.saveRequestQueue()
-            }
-            else {
-                tracker.stopRequestManager()
-            }
+            self.tracker.stopRequestManager()
         #endif
     }
     

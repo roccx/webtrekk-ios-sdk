@@ -12,9 +12,7 @@
     <sampling>0</sampling>
     <!-- interval between the requests are send in seconds -->
     <sendDelay>5</sendDelay>
-    <!--maximum amoount of requests to store when the user is offline -->
-    <maxRequests>5000</maxRequests>
-    
+
     <!--optional settings -->
     <!--automaticly track activities onStart method -->
     <autoTracked>true</autoTracked>

@@ -215,12 +215,17 @@ class ExceptionTrackerImpl: ExceptionTracker {
 
 fileprivate class ExceptionSaveAndSendHelper{
     
-    private var applicationSupportDir: URL? = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+    private var applicationSupportDir: URL? = nil
     private let exceptionFileName = "webtrekk_exception"
     private let maxParameterLength = 255
     
     // set it var to make it lazy
     fileprivate static var `default` = ExceptionSaveAndSendHelper()
+    
+    init(){
+       self.applicationSupportDir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?.appendingPathComponent("Webtrekk")
+    }
+    
     
     
     private func normalizeStack(stack: [String]?) -> NSString{

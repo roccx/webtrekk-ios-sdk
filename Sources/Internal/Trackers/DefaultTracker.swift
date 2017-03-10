@@ -144,7 +144,7 @@ final class DefaultTracker: Tracker {
         self.isFirstEventAfterAppUpdate = defaults.boolForKey(DefaultsKeys.isFirstEventAfterAppUpdate) ?? false
         self.isFirstEventOfApp = defaults.boolForKey(DefaultsKeys.isFirstEventOfApp) ?? true
         self.manualStart = configuration.maximumSendDelay == 0
-        self.requestManager = RequestManager(queueLimit: configuration.requestQueueLimit, manualStart: self.manualStart)
+        self.requestManager = RequestManager(manualStart: self.manualStart)
         self.requestQueueBackupFile = DefaultTracker.requestQueueBackupFileForWebtrekkId(configuration.webtrekkId)
         self.requestUrlBuilder = RequestUrlBuilder(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId)
         
@@ -249,8 +249,6 @@ final class DefaultTracker: Tracker {
 		didSet {
 			checkIsOnMainThread()
             
-			requestManager?.queueLimit = configuration.requestQueueLimit
-
 			requestUrlBuilder?.serverUrl = configuration.serverUrl
 			requestUrlBuilder?.webtrekkId = configuration.webtrekkId
 
@@ -298,7 +296,7 @@ final class DefaultTracker: Tracker {
             requestProperties.appVersion = Environment.appVersion
         }
         if configuration.automaticallyTracksRequestQueueSize {
-            requestProperties.requestQueueSize = requestManager?.queue.count
+            requestProperties.requestQueueSize = requestManager?.queue.size.value
         }
         if configuration.automaticallyTracksAdClearId {
             requestProperties.adClearId = adClearId
@@ -494,9 +492,11 @@ final class DefaultTracker: Tracker {
 			return
 		}
 
+        self.requestManager?.queue.load()
 		requestQueueLoaded = true
 
-		guard let file = requestQueueBackupFile else {
+		// do transition from old request file
+        guard let file = requestQueueBackupFile else {
 			return
 		}
 
@@ -506,13 +506,8 @@ final class DefaultTracker: Tracker {
 		}
 
 		guard !DefaultTracker.isOptedOut else {
-			do {
-				try fileManager.removeItem(at: file)
-				logDebug("Ignored request queue at '\(file)': User opted out of tracking.")
-			}
-			catch let error {
-				logError("Cannot remove request queue at '\(file)': \(error)")
-			}
+            
+            self.requestManager?.queue.deleteAll()
 
 			return
 		}
@@ -543,6 +538,15 @@ final class DefaultTracker: Tracker {
 
 		logDebug("Loaded \(queue.count) queued request(s) from '\(file)'.")
 		requestManager?.prependRequests(queue)
+        
+        // delete old archive file forever
+        do {
+            try FileManager.default.removeItem(at: file)
+            logDebug("Deleted request queue at '\(file).")
+        }
+        catch let error {
+            logError("Cannot remove request queue at '\(file)': \(error)")
+        }
 	}
 
 
@@ -661,50 +665,6 @@ final class DefaultTracker: Tracker {
 		return isSampling && !DefaultTracker.isOptedOut
 	}
 
-
-	func saveRequestQueue() {
-		checkIsOnMainThread()
-        
-        guard self.checkIfInitialized() else {
-            return
-        }
-
-		guard let file = requestQueueBackupFile else {
-			return
-		}
-		guard requestQueueLoaded || !(requestManager?.queue.isEmpty)! else {
-			return
-		}
-
-		// make sure backup is loaded before overwriting it
-		loadRequestQueue()
-
-		guard let queue = requestManager?.queue, !queue.isEmpty else {
-			let fileManager = FileManager.default
-			if fileManager.itemExistsAtURL(file) {
-				do {
-					try FileManager.default.removeItem(at: file)
-					logDebug("Deleted request queue at '\(file).")
-				}
-				catch let error {
-					logError("Cannot remove request queue at '\(file)': \(error)")
-				}
-			}
-
-			return
-		}
-
-		let data = NSKeyedArchiver.archivedData(withRootObject: queue)
-		do {
-			try data.write(to: file, options: .atomicWrite)
-			logDebug("Saved \(queue.count) queued request(s) to '\(file).")
-		}
-		catch let error {
-			logError("Cannot save request queue to '\(file)': \(error)")
-		}
-	}
-
-
 	func startRequestManager() {
 		checkIsOnMainThread()
         
@@ -722,7 +682,6 @@ final class DefaultTracker: Tracker {
 
 
 	func stopRequestManager() {
-		checkIsOnMainThread()
         
         guard checkIfInitialized() else {
             return
@@ -733,7 +692,6 @@ final class DefaultTracker: Tracker {
 		}
 
 		requestManager?.stop()
-		saveRequestQueue()
 	}
 
 
@@ -968,7 +926,6 @@ final class DefaultTracker: Tracker {
 		}
 
 		configuration.maximumSendDelay       = checkProperty("maximumSendDelay",       value: configuration.maximumSendDelay,       allowedValues: TrackerConfiguration.allowedMaximumSendDelays)
-		configuration.requestQueueLimit      = checkProperty("requestQueueLimit",      value: configuration.requestQueueLimit,      allowedValues: TrackerConfiguration.allowedRequestQueueLimits)
 		configuration.samplingRate           = checkProperty("samplingRate",           value: configuration.samplingRate,           allowedValues: TrackerConfiguration.allowedSamplingRates)
 		configuration.resendOnStartEventTime = checkProperty("resendOnStartEventTime", value: configuration.resendOnStartEventTime, allowedValues: TrackerConfiguration.allowedResendOnStartEventTimes)
 		configuration.version                = checkProperty("version",                value: configuration.version,                allowedValues: TrackerConfiguration.allowedVersions)
@@ -1049,10 +1006,8 @@ extension DefaultTracker: RequestManager.Delegate {
             return
         }
 		
-        saveRequestQueue()
-
 		#if !os(watchOS)
-			if requestManager!.queue.isEmpty {
+			if self.requestManager!.queue.isEmpty {
                 
                 self.flowObserver.finishBackroundTask()
 
