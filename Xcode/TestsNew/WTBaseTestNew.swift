@@ -103,7 +103,11 @@ class WTBaseTestNew: HttpBaseTestNew {
     
     private func checkFinishCondition(){
         expect(self.isBackupFileExists()).to(equal(false), description: "check for saved urls in old format")
-        expect(WTBaseTestNew.requestNewQueueBackFileExists()).to(equal(false), description: "check for saved urls")
+        let newQueueBack = WTBaseTestNew.requestNewQueueBackFileExists()
+        if newQueueBack {
+            WTBaseTestNew.requestNewQueueBackFileDelete()
+            expect(true).to(equal(false), description: "check for saved urls")
+        }
     }
     
     private func doInitiateApplicationLifecycleOneMoreTime(){
@@ -199,14 +203,30 @@ class WTBaseTestNew: HttpBaseTestNew {
     
     static func requestNewQueueBackFileExists() -> Bool{
         
-        guard let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
-            WebtrekkTracking.defaultLogger.logError("requestNewQueueBackFileExists can't get application support dir for backup file url")
+        guard let url = getNewQueueBackFileURL() else {
             return false
         }
+
+        return FileManager.default.fileExists(atPath: url.path)
+    }
+    
+    static func requestNewQueueBackFileDelete(){
         
-        let fileURL = url.appendingPathComponent("Webtrekk").appendingPathComponent("webtrekk_url_buffer.txt")
+        guard let url = getNewQueueBackFileURL() else {
+            return
+        }
         
-        return FileManager.default.fileExists(atPath: fileURL.path)
+        try? FileManager.default.removeItem(atPath: url.path)
+    }
+
+    private static func getNewQueueBackFileURL() -> URL?{
+    
+        guard let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+        WebtrekkTracking.defaultLogger.logError("requestNewQueueBackFileExists can't get application support dir for backup file url")
+        return nil
+        }
+        
+         return url.appendingPathComponent("Webtrekk").appendingPathComponent("webtrekk_url_buffer.txt")
     }
 
 }

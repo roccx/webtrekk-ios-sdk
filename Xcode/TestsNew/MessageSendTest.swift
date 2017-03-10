@@ -94,7 +94,7 @@ class MessageSendTest: WTBaseTestNew {
         
         
         let tracker = WebtrekkTracking.instance()
-        let maxRequests = 10000
+        let maxRequests = 20000
 
         for i in 0..<maxRequests {
             tracker.trackPageView(PageProperties(
@@ -120,6 +120,9 @@ class MessageSendTest: WTBaseTestNew {
         }
         
         expect(currentId).toEventually(equal(maxRequests), timeout:500, description: "check for max request received")
+
+        // wait for couple seconds so items will be deleted from queue.
+        doSmartWait(sec: 2)
     }
     
     func testConnectionInterruptionComplex() {
@@ -128,7 +131,7 @@ class MessageSendTest: WTBaseTestNew {
         
         
         let tracker = WebtrekkTracking.instance()
-        let maxRequestsFirst = 5000, maxRequestSecond = maxRequestsFirst*2
+        let maxRequestsFirst = 10000, maxRequestSecond = maxRequestsFirst*2
         
         for i in 0..<maxRequestsFirst {
             tracker.trackPageView(PageProperties(
@@ -152,8 +155,6 @@ class MessageSendTest: WTBaseTestNew {
             }
         }
         
-        expect(currentId).toEventually(beGreaterThan(1), timeout:1)
-        
         for i in maxRequestsFirst..<maxRequestSecond {
             tracker.trackPageView(PageProperties(
                 name: "interruptConnection",
@@ -163,7 +164,10 @@ class MessageSendTest: WTBaseTestNew {
                 url: nil))
         }
         
-        expect(currentId).toEventually(equal(maxRequestSecond), timeout:500)
+        expect(currentId).toEventually(equal(maxRequestSecond), timeout:1000)
+        
+        // wait for couple seconds so items will be deleted from queue.
+        doSmartWait(sec: 2)
     }
     
     func testMigrationFromVersion440(){
@@ -197,6 +201,9 @@ class MessageSendTest: WTBaseTestNew {
     
         //wait for some messages
         expect(currentId).toEventually(equal(9), timeout:5)
-  }
+
+        // wait for couple seconds so items will be deleted from queue.
+        doSmartWait(sec: 2)
+}
     
 }
