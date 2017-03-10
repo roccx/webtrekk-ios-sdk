@@ -235,7 +235,7 @@ class RequestQueue {
     
     // can be called for initial adding queue to file
     func flashQueueToDisk(){
-        guard var pointer = self.pointer.value, pointer == 0 else {
+        guard let pointer = self.pointer.value, pointer == 0 else {
             WebtrekkTracking.defaultLogger.logError("logic error with pointer")
             return
         }
@@ -363,11 +363,9 @@ class RequestQueue {
                     if !signalIsSent {
                         self.queuAddCondition.signal()
                         self.queuAddCondition.unlock()
-                        logDebug("queuAddCondition signal is send and unlock is done")
+                        logDebug("queuAddCondition signal is send and unlock is done eor: \(EOF)")
                         signalIsSent = true
                     }
-                default:
-                    WebtrekkTracking.defaultLogger.logError("can't be any other option error in logic")
             }
         }
         
@@ -602,7 +600,7 @@ class ArraySync<T> {
     }
 
     func remove(at: Int){
-        self.thread.sync(flags: .barrier){
+        let _ = self.thread.sync(flags: .barrier){
             self.valueInst.remove(at: at)
         }
     }

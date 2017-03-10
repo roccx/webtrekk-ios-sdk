@@ -244,7 +244,7 @@ fileprivate class ExceptionSaveAndSendHelper{
     private func normalizeUserReturnAddress(returnAddress: [NSNumber]?) -> NSString {
         let returnValue = returnAddress?.flatMap({$0.stringValue}).joined(separator: " ")
         
-        return normalizeField(field: returnValue, fieldName: "stack return address") ?? ""
+        return normalizeField(field: returnValue, fieldName: "stack return address")
     }
     
     // make string not more then 255 length
@@ -256,10 +256,10 @@ fileprivate class ExceptionSaveAndSendHelper{
         
         guard fieldUtf8.count <= 255 else {
             WebtrekkTracking.defaultLogger.logWarning("Field \(fieldName) is more then 255 length during excception tracking. Normalize it by cutting to 255 length.")
-            return String(fieldUtf8.prefix(maxParameterLength)) as? NSString ?? ""
+            return NSString(string: String(describing: fieldUtf8.prefix(maxParameterLength)))
         }
         
-        return field as? NSString ?? ""
+        return NSString(string: String(describing: fieldUtf8))
     }
     
     
@@ -277,7 +277,10 @@ fileprivate class ExceptionSaveAndSendHelper{
         let array : NSArray = [name, stack, reason, userInfo, stackReturnAddress]
         
         //construct string
-        let result = array.write(to: url, atomically: true)
+        guard array.write(to: url, atomically: true) else {
+            WebtrekkTracking.defaultLogger.logError("Can't save exception with url: \(url). Exception tracking won't be done.")
+            return
+        }
     }
     
     private var newFileURL : URL?{

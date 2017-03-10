@@ -86,6 +86,7 @@
 		9FC3E1EC1E5C80CE000D7B43 /* ExceptionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE852141E51F1A100F5915D /* ExceptionCreator.m */; };
 		9FC3E1ED1E5CA13E000D7B43 /* ExceptionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE852141E51F1A100F5915D /* ExceptionCreator.m */; };
 		9FDEA0461E3F8DDD00DC6F32 /* BackToForegroundTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */; };
+		9FDEA7191E72B1FE00E8A8E1 /* requestQueue.archive in Resources */ = {isa = PBXBuildFile; fileRef = 9FFA47341E701EA100774AF2 /* requestQueue.archive */; };
 		9FE852151E51F1A100F5915D /* ExceptionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE852141E51F1A100F5915D /* ExceptionCreator.m */; };
 		9FEB51761DC8A7C000C7DBCB /* RecommendationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */; };
 		9FED05741DB8F56600008C01 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FED05731DB8F56600008C01 /* Configurations */; };
@@ -1011,6 +1012,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F95D3FA1DAE41370068E8F8 /* webtrekk_config.xml in Resources */,
+				9FDEA7191E72B1FE00E8A8E1 /* requestQueue.archive in Resources */,
 				9F5FF0CA1DCB7B5F00F53B22 /* Assets.xcassets in Resources */,
 				9FED05751DB8F59400008C01 /* Configurations in Resources */,
 				9F5FF0CB1DCB7B6400F53B22 /* Main.storyboard in Resources */,
