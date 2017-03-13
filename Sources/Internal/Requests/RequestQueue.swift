@@ -43,6 +43,8 @@ class RequestQueue {
     private let positionSettingName = "FILE_CURRENT_POSITION"
     private var isLoaded: Bool = false
     
+    private let saveDirectory: FileManager.SearchPathDirectory
+    
     private struct URLItem {
         let url: URL
         let pointer: UInt64? // link to next url in file
@@ -59,7 +61,13 @@ class RequestQueue {
         threadGetURLQueue = DispatchQueue(label: "webtrekk_get_url", qos: .utility)
         threadLoadURLQueue = DispatchQueue(label: "webtrekk_load_url", qos: .utility)
         
-        guard let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+        #if os(tvOS)
+            saveDirectory = .cachesDirectory
+        #else
+            saveDirectory = .applicationSupportDirectory
+        #endif
+        
+        guard let url = FileManager.default.urls(for: saveDirectory, in: .userDomainMask).first else {
             WebtrekkTracking.defaultLogger.logError("can't get application suport directory. No buffered tracking will be done")
             return
         }

@@ -94,7 +94,11 @@ class MessageSendTest: WTBaseTestNew {
         
         
         let tracker = WebtrekkTracking.instance()
-        let maxRequests = 20000
+        #if os(tvOS)
+            let maxRequests = 2000
+        #else
+            let maxRequests = 20000
+        #endif
 
         for i in 0..<maxRequests {
             tracker.trackPageView(PageProperties(
@@ -131,7 +135,12 @@ class MessageSendTest: WTBaseTestNew {
         
         
         let tracker = WebtrekkTracking.instance()
-        let maxRequestsFirst = 10000, maxRequestSecond = maxRequestsFirst*2
+        #if os(tvOS)
+            let maxRequestsFirst = 1000
+        #else
+            let maxRequestsFirst = 10000
+        #endif
+        let maxRequestSecond = maxRequestsFirst*2
         
         for i in 0..<maxRequestsFirst {
             tracker.trackPageView(PageProperties(
