@@ -403,6 +403,8 @@ internal final class RequestManager: NSObject, URLSessionTaskDelegate {
         
         self.finishing = true
         
+        WebtrekkTracking.defaultLogger.logDebug("stop. pending task is: \(self.pendingTask)")
+        
         if let pendingTask = self.pendingTask, pendingTask.state == .running {
             WebtrekkTracking.defaultLogger.logDebug("URL request is in pending wait for finishing...")
             self.urlSession?.finishTasksAndInvalidate()

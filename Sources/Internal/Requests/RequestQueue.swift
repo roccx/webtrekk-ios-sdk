@@ -235,6 +235,8 @@ class RequestQueue {
         self.pointer.value =  UserDefaults.standardDefaults.uInt64ForKey(self.positionSettingName)
         self.size.value = UserDefaults.standardDefaults.objectForKey(self.sizeSettingName) as? Int ?? 0
         
+        logDebug("loaded save pointer: \(self.pointer.value) size: \(self.size.value)")
+        
         if self.size.value != 0 && self.fileHandler == nil {
             if let pointer = self.pointer.value, self.initFileHandler() {
                 self.fileHandler?.seek(toFileOffset: pointer)
@@ -270,14 +272,12 @@ class RequestQueue {
         
         if self.size.value == 0{
             if self.isExist() {
-                self.threadAddURLQueue.async {
-                    // check one more time if size real zero
-                    if self.size.value == 0 {
-                        // set pointer to nil and delete file
-                        self.pointer.value = nil
-                        self.deleteFile()
-                    self.logDebug("file deleted")
-                    }
+                // check one more time if size real zero
+                if self.size.value == 0 {
+                    // set pointer to nil and delete file
+                    self.pointer.value = nil
+                    self.deleteFile()
+                self.logDebug("file deleted")
                 }
             }
         } else {
@@ -420,6 +420,7 @@ class RequestQueue {
             self.fileHandler = try FileHandle(forUpdating: url)
         } catch let error {
             WebtrekkTracking.defaultLogger.logError("can't create file for buffered tracking. No buffered tracking will be done. error: \(error)")
+            self.pointer.value = nil
             return false
         }
         
