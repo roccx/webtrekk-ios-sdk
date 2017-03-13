@@ -237,6 +237,11 @@ class RequestQueue {
         
         logDebug("loaded save pointer: \(self.pointer.value) size: \(self.size.value)")
         
+        if self.size.value > 0 && self.pointer.value == nil {
+            self.size.value = 0
+            logDebug("set size to 0 if pointer is nil. Can be in case of crash")
+        }
+        
         if self.size.value != 0 && self.fileHandler == nil {
             if let pointer = self.pointer.value, self.initFileHandler() {
                 self.fileHandler?.seek(toFileOffset: pointer)

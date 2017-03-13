@@ -41,7 +41,7 @@
     <enableRemoteConfiguration>false</enableRemoteConfiguration>
     <trackingConfigurationUrl>https://d1r27qvpjiaqj3.cloudfront.net/1111111111111111/36704.xml</trackingConfigurationUrl>
     <!--resend onStart time, this is the timeout for auto tracked sessions in case an screen was paused -->
-    <resendOnStartEventTime>30</resendOnStartEventTime>
+    <resendOnStartEventTime>40</resendOnStartEventTime>
     
     <!--enable or disable exception logging. By default is disabled -->
     <errorLogEnable>true</errorLogEnable>
