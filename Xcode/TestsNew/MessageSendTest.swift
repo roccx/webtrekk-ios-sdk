@@ -153,9 +153,15 @@ class MessageSendTest: WTBaseTestNew {
         
         var currentId = 0
         
+        let lock = NSLock()
+        
         self.doURLSendTestAction(){
             self.httpTester.removeStub()
             self.httpTester.addNormalStub(){query in
+                lock.lock()
+                defer{
+                    lock.unlock()
+                }
                 let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
                 
                 expect(parameters["cp100"]).to(equal("\(currentId)"))

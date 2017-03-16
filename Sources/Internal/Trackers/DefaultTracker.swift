@@ -197,12 +197,18 @@ final class DefaultTracker: Tracker {
 	}
 
     func initHibertationDate(){
-        
-        defaults?.set(key: DefaultsKeys.appHibernationDate, to: Date())
+        let date = Date()
+        WebtrekkTracking.defaultLogger.logDebug("save current date for session detection \(date) with defaults \(self.defaults == nil)")
+        self.defaults?.set(key: DefaultsKeys.appHibernationDate, to: date)
     }
     
     func updateFirstSession(){
-        if let hibernationDate = defaults?.dateForKey(DefaultsKeys.appHibernationDate) , -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
+        
+        let hibernationDateSettings = self.defaults?.dateForKey(DefaultsKeys.appHibernationDate)
+        
+        WebtrekkTracking.defaultLogger.logDebug("read saved date for session detection \(hibernationDateSettings), defaults \(self.defaults == nil) value: \(self.defaults?.objectForKey(DefaultsKeys.appHibernationDate))")
+        
+        if let hibernationDate = hibernationDateSettings , -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
             isFirstEventOfSession = false
         }
         else {
@@ -1009,7 +1015,7 @@ extension DefaultTracker: RequestManager.Delegate {
 		#if !os(watchOS)
 			if self.requestManager!.queue.isEmpty {
                 
-                self.flowObserver.finishBackroundTask()
+                self.flowObserver.finishBackroundTask(requestManager: self.requestManager)
 
 				if application.applicationState != .active {
 					stopRequestManager()

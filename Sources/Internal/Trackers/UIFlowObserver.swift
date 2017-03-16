@@ -35,8 +35,8 @@ class UIFlowObserver: NSObject {
     fileprivate var applicationDidBecomeActiveObserver: NSObjectProtocol?
     fileprivate var applicationWillEnterForegroundObserver: NSObjectProtocol?
     fileprivate var applicationWillResignActiveObserver: NSObjectProtocol?
-    private var backgroundTaskIdentifier = UIBackgroundTaskInvalid
     private let deepLink = DeepLink()
+    private var backgroundTaskIdentifier = UIBackgroundTaskInvalid
     #endif
 
 
@@ -125,24 +125,27 @@ class UIFlowObserver: NSObject {
     tracker.startRequestManager()
     
     #if !os(watchOS)
-    if self.backgroundTaskIdentifier != UIBackgroundTaskInvalid {
-        application.endBackgroundTask(self.backgroundTaskIdentifier)
-        self.backgroundTaskIdentifier = UIBackgroundTaskInvalid
-        }
+        finishBackroundTask(requestManager: tracker.requestManager)
     #endif
     }
     
     
     #if !os(watchOS)
-    func finishBackroundTask(){
-        
-        if self.backgroundTaskIdentifier != UIBackgroundTaskInvalid {
-            application.endBackgroundTask(self.backgroundTaskIdentifier)
-            self.backgroundTaskIdentifier = UIBackgroundTaskInvalid
+    
+    func finishBackroundTask(requestManager: RequestManager?){
+    
+    guard let requestManager = requestManager else {
+            WebtrekkTracking.logger.logError("can't finish background task requestManager isn't initialized")
+            return
+        }
+    
+        if requestManager.backgroundTaskIdentifier != UIBackgroundTaskInvalid {
+            application.endBackgroundTask(requestManager.backgroundTaskIdentifier)
+            requestManager.backgroundTaskIdentifier = UIBackgroundTaskInvalid
         }
     }
-
     #else
+
     // for watchOS only
     dynamic func WTapplicationDidEnterBackground() {
         defer {
@@ -162,6 +165,8 @@ class UIFlowObserver: NSObject {
     #endif
     
     dynamic func WTapplicationWillResignActive() {
+        
+        WebtrekkTracking.defaultLogger.logDebug("applicationWillResignActive is called")
         
         #if os(watchOS)
             defer {
@@ -183,19 +188,19 @@ class UIFlowObserver: NSObject {
         tracker.initHibertationDate()
         
         #if !os(watchOS)
-            if self.backgroundTaskIdentifier == UIBackgroundTaskInvalid {
+            if let reuestManager = self.tracker.requestManager, reuestManager.backgroundTaskIdentifier == UIBackgroundTaskInvalid,
+               self.backgroundTaskIdentifier == UIBackgroundTaskInvalid {
                 self.backgroundTaskIdentifier = application.beginBackgroundTask(withName: "Webtrekk Tracker #\(self.tracker.configuration.webtrekkId)") { [weak self] in
                     guard let `self` = self else {
                         return
                     }
                     
-                    if let finishing = self.tracker.requestManager?.finishing, finishing,
-                        let isStarted = self.tracker.requestManager?.started, isStarted {
-                        // wait till finished
-                        //self.tracker.stopRequestManager()
+                    if reuestManager.started && reuestManager.finishing {
+                        reuestManager.backgroundTaskIdentifier = self.backgroundTaskIdentifier
+                    } else {
+                        self.application.endBackgroundTask(self.backgroundTaskIdentifier)
                     }
                     
-                    self.application.endBackgroundTask(self.backgroundTaskIdentifier)
                     self.backgroundTaskIdentifier = UIBackgroundTaskInvalid
                 }
             }

@@ -18,13 +18,14 @@
 //
 
 import Foundation
+import UIKit
 
 #if !os(watchOS)
 	import ReachabilitySwift
 #endif
 
 
-internal final class RequestManager: NSObject, URLSessionTaskDelegate {
+internal final class RequestManager: NSObject, URLSessionDelegate {
 
 	internal typealias Delegate = _RequestManagerDelegate
 
@@ -38,6 +39,7 @@ internal final class RequestManager: NSObject, URLSessionTaskDelegate {
 	#if !os(watchOS)
 	private let reachability: Reachability?
 	private var sendingInterruptedBecauseUnreachable = false
+    var backgroundTaskIdentifier = UIBackgroundTaskInvalid
 	#endif
 
 	internal fileprivate(set) var queue = RequestQueue()
@@ -137,7 +139,7 @@ internal final class RequestManager: NSObject, URLSessionTaskDelegate {
             return nil
         }
         
-		let task = urlSession.dataTask(with: url, completionHandler: {data, response, error in
+        let task = urlSession.dataTask(with: url, completionHandler: {data, response, error in
 			if let error = error {
 				let retryable: Bool
 				let isCompletelyOffline: Bool
@@ -371,7 +373,8 @@ internal final class RequestManager: NSObject, URLSessionTaskDelegate {
 			return
 		}
 
-		started = true
+		self.started = true
+        self.finishing = false
         
         if self.urlSession == nil {
             self.urlSession = RequestManager.createUrlSession(delegate: self)
@@ -432,16 +435,24 @@ internal final class RequestManager: NSObject, URLSessionTaskDelegate {
 	}
     
     // implement URLSessionDelegate
-    func urlSession(_ session: URLSession,
+    public func urlSession(_ session: URLSession,
                     didBecomeInvalidWithError error: Error?){
+        logDebug("didBecomeInvalidWithError  call")
         if self.finishing && error == nil {
             WebtrekkTracking.defaultLogger.logDebug("URL request has been finished. Save all")
             self.queue.save()
             self.urlSession = nil
             self.finishing = false
+
+            #if !os(watchOS)
+                if self.backgroundTaskIdentifier != UIBackgroundTaskInvalid {
+                    UIApplication.shared.endBackgroundTask(self.backgroundTaskIdentifier)
+                    self.backgroundTaskIdentifier = UIBackgroundTaskInvalid
+                }
+            #endif
+
         }
     }
-    
 }
 
 internal protocol _RequestManagerDelegate: class {
