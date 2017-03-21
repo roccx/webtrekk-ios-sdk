@@ -204,6 +204,17 @@ class PageTest: WTBaseTestNew {
            doURLSendTestCheck(){parametersArr in
                expect(parametersArr[parOrientation]).to(equal("landscape"))
            }
+        
+            doURLSendTestAction(){
+                self.mainViewController.beginAppearanceTransition(true, animated: false)
+                let value = UIInterfaceOrientation.portrait.rawValue
+                UIDevice.current.setValue(value, forKey: "orientation")
+                self.mainViewController.endAppearanceTransition()
+            }
+            
+            doURLSendTestCheck(){parametersArr in
+                expect(parametersArr[parOrientation]).to(equal("portrait"))
+            }
     }
     #endif
     
