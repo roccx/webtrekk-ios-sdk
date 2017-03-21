@@ -76,7 +76,7 @@ class AttributionTest: WTBaseTestNew {
             attempt += 1
         }
         
-        WebtrekkTracking.defaultLogger.logDebug("end wait for campaign process: isSuccess=\(checkDefSetting(setting: "campaignHasProcessed"))")
+        WebtrekkTracking.defaultLogger.logDebug("end wait for campaign process: isSuccess=\(checkDefSettingNoConfig(setting: "campaignHasProcessed"))")
         
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
@@ -87,5 +87,8 @@ class AttributionTest: WTBaseTestNew {
             expect(parametersArr["mca"]).to(equal("c"))
             expect(parametersArr["cb900"]).to(equal("1"))
         }
+        
+        //wait till message is processed and deleted from queue
+        doSmartWait(sec: 2)
     }
 }

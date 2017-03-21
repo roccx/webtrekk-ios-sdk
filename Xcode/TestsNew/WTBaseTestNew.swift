@@ -165,6 +165,11 @@ class WTBaseTestNew: HttpBaseTestNew {
         return "webtrekk.\(getConfID()).\(setting)"
     }
     
+    func checkDefSettingNoConfig(setting: String) -> Bool{
+        let object = Foundation.UserDefaults.standard.object(forKey: "webtrekk.\(setting)")
+        return object != nil
+    }
+    
     static func requestQueueBackupFileForWebtrekkId(_ webtrekkId: String) -> URL? {
         
         let searchPathDirectory: FileManager.SearchPathDirectory
