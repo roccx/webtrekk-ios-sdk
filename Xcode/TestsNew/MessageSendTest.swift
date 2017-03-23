@@ -31,7 +31,7 @@ class MessageSendTest: WTBaseTestNew {
                 return "webtrekk_config_message_send_minimum_delay"
             } else if (name.range(of: "testConnectionInterruption") != nil) {
                 return "webtrekk_config_message_send_connection_interruption"
-            } else if (name.range(of: "testMigrationFromVersion440") != nil) {
+            } else if (name.range(of: "testMigrationFromVersion440") != nil || name.range(of: "testPerformance") != nil) {
                 return nil
             } else {
                 WebtrekkTracking.defaultLogger.logError("This test use incorrect configuration")
@@ -219,6 +219,31 @@ class MessageSendTest: WTBaseTestNew {
 
         // wait for couple seconds so items will be deleted from queue.
         doSmartWait(sec: 2)
-}
+    }
+    
+    func testPerformance(){
+        let tracker = WebtrekkTracking.instance()
+        
+        var currentId = 0
+        let lock = NSLock()
+        
+        self.httpTester.removeStub()
+        self.httpTester.addNormalStub(){query in
+            lock.lock()
+            defer{
+                lock.unlock()
+            }
+            currentId += 1
+        }
+        
+        self.measure {
+            tracker.trackPageView("performanceTest")
+        
+        }
+
+        expect(currentId).toEventually(equal(10), timeout:20)
+        
+        doSmartWait(sec: 2)
+    }
     
 }
