@@ -275,8 +275,6 @@
 		9F415F541D5CAD09002CB83F /* ModuleTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ModuleTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F415F731D5CB508002CB83F /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/CryptoSwift/CryptoSwift.framework"; sourceTree = "<group>"; };
 		9F415F751D5CB5E5002CB83F /* Pods_iOS_Example.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_iOS_Example.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/Pods_iOS_Example.framework"; sourceTree = "<group>"; };
-		9F415F7C1D5CB9C2002CB83F /* ReachabilitySwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = ReachabilitySwift.framework; path = "/Users/arsen.vartbaronov/Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/ReachabilitySwift/ReachabilitySwift.framework"; sourceTree = "<absolute>"; };
-		9F415F7F1D5CB9DE002CB83F /* Webtrekk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = Webtrekk.framework; path = "/Users/arsen.vartbaronov/Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/Webtrekk/Webtrekk.framework"; sourceTree = "<absolute>"; };
 		9F415F9C1D5CCD6B002CB83F /* Pods_iOS_Example_ModuleTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_iOS_Example_ModuleTest.framework; path = "Pods/../build/Debug-iphoneos/Pods_iOS_Example_ModuleTest.framework"; sourceTree = "<group>"; };
 		9F415F9E1D5CD57B002CB83F /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		9F415FC21D5CDCCB002CB83F /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/Nimble/Nimble.framework"; sourceTree = "<group>"; };
@@ -428,8 +426,6 @@
 			isa = PBXGroup;
 			children = (
 				9F9487C01D7DB8060072CB0B /* ModuleTest.entitlements */,
-				9F415F7F1D5CB9DE002CB83F /* Webtrekk.framework */,
-				9F415F7C1D5CB9C2002CB83F /* ReachabilitySwift.framework */,
 				9F415F141D5C7C6D002CB83F /* TestsNew */,
 				A3DFB00630AF1B828E7E41A9 /* Frameworks */,
 				F6D5AB716B904C7CC4FFDE6C /* Pods */,
