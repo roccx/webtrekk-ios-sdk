@@ -251,8 +251,14 @@ class RequestQueue {
         }
         
         if self.size.value != 0 && self.fileHandler == nil {
-            if let pointer = self.pointer.value, self.initFileHandler() {
-                self.fileHandler?.seek(toFileOffset: pointer)
+            if let pointer = self.pointer.value {
+                if self.initFileHandler() {
+                    self.fileHandler?.seek(toFileOffset: pointer)
+                } else {
+                    // can't get reference to file create file, but point isn't nil and size is more zero in that case make size zero
+                    logDebug("make size sero as file not existed")
+                    self.size.value = 0
+                }
             }
         }
         self.refreshMemoryQueue()

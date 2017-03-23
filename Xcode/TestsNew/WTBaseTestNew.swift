@@ -39,6 +39,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     }
     
     override func tearDown() {
+        doSmartWait(sec: 1)
         releaseWebtrekk()
         super.tearDown()
     }
@@ -103,11 +104,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     
     private func checkFinishCondition(){
         expect(self.isBackupFileExists()).to(equal(false), description: "check for saved urls in old format")
-        let newQueueBack = WTBaseTestNew.requestNewQueueBackFileExists()
-        if newQueueBack {
-            WTBaseTestNew.requestNewQueueBackFileDelete()
-            expect(true).to(equal(false), description: "check for saved urls")
-        }
+        expect(WTBaseTestNew.requestNewQueueBackFileExists()).to(equal(false), description: "check for saved urls")
     }
     
     private func doInitiateApplicationLifecycleOneMoreTime(){
