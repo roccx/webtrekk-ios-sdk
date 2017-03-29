@@ -31,7 +31,7 @@ class MessageSendTest: WTBaseTestNew {
                 return "webtrekk_config_message_send_minimum_delay"
             } else if (name.range(of: "testConnectionInterruption") != nil) {
                 return "webtrekk_config_message_send_connection_interruption"
-            } else if (name.range(of: "testMigrationFromVersion440") != nil || name.range(of: "testPerformance") != nil) {
+            } else if (name.range(of: "testMigrationFromVersion440") != nil || name.range(of: "testPerformance") != nil || (name.range(of: "testCPULoad") != nil)) {
                 return nil
             } else {
                 WebtrekkTracking.defaultLogger.logError("This test use incorrect configuration")
@@ -95,9 +95,9 @@ class MessageSendTest: WTBaseTestNew {
         
         let tracker = WebtrekkTracking.instance()
         #if os(tvOS)
-            let maxRequests = 2000
+            let maxRequests = 20
         #else
-            let maxRequests = 20000
+            let maxRequests = 2000
         #endif
 
         for i in 0..<maxRequests {
@@ -107,6 +107,7 @@ class MessageSendTest: WTBaseTestNew {
                 groups: nil,
                 internalSearch: nil,
                 url: nil))
+            doSmartWait(sec: 0.0001)
         }
         
         var currentId = 0
@@ -123,7 +124,7 @@ class MessageSendTest: WTBaseTestNew {
             }
         }
         
-        expect(currentId).toEventually(equal(maxRequests), timeout:500, description: "check for max request received")
+        expect(currentId).toEventually(equal(maxRequests), timeout:1000, description: "check for max request received")
 
         // wait for couple seconds so items will be deleted from queue.
         doSmartWait(sec: 2)
@@ -136,9 +137,9 @@ class MessageSendTest: WTBaseTestNew {
         
         let tracker = WebtrekkTracking.instance()
         #if os(tvOS)
-            let maxRequestsFirst = 1000
+            let maxRequestsFirst = 10
         #else
-            let maxRequestsFirst = 10000
+            let maxRequestsFirst = 1000
         #endif
         let maxRequestSecond = maxRequestsFirst*2
         
@@ -149,6 +150,7 @@ class MessageSendTest: WTBaseTestNew {
                 groups: nil,
                 internalSearch: nil,
                 url: nil))
+            doSmartWait(sec: 0.0001)
         }
         
         var currentId = 0
@@ -177,6 +179,7 @@ class MessageSendTest: WTBaseTestNew {
                 groups: nil,
                 internalSearch: nil,
                 url: nil))
+            doSmartWait(sec: 0.0001)
         }
         
         expect(currentId).toEventually(equal(maxRequestSecond), timeout:1000)
@@ -202,14 +205,11 @@ class MessageSendTest: WTBaseTestNew {
         //do test
         var currentId = 0
         
-        // release webtrekk
-        self.doURLSendTestAction(){
-            self.httpTester.removeStub()
-            self.httpTester.addNormalStub(){query in
-                currentId += 1
-                let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
-                expect(parameters["p"]).to(contain("440,"))
-            }
+        self.httpTester.removeStub()
+        self.httpTester.addNormalStub(){query in
+            currentId += 1
+            let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
+            expect(parameters["p"]).to(contain("440,"))
         }
         
         try! WebtrekkTracking.initTrack()
@@ -243,6 +243,42 @@ class MessageSendTest: WTBaseTestNew {
 
         expect(currentId).toEventually(equal(10), timeout:20)
         
+        doSmartWait(sec: 2)
+    }
+    
+    func testCPULoad(){
+        httpTester.removeStub()
+        
+        var runThread: Bool = true
+        
+        DispatchQueue.global(qos: .userInteractive).async {
+            while runThread{
+                let n: Double = 45.0
+                let _ = sqrt(n)
+            }
+        }
+        
+        let tracker = WebtrekkTracking.instance()
+        let maxRequests = 1000
+        var currentId = 0
+        
+        self.httpTester.addNormalStub(){query in
+            currentId += 1
+            WebtrekkTracking.logger.logDebug("currentId increased: \(currentId)")
+        }
+        
+        for _ in 0..<maxRequests {
+            tracker.trackPageView("CPULoadTest")
+            doSmartWait(sec: 0.0001)
+        }
+        
+        expect(currentId).toEventually(equal(maxRequests), timeout:100, description: "check for max request received CPU Load")
+        
+        DispatchQueue.global(qos: .userInteractive).sync {
+            runThread = false
+        }
+
+        // wait for couple seconds so items will be deleted from queue.
         doSmartWait(sec: 2)
     }
     

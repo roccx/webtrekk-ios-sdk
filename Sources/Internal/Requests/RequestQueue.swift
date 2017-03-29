@@ -18,7 +18,6 @@
 //
 
 import Foundation
-//import UIKit
 
 class RequestQueue {
     
@@ -37,11 +36,13 @@ class RequestQueue {
     private let threadGetURLQueue: DispatchQueue
     private let threadLoadURLQueue: DispatchQueue
     private let queuAddCondition = NSCondition()
+    private let dispatchQueueAddURLCondition = NSCondition()
     private let saveLoadLock = NSLock()
     private let flashAndDeleteLock = NSLock()
     private let sizeSettingName = "QUEU_SIZE"
     private let positionSettingName = "FILE_CURRENT_POSITION"
     private var isLoaded: Bool = false
+    private var addURLQueueSize: Int = 0
     
     private let saveDirectory: FileManager.SearchPathDirectory
     
@@ -51,7 +52,7 @@ class RequestQueue {
     }
 
     var isEmpty : Bool {
-        return self.size.value == 0
+        return self.size.value == 0 && self.addURLQueueSize == 0
     }
 
     init(){
@@ -87,17 +88,23 @@ class RequestQueue {
         if self.pointer.value != nil {
             // read it from file
             // put it to the separate thread
+            self.addURLQueueSize += 1
             self.threadAddURLQueue.async {
                 let pointer = self.saveToFile(url: url)
                 self.logDebug("saved to file")
                 DispatchQueue.main.sync(){
-                        if self.size.value == self.queue.count && self.queue.count < self.urlsBuffered{
-                            self.queue.append(URLItem(url: url, pointer: pointer))
-                        }
+                    self.dispatchQueueAddURLCondition.lock()
+                    if self.size.value == self.queue.count && self.queue.count < self.urlsBuffered{
+                        self.queue.append(URLItem(url: url, pointer: pointer))
+                        self.dispatchQueueAddURLCondition.signal()
+                    }
                     self.size.increment(to: 1)
+                    self.addURLQueueSize -= 1
+                    self.logDebug("Add URL dispatch queue size: \(self.addURLQueueSize)")
+                    self.dispatchQueueAddURLCondition.unlock()
                 }
                 self.saveSettings()
-                self.logDebug("addURL threadAddURLQueue queue size: \(self.size.value). local queue size \(self.queue.count)")
+                self.logDebug("addURL threadAddURLQueue queue size: \(self.size.value). local queue size \(self.queue.count).")
             }
         } else {
             
@@ -118,33 +125,45 @@ class RequestQueue {
                     }
                 }
         }
-        self.logDebug("addURL end queue size: \(self.size.value). local queue size \(self.queue.count)")
+        self.logDebug("addURL end queue size: \(self.size.value). local queue size \(self.queue.count). Add URL dispatch queue size: \(self.addURLQueueSize)")
     }
     
     /** return nil, if it is empty */
     func getURL(finishClosure: @escaping (_ url: URL?)->Void ) throws{
         
-        guard self.size.value > 0 else {
+        guard !self.isEmpty else {
             finishClosure(nil)
             return
         }
         
         self.logDebug("get URL")
         
-        if self.pointer.value != nil && queue.isEmpty  {
+        if self.pointer.value != nil && self.queue.isEmpty {
+            let isDispatchQueueEmpty = self.addURLQueueSize == 0
+            let isSizeEmpty = self.size.value == 0
             // it means that queue is uploading
             self.threadGetURLQueue.async {
-                self.logDebug("wait till at least one item in queue loaded")
-                self.queuAddCondition.lock()
-                self.logDebug("queuAddCondition lock is set")
                 
-                while self.queue.isEmpty {
-                    self.queuAddCondition.wait()
+                var lock: NSCondition?
+                if !isSizeEmpty {// wait till item loadded from memory
+                    lock = self.queuAddCondition
+                } else if isSizeEmpty && self.queue.count == 0 && !isDispatchQueueEmpty {
+                    lock = self.dispatchQueueAddURLCondition
                 }
                 
-                self.logDebug("queuAddCondition wait is done")
-                self.queuAddCondition.unlock()
-                self.logDebug("queuAddCondition unlock is set")
+                if let lock = lock {
+                    self.logDebug("wait till at least one item in queue loaded")
+                    lock.lock()
+                    self.logDebug("queuAddCondition lock is set")
+                    
+                    while self.queue.isEmpty {
+                        lock.wait()
+                    }
+                    
+                    self.logDebug("queuAddCondition wait is done")
+                    lock.unlock()
+                    self.logDebug("queuAddCondition unlock is set")
+                }
                 
                 guard let first = self.queue.first?.url else {
                     WebtrekkTracking.defaultLogger.logError("no first items in cashed queue. something wrong")
@@ -290,14 +309,11 @@ class RequestQueue {
         }
         
         if self.size.value == 0{
-            if self.isExist() {
-                // check one more time if size real zero
-                if self.size.value == 0 {
-                    // set pointer to nil and delete file
-                    self.pointer.value = nil
-                    self.deleteFile()
+            if self.isExist() && self.addURLQueueSize == 0 {
+                // set pointer to nil and delete file
+                self.pointer.value = nil
+                self.deleteFile()
                 self.logDebug("file deleted")
-                }
             }
         } else {
             self.threadLoadURLQueue.async {
