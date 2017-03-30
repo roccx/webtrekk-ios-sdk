@@ -56,7 +56,7 @@ fileprivate func signalHandler(signalNum: Int32){
     // remove first two items as this is handler function items.
     let stack = Array(Thread.callStackSymbols.suffix(from: 2))
     
-    ExceptionSaveAndSendHelper.default.saveToFile(name: "Signal: \(signalsMap[signalNum] ?? String("undefined"))", stack: stack, reason: nil, userInfo: nil, stackReturnAddress: nil)
+    ExceptionSaveAndSendHelper.default.saveToFile(name: "Signal: \(signalsMap[signalNum] ?? "undefined")", stack: stack, reason: nil, userInfo: nil, stackReturnAddress: nil)
 }
 
 class ExceptionTrackerImpl: ExceptionTracker {
