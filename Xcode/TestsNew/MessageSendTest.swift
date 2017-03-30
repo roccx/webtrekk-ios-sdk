@@ -97,7 +97,7 @@ class MessageSendTest: WTBaseTestNew {
         #if os(tvOS)
             let maxRequests = 200
         #else
-            let maxRequests = 20000
+            let maxRequests = 2000
         #endif
 
         var currentId = 0
@@ -144,7 +144,7 @@ class MessageSendTest: WTBaseTestNew {
         #if os(tvOS)
             let maxRequestsFirst = 100
         #else
-            let maxRequestsFirst = 10000
+            let maxRequestsFirst = 1000
         #endif
         let maxRequestSecond = maxRequestsFirst*2
         
