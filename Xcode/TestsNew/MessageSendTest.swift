@@ -95,11 +95,29 @@ class MessageSendTest: WTBaseTestNew {
         
         let tracker = WebtrekkTracking.instance()
         #if os(tvOS)
-            let maxRequests = 20
+            let maxRequests = 200
         #else
-            let maxRequests = 2000
+            let maxRequests = 20000
         #endif
 
+        var currentId = 0
+        WebtrekkTracking.defaultLogger.logDebug("Remove interrup connection stub")
+        let lock = NSLock()
+        
+        
+        self.httpTester.removeStub()
+        self.httpTester.addNormalStub(){query in
+            lock.lock()
+            defer{
+                lock.unlock()
+            }
+            let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
+            
+            expect(parameters["cp100"]).to(equal("\(currentId)"))
+            WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp100"]) is received")
+            currentId += 1
+        }
+        
         for i in 0..<maxRequests {
             tracker.trackPageView(PageProperties(
                 name: "intrupConnection",
@@ -110,19 +128,6 @@ class MessageSendTest: WTBaseTestNew {
             doSmartWait(sec: 0.0001)
         }
         
-        var currentId = 0
-        WebtrekkTracking.defaultLogger.logDebug("Remove interrup connection stub")
-        
-        self.doURLSendTestAction(){
-            self.httpTester.removeStub()
-            self.httpTester.addNormalStub(){query in
-                let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
-                
-                expect(parameters["cp100"]).to(equal("\(currentId)"))
-                WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp100"]) is received")
-                currentId += 1
-            }
-        }
         
         expect(currentId).toEventually(equal(maxRequests), timeout:1000, description: "check for max request received")
 
@@ -137,9 +142,9 @@ class MessageSendTest: WTBaseTestNew {
         
         let tracker = WebtrekkTracking.instance()
         #if os(tvOS)
-            let maxRequestsFirst = 10
+            let maxRequestsFirst = 100
         #else
-            let maxRequestsFirst = 1000
+            let maxRequestsFirst = 10000
         #endif
         let maxRequestSecond = maxRequestsFirst*2
         
@@ -157,19 +162,17 @@ class MessageSendTest: WTBaseTestNew {
         
         let lock = NSLock()
         
-        self.doURLSendTestAction(){
-            self.httpTester.removeStub()
-            self.httpTester.addNormalStub(){query in
-                lock.lock()
-                defer{
-                    lock.unlock()
-                }
-                let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
-                
-                expect(parameters["cp100"]).to(equal("\(currentId)"))
-                WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp100"]) is received")
-                currentId += 1
+        self.httpTester.removeStub()
+        self.httpTester.addNormalStub(){query in
+            lock.lock()
+            defer{
+                lock.unlock()
             }
+            let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
+            
+            expect(parameters["cp100"]).to(equal("\(currentId)"))
+            WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp100"]) is received")
+            currentId += 1
         }
         
         for i in maxRequestsFirst..<maxRequestSecond {
