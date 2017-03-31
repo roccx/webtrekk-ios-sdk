@@ -58,7 +58,6 @@ final class DefaultTracker: Tracker {
     var pageURL: String?
 
 	internal var global = GlobalProperties()
-	internal var plugins = [TrackerPlugin]()
     
     let exceptionTracker: ExceptionTracker = ExceptionTrackerImpl()
     
@@ -343,16 +342,8 @@ final class DefaultTracker: Tracker {
             return
         }
         
-		for plugin in plugins {
-			request = plugin.tracker(self, requestForQueuingRequest: request)
-		}
-
 		if shouldEnqueueNewEvents, let requestUrl = requestUrlBuilder?.urlForRequest(request, type: type) {
 			requestManager?.enqueueRequest(requestUrl, maximumDelay: configuration.maximumSendDelay)
-		}
-
-		for plugin in plugins {
-			plugin.tracker(self, didQueueRequest: request)
 		}
 
 		isFirstEventAfterAppUpdate = false
