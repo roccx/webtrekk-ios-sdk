@@ -97,7 +97,7 @@ class MessageSendTest: WTBaseTestNew {
         #if os(tvOS)
             let maxRequests = 200
         #else
-            let maxRequests = 2000
+            let maxRequests = 20000
         #endif
 
         var currentId = 0
@@ -114,7 +114,7 @@ class MessageSendTest: WTBaseTestNew {
             let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
             
             expect(parameters["cp100"]).to(equal("\(currentId)"))
-            WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp100"]) is received")
+            WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp100"].simpleDescription) is received")
             currentId += 1
         }
         
@@ -144,7 +144,7 @@ class MessageSendTest: WTBaseTestNew {
         #if os(tvOS)
             let maxRequestsFirst = 100
         #else
-            let maxRequestsFirst = 1000
+            let maxRequestsFirst = 10000
         #endif
         let maxRequestSecond = maxRequestsFirst*2
         
@@ -171,7 +171,7 @@ class MessageSendTest: WTBaseTestNew {
             let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
             
             expect(parameters["cp100"]).to(equal("\(currentId)"))
-            WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp100"]) is received")
+            WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp100"].simpleDescription) is received")
             currentId += 1
         }
         
@@ -199,7 +199,9 @@ class MessageSendTest: WTBaseTestNew {
         WebtrekkTracking.defaultLogger.minimumLevel = .debug
         
         do {
-            WebtrekkTracking.logger.logDebug("source: \(source) destination: \(destination)")
+            let destinationToLog = destination?.absoluteString
+            let sourceToLog = source?.absoluteString
+            WebtrekkTracking.logger.logDebug("source: \(sourceToLog.simpleDescription) destination: \(destinationToLog.simpleDescription)")
             try FileManager.default.copyItem(at: source!, to: destination!)
         } catch let error {
            WebtrekkTracking.logger.logError("can't copy file: \(error)")

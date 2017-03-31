@@ -13,7 +13,6 @@ abstract_target "iOS" do
             target "Tests" do
                 inherit! :search_paths
                 pod 'Nimble', '~> 6.1.0'
-                pod 'FBSnapshotTestCase', '~> 2.1.4'
                 pod 'OHHTTPStubs', '~> 5.2.1'
                 pod 'OHHTTPStubs/Swift', '~> 5.2.1'
                 end
@@ -29,7 +28,6 @@ abstract_target "tvOS" do
     target "SampleTVAppTests" do
         inherit! :search_paths
         pod 'Nimble', '~> 6.1.0'
-        pod 'FBSnapshotTestCase', '~> 2.1.4'
         pod 'OHHTTPStubs', '~> 5.2.1'
         pod 'OHHTTPStubs/Swift', '~> 5.2.1'
         end

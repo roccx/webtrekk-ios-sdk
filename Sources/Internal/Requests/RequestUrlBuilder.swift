@@ -176,7 +176,7 @@ internal final class RequestUrlBuilder {
 		urlComponents?.queryItems = parameters
 
 		guard let url = urlComponents?.url else {
-			logError("Cannot build URL from components: \(urlComponents)")
+			logError("Cannot build URL from components: \(urlComponents.simpleDescription)")
 			return nil
 		}
 
