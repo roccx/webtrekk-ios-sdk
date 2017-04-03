@@ -193,11 +193,11 @@ class CDBTest: WTBaseTestNew {
             NSLog("test " + parName + " value:" + parValue+"\n")
             
             if let key = firstKey {
-                expect(firstValue).to(equal(parameters[key]?.lowercased()), description: "cycle: \(cycle) key:\(key) index: \(index). ER: \(firstValue) AR:\(parameters[key])")
+                expect(firstValue).to(equal(parameters[key]?.lowercased()), description: "cycle: \(cycle) key:\(key) index: \(index). ER: \(firstValue.simpleDescription) AR:\(parameters[key].simpleDescription)")
             }
             
             if let key = mdKey {
-                expect(mdValue).to(equal(parameters[key]?.lowercased()), description: "cycle: \(cycle) key:\(key) index: \(index). ER: \(mdValue) AR:\(parameters[key])")
+                expect(mdValue).to(equal(parameters[key]?.lowercased()), description: "cycle: \(cycle) key:\(key) index: \(index). ER: \(mdValue.simpleDescription) AR:\(parameters[key].simpleDescription)")
             }
         }
     }

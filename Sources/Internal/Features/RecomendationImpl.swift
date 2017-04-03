@@ -116,7 +116,7 @@ class RecomendationImpl: Recommendation {
                     }
                 } else {
                     result = .incorrect_response
-                    logError("Not URL response type: \(response)")
+                    logError("Not URL response type: \(response.simpleDescription)")
                 }
                 
                 guard result == .ok else {

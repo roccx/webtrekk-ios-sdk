@@ -70,12 +70,12 @@ class Campaign{
                 WebtrekkTracking.logger.logError("Install campaign request error:\(error)")
             } else {
                 guard let responseGuard = response as? HTTPURLResponse else {
-                    WebtrekkTracking.logger.logError("Install campaign response error:\(response)")
+                    WebtrekkTracking.logger.logError("Install campaign response error:\(response.simpleDescription)")
                     return
                 }
                 
                 guard responseGuard.statusCode == 200 else {
-                    WebtrekkTracking.logger.logDebug("No campaign for this applicaiton. Response:\(response)")
+                    WebtrekkTracking.logger.logDebug("No campaign for this applicaiton. Response:\(response.simpleDescription)")
                     self.sharedDefaults.set(key: Campaign.campaignHasProcessed, to: true)
                     return
                 }
@@ -84,7 +84,7 @@ class Campaign{
                 guard let dataG = data, let json = try? JSONSerialization.jsonObject(with: dataG, options: .allowFragments) as! [String:Any],
                     let jsonMedia = json["mediacode"] as? String else {
             
-                    WebtrekkTracking.logger.logError("Incorrect JSON response for Campaign tracking:\(data)")
+                    WebtrekkTracking.logger.logError("Incorrect JSON response for Campaign tracking:\(data.simpleDescription)")
                     return
                 }
             

@@ -23,7 +23,7 @@ import Nimble
 
 
 fileprivate func signalHandler(signalNum: Int32){
-    print("old signal handler is called with num: \(signalNum) and default \(SIG_DFL)")
+    print("old signal handler is called with num: \(signalNum) and default \(String(describing: SIG_DFL))")
 }
 
 

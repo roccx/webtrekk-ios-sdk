@@ -32,7 +32,7 @@ fileprivate func exceptionHandler(exception: NSException){
     }
 
     //Save exception to file
-    WebtrekkTracking.defaultLogger.logDebug("Webtrekk catched exception: \(exception), callStack: \(exception.callStackSymbols), reason: \(exception.reason), name: \(exception.name), user info: \(dump(exception.userInfo)), return address: \(exception.callStackReturnAddresses)")
+    WebtrekkTracking.defaultLogger.logDebug("Webtrekk catched exception: \(exception), callStack: \(exception.callStackSymbols), reason: \(exception.reason ?? "nil"), name: \(exception.name), user info: \(String(describing: exception.userInfo)), return address: \(exception.callStackReturnAddresses)")
     
     ExceptionSaveAndSendHelper.default.saveToFile(name: exception.name.rawValue, stack: exception.callStackSymbols, reason: exception.reason, userInfo: exception.userInfo as NSDictionary?, stackReturnAddress: exception.callStackReturnAddresses)
 }
@@ -56,7 +56,7 @@ fileprivate func signalHandler(signalNum: Int32){
     // remove first two items as this is handler function items.
     let stack = Array(Thread.callStackSymbols.suffix(from: 2))
     
-    ExceptionSaveAndSendHelper.default.saveToFile(name: "Signal: \(signalsMap[signalNum] ?? String("undefined"))", stack: stack, reason: nil, userInfo: nil, stackReturnAddress: nil)
+    ExceptionSaveAndSendHelper.default.saveToFile(name: "Signal: \(signalsMap[signalNum] ?? "undefined")", stack: stack, reason: nil, userInfo: nil, stackReturnAddress: nil)
 }
 
 class ExceptionTrackerImpl: ExceptionTracker {
@@ -387,19 +387,19 @@ fileprivate class ExceptionSaveAndSendHelper{
         
         details[910] = .constant(String(logLevel.rawValue))
         
-        if let name = name  as? String, !name.isEmpty {
+        if let name = name as String?, !name.isEmpty {
             details[911] = .constant(name)
         }
-        if let message = message as? String, !message.isEmpty {
+        if let message = message as String?, !message.isEmpty {
             details[912] = .constant(message)
         }
-        if let stack = stack as? String, !stack.isEmpty  {
+        if let stack = stack as String?, !stack.isEmpty  {
             details[913] = .constant(stack)
         }
-        if let userInfo = userInfo as? String, !userInfo.isEmpty  {
+        if let userInfo = userInfo as String?, !userInfo.isEmpty  {
             details[916] = .constant(userInfo)
         }
-        if let stackReturnAddress = stackReturnAddress as? String, !stackReturnAddress.isEmpty  {
+        if let stackReturnAddress = stackReturnAddress as String?, !stackReturnAddress.isEmpty  {
             details[917] = .constant(stackReturnAddress)
         }
         let action = ActionEvent(actionProperties: ActionProperties(name: "webtrekk_ignore", details: details) , pageProperties: PageProperties(name: nil))

@@ -35,12 +35,12 @@ class RecommendationTableViewController: UITableViewController, RecommendationCa
         self.lastResult = result
         self.requestFinished = true
         guard result == .ok else {
-            print("error getting products. Result: \(result), error: \(error)")
+            WebtrekkTracking.defaultLogger.logDebug("error getting products. Result: \(result), error: \(error?.localizedDescription ?? "nil")")
             return
         }
         
         guard let productsResult = products else {
-            print("error getting products, with OK result")
+            WebtrekkTracking.defaultLogger.logDebug("error getting products, with OK result")
             return
         }
         
