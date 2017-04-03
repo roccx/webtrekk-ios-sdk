@@ -63,9 +63,9 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
             return
         }
         
-        if currentTestNumber != 2 {
+        if self.currentTestNumber != 2 {
             startTest() {
-                currentTestNumber = 1
+                self.currentTestNumber = 1
                 WebtrekkTracking.instance().trackPageView("SimpleWatchPage")
             }
         } else {
@@ -98,7 +98,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     }
     
     override func didAppear() {
-        guard currentTestNumber != 2 && currentTestNumber != 3 else {
+        guard self.currentTestNumber != 2 && self.currentTestNumber != 3 else {
             return
         }
         finishTest(){parameters in
