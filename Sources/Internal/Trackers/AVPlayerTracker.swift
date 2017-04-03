@@ -58,13 +58,12 @@ internal final class AVPlayerTracker: NSObject {
 
 		let lastKnownPlaybackTime = self._lastKnownPlaybackTime
 		let parent = self.parent
-		let player = self.player
 		let playbackState = self.playbackState
 
 		onMainQueue(synchronousIfPossible: true) {
 			switch playbackState {
 			case .paused, .pausedOrSeeking, .playing, .seeking:
-				if let time = player?.currentTime() {
+				if let time = self.player?.currentTime() {
 					parent.mediaProperties.position = CMTimeGetSeconds(time)
 				}
 				else if let lastKnownPlaybackTime = lastKnownPlaybackTime {
@@ -78,8 +77,8 @@ internal final class AVPlayerTracker: NSObject {
 			}
 		}
 
-		if let player = player, let playerTimeObserver = playerTimeObserver {
-			onMainQueue(synchronousIfPossible: true) {
+		onMainQueue(synchronousIfPossible: true) {
+            if let player = self.player, let playerTimeObserver = self.playerTimeObserver {
 				player.removeTimeObserver(playerTimeObserver)
 			}
 		}
@@ -98,15 +97,14 @@ internal final class AVPlayerTracker: NSObject {
 	}
 
 
-	fileprivate func onPlayerDeinit(_ unownedPlayer: Unmanaged<AVPlayer>) {
+	fileprivate func onPlayerDeinit() {
 		onMainQueue(synchronousIfPossible: true) {
 			if let playerTimeObserver = self.playerTimeObserver {
 				self.playerTimeObserver = nil
 
-				unownedPlayer.takeUnretainedValue().removeTimeObserver(playerTimeObserver)
+				self.player?.removeTimeObserver(playerTimeObserver)
 			}
 
-			self.player = nil
 			self.updatePlaybackState()
 		}
 	}
@@ -126,7 +124,7 @@ internal final class AVPlayerTracker: NSObject {
 			self.updateToPlaybackState(.finished)
 		}
 
-		playerTimeObserver = player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(60, 1), queue: nil) { [weak self] currentTime in
+		self.playerTimeObserver = player.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(60, 1), queue: nil) { [weak self] currentTime in
 			guard let `self` = self, let player = self.player else {
 				return
 			}
@@ -196,7 +194,7 @@ internal final class AVPlayerTracker: NSObject {
 	private func updatePlaybackState() {
 		checkIsOnMainThread()
 
-		let playerIsPlaying = player?.isPlaying ?? false
+		let playerIsPlaying = self.player?.isPlaying ?? false
 
 		switch playbackState {
 		case .finished, .paused, .pausedOrSeeking, .seeking, .stopped:
@@ -320,7 +318,7 @@ fileprivate extension AVPlayer {
 		checkIsOnMainThread()
 
 		return objc_getAssociatedObject(self, &AssociatedKeys.trackers) as? Trackers ?? {
-			let trackers = Trackers(player: self)
+			let trackers = Trackers()
 			objc_setAssociatedObject(self, &AssociatedKeys.trackers, trackers, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 			return trackers
 		}()
@@ -331,20 +329,12 @@ fileprivate extension AVPlayer {
 	fileprivate final class Trackers {
 
 		private var trackers = [AVPlayerTracker]()
-		private let player: Unmanaged<AVPlayer>
-
-
-		fileprivate init(player: AVPlayer) {
-			self.player = Unmanaged.passUnretained(player)
-		}
-
 
 		deinit {
 			for tracker in trackers {
-				tracker.onPlayerDeinit(player)
+				tracker.onPlayerDeinit()
 			}
 		}
-
 
 		fileprivate func add(_ tracker: AVPlayerTracker) {
 			trackers.append(tracker)

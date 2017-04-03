@@ -339,7 +339,7 @@ final class DefaultTracker: Tracker {
             requestBuilder.setDeepLink(deepLink: self.deepLink)
         #endif
         
-        guard var request = requestBuilder.createRequest(event, requestProperties: requestProperties) else {
+        guard let request = requestBuilder.createRequest(event, requestProperties: requestProperties) else {
             return
         }
         
