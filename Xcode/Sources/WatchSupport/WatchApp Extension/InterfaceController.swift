@@ -41,8 +41,6 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     
     override init(){
         super.init()
-        NSLog("Interface Controller init")
-        self.initSpecficStub()
         
         let version = ProcessInfo().operatingSystemVersion
         self.userAgent = "Tracking Library \(WebtrekkTracking.version) (Apple Watch; watchOS \(version.majorVersion).\(version.minorVersion)\(version.patchVersion == 0 ? "":".\(version.patchVersion)"); \(Locale.current.identifier))"
@@ -64,6 +62,9 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         }
         
         if self.currentTestNumber != 2 {
+            // start first test. Init stub
+            self.initSpecficStub()
+
             startTest() {
                 self.currentTestNumber = 1
                 WebtrekkTracking.instance().trackPageView("SimpleWatchPage")
@@ -169,6 +170,8 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     }
     
     private func initSpecficStub(){
+        NSLog("Init specificStup")
+
         let defaultTracker = WebtrekkTracking.instance() as! DefaultTracker
         
         
@@ -189,7 +192,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     }
     
     func requestManager (_ requestManager: RequestManager, didFailToSendRequest request: URL, error: RequestManager.ConnectionError){
-        NSLog ("failed request with error\(error).")
+        NSLog ("failed request with error \(error).")
         self.originDelegate?.requestManager(requestManager, didFailToSendRequest: request, error: error)
     }
     
