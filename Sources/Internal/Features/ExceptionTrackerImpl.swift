@@ -131,7 +131,7 @@ class ExceptionTrackerImpl: ExceptionTracker {
         NSSetUncaughtExceptionHandler(exceptionHandler)
         
         // setup processing for signals. Save old processing as well
-        for signalNum in signals {
+        for signalNum in self.signals {
             
             // set Webtrekk signal handler and get previoius one
             let oldSignal = signal(signalNum, signalHandler)

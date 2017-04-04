@@ -41,7 +41,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     
     override init(){
         super.init()
-        //httpTester.initHTTPServer()
+        NSLog("Interface Controller init")
         self.initSpecficStub()
         
         let version = ProcessInfo().operatingSystemVersion
@@ -171,23 +171,30 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     private func initSpecficStub(){
         let defaultTracker = WebtrekkTracking.instance() as! DefaultTracker
         
-        self.originDelegate = defaultTracker.requestManager?.delegate
         
-        defaultTracker.requestManager?.delegate = self
+        guard let requestManager = defaultTracker.requestManager else {
+            NSLog("Error: request manager is null. Can't establish delegate")
+            return
+        }
+        
+        self.originDelegate = requestManager.delegate
+        
+        requestManager.delegate = self
     }
     
     func requestManager (_ requestManager: RequestManager, didSendRequest request: URL){
         HTTPTester.request = URLRequest(url: request)
+        NSLog("Request catched by delegate.")
         self.originDelegate?.requestManager(requestManager, didSendRequest: request)
     }
     
     func requestManager (_ requestManager: RequestManager, didFailToSendRequest request: URL, error: RequestManager.ConnectionError){
-        NSLog ("failed request with error\(error)")
+        NSLog ("failed request with error\(error).")
         self.originDelegate?.requestManager(requestManager, didFailToSendRequest: request, error: error)
     }
     
     private func logTestResult(isPassed: Bool, testNum: Int = 0){
-        NSLog("Test \(testNum) result")
+        NSLog("Test \(testNum) result.")
         NSLog("Webtrekk WatchApp Test \(isPassed ? "passed":"failed")")
     }
 }
