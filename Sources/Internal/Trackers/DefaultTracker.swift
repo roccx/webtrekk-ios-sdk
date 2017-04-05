@@ -288,9 +288,9 @@ final class DefaultTracker: Tracker {
         if isFirstEventOfApp {
             requestProperties.isFirstEventOfApp = true
         }
-        if self.isFirstEventOfSession {
-            requestProperties.isFirstEventOfSession = true
-        }
+        
+        requestProperties.isFirstEventOfSession = self.isFirstEventOfSession
+        
         if configuration.automaticallyTracksAdvertisingId {
             requestProperties.advertisingId = Environment.advertisingIdentifierManager?.advertisingIdentifier
         }
