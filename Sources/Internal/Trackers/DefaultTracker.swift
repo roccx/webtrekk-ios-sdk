@@ -204,15 +204,14 @@ final class DefaultTracker: Tracker {
     func updateFirstSession(){
         
         let hibernationDateSettings = self.defaults?.dateForKey(DefaultsKeys.appHibernationDate)
-        let valueToLog = self.defaults?.objectForKey(DefaultsKeys.appHibernationDate)
         
-        WebtrekkTracking.defaultLogger.logDebug("read saved date for session detection \(hibernationDateSettings.simpleDescription), defaults \(self.defaults == nil) value: \(valueToLog.simpleDescription)")
+        WebtrekkTracking.defaultLogger.logDebug("read saved date for session detection \(hibernationDateSettings.simpleDescription), defaults \(self.defaults == nil) value: \(hibernationDateSettings.simpleDescription) timeIntervalSinceNow is: \(String(describing: hibernationDateSettings?.timeIntervalSinceNow))")
         
         if let hibernationDate = hibernationDateSettings , -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
-            isFirstEventOfSession = false
+            self.isFirstEventOfSession = false
         }
         else {
-            isFirstEventOfSession = true
+            self.isFirstEventOfSession = true
         }
     }
     
@@ -289,7 +288,7 @@ final class DefaultTracker: Tracker {
         if isFirstEventOfApp {
             requestProperties.isFirstEventOfApp = true
         }
-        if isFirstEventOfSession {
+        if self.isFirstEventOfSession {
             requestProperties.isFirstEventOfSession = true
         }
         if configuration.automaticallyTracksAdvertisingId {
@@ -347,9 +346,9 @@ final class DefaultTracker: Tracker {
 			requestManager?.enqueueRequest(requestUrl, maximumDelay: configuration.maximumSendDelay)
 		}
 
-		isFirstEventAfterAppUpdate = false
-		isFirstEventOfApp = false
-		isFirstEventOfSession = false
+		self.isFirstEventAfterAppUpdate = false
+		self.isFirstEventOfApp = false
+		self.isFirstEventOfSession = false
 	}
     
     /*
