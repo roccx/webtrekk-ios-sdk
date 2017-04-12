@@ -91,14 +91,26 @@ class RequestQueue {
             self.addURLQueueSize += 1
             self.threadAddURLQueue.async {
                 let pointer = self.saveToFile(url: url)
-                self.logDebug("saved to file")
+                let isSaveSuccessfully = pointer != nil
+                
+                if isSaveSuccessfully{
+                    self.logDebug("saved to file successfully")
+                } else {
+                    self.logDebug("file save error")
+                }
                 DispatchQueue.main.sync(){
                     self.dispatchQueueAddURLCondition.lock()
                     if self.size.value == self.queue.count && self.queue.count < self.urlsBuffered{
-                        self.queue.append(URLItem(url: url, pointer: pointer))
+                        if isSaveSuccessfully {
+                            self.queue.append(URLItem(url: url, pointer: pointer))
+                        }
                         self.dispatchQueueAddURLCondition.signal()
                     }
-                    self.size.increment(to: 1)
+                    
+                    if isSaveSuccessfully {
+                        self.size.increment(to: 1)
+                    }
+                    
                     self.addURLQueueSize -= 1
                     self.logDebug("Add URL dispatch queue size: \(self.addURLQueueSize)")
                     self.dispatchQueueAddURLCondition.unlock()
@@ -137,6 +149,7 @@ class RequestQueue {
         }
         
         self.logDebug("get URL")
+        
         
         if self.pointer.value != nil && self.queue.isEmpty {
             let isDispatchQueueEmpty = self.addURLQueueSize == 0
@@ -294,9 +307,10 @@ class RequestQueue {
         
         self.flashAndDeleteLock.lock()
         
-        for i in 0..<queue.count {
-            let pointer = saveToFile(url: queue[i].url)
-            queue[i] = URLItem(url:queue[i].url, pointer: pointer)
+        for i in 0..<self.queue.count {
+            if let pointer = saveToFile(url: queue[i].url){
+                self.queue[i] = URLItem(url:queue[i].url, pointer: pointer)
+            }
         }
         self.flashAndDeleteLock.unlock()
         
@@ -326,7 +340,7 @@ class RequestQueue {
     }
     
     // write url to file return poniter to next postion after this url
-    private func saveToFile(url: URL) -> UInt64{
+    private func saveToFile(url: URL) -> UInt64?{
         
         guard let file = self.fileHandler else {
             return 0
@@ -346,8 +360,15 @@ class RequestQueue {
         }
 
         file.seekToEndOfFile()
-        file.write(data)
-        self.logDebug("save data done")
+        do {
+            try CatchObC.catchException{
+                file.write(data)
+            }
+        }catch let error {
+            WebtrekkTracking.defaultLogger.logError("Exception during saving to file:\(error)")
+            return nil
+        }
+        self.logDebug("save data done. file size in KB is:\(file.offsetInFile/1024)")
         
         return file.offsetInFile
     }
@@ -443,7 +464,7 @@ class RequestQueue {
         }
         
         self.pointer.value = 0
-        self.logDebug("file created")
+        self.logDebug("file created at: \(url.path)")
         return true
     }
     

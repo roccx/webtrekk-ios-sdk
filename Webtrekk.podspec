@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
 
 	s.module_map = 'Module/Module.modulemap'
 
-	s.source_files          = 'Sources/**/*.swift', 'Module/Module.h'
+	s.source_files          = 'Sources/**/*.swift', 'Module/Module.h', 'Sources/Internal/Utility/CatchObC.*'
     s.ios.exclude_files = 'Sources/Internal/Utility/WKInterfaceController.swift'
     s.tvos.exclude_files = 'Sources/Internal/Utility/WKInterfaceController.swift'
     s.watchos.exclude_files = 'Sources/Internal/Utility/UIDevice.swift', 'Sources/Internal/Utility/UIViewController.swift', 'Sources/Internal/Trackers/AVPlayerTracker.swift', 'Sources/Internal/Features/DeepLink.swift'

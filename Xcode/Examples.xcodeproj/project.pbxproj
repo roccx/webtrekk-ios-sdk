@@ -22,6 +22,7 @@
 		9F0E36851E29224900E815CA /* AttributionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0E36841E29224900E815CA /* AttributionTest.swift */; };
 		9F0FB5BB1E0A7ED300957440 /* ParametersPriorityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */; };
 		9F12A9401DC899530006B44F /* RecoItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */; };
+		9F162F3C1E966688006EEF5D /* OutOfMemoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */; };
 		9F26D1A81E7045F5002CA573 /* requestQueue.archive in Resources */ = {isa = PBXBuildFile; fileRef = 9FFA47341E701EA100774AF2 /* requestQueue.archive */; };
 		9F30E2021E4CB04000F7BB99 /* ExceptionTrackingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */; };
 		9F34496D1E5DF0710094C006 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F081D5C7C59002CB83F /* ViewController.swift */; };
@@ -251,6 +252,7 @@
 		9F0E36841E29224900E815CA /* AttributionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributionTest.swift; sourceTree = "<group>"; };
 		9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParametersPriorityTest.swift; sourceTree = "<group>"; };
 		9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecoItemTableViewCell.swift; sourceTree = "<group>"; };
+		9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutOfMemoryTest.swift; sourceTree = "<group>"; };
 		9F16F2BD1DB8C9CB007CFB71 /* MessageSendTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageSendTest.swift; sourceTree = "<group>"; };
 		9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExceptionTrackingTest.swift; sourceTree = "<group>"; };
 		9F415F001D5C7C59002CB83F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -539,6 +541,7 @@
 				9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */,
 				9FE852131E51F1A100F5915D /* ExceptionCreator.h */,
 				9FE852141E51F1A100F5915D /* ExceptionCreator.m */,
+				9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */,
 			);
 			path = TestsNew;
 			sourceTree = "<group>";
@@ -1428,6 +1431,7 @@
 				9FFB526E1DC909CF000E4519 /* RecommendationTableViewController.swift in Sources */,
 				9F63E7851DC0E9580001D72E /* InitializationTest.swift in Sources */,
 				9F63E77B1DC0D4B30001D72E /* WTBaseTestNew.swift in Sources */,
+				9F162F3C1E966688006EEF5D /* OutOfMemoryTest.swift in Sources */,
 				DF46AEB01E3209F6001EB97A /* AdClearID.swift in Sources */,
 				9F415F2C1D5C7C81002CB83F /* HttpBaseTestNew.swift in Sources */,
 				9F30E2021E4CB04000F7BB99 /* ExceptionTrackingTest.swift in Sources */,

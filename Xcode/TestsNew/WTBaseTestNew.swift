@@ -223,12 +223,16 @@ class WTBaseTestNew: HttpBaseTestNew {
 
     private static func getNewQueueBackFileURL() -> URL?{
     
-        guard let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
-        WebtrekkTracking.defaultLogger.logError("requestNewQueueBackFileExists can't get application support dir for backup file url")
-        return nil
-        }
-        
-         return url.appendingPathComponent("Webtrekk").appendingPathComponent("webtrekk_url_buffer.txt")
+        return getNewQueueBackFolderURL()?.appendingPathComponent("webtrekk_url_buffer.txt")
     }
 
+    static func getNewQueueBackFolderURL() -> URL?{
+        
+        guard let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            WebtrekkTracking.defaultLogger.logError("requestNewQueueBackFileExists can't get application support dir for backup file url")
+            return nil
+        }
+        
+        return url.appendingPathComponent("Webtrekk")
+    }
 }
