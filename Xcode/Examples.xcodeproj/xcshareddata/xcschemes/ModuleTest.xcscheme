@@ -76,6 +76,9 @@
                <Test
                   Identifier = "MessageSendTest/testConnectionInterruptionComplex()">
                </Test>
+               <Test
+                  Identifier = "OutOfMemoryTest">
+               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>

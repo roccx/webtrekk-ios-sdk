@@ -23,11 +23,16 @@ class OutOfMemoryTest: WTBaseTestNew {
     
     override func tearDown() {
         super.tearDown()
-        // at the end unmount should be done
-        NSLog("testOutOfMemory has been finished")
-        
-        //wait for unmount
-        sleep(2)
+        switch self.name {
+        case _ where name?.range(of: "testOutOfMemory") != nil:
+            // at the end unmount should be done
+            NSLog("testOutOfMemory has been finished")
+            
+            //wait for unmount
+            sleep(2)
+        default:
+            break
+        }
     }
 
     
