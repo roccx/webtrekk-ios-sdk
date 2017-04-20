@@ -228,7 +228,14 @@ class WTBaseTestNew: HttpBaseTestNew {
 
     static func getNewQueueBackFolderURL() -> URL?{
         
-        guard let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+        #if os(tvOS)
+            let saveDirectory: FileManager.SearchPathDirectory = .cachesDirectory
+        #else
+            let saveDirectory: FileManager.SearchPathDirectory = .applicationSupportDirectory
+        #endif
+
+        
+        guard let url = FileManager.default.urls(for: saveDirectory, in: .userDomainMask).first else {
             WebtrekkTracking.defaultLogger.logError("requestNewQueueBackFileExists can't get application support dir for backup file url")
             return nil
         }
