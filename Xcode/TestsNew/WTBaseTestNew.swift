@@ -221,7 +221,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         try? FileManager.default.removeItem(atPath: url.path)
     }
 
-    private static func getNewQueueBackFileURL() -> URL?{
+    static func getNewQueueBackFileURL() -> URL?{
     
         return getNewQueueBackFolderURL()?.appendingPathComponent("webtrekk_url_buffer.txt")
     }

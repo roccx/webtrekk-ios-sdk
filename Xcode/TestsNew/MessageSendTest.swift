@@ -31,6 +31,8 @@ class MessageSendTest: WTBaseTestNew {
                 return "webtrekk_config_message_send_minimum_delay"
             } else if (name.range(of: "testConnectionInterruption") != nil) {
                 return "webtrekk_config_message_send_connection_interruption"
+            }else if (name.range(of: "testFileCorruption") != nil) {
+                return "webtrekk_config_error_log_disabled"
             } else if (name.range(of: "testMigrationFromVersion440") != nil || name.range(of: "testPerformance") != nil || (name.range(of: "testCPULoad") != nil)) {
                 return nil
             } else {
@@ -285,6 +287,82 @@ class MessageSendTest: WTBaseTestNew {
 
         // wait for couple seconds so items will be deleted from queue.
         doSmartWait(sec: 2)
+    }
+    
+    
+    func testFileCorruption(){
+        //do test
+        
+        // put meesage to file
+        self.httpTester.removeStub()
+        self.httpTester.addConnectionInterruptionStub()
+        
+        let tracker = WebtrekkTracking.instance()
+        let maxRequestsFirst = 200
+        
+        for i in 0..<maxRequestsFirst {
+            tracker.trackPageView(PageProperties(
+                name: "intrupConnection",
+                details: [101: .constant("\(i)")],
+                groups: nil,
+                internalSearch: nil,
+                url: nil))
+            doSmartWait(sec: 0.0001)
+        }
+        
+        doSmartWait(sec: 5)
+        
+        //put garbage to file
+        let finalURL = WTBaseTestNew.getNewQueueBackFileURL()
+        
+        guard let url = finalURL, let fileHandler = try? FileHandle(forUpdating: url) else {
+            expect(true).to(equal(false), description: "Can't get saved path for file or create handler")
+            return
+        }
+        
+        // setup file handler
+        
+        let rand = arc4random_uniform(2048)
+        let preservePosition = fileHandler.offsetInFile
+        let endOfFilePosition = fileHandler.seekToEndOfFile()
+        let randomPosition = endOfFilePosition - UInt64(8096) + UInt64(rand)
+        
+        WebtrekkTracking.defaultLogger.logDebug("preservePosition: \(preservePosition), endofFile: \(endOfFilePosition), random: \(randomPosition)")
+        
+        
+        fileHandler.seek(toFileOffset: UInt64(integerLiteral: randomPosition))
+        
+        //generate garbage
+        var randArray = [UInt8]()
+        
+        for i in 0..<2024 {
+            randArray.append(UInt8(arc4random_uniform(255)))
+        }
+        
+        fileHandler.write(Data(randArray))
+        
+        //restore position
+        fileHandler.seek(toFileOffset: preservePosition)
+        
+        //try to send
+        let lock = NSLock()
+        
+        self.httpTester.removeStub()
+        self.httpTester.addNormalStub(){query in
+            lock.lock()
+            defer{
+                
+                lock.unlock()
+            }
+            let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
+            
+            WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp101"].simpleDescription) is received")
+        }
+        
+        //test shouldn't crash
+        
+        doSmartWait(sec: 20)
+
     }
     
 }

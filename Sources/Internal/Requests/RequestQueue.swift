@@ -43,6 +43,7 @@ class RequestQueue {
     private let positionSettingName = "FILE_CURRENT_POSITION"
     private var isLoaded: Bool = false
     private var addURLQueueSize: Int = 0
+    private var incorrectDataMode = false
     
     private let saveDirectory: FileManager.SearchPathDirectory
     
@@ -393,6 +394,8 @@ class RequestQueue {
             self.reader.clearBuffer()
         }
         
+        var endOfFileHasBeenReached = false
+        
         mainCycle: for i in 0..<self.urlsBuffered {
             // that is save read lock for moving pointer correctly
             self.saveLoadLock.lock()
@@ -417,14 +420,17 @@ class RequestQueue {
                 }
             }
             
-            self.fileHandler?.seek(toFileOffset: pointer)
+            file.seek(toFileOffset: pointer)
             let result = self.reader.readLine(fileHandle: file)
             logDebug("result is received \(result) ")
             switch result {
                 case (nil, true, 0): //no data found exit from cycle
+                    endOfFileHasBeenReached = true
                     break mainCycle
                 case (nil, false, let shift): // wrong data. just continue
                     pointer = pointer + shift
+                    self.incorrectDataMode = true
+                    WebtrekkTracking.defaultLogger.logError("Incorect data in saved queue file")
                 case (let url, let EOF, let shift): // receive url add to queue
                     pointer = pointer + shift
                     self.queue.append(URLItem(url: url!, pointer: pointer))
@@ -434,20 +440,23 @@ class RequestQueue {
                         logDebug("queuAddCondition signal is send and unlock is done eor: \(EOF)")
                         signalIsSent = true
                     }
+                    endOfFileHasBeenReached = EOF
             }
+        }
+        
+        //validate file status
+        if endOfFileHasBeenReached && self.incorrectDataMode {
+            if self.queue.count < self.size.value {
+                let decrementValue =  self.size.value - self.queue.count
+                self.size.increment(to: -decrementValue)
+                logDebug("correct queue size to \(decrementValue)")
+            }
+            self.incorrectDataMode = false
         }
         
         self.logDebug("load queue finish queue size: \(self.size.value). local queue size \(self.queue.count)")
     }
     
-    
-    private func readURLFromFile() -> ReadURLResult? {
-        guard let file = self.fileHandler else {
-            return nil
-        }
-        
-        return self.reader.readLine(fileHandle: file)
-    }
     
     private func createNewFile() -> Bool{
         guard let url = self.fileURL else {
@@ -534,7 +543,7 @@ fileprivate class TextFileReader{
         
         while !eof {
             
-            if let range = self.buffer.range(of: delimeter) {
+            if let range = self.buffer.range(of: self.delimeter) {
                 
                 // Convert complete line (excluding the delimiter) to a string:
                 line = String(data: self.buffer.subdata(in: 0..<range.lowerBound), encoding: .utf8)
@@ -570,7 +579,7 @@ fileprivate class TextFileReader{
         }
         
         guard let lineNotOpt = line, let url = URL(string: lineNotOpt) else {
-            WebtrekkTracking.defaultLogger.logDebug("Line in stored url file isn't string or URL. Line: \(line.simpleDescription)")
+            WebtrekkTracking.defaultLogger.logError("Line in stored url file isn't string or URL. Line: \(line.simpleDescription)")
             return (nil, eof, shift)
         }
         

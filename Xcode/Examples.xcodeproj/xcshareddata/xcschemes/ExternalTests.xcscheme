@@ -84,6 +84,9 @@
                   Identifier = "MessageSendTest/testCPULoad()">
                </Test>
                <Test
+                  Identifier = "MessageSendTest/testFileCorruption()">
+               </Test>
+               <Test
                   Identifier = "MessageSendTest/testManualSend()">
                </Test>
                <Test
