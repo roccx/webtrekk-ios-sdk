@@ -100,7 +100,7 @@ public struct CrossDeviceProperties {
 			phoneNumber:  phoneNumber ?? other.phoneNumber,
 			twitterId:    twitterId ?? other.twitterId,
 			windowsId:    windowsId ?? other.windowsId,
-            custom:       custom.merged(over: other.custom)
+			custom:       custom.merged(over: other.custom)
 		)
 	}
 }
