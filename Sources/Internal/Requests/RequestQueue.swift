@@ -43,7 +43,7 @@ class RequestQueue {
     private let positionSettingName = "FILE_CURRENT_POSITION"
     private var isLoaded: Bool = false
     private var addURLQueueSize: Int = 0
-    private var incorrectDataMode = false
+    private var incorrectDataMode: SimpleSync<Bool> = SimpleSync<Bool>(value: false)
     
     private let saveDirectory: FileManager.SearchPathDirectory
     
@@ -329,6 +329,7 @@ class RequestQueue {
                 // set pointer to nil and delete file
                 self.pointer.value = nil
                 self.deleteFile()
+                self.incorrectDataMode.value = false
                 self.logDebug("file deleted")
             }
         } else {
@@ -429,7 +430,7 @@ class RequestQueue {
                     break mainCycle
                 case (nil, false, let shift): // wrong data. just continue
                     pointer = pointer + shift
-                    self.incorrectDataMode = true
+                    self.incorrectDataMode.value = true
                     WebtrekkTracking.defaultLogger.logError("Incorect data in saved queue file")
                 case (let url, let EOF, let shift): // receive url add to queue
                     pointer = pointer + shift
@@ -445,13 +446,10 @@ class RequestQueue {
         }
         
         //validate file status
-        if endOfFileHasBeenReached && self.incorrectDataMode {
-            if self.queue.count < self.size.value {
-                let decrementValue =  self.size.value - self.queue.count
-                self.size.increment(to: -decrementValue)
-                logDebug("correct queue size to \(decrementValue)")
-            }
-            self.incorrectDataMode = false
+        if endOfFileHasBeenReached && self.incorrectDataMode.value && self.queue.count < self.size.value {
+            let decrementValue =  self.size.value - self.queue.count
+            self.size.increment(to: -decrementValue)
+            logDebug("correct queue size to \(decrementValue)")
         }
         
         self.logDebug("load queue finish queue size: \(self.size.value). local queue size \(self.queue.count)")

@@ -302,7 +302,7 @@ class MessageSendTest: WTBaseTestNew {
         
         for i in 0..<maxRequestsFirst {
             tracker.trackPageView(PageProperties(
-                name: "intrupConnection",
+                name: "testFileCorruption",
                 details: [101: .constant("\(i)")],
                 groups: nil,
                 internalSearch: nil,
@@ -362,6 +362,8 @@ class MessageSendTest: WTBaseTestNew {
         //test shouldn't crash
         
         doSmartWait(sec: 20)
+        
+        WebtrekkTracking.defaultLogger.logDebug("finishWait")
 
     }
     
