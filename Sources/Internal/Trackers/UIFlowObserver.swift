@@ -188,15 +188,15 @@ class UIFlowObserver: NSObject {
         tracker.initHibertationDate()
         
         #if !os(watchOS)
-            if let reuestManager = self.tracker.requestManager, reuestManager.backgroundTaskIdentifier == UIBackgroundTaskInvalid,
-               self.backgroundTaskIdentifier == UIBackgroundTaskInvalid {
+            if let requestManager = self.tracker.requestManager, requestManager.backgroundTaskIdentifier == UIBackgroundTaskInvalid,
+               self.backgroundTaskIdentifier == UIBackgroundTaskInvalid, requestManager.isPending {
                 self.backgroundTaskIdentifier = application.beginBackgroundTask(withName: "Webtrekk Tracker #\(self.tracker.configuration.webtrekkId)") { [weak self] in
                     guard let `self` = self else {
                         return
                     }
                     
-                    if reuestManager.started && reuestManager.finishing {
-                        reuestManager.backgroundTaskIdentifier = self.backgroundTaskIdentifier
+                    if requestManager.started && requestManager.finishing {
+                        requestManager.backgroundTaskIdentifier = self.backgroundTaskIdentifier
                     } else {
                         self.application.endBackgroundTask(self.backgroundTaskIdentifier)
                     }

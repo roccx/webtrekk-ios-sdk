@@ -45,6 +45,7 @@ internal final class RequestManager: NSObject, URLSessionDelegate {
 	internal fileprivate(set) var queue = RequestQueue()
 	internal fileprivate(set) var started = false
     private(set) var finishing = false
+    var isPending: Bool {return pendingTask != nil}
 
 	internal weak var delegate: Delegate?
 

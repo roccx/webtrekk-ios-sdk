@@ -191,13 +191,3 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         NSLog("Webtrekk WatchApp Test \(isPassed ? "passed":"failed")")
     }
  }
-
-
-class RequestManagerDelegate: RequestManager.Delegate {
-    func requestManager (_ requestManager: RequestManager, didSendRequest request: URL){
-        HTTPTester.request = URLRequest(url: request)
-    }
-    func requestManager (_ requestManager: RequestManager, didFailToSendRequest request: URL, error: RequestManager.ConnectionError){
-        NSLog ("failed request with error\(error)")
-    }
-}
