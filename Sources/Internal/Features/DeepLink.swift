@@ -68,7 +68,7 @@ class DeepLink: NSObject{
                             track.everId = value
                             WebtrekkTracking.defaultLogger.logDebug("Ever id from Deep link is set")
                         } else {
-                            WebtrekkTracking.defaultLogger.logError("Incorrect everid: \(queryItem.value)")
+                            WebtrekkTracking.defaultLogger.logError("Incorrect everid: \(queryItem.value.simpleDescription)")
                         }
                     } else {
                       WebtrekkTracking.defaultLogger.logError("Everid is empty in request")

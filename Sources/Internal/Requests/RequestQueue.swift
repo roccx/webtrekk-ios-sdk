@@ -178,7 +178,8 @@ class RequestQueue {
             self.pointer.value = self.queue.first?.pointer
         }
         
-        self.logDebug("url \(self.queue.first?.url) will be deleted")
+        let urlToLog = self.queue.first?.url.absoluteString
+        self.logDebug("url \(urlToLog.simpleDescription) will be deleted")
 
         self.queue.remove(at: 0)
         self.size.increment(to: -1)
@@ -230,7 +231,7 @@ class RequestQueue {
     private func saveSettings(){
         UserDefaults.standardDefaults.set(key: self.positionSettingName, to: self.pointer.value)
         UserDefaults.standardDefaults.set(key: self.sizeSettingName, to: self.size.value)
-        logDebug("save pointer: \(self.pointer.value) size: \(self.size.value)")
+        logDebug("save pointer: \(self.pointer.value.simpleDescription) size: \(self.size.value)")
     }
     
     func load(){
@@ -243,7 +244,7 @@ class RequestQueue {
         self.pointer.value =  UserDefaults.standardDefaults.uInt64ForKey(self.positionSettingName)
         self.size.value = UserDefaults.standardDefaults.objectForKey(self.sizeSettingName) as? Int ?? 0
         
-        logDebug("loaded save pointer: \(self.pointer.value) size: \(self.size.value)")
+        logDebug("loaded save pointer: \(self.pointer.value.simpleDescription) size: \(self.size.value)")
         
         if self.size.value > 0 && self.pointer.value == nil {
             self.size.value = 0
@@ -526,7 +527,7 @@ fileprivate class TextFileReader{
         }
         
         guard let lineNotOpt = line, let url = URL(string: lineNotOpt) else {
-            WebtrekkTracking.defaultLogger.logDebug("Line in stored url file isn't string or URL. Line: \(line)")
+            WebtrekkTracking.defaultLogger.logDebug("Line in stored url file isn't string or URL. Line: \(line.simpleDescription)")
             return (nil, eof, shift)
         }
         

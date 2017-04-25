@@ -206,7 +206,7 @@ final class DefaultTracker: Tracker {
         
         let hibernationDateSettings = self.defaults?.dateForKey(DefaultsKeys.appHibernationDate)
         
-        WebtrekkTracking.defaultLogger.logDebug("read saved date for session detection \(hibernationDateSettings), defaults \(self.defaults == nil) value: \(self.defaults?.objectForKey(DefaultsKeys.appHibernationDate))")
+        WebtrekkTracking.defaultLogger.logDebug("read saved date for session detection \(hibernationDateSettings.simpleDescription), defaults \(self.defaults == nil) value: \(hibernationDateSettings.simpleDescription) timeIntervalSinceNow is: \(String(describing: hibernationDateSettings?.timeIntervalSinceNow))")
         
         if let hibernationDate = hibernationDateSettings , -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
             isFirstEventOfSession = false
@@ -531,7 +531,7 @@ final class DefaultTracker: Tracker {
 			}
 
 			guard let _queue = object as? [URL] else {
-				logError("Cannot load request queue from '\(file)': Data has wrong format: \(object)")
+				logError("Cannot load request queue from '\(file)': Data has wrong format: \(String(describing: object))")
 				return
 			}
 
