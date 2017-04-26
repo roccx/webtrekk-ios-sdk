@@ -31,6 +31,8 @@ public struct CrossDeviceProperties {
 	public var phoneNumber: AnonymizableValue<String>?
 	public var twitterId: String?
 	public var windowsId: String?
+	// custom CDB parameters, valid keys are 1 to 29:
+	public var custom: [Int: String]?
 
 
 	public init(
@@ -43,8 +45,9 @@ public struct CrossDeviceProperties {
 		linkedInId: String? = nil,
 		phoneNumber: AnonymizableValue<String>? = nil,
 		twitterId: String? = nil,
-		windowsId: String? = nil
-	) {
+		windowsId: String? = nil,
+		custom: [Int: String]? = nil
+		) {
 		self.address = address
 		self.androidId = androidId
 		self.emailAddress = emailAddress
@@ -55,6 +58,7 @@ public struct CrossDeviceProperties {
 		self.phoneNumber = phoneNumber
 		self.twitterId = twitterId
 		self.windowsId = windowsId
+		self.custom = custom
 	}
 
 
@@ -95,7 +99,8 @@ public struct CrossDeviceProperties {
 			linkedInId:   linkedInId ?? other.linkedInId,
 			phoneNumber:  phoneNumber ?? other.phoneNumber,
 			twitterId:    twitterId ?? other.twitterId,
-			windowsId:    windowsId ?? other.windowsId
+			windowsId:    windowsId ?? other.windowsId,
+			custom:       custom.merged(over: other.custom)
 		)
 	}
 }
