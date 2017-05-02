@@ -68,6 +68,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         print("Original Selector is called")
         
+        
+        // test if this is deep link
+        if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+            let url = userActivity.webpageURL,
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+            let queryItems = components.queryItems{
+            
+            //loop for all parameters
+            for queryItem in queryItems {
+                //if parameter is everID set it
+                if queryItem.name == "downloadTest" {
+                    
+                    if let value = queryItem.value, value == "true"  {
+                            WebtrekkTracking.defaultLogger.logDebug("download test command is received")
+                            DownloadManager.shared.start()
+                     }
+                 }
+             }
+        }
         return true
     }
     

@@ -27,6 +27,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     var libraryVersion: String?
     static var lifeCicleIsInited = false
     var initWebtrekkManualy = false
+    var isCheckFinishCondition = true
 
     override func setUp() {
         super.setUp()
@@ -103,6 +104,11 @@ class WTBaseTestNew: HttpBaseTestNew {
     }
     
     private func checkFinishCondition(){
+        
+        guard isCheckFinishCondition else {
+            return
+        }
+        
         expect(self.isBackupFileExists()).to(equal(false), description: "check for saved urls in old format")
         expect(WTBaseTestNew.requestNewQueueBackFileExists()).to(equal(false), description: "check for saved urls")
     }

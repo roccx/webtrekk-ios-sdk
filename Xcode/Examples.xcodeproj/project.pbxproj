@@ -88,6 +88,7 @@
 		9FC3E1ED1E5CA13E000D7B43 /* ExceptionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE852141E51F1A100F5915D /* ExceptionCreator.m */; };
 		9FDEA0461E3F8DDD00DC6F32 /* BackToForegroundTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */; };
 		9FDEA7191E72B1FE00E8A8E1 /* requestQueue.archive in Resources */ = {isa = PBXBuildFile; fileRef = 9FFA47341E701EA100774AF2 /* requestQueue.archive */; };
+		9FE7E45E1EB37FEA0021D363 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FE7E45C1EB37FE60021D363 /* DownloadManager.swift */; };
 		9FE852151E51F1A100F5915D /* ExceptionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE852141E51F1A100F5915D /* ExceptionCreator.m */; };
 		9FEB51761DC8A7C000C7DBCB /* RecommendationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */; };
 		9FED05741DB8F56600008C01 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FED05731DB8F56600008C01 /* Configurations */; };
@@ -300,6 +301,7 @@
 		9FC183901DAE1D64000F6106 /* SampleTVAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleTVAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC3E1EE1E5CA3CE000D7B43 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackToForegroundTest.swift; sourceTree = "<group>"; };
+		9FE7E45C1EB37FE60021D363 /* DownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		9FE852131E51F1A100F5915D /* ExceptionCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCreator.h; sourceTree = "<group>"; };
 		9FE852141E51F1A100F5915D /* ExceptionCreator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExceptionCreator.m; sourceTree = "<group>"; };
 		9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecommendationTableViewController.swift; sourceTree = "<group>"; };
@@ -495,6 +497,7 @@
 		9F415EFF1D5C7C59002CB83F /* ModuleTest */ = {
 			isa = PBXGroup;
 			children = (
+				9FE7E45C1EB37FE60021D363 /* DownloadManager.swift */,
 				9FFA47341E701EA100774AF2 /* requestQueue.archive */,
 				9FC3E1EE1E5CA3CE000D7B43 /* Bridging-Header.h */,
 				9FED05731DB8F56600008C01 /* Configurations */,
@@ -1451,6 +1454,7 @@
 				9F12A9401DC899530006B44F /* RecoItemTableViewCell.swift in Sources */,
 				9F415F6B1D5CAD21002CB83F /* ViewController.swift in Sources */,
 				9F415F6A1D5CAD21002CB83F /* NextScreenController.swift in Sources */,
+				9FE7E45E1EB37FEA0021D363 /* DownloadManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -27,6 +27,11 @@ class HTTPTester {
         guard HTTPTester.stubDescription == nil else{
             return
         }
+        
+        addStandardStub()
+    }
+    
+    func addStandardStub(){
         addNormalStub(process: {HTTPTester.request = $0})
     }
     
