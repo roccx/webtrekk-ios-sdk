@@ -325,19 +325,23 @@ class RequestQueue {
         }
         
         if self.size.value == 0{
-            if self.isExist() && self.addURLQueueSize == 0 {
-                // set pointer to nil and delete file
-                self.pointer.value = nil
-                self.deleteFile()
-                self.incorrectDataMode.value = false
-                self.logDebug("file deleted")
-            }
+            self.doZeroSizeValidation()
         } else {
             self.threadLoadURLQueue.async {
                if self.queue.count == 0 {
                     self.loadToQueue()
                 }
             }
+        }
+    }
+    
+    private func doZeroSizeValidation(){
+        if self.isExist() && self.addURLQueueSize == 0 {
+            // set pointer to nil and delete file
+            self.pointer.value = nil
+            self.deleteFile()
+            self.incorrectDataMode.value = false
+            self.logDebug("file deleted")
         }
     }
     
@@ -450,7 +454,13 @@ class RequestQueue {
             let decrementValue =  self.size.value - self.queue.count
             self.size.increment(to: -decrementValue)
             logDebug("correct queue size to \(decrementValue)")
-        }
+            // as after load to queu size can be corrected. Check after this processs if size is zero.
+            DispatchQueue.main.async {
+                if self.size.value == 0 {
+                    self.doZeroSizeValidation()
+                }
+            }
+       }
         
         self.logDebug("load queue finish queue size: \(self.size.value). local queue size \(self.queue.count)")
     }
