@@ -43,6 +43,7 @@
 		9F415FFF1D5CE239002CB83F /* EventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495162091D1DFB9C0006A82D /* EventTest.swift */; };
 		9F4160001D5CE23E002CB83F /* RequestUrlBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620B1D1DFB9C0006A82D /* RequestUrlBuilderTests.swift */; };
 		9F4160011D5CE23E002CB83F /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */; };
+		9F429F7E1EB8B8EF00858097 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FE7E45C1EB37FE60021D363 /* DownloadManager.swift */; };
 		9F477E6F1DAFF0E700EC56EB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F477E691DAFED6200EC56EB /* ViewController.swift */; };
 		9F477E711DAFF18C00EC56EB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F477E691DAFED6200EC56EB /* ViewController.swift */; };
 		9F5A604C1DE2EC6D00EF84E0 /* AutoParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5A604B1DE2EC6D00EF84E0 /* AutoParameterTest.swift */; };
@@ -1473,6 +1474,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F477E6F1DAFF0E700EC56EB /* ViewController.swift in Sources */,
+				9F429F7E1EB8B8EF00858097 /* DownloadManager.swift in Sources */,
 				9F5FF0CC1DCB7C8000F53B22 /* RecoItemTableViewCell.swift in Sources */,
 				9F95D3F31DAE41050068E8F8 /* AppDelegate.swift in Sources */,
 				9FAFC0651DC79EF300A80671 /* NextScreenController.swift in Sources */,
