@@ -83,8 +83,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     if let value = queryItem.value, value == "true"  {
                             WebtrekkTracking.defaultLogger.logDebug("download test command is received")
                             DownloadManager.shared.start()
-                     }
-                 }
+                    }
+                } else if let value = queryItem.value, queryItem.name == "checkSession" {
+                    WebtrekkTracking.defaultLogger.logDebug("started in checkSessionMode")
+                    //setup session paramter to be checked by external script
+                    WebtrekkTracking.instance()["sessionCheck"]=value
+                }
              }
         }
         return true
