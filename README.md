@@ -17,6 +17,8 @@ Xcode 7.3+ and Swift 2.2 for versions below and equal to 4.0.1
 
 Xcode 8.0+ and Swift 3.0 starting with version 4.1.0
 
+Xcode 8.3+ and Swift 3.1 starting with version 4.5.1
+
 tvOS support starting with verison 4.2.0 with the follow limitation:
 No screen resolution and network status automatic tracing support.
 

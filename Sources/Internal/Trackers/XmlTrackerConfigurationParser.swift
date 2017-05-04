@@ -138,8 +138,12 @@ internal class XmlTrackerConfigurationParser {
                     #else
                     logError("autoTrackScreenOrientation isn't supported for watchOS and tvOS")
                     #endif
-                case "errorLogLevel": self.errorLogLevel = try parseInt(child.text, allowedRange: 1...3)
-                case "errorLogEnable": if let enable = try parseBool(child.text){
+                case "errorLogLevel":
+                    if self.errorLogLevel == nil || (self.errorLogLevel != nil && self.errorLogLevel != 0) {
+                    self.errorLogLevel = try parseInt(child.text, allowedRange: 1...3)
+                    }
+                case "errorLogEnable":
+                    if let enable = try parseBool(child.text) {
                     self.errorLogLevel = enable ? self.errorLogLevel : 0
                     }
 				default:

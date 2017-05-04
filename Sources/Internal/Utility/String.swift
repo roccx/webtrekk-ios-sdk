@@ -64,6 +64,6 @@ internal extension String {
 internal extension _Optional where Wrapped == String {
 
 	internal var simpleDescription: String {
-		return value?.simpleDescription ?? "<nil>"
+		return self.value?.simpleDescription ?? "<nil>"
 	}
 }

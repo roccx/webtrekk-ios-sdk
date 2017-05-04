@@ -70,6 +70,15 @@
                <Test
                   Identifier = "ExceptionTrackingTest/testCrashSignal()">
                </Test>
+               <Test
+                  Identifier = "MessageSendTest/testConnectionInterruption()">
+               </Test>
+               <Test
+                  Identifier = "MessageSendTest/testConnectionInterruptionComplex()">
+               </Test>
+               <Test
+                  Identifier = "OutOfMemoryTest">
+               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>

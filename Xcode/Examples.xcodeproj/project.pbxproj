@@ -22,6 +22,7 @@
 		9F0E36851E29224900E815CA /* AttributionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0E36841E29224900E815CA /* AttributionTest.swift */; };
 		9F0FB5BB1E0A7ED300957440 /* ParametersPriorityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */; };
 		9F12A9401DC899530006B44F /* RecoItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */; };
+		9F162F3C1E966688006EEF5D /* OutOfMemoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */; };
 		9F26D1A81E7045F5002CA573 /* requestQueue.archive in Resources */ = {isa = PBXBuildFile; fileRef = 9FFA47341E701EA100774AF2 /* requestQueue.archive */; };
 		9F30E2021E4CB04000F7BB99 /* ExceptionTrackingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */; };
 		9F34496D1E5DF0710094C006 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F081D5C7C59002CB83F /* ViewController.swift */; };
@@ -42,6 +43,7 @@
 		9F415FFF1D5CE239002CB83F /* EventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495162091D1DFB9C0006A82D /* EventTest.swift */; };
 		9F4160001D5CE23E002CB83F /* RequestUrlBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620B1D1DFB9C0006A82D /* RequestUrlBuilderTests.swift */; };
 		9F4160011D5CE23E002CB83F /* XmlParserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4951620C1D1DFB9C0006A82D /* XmlParserTest.swift */; };
+		9F429F7E1EB8B8EF00858097 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FE7E45C1EB37FE60021D363 /* DownloadManager.swift */; };
 		9F477E6F1DAFF0E700EC56EB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F477E691DAFED6200EC56EB /* ViewController.swift */; };
 		9F477E711DAFF18C00EC56EB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F477E691DAFED6200EC56EB /* ViewController.swift */; };
 		9F5A604C1DE2EC6D00EF84E0 /* AutoParameterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5A604B1DE2EC6D00EF84E0 /* AutoParameterTest.swift */; };
@@ -87,6 +89,7 @@
 		9FC3E1ED1E5CA13E000D7B43 /* ExceptionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE852141E51F1A100F5915D /* ExceptionCreator.m */; };
 		9FDEA0461E3F8DDD00DC6F32 /* BackToForegroundTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */; };
 		9FDEA7191E72B1FE00E8A8E1 /* requestQueue.archive in Resources */ = {isa = PBXBuildFile; fileRef = 9FFA47341E701EA100774AF2 /* requestQueue.archive */; };
+		9FE7E45E1EB37FEA0021D363 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FE7E45C1EB37FE60021D363 /* DownloadManager.swift */; };
 		9FE852151E51F1A100F5915D /* ExceptionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE852141E51F1A100F5915D /* ExceptionCreator.m */; };
 		9FEB51761DC8A7C000C7DBCB /* RecommendationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */; };
 		9FED05741DB8F56600008C01 /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FED05731DB8F56600008C01 /* Configurations */; };
@@ -251,6 +254,7 @@
 		9F0E36841E29224900E815CA /* AttributionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributionTest.swift; sourceTree = "<group>"; };
 		9F0FB5BA1E0A7ED300957440 /* ParametersPriorityTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParametersPriorityTest.swift; sourceTree = "<group>"; };
 		9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecoItemTableViewCell.swift; sourceTree = "<group>"; };
+		9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutOfMemoryTest.swift; sourceTree = "<group>"; };
 		9F16F2BD1DB8C9CB007CFB71 /* MessageSendTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageSendTest.swift; sourceTree = "<group>"; };
 		9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExceptionTrackingTest.swift; sourceTree = "<group>"; };
 		9F415F001D5C7C59002CB83F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -275,8 +279,6 @@
 		9F415F541D5CAD09002CB83F /* ModuleTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ModuleTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F415F731D5CB508002CB83F /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/CryptoSwift/CryptoSwift.framework"; sourceTree = "<group>"; };
 		9F415F751D5CB5E5002CB83F /* Pods_iOS_Example.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_iOS_Example.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/Pods_iOS_Example.framework"; sourceTree = "<group>"; };
-		9F415F7C1D5CB9C2002CB83F /* ReachabilitySwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = ReachabilitySwift.framework; path = "/Users/arsen.vartbaronov/Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/ReachabilitySwift/ReachabilitySwift.framework"; sourceTree = "<absolute>"; };
-		9F415F7F1D5CB9DE002CB83F /* Webtrekk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = Webtrekk.framework; path = "/Users/arsen.vartbaronov/Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/Webtrekk/Webtrekk.framework"; sourceTree = "<absolute>"; };
 		9F415F9C1D5CCD6B002CB83F /* Pods_iOS_Example_ModuleTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_iOS_Example_ModuleTest.framework; path = "Pods/../build/Debug-iphoneos/Pods_iOS_Example_ModuleTest.framework"; sourceTree = "<group>"; };
 		9F415F9E1D5CD57B002CB83F /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		9F415FC21D5CDCCB002CB83F /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Examples-fwhhfimmjqtpuohhqtczajlioion/Build/Products/Debug-iphonesimulator/Nimble/Nimble.framework"; sourceTree = "<group>"; };
@@ -300,6 +302,7 @@
 		9FC183901DAE1D64000F6106 /* SampleTVAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleTVAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC3E1EE1E5CA3CE000D7B43 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackToForegroundTest.swift; sourceTree = "<group>"; };
+		9FE7E45C1EB37FE60021D363 /* DownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		9FE852131E51F1A100F5915D /* ExceptionCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCreator.h; sourceTree = "<group>"; };
 		9FE852141E51F1A100F5915D /* ExceptionCreator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExceptionCreator.m; sourceTree = "<group>"; };
 		9FEB51751DC8A7C000C7DBCB /* RecommendationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecommendationTableViewController.swift; sourceTree = "<group>"; };
@@ -428,8 +431,6 @@
 			isa = PBXGroup;
 			children = (
 				9F9487C01D7DB8060072CB0B /* ModuleTest.entitlements */,
-				9F415F7F1D5CB9DE002CB83F /* Webtrekk.framework */,
-				9F415F7C1D5CB9C2002CB83F /* ReachabilitySwift.framework */,
 				9F415F141D5C7C6D002CB83F /* TestsNew */,
 				A3DFB00630AF1B828E7E41A9 /* Frameworks */,
 				F6D5AB716B904C7CC4FFDE6C /* Pods */,
@@ -497,6 +498,7 @@
 		9F415EFF1D5C7C59002CB83F /* ModuleTest */ = {
 			isa = PBXGroup;
 			children = (
+				9FE7E45C1EB37FE60021D363 /* DownloadManager.swift */,
 				9FFA47341E701EA100774AF2 /* requestQueue.archive */,
 				9FC3E1EE1E5CA3CE000D7B43 /* Bridging-Header.h */,
 				9FED05731DB8F56600008C01 /* Configurations */,
@@ -543,6 +545,7 @@
 				9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */,
 				9FE852131E51F1A100F5915D /* ExceptionCreator.h */,
 				9FE852141E51F1A100F5915D /* ExceptionCreator.m */,
+				9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */,
 			);
 			path = TestsNew;
 			sourceTree = "<group>";
@@ -1432,6 +1435,7 @@
 				9FFB526E1DC909CF000E4519 /* RecommendationTableViewController.swift in Sources */,
 				9F63E7851DC0E9580001D72E /* InitializationTest.swift in Sources */,
 				9F63E77B1DC0D4B30001D72E /* WTBaseTestNew.swift in Sources */,
+				9F162F3C1E966688006EEF5D /* OutOfMemoryTest.swift in Sources */,
 				DF46AEB01E3209F6001EB97A /* AdClearID.swift in Sources */,
 				9F415F2C1D5C7C81002CB83F /* HttpBaseTestNew.swift in Sources */,
 				9F30E2021E4CB04000F7BB99 /* ExceptionTrackingTest.swift in Sources */,
@@ -1451,6 +1455,7 @@
 				9F12A9401DC899530006B44F /* RecoItemTableViewCell.swift in Sources */,
 				9F415F6B1D5CAD21002CB83F /* ViewController.swift in Sources */,
 				9F415F6A1D5CAD21002CB83F /* NextScreenController.swift in Sources */,
+				9FE7E45E1EB37FEA0021D363 /* DownloadManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1469,6 +1474,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F477E6F1DAFF0E700EC56EB /* ViewController.swift in Sources */,
+				9F429F7E1EB8B8EF00858097 /* DownloadManager.swift in Sources */,
 				9F5FF0CC1DCB7C8000F53B22 /* RecoItemTableViewCell.swift in Sources */,
 				9F95D3F31DAE41050068E8F8 /* AppDelegate.swift in Sources */,
 				9FAFC0651DC79EF300A80671 /* NextScreenController.swift in Sources */,
@@ -1637,7 +1643,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 3.1;
 			};
 			name = Debug;
 		};
@@ -1677,7 +1683,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 3.1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1899,7 +1905,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 3.1;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -1921,7 +1927,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 3.1;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -1947,7 +1953,7 @@
 				SDKROOT = appletvos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OBJC_BRIDGING_HEADER = "TestsNew/Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 3.1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SampleTVApp.app/SampleTVApp";
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -1973,7 +1979,7 @@
 				SDKROOT = appletvos;
 				SWIFT_OBJC_BRIDGING_HEADER = "TestsNew/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 3.1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SampleTVApp.app/SampleTVApp";
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
@@ -1996,7 +2002,7 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 3.1;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 			};
@@ -2019,7 +2025,7 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 3.1;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 			};
@@ -2045,9 +2051,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.webtrekk.ModuleTest.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 3.1;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 			};
@@ -2073,9 +2079,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.webtrekk.ModuleTest.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 3.1;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 			};

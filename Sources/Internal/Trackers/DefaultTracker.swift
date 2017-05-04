@@ -58,7 +58,6 @@ final class DefaultTracker: Tracker {
     var pageURL: String?
 
 	internal var global = GlobalProperties()
-	internal var plugins = [TrackerPlugin]()
     
     let exceptionTracker: ExceptionTracker = ExceptionTrackerImpl()
     
@@ -209,10 +208,10 @@ final class DefaultTracker: Tracker {
         WebtrekkTracking.defaultLogger.logDebug("read saved date for session detection \(hibernationDateSettings.simpleDescription), defaults \(self.defaults == nil) value: \(hibernationDateSettings.simpleDescription) timeIntervalSinceNow is: \(String(describing: hibernationDateSettings?.timeIntervalSinceNow))")
         
         if let hibernationDate = hibernationDateSettings , -hibernationDate.timeIntervalSinceNow < configuration.resendOnStartEventTime {
-            isFirstEventOfSession = false
+            self.isFirstEventOfSession = false
         }
         else {
-            isFirstEventOfSession = true
+            self.isFirstEventOfSession = true
         }
     }
     
@@ -289,9 +288,9 @@ final class DefaultTracker: Tracker {
         if isFirstEventOfApp {
             requestProperties.isFirstEventOfApp = true
         }
-        if isFirstEventOfSession {
-            requestProperties.isFirstEventOfSession = true
-        }
+        
+        requestProperties.isFirstEventOfSession = self.isFirstEventOfSession
+        
         if configuration.automaticallyTracksAdvertisingId {
             requestProperties.advertisingId = Environment.advertisingIdentifierManager?.advertisingIdentifier
         }
@@ -339,25 +338,17 @@ final class DefaultTracker: Tracker {
             requestBuilder.setDeepLink(deepLink: self.deepLink)
         #endif
         
-        guard var request = requestBuilder.createRequest(event, requestProperties: requestProperties) else {
+        guard let request = requestBuilder.createRequest(event, requestProperties: requestProperties) else {
             return
         }
         
-		for plugin in plugins {
-			request = plugin.tracker(self, requestForQueuingRequest: request)
-		}
-
 		if shouldEnqueueNewEvents, let requestUrl = requestUrlBuilder?.urlForRequest(request, type: type) {
 			requestManager?.enqueueRequest(requestUrl, maximumDelay: configuration.maximumSendDelay)
 		}
 
-		for plugin in plugins {
-			plugin.tracker(self, didQueueRequest: request)
-		}
-
-		isFirstEventAfterAppUpdate = false
-		isFirstEventOfApp = false
-		isFirstEventOfSession = false
+		self.isFirstEventAfterAppUpdate = false
+		self.isFirstEventOfApp = false
+		self.isFirstEventOfSession = false
 	}
     
     /*
@@ -531,7 +522,7 @@ final class DefaultTracker: Tracker {
 			}
 
 			guard let _queue = object as? [URL] else {
-				logError("Cannot load request queue from '\(file)': Data has wrong format: \(String(describing: object))")
+				logError("Cannot load request queue from '\(file)': Data has wrong format: \(object.simpleDescription)")
 				return
 			}
 

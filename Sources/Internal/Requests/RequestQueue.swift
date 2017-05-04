@@ -18,7 +18,6 @@
 //
 
 import Foundation
-//import UIKit
 
 class RequestQueue {
     
@@ -37,11 +36,14 @@ class RequestQueue {
     private let threadGetURLQueue: DispatchQueue
     private let threadLoadURLQueue: DispatchQueue
     private let queuAddCondition = NSCondition()
+    private let dispatchQueueAddURLCondition = NSCondition()
     private let saveLoadLock = NSLock()
     private let flashAndDeleteLock = NSLock()
     private let sizeSettingName = "QUEU_SIZE"
     private let positionSettingName = "FILE_CURRENT_POSITION"
     private var isLoaded: Bool = false
+    private var addURLQueueSize: Int = 0
+    private var incorrectDataMode: SimpleSync<Bool> = SimpleSync<Bool>(value: false)
     
     private let saveDirectory: FileManager.SearchPathDirectory
     
@@ -51,7 +53,7 @@ class RequestQueue {
     }
 
     var isEmpty : Bool {
-        return self.size.value == 0
+        return self.size.value == 0 && self.addURLQueueSize == 0
     }
 
     init(){
@@ -87,17 +89,35 @@ class RequestQueue {
         if self.pointer.value != nil {
             // read it from file
             // put it to the separate thread
+            self.addURLQueueSize += 1
             self.threadAddURLQueue.async {
                 let pointer = self.saveToFile(url: url)
-                self.logDebug("saved to file")
+                let isSaveSuccessfully = pointer != nil
+                
+                if isSaveSuccessfully{
+                    self.logDebug("saved to file successfully")
+                } else {
+                    self.logDebug("file save error")
+                }
                 DispatchQueue.main.sync(){
-                        if self.size.value == self.queue.count && self.queue.count < self.urlsBuffered{
+                    self.dispatchQueueAddURLCondition.lock()
+                    if self.size.value == self.queue.count && self.queue.count < self.urlsBuffered{
+                        if isSaveSuccessfully {
                             self.queue.append(URLItem(url: url, pointer: pointer))
                         }
-                    self.size.increment(to: 1)
+                        self.dispatchQueueAddURLCondition.signal()
+                    }
+                    
+                    if isSaveSuccessfully {
+                        self.size.increment(to: 1)
+                    }
+                    
+                    self.addURLQueueSize -= 1
+                    self.logDebug("Add URL dispatch queue size: \(self.addURLQueueSize)")
+                    self.dispatchQueueAddURLCondition.unlock()
                 }
                 self.saveSettings()
-                self.logDebug("addURL threadAddURLQueue queue size: \(self.size.value). local queue size \(self.queue.count)")
+                self.logDebug("addURL threadAddURLQueue queue size: \(self.size.value). local queue size \(self.queue.count).")
             }
         } else {
             
@@ -118,33 +138,46 @@ class RequestQueue {
                     }
                 }
         }
-        self.logDebug("addURL end queue size: \(self.size.value). local queue size \(self.queue.count)")
+        self.logDebug("addURL end queue size: \(self.size.value). local queue size \(self.queue.count). Add URL dispatch queue size: \(self.addURLQueueSize)")
     }
     
     /** return nil, if it is empty */
     func getURL(finishClosure: @escaping (_ url: URL?)->Void ) throws{
         
-        guard self.size.value > 0 else {
+        guard !self.isEmpty else {
             finishClosure(nil)
             return
         }
         
         self.logDebug("get URL")
         
-        if self.pointer.value != nil && queue.isEmpty  {
+        
+        if self.pointer.value != nil && self.queue.isEmpty {
+            let isDispatchQueueEmpty = self.addURLQueueSize == 0
+            let isSizeEmpty = self.size.value == 0
             // it means that queue is uploading
             self.threadGetURLQueue.async {
-                self.logDebug("wait till at least one item in queue loaded")
-                self.queuAddCondition.lock()
-                self.logDebug("queuAddCondition lock is set")
                 
-                while self.queue.isEmpty {
-                    self.queuAddCondition.wait()
+                var lock: NSCondition?
+                if !isSizeEmpty {// wait till item loadded from memory
+                    lock = self.queuAddCondition
+                } else if isSizeEmpty && self.queue.count == 0 && !isDispatchQueueEmpty {
+                    lock = self.dispatchQueueAddURLCondition
                 }
                 
-                self.logDebug("queuAddCondition wait is done")
-                self.queuAddCondition.unlock()
-                self.logDebug("queuAddCondition unlock is set")
+                if let lock = lock {
+                    self.logDebug("wait till at least one item in queue loaded")
+                    lock.lock()
+                    self.logDebug("queuAddCondition lock is set")
+                    
+                    while self.queue.isEmpty {
+                        lock.wait()
+                    }
+                    
+                    self.logDebug("queuAddCondition wait is done")
+                    lock.unlock()
+                    self.logDebug("queuAddCondition unlock is set")
+                }
                 
                 guard let first = self.queue.first?.url else {
                     WebtrekkTracking.defaultLogger.logError("no first items in cashed queue. something wrong")
@@ -252,8 +285,14 @@ class RequestQueue {
         }
         
         if self.size.value != 0 && self.fileHandler == nil {
-            if let pointer = self.pointer.value, self.initFileHandler() {
-                self.fileHandler?.seek(toFileOffset: pointer)
+            if let pointer = self.pointer.value {
+                if self.initFileHandler() {
+                    self.fileHandler?.seek(toFileOffset: pointer)
+                } else {
+                    // can't get reference to file create file, but point isn't nil and size is more zero in that case make size zero
+                    logDebug("make size sero as file not existed")
+                    self.size.value = 0
+                }
             }
         }
         self.refreshMemoryQueue()
@@ -269,9 +308,10 @@ class RequestQueue {
         
         self.flashAndDeleteLock.lock()
         
-        for i in 0..<queue.count {
-            let pointer = saveToFile(url: queue[i].url)
-            queue[i] = URLItem(url:queue[i].url, pointer: pointer)
+        for i in 0..<self.queue.count {
+            if let pointer = saveToFile(url: queue[i].url){
+                self.queue[i] = URLItem(url:queue[i].url, pointer: pointer)
+            }
         }
         self.flashAndDeleteLock.unlock()
         
@@ -285,15 +325,7 @@ class RequestQueue {
         }
         
         if self.size.value == 0{
-            if self.isExist() {
-                // check one more time if size real zero
-                if self.size.value == 0 {
-                    // set pointer to nil and delete file
-                    self.pointer.value = nil
-                    self.deleteFile()
-                self.logDebug("file deleted")
-                }
-            }
+            self.doZeroSizeValidation()
         } else {
             self.threadLoadURLQueue.async {
                if self.queue.count == 0 {
@@ -303,8 +335,18 @@ class RequestQueue {
         }
     }
     
+    private func doZeroSizeValidation(){
+        if self.isExist() && self.addURLQueueSize == 0 {
+            // set pointer to nil and delete file
+            self.pointer.value = nil
+            self.deleteFile()
+            self.incorrectDataMode.value = false
+            self.logDebug("file deleted")
+        }
+    }
+    
     // write url to file return poniter to next postion after this url
-    private func saveToFile(url: URL) -> UInt64{
+    private func saveToFile(url: URL) -> UInt64?{
         
         guard let file = self.fileHandler else {
             return 0
@@ -324,8 +366,15 @@ class RequestQueue {
         }
 
         file.seekToEndOfFile()
-        file.write(data)
-        self.logDebug("save data done")
+        do {
+            try CatchObC.catchException{
+                file.write(data)
+            }
+        }catch let error {
+            WebtrekkTracking.defaultLogger.logError("Exception during saving to file:\(error)")
+            return nil
+        }
+        self.logDebug("save data done. file size in KB is:\(file.offsetInFile/1024)")
         
         return file.offsetInFile
     }
@@ -349,6 +398,8 @@ class RequestQueue {
         defer {
             self.reader.clearBuffer()
         }
+        
+        var endOfFileHasBeenReached = false
         
         mainCycle: for i in 0..<self.urlsBuffered {
             // that is save read lock for moving pointer correctly
@@ -374,14 +425,17 @@ class RequestQueue {
                 }
             }
             
-            self.fileHandler?.seek(toFileOffset: pointer)
+            file.seek(toFileOffset: pointer)
             let result = self.reader.readLine(fileHandle: file)
             logDebug("result is received \(result) ")
             switch result {
                 case (nil, true, 0): //no data found exit from cycle
+                    endOfFileHasBeenReached = true
                     break mainCycle
                 case (nil, false, let shift): // wrong data. just continue
                     pointer = pointer + shift
+                    self.incorrectDataMode.value = true
+                    WebtrekkTracking.defaultLogger.logError("Incorect data in saved queue file")
                 case (let url, let EOF, let shift): // receive url add to queue
                     pointer = pointer + shift
                     self.queue.append(URLItem(url: url!, pointer: pointer))
@@ -391,20 +445,26 @@ class RequestQueue {
                         logDebug("queuAddCondition signal is send and unlock is done eor: \(EOF)")
                         signalIsSent = true
                     }
+                    endOfFileHasBeenReached = EOF
             }
         }
+        
+        //validate file status
+        if endOfFileHasBeenReached && self.incorrectDataMode.value && self.queue.count < self.size.value {
+            let decrementValue =  self.size.value - self.queue.count
+            self.size.increment(to: -decrementValue)
+            logDebug("correct queue size to \(decrementValue)")
+            // as after load to queu size can be corrected. Check after this processs if size is zero.
+            DispatchQueue.main.async {
+                if self.size.value == 0 {
+                    self.doZeroSizeValidation()
+                }
+            }
+       }
         
         self.logDebug("load queue finish queue size: \(self.size.value). local queue size \(self.queue.count)")
     }
     
-    
-    private func readURLFromFile() -> ReadURLResult? {
-        guard let file = self.fileHandler else {
-            return nil
-        }
-        
-        return self.reader.readLine(fileHandle: file)
-    }
     
     private func createNewFile() -> Bool{
         guard let url = self.fileURL else {
@@ -421,7 +481,7 @@ class RequestQueue {
         }
         
         self.pointer.value = 0
-        self.logDebug("file created")
+        self.logDebug("file created at: \(url.path)")
         return true
     }
     
@@ -491,7 +551,7 @@ fileprivate class TextFileReader{
         
         while !eof {
             
-            if let range = self.buffer.range(of: delimeter) {
+            if let range = self.buffer.range(of: self.delimeter) {
                 
                 // Convert complete line (excluding the delimiter) to a string:
                 line = String(data: self.buffer.subdata(in: 0..<range.lowerBound), encoding: .utf8)
@@ -527,7 +587,7 @@ fileprivate class TextFileReader{
         }
         
         guard let lineNotOpt = line, let url = URL(string: lineNotOpt) else {
-            WebtrekkTracking.defaultLogger.logDebug("Line in stored url file isn't string or URL. Line: \(line.simpleDescription)")
+            WebtrekkTracking.defaultLogger.logError("Line in stored url file isn't string or URL. Line: \(line.simpleDescription)")
             return (nil, eof, shift)
         }
         

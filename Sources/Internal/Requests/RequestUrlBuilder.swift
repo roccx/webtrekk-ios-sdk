@@ -280,6 +280,18 @@ private extension CrossDeviceProperties {
 			items.append(URLQueryItem(name: "cdb9", value: windowsId))
 		}
 		
+        let numberOfCdbCustomParams = 29
+        let customCdbParamBase = 50
+        if let custom = custom {
+            for (key,value) in custom {
+                if key > 0 && key <= numberOfCdbCustomParams {
+                    items.append(URLQueryItem(name: "cdb\(key+customCdbParamBase)", value: value))
+                } else {
+                    logError("Custom CDB parameter key \(key) is out of range, valid keys are between 1 and \(numberOfCdbCustomParams).")
+                }
+            }
+        }
+
 		return items
 	}
 }

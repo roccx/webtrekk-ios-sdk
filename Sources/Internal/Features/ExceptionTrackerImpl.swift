@@ -37,6 +37,7 @@ fileprivate func exceptionHandler(exception: NSException){
     ExceptionSaveAndSendHelper.default.saveToFile(name: exception.name.rawValue, stack: exception.callStackSymbols, reason: exception.reason, userInfo: exception.userInfo as NSDictionary?, stackReturnAddress: exception.callStackReturnAddresses)
 }
 
+#if !os(watchOS)
 //these function should be global due to requriements to signal handler API
 fileprivate func signalHandler(signalNum: Int32){
     
@@ -58,6 +59,7 @@ fileprivate func signalHandler(signalNum: Int32){
     
     ExceptionSaveAndSendHelper.default.saveToFile(name: "Signal: \(signalsMap[signalNum] ?? "undefined")", stack: stack, reason: nil, userInfo: nil, stackReturnAddress: nil)
 }
+#endif
 
 class ExceptionTrackerImpl: ExceptionTracker {
     
@@ -65,7 +67,11 @@ class ExceptionTrackerImpl: ExceptionTracker {
     static var previousExceptionHandler: ExceptionHandler
     private static var initialized = false
     fileprivate static var previousSignalHandlers = [Int32: SignalHanlder]()
+    
+    #if !os(watchOS)
     private let signals: [Int32] = [SIGABRT, SIGILL, SIGSEGV, SIGFPE, SIGBUS, SIGPIPE, SIGTRAP]
+    #endif
+    
     private var errorLogLevel: ErrorLogLevel = .disable
     
     typealias SignalHanlder = (@convention(c) (Int32) -> Swift.Void)
@@ -89,6 +95,7 @@ class ExceptionTrackerImpl: ExceptionTracker {
         
         guard satisfyToLevel(level: .fatal) else {
             // don't do anything for disable level
+            ExceptionTrackerImpl.initialized = true
             return
         }
         
@@ -115,10 +122,12 @@ class ExceptionTrackerImpl: ExceptionTracker {
         NSSetUncaughtExceptionHandler(ExceptionTrackerImpl.previousExceptionHandler)
         ExceptionTrackerImpl.previousExceptionHandler = nil
         
-        for signalNum in signals {
+        #if !os(watchOS)
+        for signalNum in self.signals {
             // restore signals back
             signal(signalNum, ExceptionTrackerImpl.previousSignalHandlers[signalNum])
         }
+        #endif
         
         ExceptionTrackerImpl.initialized = false
     }
@@ -130,8 +139,9 @@ class ExceptionTrackerImpl: ExceptionTracker {
         // set Webtrekk one
         NSSetUncaughtExceptionHandler(exceptionHandler)
         
+        #if !os(watchOS)
         // setup processing for signals. Save old processing as well
-        for signalNum in signals {
+        for signalNum in self.signals {
             
             // set Webtrekk signal handler and get previoius one
             let oldSignal = signal(signalNum, signalHandler)
@@ -141,6 +151,7 @@ class ExceptionTrackerImpl: ExceptionTracker {
                 ExceptionTrackerImpl.previousSignalHandlers[signalNum] = oldSignal
             }
         }
+        #endif
         
         WebtrekkTracking.defaultLogger.logDebug("exception tracking has been initialized")
     }
@@ -151,7 +162,7 @@ class ExceptionTrackerImpl: ExceptionTracker {
         }
 
         guard satisfyToLevel(level: .info) else {
-            WebtrekkTracking.defaultLogger.logDebug("Error tracking level isn't correspond to info/warning level. No tracking will be done.")
+            WebtrekkTracking.defaultLogger.logDebug("Tracking level isn't correspond to info/warning level. No tracking will be done.")
             return
         }
         
@@ -165,7 +176,7 @@ class ExceptionTrackerImpl: ExceptionTracker {
         }
 
         guard satisfyToLevel(level: .catched) else {
-            WebtrekkTracking.defaultLogger.logDebug("Error tracking level isn't correspond to caught/exception level. No tracking will be done.")
+            WebtrekkTracking.defaultLogger.logDebug("Tracking level isn't correspond to caught/exception level. No tracking will be done.")
             return
         }
         
@@ -178,7 +189,7 @@ class ExceptionTrackerImpl: ExceptionTracker {
             return
         }
         guard satisfyToLevel(level: .catched) else {
-            WebtrekkTracking.defaultLogger.logDebug("Error tracking level isn't correspond to caught/exception level. No tracking will be done.")
+            WebtrekkTracking.defaultLogger.logDebug("Tracking level isn't correspond to caught/exception level. No tracking will be done.")
             return
         }
         
@@ -192,7 +203,7 @@ class ExceptionTrackerImpl: ExceptionTracker {
         }
         
         guard satisfyToLevel(level: .catched) else {
-            WebtrekkTracking.defaultLogger.logDebug("Error tracking level isn't correspond to caught/exception level. No tracking will be done.")
+            WebtrekkTracking.defaultLogger.logDebug("Tracking level isn't correspond to caught/exception level. No tracking will be done.")
             return
         }
         
@@ -387,7 +398,7 @@ fileprivate class ExceptionSaveAndSendHelper{
         
         details[910] = .constant(String(logLevel.rawValue))
         
-        if let name = name  as String?, !name.isEmpty {
+        if let name = name as String?, !name.isEmpty {
             details[911] = .constant(name)
         }
         if let message = message as String?, !message.isEmpty {

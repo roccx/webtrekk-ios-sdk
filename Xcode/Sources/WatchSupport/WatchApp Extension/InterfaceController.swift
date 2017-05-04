@@ -26,7 +26,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     
     let httpTester = HTTPTester()
     var currentTestNumber = 0
-    var originDelegate: RequestManager.Delegate?
+    weak var originDelegate: RequestManager.Delegate?
     var userAgent: String!
     
     private typealias Parameters = [String: String]
@@ -41,8 +41,6 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     
     override init(){
         super.init()
-        //httpTester.initHTTPServer()
-        self.initSpecficStub()
         
         let version = ProcessInfo().operatingSystemVersion
         self.userAgent = "Tracking Library \(WebtrekkTracking.version) (Apple Watch; watchOS \(version.majorVersion).\(version.minorVersion)\(version.patchVersion == 0 ? "":".\(version.patchVersion)"); \(Locale.current.identifier))"
@@ -63,9 +61,12 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
             return
         }
         
-        if currentTestNumber != 2 {
+        if self.currentTestNumber != 2 {
+            // start first test. Init stub
+            self.initSpecficStub()
+
             startTest() {
-                currentTestNumber = 1
+                self.currentTestNumber = 1
                 WebtrekkTracking.instance().trackPageView("SimpleWatchPage")
             }
         } else {
@@ -98,7 +99,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     }
     
     override func didAppear() {
-        guard currentTestNumber != 2 && currentTestNumber != 3 else {
+        guard self.currentTestNumber != 2 && self.currentTestNumber != 3 else {
             return
         }
         finishTest(){parameters in
@@ -169,25 +170,33 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     }
     
     private func initSpecficStub(){
+        NSLog("Init specificStup")
+
         let defaultTracker = WebtrekkTracking.instance() as! DefaultTracker
         
-        originDelegate = defaultTracker.requestManager?.delegate
         
-        defaultTracker.requestManager?.delegate = self
+        guard let requestManager = defaultTracker.requestManager else {
+            NSLog("Error: request manager is null. Can't establish delegate")
+            return
+        }
+        
+        self.originDelegate = requestManager.delegate
+        
+        requestManager.delegate = self
     }
     
     func requestManager (_ requestManager: RequestManager, didSendRequest request: URL){
         HTTPTester.request = URLRequest(url: request)
-        originDelegate?.requestManager(requestManager, didSendRequest: request)
+        NSLog("Request catched by delegate.")
+        self.originDelegate?.requestManager(requestManager, didSendRequest: request)
     }
     
     func requestManager (_ requestManager: RequestManager, didFailToSendRequest request: URL, error: RequestManager.ConnectionError){
-        NSLog ("failed request with error\(error)")
-        originDelegate?.requestManager(requestManager, didFailToSendRequest: request, error: error)
+        NSLog ("failed request with error \(error).")
+        self.originDelegate?.requestManager(requestManager, didFailToSendRequest: request, error: error)
     }
     
     private func logTestResult(isPassed: Bool, testNum: Int = 0){
-        NSLog("Test \(testNum) result")
+        NSLog("Test \(testNum) result.")
         NSLog("Webtrekk WatchApp Test \(isPassed ? "passed":"failed")")
     }
- }

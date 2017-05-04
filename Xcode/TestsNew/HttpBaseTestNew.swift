@@ -59,3 +59,9 @@ class HttpBaseTestNew: XCTestCase {
         closure(httpTester.getReceivedURLParameters((HTTPTester.request?.url?.query)!))
     }
 }
+
+internal extension Optional where Wrapped == String{
+    internal var simpleDescription: String {
+        return map { String(describing: $0) } ?? "<nil>"
+    }
+}

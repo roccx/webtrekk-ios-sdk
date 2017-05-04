@@ -14,45 +14,62 @@
 //CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//  Created by arsen.vartbaronov on 30/01/17.
-//  Copyright © 2017 Webtrekk. All rights reserved.
+//  Created by arsen.vartbaronov on 06.04.17.
 //
 
 import XCTest
-import Nimble
-import Webtrekk
 
-/**
- This test is used webtrekk_config.xml with 30 sec delay timeout for new session and test new session determination
- */
-class BackToForegroundTest: WTBaseTestNew {
-    let maxRequestsFirst = 1000
+class OutOfMemoryTest: WTBaseTestNew {
     
- 
-    func testPutMesaageToQueue(){
-        // put meesage to queue
+    override func tearDown() {
+        super.tearDown()
+        switch self.name {
+        case _ where name?.range(of: "testOutOfMemory") != nil:
+            // at the end unmount should be done
+            NSLog("testOutOfMemory has been finished")
+            
+            //wait for unmount
+            sleep(2)
+        default:
+            break
+        }
+    }
+
+    
+    
+    override func getCongigName() -> String? {
+        return "webtrekk_config_error_log_disabled"
+    }
+    
+    func testGetPath(){
+        let finalURL = WTBaseTestNew.getNewQueueBackFolderURL()
+        
+        guard let url = finalURL else {
+            return
+        }
+        
+        WebtrekkTracking.defaultLogger.logDebug("Folder for queue:=\(url.path)")
+    }
+    
+    // this test shouldn't crash that is main idea. Before this test should be descrease memory for storing queue file
+    func testOutOfMemory() {
+        
+        //do test
         self.httpTester.removeStub()
         self.httpTester.addConnectionInterruptionStub()
         
         let tracker = WebtrekkTracking.instance()
+        let maxRequestsFirst = 100
         
         for i in 0..<maxRequestsFirst {
             tracker.trackPageView(PageProperties(
-                name: "testFromBackground",
-                details: [103: .constant("\(i)")],
+                name: "intrupConnection",
+                details: [101: .constant("\(i)")],
                 groups: nil,
                 internalSearch: nil,
                 url: nil))
             doSmartWait(sec: 0.0001)
         }
-        
-        self.isCheckFinishCondition = false
-    }
-
-    func testAllMessageHasBeenReceived(){
-        
-        var passed = false
-        var lastMessageIsReceived = false
         
         let lock = NSLock()
         
@@ -60,26 +77,14 @@ class BackToForegroundTest: WTBaseTestNew {
         self.httpTester.addNormalStub(){query in
             lock.lock()
             defer{
+                
                 lock.unlock()
             }
             let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
             
-            WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp103"].simpleDescription) is received")
-            
-            if let mesNum = Int(parameters["cp103"].simpleDescription), mesNum == (self.maxRequestsFirst - 1) {
-                lastMessageIsReceived = true
-            }
-            if let value = parameters["p"]?.contains("testFromBackground"), value, lastMessageIsReceived {
-                passed = true
-            }
+            WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp101"].simpleDescription) is received")
         }
         
-        expect(passed).toEventually(equal(true), timeout:20)
-        
-        WebtrekkTracking.defaultLogger.logDebug("all message are received")
-    }
-    
-    
-    func testDummy(){
+        doSmartWait(sec: 10)
     }
 }

@@ -81,7 +81,22 @@
                   Identifier = "MediaTest">
                </Test>
                <Test
-                  Identifier = "MessageSendTest">
+                  Identifier = "MessageSendTest/testCPULoad()">
+               </Test>
+               <Test
+                  Identifier = "MessageSendTest/testFileCorruption()">
+               </Test>
+               <Test
+                  Identifier = "MessageSendTest/testManualSend()">
+               </Test>
+               <Test
+                  Identifier = "MessageSendTest/testMigrationFromVersion440()">
+               </Test>
+               <Test
+                  Identifier = "MessageSendTest/testMinimumDelaySend()">
+               </Test>
+               <Test
+                  Identifier = "MessageSendTest/testPerformance()">
                </Test>
                <Test
                   Identifier = "PageTest">

@@ -27,6 +27,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     var libraryVersion: String?
     static var lifeCicleIsInited = false
     var initWebtrekkManualy = false
+    var isCheckFinishCondition = true
 
     override func setUp() {
         super.setUp()
@@ -39,6 +40,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     }
     
     override func tearDown() {
+        doSmartWait(sec: 1)
         releaseWebtrekk()
         super.tearDown()
     }
@@ -102,12 +104,13 @@ class WTBaseTestNew: HttpBaseTestNew {
     }
     
     private func checkFinishCondition(){
-        expect(self.isBackupFileExists()).to(equal(false), description: "check for saved urls in old format")
-        let newQueueBack = WTBaseTestNew.requestNewQueueBackFileExists()
-        if newQueueBack {
-            WTBaseTestNew.requestNewQueueBackFileDelete()
-            expect(true).to(equal(false), description: "check for saved urls")
+        
+        guard isCheckFinishCondition else {
+            return
         }
+        
+        expect(self.isBackupFileExists()).to(equal(false), description: "check for saved urls in old format")
+        expect(WTBaseTestNew.requestNewQueueBackFileExists()).to(equal(false), description: "check for saved urls")
     }
     
     private func doInitiateApplicationLifecycleOneMoreTime(){
@@ -165,6 +168,11 @@ class WTBaseTestNew: HttpBaseTestNew {
         return "webtrekk.\(getConfID()).\(setting)"
     }
     
+    func checkDefSettingNoConfig(setting: String) -> Bool{
+        let object = Foundation.UserDefaults.standard.object(forKey: "webtrekk.\(setting)")
+        return object != nil
+    }
+    
     static func requestQueueBackupFileForWebtrekkId(_ webtrekkId: String) -> URL? {
         
         let searchPathDirectory: FileManager.SearchPathDirectory
@@ -219,14 +227,25 @@ class WTBaseTestNew: HttpBaseTestNew {
         try? FileManager.default.removeItem(atPath: url.path)
     }
 
-    private static func getNewQueueBackFileURL() -> URL?{
+    static func getNewQueueBackFileURL() -> URL?{
     
-        guard let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
-        WebtrekkTracking.defaultLogger.logError("requestNewQueueBackFileExists can't get application support dir for backup file url")
-        return nil
-        }
-        
-         return url.appendingPathComponent("Webtrekk").appendingPathComponent("webtrekk_url_buffer.txt")
+        return getNewQueueBackFolderURL()?.appendingPathComponent("webtrekk_url_buffer.txt")
     }
 
+    static func getNewQueueBackFolderURL() -> URL?{
+        
+        #if os(tvOS)
+            let saveDirectory: FileManager.SearchPathDirectory = .cachesDirectory
+        #else
+            let saveDirectory: FileManager.SearchPathDirectory = .applicationSupportDirectory
+        #endif
+
+        
+        guard let url = FileManager.default.urls(for: saveDirectory, in: .userDomainMask).first else {
+            WebtrekkTracking.defaultLogger.logError("requestNewQueueBackFileExists can't get application support dir for backup file url")
+            return nil
+        }
+        
+        return url.appendingPathComponent("Webtrekk")
+    }
 }

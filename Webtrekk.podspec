@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
 
 	s.author   = { 'Webtrekk' => 'arsen.vartbaronov@webtrekk.com' }
 	s.homepage = 'https://www.webtrekk.com/en/solutions/mobile-analytics/'
-	s.license  = { :type => 'MIT', :file => 'LICENSE.MD' }
+	s.license  = { :type => 'MIT', :file => 'LICENSE.md' }
     s.ios.deployment_target = '8.0'
     s.tvos.deployment_target = '9.0'
     s.watchos.deployment_target = '2.0'
@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
 
 	s.module_map = 'Module/Module.modulemap'
 
-	s.source_files          = 'Sources/**/*.swift', 'Module/Module.h'
+	s.source_files          = 'Sources/**/*.swift', 'Module/Module.h', 'Sources/Internal/Utility/CatchObC.*'
     s.ios.exclude_files = 'Sources/Internal/Utility/WKInterfaceController.swift'
     s.tvos.exclude_files = 'Sources/Internal/Utility/WKInterfaceController.swift'
     s.watchos.exclude_files = 'Sources/Internal/Utility/UIDevice.swift', 'Sources/Internal/Utility/UIViewController.swift', 'Sources/Internal/Trackers/AVPlayerTracker.swift', 'Sources/Internal/Features/DeepLink.swift'
