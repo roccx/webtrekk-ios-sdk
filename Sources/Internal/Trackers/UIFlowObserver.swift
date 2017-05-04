@@ -196,7 +196,6 @@ class UIFlowObserver: NSObject {
                     }
                     
                     if !requestManager.started || !requestManager.finishing {
-                        reuestManager.backgroundTaskIdentifier = self.backgroundTaskIdentifier
                         self.application.endBackgroundTask(self.backgroundTaskIdentifier)
                     }
                     self.backgroundTaskIdentifier = UIBackgroundTaskInvalid

@@ -200,3 +200,4 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         NSLog("Test \(testNum) result.")
         NSLog("Webtrekk WatchApp Test \(isPassed ? "passed":"failed")")
     }
+}
