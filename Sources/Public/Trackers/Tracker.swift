@@ -188,6 +188,8 @@ public extension Tracker {
     {
         global.crossDeviceProperties = crossDeviceProperties
         trackPageView("CDBPage")
+        // reset the crossDeviceProperties so they don't get immediately send again:
+        global.crossDeviceProperties = CrossDeviceProperties()
     }
     
     public subscript(key: String) -> String? {

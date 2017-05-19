@@ -22,6 +22,9 @@ import Foundation
 
 final class RequestTrackerBuilder {
     
+
+    private let lastCdbPropertiesSendTime = "lastCdbPropertiesSentTime"
+
     #if !os(watchOS)
     var deepLink: DeepLink!
     #endif
@@ -50,23 +53,63 @@ final class RequestTrackerBuilder {
 
         var event = event
         
-        globalPropertiesByApplyingEvent(from: &event, requestProperties: requestProperties)
+        // it's a dedicated CDB request:
+        if (!global.crossDeviceProperties.isEmpty()) {
         
-        eventByApplyingAutomaticPageTracking(to: &event)
-        
-        campaignOverride(to: &event)
-        
-        #if !os(watchOS)
-            deepLinkOverride(to: &event)
-        #endif
-        
-        pageURLOverride(to: &event)
+            // merge the new CDB properties with the ones already existing on the device
+            if let oldCDBProperties = CrossDeviceProperties.loadFromDevice() {
+                let newCDBProperties = global.crossDeviceProperties
+                // the new ones have a higher priority (i.e. its properties can overwrite existig ones):
+                // (nil values won't overwrite existing values though)
+                global.crossDeviceProperties = newCDBProperties.merged(over: oldCDBProperties)
+            }
+            
+            // save the cdb properties to the device:
+            global.crossDeviceProperties.saveToDevice()
+            
+            // save the lastCdbPropertiesSendTime:
+            let now = Int(Date().timeIntervalSince1970)
+            UserDefaults.standardDefaults.child(namespace: "webtrekk").set(key: lastCdbPropertiesSendTime, to: now)
+        }
+            
+        // it's not a dedicated CDB request:
+        else {
+            if cdbPropertiesNeedResend(), let oldCDBProperties = CrossDeviceProperties.loadFromDevice() {
+                global.crossDeviceProperties = oldCDBProperties
+                
+                // save the lastCdbPropertiesSendTime:
+                let now = Int(Date().timeIntervalSince1970)
+                UserDefaults.standardDefaults.child(namespace: "webtrekk").set(key: lastCdbPropertiesSendTime, to: now)
+            }
+            
+            globalPropertiesByApplyingEvent(from: &event, requestProperties: requestProperties)
+            
+            eventByApplyingAutomaticPageTracking(to: &event)
+            
+            campaignOverride(to: &event)
+            
+            #if !os(watchOS)
+                deepLinkOverride(to: &event)
+            #endif
+            
+            pageURLOverride(to: &event)
+        }
         
         return createRequestForEvent(event, requestProperties: requestProperties)
     }
     
-    // override media code in request in case of deeplink
     
+    private func cdbPropertiesNeedResend() -> Bool {
+        if let lastSend = UserDefaults.standardDefaults.child(namespace: "webtrekk").intForKey(lastCdbPropertiesSendTime) {
+            let now = Int(Date().timeIntervalSince1970)
+            return (now - lastSend) > configuration.cdbUpdateInterval
+        } else {
+            return true
+        }
+    }
+
+    
+    // override media code in request in case of deeplink
     #if !os(watchOS)
     private func deepLinkOverride(to event: inout TrackingEvent){
         guard var _ = event as? TrackingEventWithAdvertisementProperties,

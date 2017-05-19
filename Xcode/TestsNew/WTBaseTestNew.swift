@@ -44,7 +44,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         super.tearDown()
     }
     
-    func getCongigName() -> String?{
+    func getConfigName() -> String?{
         return nil
     }
     
@@ -57,7 +57,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         WebtrekkTracking.defaultLogger.minimumLevel = .debug
         
         do {
-            if let configName = getCongigName(){
+            if let configName = getConfigName(){
                 let configFileURL = Bundle.main.url(forResource: configName, withExtension: "xml", subdirectory: "Configurations/")
                 try WebtrekkTracking.initTrack(configFileURL)
             }else {

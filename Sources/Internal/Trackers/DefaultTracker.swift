@@ -1074,6 +1074,7 @@ struct DefaultsKeys {
 	fileprivate static let migrationCompleted = "migrationCompleted"
 	fileprivate static let samplingRate = "samplingRate"
     static let adClearId = "adClearId"
+    static let crossDeviceProperties = "CrossDeviceProperties"
 }
 
 private extension TrackingValue {

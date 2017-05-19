@@ -22,7 +22,7 @@ import Webtrekk
 
 class MessageSendTest: WTBaseTestNew {
     
-    override func getCongigName() -> String? {
+    override func getConfigName() -> String? {
         
         if let name = self.name {
             if name.range(of: "testManualSend") != nil {

@@ -38,6 +38,7 @@ internal class XmlTrackerConfigurationParser {
 	private var webtrekkId: String?
 	private var automaticallyTrackedPages = Array<TrackerConfiguration.Page>()
     private var automaticallyTracksAdClearId: Bool?
+    private var cdbUpdateInterval: Int?
     private var errorLogLevel: Int?
     
     #if !os(watchOS)
@@ -120,10 +121,11 @@ internal class XmlTrackerConfigurationParser {
 				case "autoTrackAppUpdate":           self.automaticallyTracksAppUpdates = try parseBool(child.text)
 				case "autoTrackAppVersionName":      self.automaticallyTracksAppVersion = try parseBool(child.text)
 				case "autoTrackRequestUrlStoreSize": self.automaticallyTracksRequestQueueSize = try parseBool(child.text)
-
-                case "autoTrackAdClearId": self.automaticallyTracksAdClearId = try parseBool(child.text)
+                case "autoTrackAdClearId":           self.automaticallyTracksAdClearId = try parseBool(child.text)
                     
-				case "globalTrackingParameter" : try readFromGlobalElement(child)
+                case "cdbUpdateInterval":            self.cdbUpdateInterval = try parseInt(child.text, allowedRange: TrackerConfiguration.allowedCdbUpdateIntervals)
+
+                case "globalTrackingParameter" : try readFromGlobalElement(child)
                 case "recommendations" : try recommendationsL = readRecommendations(xmlElement: child)
                 case "screen": try readFromScreenElement(child)
                 case "autoTrackConnectionType":
@@ -218,6 +220,10 @@ internal class XmlTrackerConfigurationParser {
         
         if let automaticallyTracksAdClearId = self.automaticallyTracksAdClearId {
             trackerConfiguration.automaticallyTracksAdClearId = automaticallyTracksAdClearId
+        }
+        
+        if let cdbUpdateInterval = self.cdbUpdateInterval {
+            trackerConfiguration.cdbUpdateInterval = cdbUpdateInterval
         }
         
         if let recommendations = recommendationsL {

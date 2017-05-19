@@ -36,7 +36,7 @@ class ExceptionTrackingTest: WTBaseTestNew {
     
     private var applicationSupportDir: URL? = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
     
-    override func getCongigName() -> String? {
+    override func getConfigName() -> String? {
         switch self.name {
             case let name where name?.range(of: "testNoErrorLog") != nil:
             return "webtrekk_config_error_log_no"

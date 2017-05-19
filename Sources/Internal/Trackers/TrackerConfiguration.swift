@@ -35,6 +35,9 @@ internal struct TrackerConfiguration {
 	/** Allowed values for version */
 	internal static let allowedVersions: ClosedRange<Int> = 1 ... .max
 
+	/** Allowed values for 	/** Allowed values for version */ */
+    internal static let allowedCdbUpdateIntervals: ClosedRange<Int> = 0 ... .max
+    
 	/** If enabled automatically tries to attach the Advertising Identifier to each request. */
 	internal var automaticallyTracksAdvertisingId = true
 
@@ -52,6 +55,9 @@ internal struct TrackerConfiguration {
     
     /** If enabled automatically tracks adclear id. */
     internal var automaticallyTracksAdClearId = false
+    
+    /** Specifies the intervall in seconds after which the cdb properties are resent (default: daily)*/
+    internal var cdbUpdateInterval = 86400
     
 	/** Url of the remote configuration. */
 	internal var configurationUpdateUrl: URL? = nil

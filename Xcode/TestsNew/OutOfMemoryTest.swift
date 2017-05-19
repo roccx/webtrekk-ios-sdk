@@ -37,7 +37,7 @@ class OutOfMemoryTest: WTBaseTestNew {
 
     
     
-    override func getCongigName() -> String? {
+    override func getConfigName() -> String? {
         return "webtrekk_config_error_log_disabled"
     }
     

@@ -47,6 +47,10 @@ internal final class UserDefaults {
         return objectForKey(key) as? UInt64
     }
 
+    internal func dictForKey(_ key: String) -> [String:String?]? {
+        return objectForKey(key) as? [String:String]
+    }
+    
 
 	internal func remove(key: String) {
 		source.removeObject(forKey: keyPrefix + key)
@@ -61,6 +65,11 @@ internal final class UserDefaults {
 	private func set(key: String, to value: AnyObject?) {
 		source.set(value, forKey: keyPrefix + key)
 	}
+
+    
+    internal func set(key: String, to value: [String:String?]?) {
+        set(key: key, to: value as AnyObject?)
+    }
 
 
 	internal func set(key: String, to value: Bool?) {

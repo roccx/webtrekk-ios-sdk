@@ -117,6 +117,8 @@
 		B73DB2421D49ED4F00F0C8DD /* VoucherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB23A1D49ED4F00F0C8DD /* VoucherViewController.swift */; };
 		B73DB2431D49ED4F00F0C8DD /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = B73DB23B1D49ED4F00F0C8DD /* webtrekk_config.xml */; };
 		B73DB2441D49ED4F00F0C8DD /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73DB23C1D49ED4F00F0C8DD /* WebtrekkTracking.swift */; };
+		C2B77AAC1ECAEEC80054343D /* CDBResendTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C8D0931ECA059700A73ED5 /* CDBResendTest.swift */; };
+		C2C8D0941ECA059700A73ED5 /* CDBResendTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C8D0931ECA059700A73ED5 /* CDBResendTest.swift */; };
 		DF46AEB01E3209F6001EB97A /* AdClearID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF46AEAE1E32060C001EB97A /* AdClearID.swift */; };
 		DF46AEB11E320A02001EB97A /* AdClearID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF46AEAE1E32060C001EB97A /* AdClearID.swift */; };
 		E08EAF21BCAD72549F2E2F67 /* Pods_iOS_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F05209EDDBE65B58F6F92233 /* Pods_iOS_Example.framework */; };
@@ -332,6 +334,7 @@
 		B73DB23C1D49ED4F00F0C8DD /* WebtrekkTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
 		BB1C978B55E3E940E6199B69 /* Pods_iOS_Manual_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Manual_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0B7FD790296B97A0FCEC22D /* Pods-WatchAppExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WatchAppExtension.release.xcconfig"; path = "Pods/Target Support Files/Pods-WatchAppExtension/Pods-WatchAppExtension.release.xcconfig"; sourceTree = "<group>"; };
+		C2C8D0931ECA059700A73ED5 /* CDBResendTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDBResendTest.swift; sourceTree = "<group>"; };
 		C45F165CC45CE1A1F00F5A32 /* Pods-WatchApp Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WatchApp Extension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WatchApp Extension/Pods-WatchApp Extension.debug.xcconfig"; sourceTree = "<group>"; };
 		C545A3285EEC349D19BBAFE5 /* Pods_tvOS_SampleTVApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_tvOS_SampleTVApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA61704AF7F3C08DC203ADDB /* Pods_iOS_Automatic_Tracking_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Automatic_Tracking_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -521,6 +524,7 @@
 				9F415F151D5C7C6D002CB83F /* AAMigrationTest.swift */,
 				9F415F161D5C7C6D002CB83F /* ActionTest.swift */,
 				9F415F171D5C7C6D002CB83F /* CDBTest.swift */,
+				C2C8D0931ECA059700A73ED5 /* CDBResendTest.swift */,
 				9F415F181D5C7C6D002CB83F /* HttpBaseTestNew.swift */,
 				9F415F191D5C7C6D002CB83F /* Info.plist */,
 				9F415F1A1D5C7C6D002CB83F /* MediaTest.swift */,
@@ -1415,6 +1419,7 @@
 			files = (
 				9FFB526F1DC909E3000E4519 /* RecoItemTableViewCell.swift in Sources */,
 				9F5B66461E0163D000F1B917 /* RemoteConfTest.swift in Sources */,
+				C2C8D0941ECA059700A73ED5 /* CDBResendTest.swift in Sources */,
 				9F63E7811DC0D51B0001D72E /* ParameterTest.swift in Sources */,
 				9F06B91E1DD4AB00003D15EC /* HTTPTester.swift in Sources */,
 				9F415F291D5C7C81002CB83F /* AAMigrationTest.swift in Sources */,
@@ -1489,6 +1494,7 @@
 				9F9710271DCB882700AB3872 /* MessageSendTest.swift in Sources */,
 				9F95D4001DAE423E0068E8F8 /* CDBTest.swift in Sources */,
 				9FF81B391E1FF58A00D0C5AD /* ParametersPriorityTest.swift in Sources */,
+				C2B77AAC1ECAEEC80054343D /* CDBResendTest.swift in Sources */,
 				9F95D3FF1DAE423E0068E8F8 /* ActionTest.swift in Sources */,
 				9FFB526D1DC909A1000E4519 /* RecommendationTest.swift in Sources */,
 				9F06B9201DD4AB02003D15EC /* HTTPTester.swift in Sources */,
