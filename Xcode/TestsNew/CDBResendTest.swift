@@ -73,7 +73,7 @@ class CDBResendTest: WTBaseTestNew {
     
     
     /// Test to make sure that the CDB properties are not resent before the cdbUpdateInterval has passed
-    func testCDB1(){
+    func testCDB1NoResend(){
         
         // do a CDB tracking request:
         doURLSendTestAction() {
@@ -82,7 +82,7 @@ class CDBResendTest: WTBaseTestNew {
         
         // validate that all CDB properties were sent:
         doURLSendTestCheck() {parametersArr in
-            self.processResultAndValidateAllCBDSent(parameters: parametersArr)
+            self.processResultAndValidateAllCDBParasSent(parameters: parametersArr)
         }
         
         // do a normal page view request:
@@ -93,13 +93,13 @@ class CDBResendTest: WTBaseTestNew {
         // valiadate that the CDB properties are NOT resent:
         // (This test uses a configuration with a cdbUpdateInterval of 1 day. So the CDB properties should not be resent with a page view request after some seconds.)
         doURLSendTestCheck() {parametersArr in
-            self.processResultAndValidateNoCBDSent(parameters: parametersArr)
+            self.processResultAndValidateNoCDBParasSent(parameters: parametersArr)
         }
     }
     
     
     /// Test to make sure that the CDB properties are resent after the cdbUpdateInterval has passed
-    func testCDB2(){
+    func testCDB2Resend(){
         
         // do a CDB tracking request:
         doURLSendTestAction() {
@@ -108,7 +108,7 @@ class CDBResendTest: WTBaseTestNew {
         
         // validate that all CDB properties were sent:
         doURLSendTestCheck() {parametersArr in
-            self.processResultAndValidateAllCBDSent(parameters: parametersArr)
+            self.processResultAndValidateAllCDBParasSent(parameters: parametersArr)
         }
         
         // do a normal page view request:
@@ -116,21 +116,48 @@ class CDBResendTest: WTBaseTestNew {
             WebtrekkTracking.instance().trackPageView("some page view")
         }
         
+        // make sure, that enough time has passed that CDB properties will be resend
         sleep(1)
         
         // valiadate that the CDB properties ARE resent:
         // (This test uses a configuration with a cdbUpdateInterval of 1 second. So the CDB properties should be resent with a page view request after some seconds.)
         doURLSendTestCheck() {parametersArr in
-            self.processResultAndValidateAllCBDSent(parameters: parametersArr)
+            self.processResultAndValidateAllCDBParasSent(parameters: parametersArr)
         }
     }
     
+    
+    /// Test to make sure that new CDB properties are merged with properties existing on the device
+    func testCDB3Merge(){
+        
+        // do a CDB tracking request to store some properties on the device:
+        doURLSendTestAction() {
+            WebtrekkTracking.instance().trackCDB(crossDeviceProperties)
+        }
+
+        // do a second CDB tracking request with a different twitterId (this should be merged on the device):
+        crossDeviceProperties.twitterId = "newTwitterId"
+        doURLSendTestAction() {
+            WebtrekkTracking.instance().trackCDB(crossDeviceProperties)
+        }
+        
+        // do a third CDB tracking request with a different windowsId (this should also be merged on the device)
+        doURLSendTestAction() {
+            crossDeviceProperties.windowsId = "newWindowsId"
+            WebtrekkTracking.instance().trackCDB(crossDeviceProperties)
+        }
+        
+        // validate that all stored CDB properties were sent (including the merged twitterId and windowsId):
+        doURLSendTestCheck() {parametersArr in
+            self.processResultAndValidateMergedCDBParasSent(parameters: parametersArr)
+        }
+    }
     
     
     ///
     /// check the result of a request and validate that all CDB properties are sent
     ///
-    private func processResultAndValidateAllCBDSent(parameters: [String:String]) {
+    private func processResultAndValidateAllCDBParasSent(parameters: [String:String]) {
         validate("Elmo|Monster|90210|SesameStreet|5", is: parameters["cdb5"], "md5")
         validate("12345", is: parameters["cdb7"])
         validate("mail@test.de", is: parameters["cdb1"], "md5")
@@ -152,13 +179,36 @@ class CDBResendTest: WTBaseTestNew {
     ///
     /// check the result of a request and validate that no CDB properties are sent
     ///
-    private func processResultAndValidateNoCBDSent(parameters: [String:String]) {
+    private func processResultAndValidateNoCDBParasSent(parameters: [String:String]) {
         for i in 1...59 {
             expect(parameters["cdb"+String(i)]).to(beNil())
         }
     }
+
     
     
+    ///
+    /// check the result of a request and validate that the merged CDB properties are sent
+    ///
+    private func processResultAndValidateMergedCDBParasSent(parameters: [String:String]) {
+        validate("Elmo|Monster|90210|SesameStreet|5", is: parameters["cdb5"], "md5")
+        validate("12345", is: parameters["cdb7"])
+        validate("mail@test.de", is: parameters["cdb1"], "md5")
+        validate("mail@test.de", is: parameters["cdb2"], "md256")
+        validate("facebookId123", is: parameters["cdb10"], "sha256")
+        validate("googlePlusId123", is: parameters["cdb12"], "sha256")
+        validate("iOSId123", is: parameters["cdb8"])
+        validate("linkedInId123", is: parameters["cdb13"], "sha256")
+        validate("55512345", is: parameters["cdb3"], "md5")
+        validate("55512345", is: parameters["cdb4"], "md256")
+        validate("newTwitterId", is: parameters["cdb11"], "sha256")
+        validate("newWindowsId", is: parameters["cdb9"])
+        validate("three333", is: parameters["cdb53"])
+        validate("eight888", is: parameters["cdb58"])
+    }
+    
+    
+
     private func validate(_ expectedValue: String, is cdbParam : String?, _ encode: String? = nil) {
         if encode == nil {
             expect(expectedValue.lowercased()).to(equal(cdbParam!.lowercased()))
@@ -169,4 +219,3 @@ class CDBResendTest: WTBaseTestNew {
         }
     }
 }
-
