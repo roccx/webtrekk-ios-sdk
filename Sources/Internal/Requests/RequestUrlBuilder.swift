@@ -19,6 +19,7 @@
 
 import CryptoSwift
 import Foundation
+import UIKit
 
 
 internal final class RequestUrlBuilder {
