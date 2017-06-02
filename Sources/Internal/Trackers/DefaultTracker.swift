@@ -69,7 +69,15 @@ final class DefaultTracker: Tracker {
         case normal, exceptionTracking
     }
     
-    
+    var trackIds:[String] {
+        get {
+            guard self.checkIfInitialized() else {
+                return []
+            }
+            return configuration.webtrekkId.replacingOccurrences(of: " ", with: "").components(separatedBy: ",")
+        }
+    }
+
     func initializeTracking(configuration: TrackerConfiguration) -> Bool{
         
         checkIsOnMainThread()
