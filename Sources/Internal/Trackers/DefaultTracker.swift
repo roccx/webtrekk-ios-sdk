@@ -762,7 +762,7 @@ final class DefaultTracker: Tracker {
     fileprivate func setupAutoDeepLinkTrack()
     {
         //init deep link to get automatic object
-        deepLink.deepLinkInit()
+        self.deepLink.deepLinkInit()
     }
     #endif
     
@@ -953,7 +953,7 @@ final class DefaultTracker: Tracker {
         
         set (newMediaCode) {
             checkIsOnMainThread()
-            deepLink.setMediaCode(newMediaCode)
+            self.deepLink.setMediaCode(newMediaCode)
         }
     }
     #endif
