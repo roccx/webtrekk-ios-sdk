@@ -408,13 +408,8 @@ internal final class RequestManager: NSObject, URLSessionDelegate {
         self.finishing = true
         
         WebtrekkTracking.defaultLogger.logDebug("stop. pending task is: \(self.pendingTask.simpleDescription)")
-        
-        if let pendingTask = self.pendingTask, pendingTask.state == .running {
-            WebtrekkTracking.defaultLogger.logDebug("URL request is in pending wait for finishing...")
-            self.urlSession?.finishTasksAndInvalidate()
-        } else {
-            self.queue.save()
-        }
+        self.urlSession?.finishTasksAndInvalidate();
+        self.urlSession = nil
 	}
 
 
@@ -439,10 +434,12 @@ internal final class RequestManager: NSObject, URLSessionDelegate {
     public func urlSession(_ session: URLSession,
                     didBecomeInvalidWithError error: Error?){
         logDebug("didBecomeInvalidWithError  call")
-        if self.finishing && error == nil {
+        if self.finishing{
             WebtrekkTracking.defaultLogger.logDebug("URL request has been finished. Save all")
+            if let error = error {
+                WebtrekkTracking.defaultLogger.logError("URL session invalidated with error: \(error)")
+            }
             self.queue.save()
-            self.urlSession = nil
             self.finishing = false
 
             #if !os(watchOS)
@@ -451,7 +448,6 @@ internal final class RequestManager: NSObject, URLSessionDelegate {
                     self.backgroundTaskIdentifier = UIBackgroundTaskInvalid
                 }
             #endif
-
         }
     }
 }
