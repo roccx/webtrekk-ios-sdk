@@ -35,9 +35,6 @@ internal struct TrackerConfiguration {
 	/** Allowed values for version */
 	internal static let allowedVersions: ClosedRange<Int> = 1 ... .max
 
-	/** Allowed values for 	the cdb update interval */
-	internal static let allowedCdbUpdateIntervals: ClosedRange<Int> = 0 ... .max
-    
 	/** If enabled automatically tries to attach the Advertising Identifier to each request. */
 	internal var automaticallyTracksAdvertisingId = true
 
