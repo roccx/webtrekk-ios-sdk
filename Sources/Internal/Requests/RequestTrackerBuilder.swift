@@ -102,7 +102,7 @@ final class RequestTrackerBuilder {
     private func cdbPropertiesNeedResend() -> Bool {
         if let lastSend = UserDefaults.standardDefaults.child(namespace: "webtrekk").intForKey(lastCdbPropertiesSendTime) {
             let now = Int(Date().timeIntervalSince1970)
-            return (now - lastSend) > configuration.cdbUpdateInterval
+            return (now - lastSend) > 86400 // one day
         } else {
             return true
         }

@@ -56,9 +56,6 @@ internal struct TrackerConfiguration {
     /** If enabled automatically tracks adclear id. */
     internal var automaticallyTracksAdClearId = false
     
-    /** Specifies the intervall in seconds after which the cdb properties are resent (default: daily)*/
-    internal var cdbUpdateInterval = 86400
-    
 	/** Url of the remote configuration. */
 	internal var configurationUpdateUrl: URL? = nil
 
