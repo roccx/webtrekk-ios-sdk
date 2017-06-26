@@ -49,7 +49,7 @@ class HttpBaseTestNew: XCTestCase {
     
     func doURLSendTestCheck(_ closure: (_ parameters: [String: String])->())
     {
-        expect(HTTPTester.request).toEventuallyNot(beNil(), timeout:self.timeout)
+        expect(HTTPTester.request).toEventuallyNot(beNil(), timeout:self.timeout, pollInterval: 0.1)
         
         guard let _ = HTTPTester.request else{
             return
