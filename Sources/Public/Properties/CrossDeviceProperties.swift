@@ -62,7 +62,7 @@ public struct CrossDeviceProperties {
         }
 
 
-    public init (_ json: [String: Any?]) {
+    init (_ json: [String: Any?]) {
         self.androidId = json["androidId"] as? String
         self.facebookId = json["facebookId"] as? String
         self.googlePlusId = json["googlePlusId"] as? String
@@ -108,7 +108,7 @@ public struct CrossDeviceProperties {
     }
     
 
-    public func isEmpty() -> Bool {
+    func isEmpty() -> Bool {
         return address == nil &&
             androidId == nil &&
             emailAddress == nil &&
@@ -144,7 +144,7 @@ public struct CrossDeviceProperties {
 			self.zipCode = zipCode
 		}
         
-        public init (_ json: [String: Any?]) {
+        init (_ json: [String: Any?]) {
             self.firstName = json["firstName"] as? String
             self.lastName = json["lastName"] as? String
             self.street = json["street"] as? String

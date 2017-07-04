@@ -23,7 +23,7 @@ import Foundation
 final class RequestTrackerBuilder {
     
 
-    private let lastCdbPropertiesSendTime = "lastCdbPropertiesSentTime"
+    private let lastCdbPropertiesSentTime = "lastCdbPropertiesSentTime"
 
     #if !os(watchOS)
     var deepLink: DeepLink!
@@ -73,10 +73,10 @@ final class RequestTrackerBuilder {
             if cdbPropertiesNeedResend(), let oldCDBProperties = CrossDeviceProperties.loadFromDevice() {
                 global.crossDeviceProperties = oldCDBProperties
                 
-                // save the lastCdbPropertiesSendTime:
+                // save the lastCdbPropertiesSentTime:
                 // (This should only be set here. Because if setting it is also triggered by a dedicated CDB request, the automatic sending of the merged properties might never happen. This would only be the case though, if the customer has a suboptimal implementation and sends the dedicated CDB requests too often.)
                 let now = Int(Date().timeIntervalSince1970)
-                UserDefaults.standardDefaults.child(namespace: "webtrekk").set(key: lastCdbPropertiesSendTime, to: now)
+                UserDefaults.standardDefaults.child(namespace: "webtrekk").set(key: lastCdbPropertiesSentTime, to: now)
             }
             
             globalPropertiesByApplyingEvent(from: &event, requestProperties: requestProperties)
@@ -97,7 +97,7 @@ final class RequestTrackerBuilder {
     
     
     private func cdbPropertiesNeedResend() -> Bool {
-        if let lastSend = UserDefaults.standardDefaults.child(namespace: "webtrekk").intForKey(lastCdbPropertiesSendTime) {
+        if let lastSend = UserDefaults.standardDefaults.child(namespace: "webtrekk").intForKey(lastCdbPropertiesSentTime) {
             let now = Int(Date().timeIntervalSince1970)
             return (now - lastSend) > 86400 // one day
         } else {
