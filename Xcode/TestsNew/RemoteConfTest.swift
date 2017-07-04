@@ -23,7 +23,7 @@ import Webtrekk
 
 class RemoteConfTest: WTBaseTestNew {
     
-    override func getCongigName() -> String?{
+    override func getConfigName() -> String?{
         
         switch self.name {
         case let name where name?.range(of: "testConfigOK") != nil:

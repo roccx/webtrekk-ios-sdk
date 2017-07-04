@@ -26,7 +26,7 @@ class ParameterTest: WTBaseTestNew {
     var mainViewController: ViewController!
     
     
-    override func getCongigName() -> String?{
+    override func getConfigName() -> String?{
         return String("webtrekk_config_no_autoTrack")
     }
 

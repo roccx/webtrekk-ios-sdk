@@ -120,10 +120,9 @@ internal class XmlTrackerConfigurationParser {
 				case "autoTrackAppUpdate":           self.automaticallyTracksAppUpdates = try parseBool(child.text)
 				case "autoTrackAppVersionName":      self.automaticallyTracksAppVersion = try parseBool(child.text)
 				case "autoTrackRequestUrlStoreSize": self.automaticallyTracksRequestQueueSize = try parseBool(child.text)
-
-                case "autoTrackAdClearId": self.automaticallyTracksAdClearId = try parseBool(child.text)
+                case "autoTrackAdClearId":           self.automaticallyTracksAdClearId = try parseBool(child.text)
                     
-				case "globalTrackingParameter" : try readFromGlobalElement(child)
+                case "globalTrackingParameter" : try readFromGlobalElement(child)
                 case "recommendations" : try recommendationsL = readRecommendations(xmlElement: child)
                 case "screen": try readFromScreenElement(child)
                 case "autoTrackConnectionType":

@@ -22,7 +22,7 @@ import Webtrekk
 
 class InitializationTest: WTBaseTestNew {
     
-    override func getCongigName() -> String? {
+    override func getConfigName() -> String? {
         return String("webtrekk_bad_config")
     }
     

@@ -22,6 +22,9 @@ import Foundation
 
 final class RequestTrackerBuilder {
     
+
+    private let lastCdbPropertiesSentTime = "lastCdbPropertiesSentTime"
+
     #if !os(watchOS)
     var deepLink: DeepLink!
     #endif
@@ -50,23 +53,60 @@ final class RequestTrackerBuilder {
 
         var event = event
         
-        globalPropertiesByApplyingEvent(from: &event, requestProperties: requestProperties)
+        // it's a dedicated CDB request:
+        if (!global.crossDeviceProperties.isEmpty()) {
         
-        eventByApplyingAutomaticPageTracking(to: &event)
-        
-        campaignOverride(to: &event)
-        
-        #if !os(watchOS)
-            deepLinkOverride(to: &event)
-        #endif
-        
-        pageURLOverride(to: &event)
+            // if there are CDB properties already stored on the device, merge the new ones with them and store the result on the device:
+            if let oldCDBProperties = CrossDeviceProperties.loadFromDevice() {
+                let newCDBProperties = global.crossDeviceProperties
+                // the new ones have a higher priority (i.e. its properties can overwrite existig ones):
+                // (nil values won't overwrite existing values though)
+                newCDBProperties.merged(over: oldCDBProperties).saveToDevice()
+            } else {
+                // else just save the cdb properties from the current request to the device:
+                global.crossDeviceProperties.saveToDevice()
+            }
+        }
+            
+        // it's not a dedicated CDB request:
+        else {
+            if cdbPropertiesNeedResend(), let oldCDBProperties = CrossDeviceProperties.loadFromDevice() {
+                global.crossDeviceProperties = oldCDBProperties
+                
+                // save the lastCdbPropertiesSentTime:
+                // (This should only be set here. Because if setting it is also triggered by a dedicated CDB request, the automatic sending of the merged properties might never happen. This would only be the case though, if the customer has a suboptimal implementation and sends the dedicated CDB requests too often.)
+                let now = Int(Date().timeIntervalSince1970)
+                UserDefaults.standardDefaults.child(namespace: "webtrekk").set(key: lastCdbPropertiesSentTime, to: now)
+            }
+            
+            globalPropertiesByApplyingEvent(from: &event, requestProperties: requestProperties)
+            
+            eventByApplyingAutomaticPageTracking(to: &event)
+            
+            campaignOverride(to: &event)
+            
+            #if !os(watchOS)
+                deepLinkOverride(to: &event)
+            #endif
+            
+            pageURLOverride(to: &event)
+        }
         
         return createRequestForEvent(event, requestProperties: requestProperties)
     }
     
-    // override media code in request in case of deeplink
     
+    private func cdbPropertiesNeedResend() -> Bool {
+        if let lastSend = UserDefaults.standardDefaults.child(namespace: "webtrekk").intForKey(lastCdbPropertiesSentTime) {
+            let now = Int(Date().timeIntervalSince1970)
+            return (now - lastSend) > 86400 // one day
+        } else {
+            return true
+        }
+    }
+
+    
+    // override media code in request in case of deeplink
     #if !os(watchOS)
     private func deepLinkOverride(to event: inout TrackingEvent){
         guard var _ = event as? TrackingEventWithAdvertisementProperties,
@@ -210,8 +250,13 @@ final class RequestTrackerBuilder {
             return nil
         }
         
+        
+        let currentCrossDeviceProperties = global.crossDeviceProperties
+        // reset the crossDeviceProperties so they don't get immediately sent again:
+        global.crossDeviceProperties = CrossDeviceProperties()
+        
         return TrackerRequest(
-            crossDeviceProperties: global.crossDeviceProperties,
+            crossDeviceProperties: currentCrossDeviceProperties,
             event: event,
             properties: requestProperties
         )

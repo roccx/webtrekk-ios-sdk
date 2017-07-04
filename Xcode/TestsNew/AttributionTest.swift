@@ -28,7 +28,7 @@ class AttributionTest: WTBaseTestNew {
     private let mediaCode = "media_code"
     
 
-    override func getCongigName() -> String?{
+    override func getConfigName() -> String?{
         return "webtrekk_config_no_completely_autoTrack"
     }
     

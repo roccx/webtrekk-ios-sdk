@@ -269,7 +269,7 @@ private extension CrossDeviceProperties {
 					items.append(URLQueryItem(name: "cdb3", value: md5.lowercased()))
 				}
 				if let sha256 = sha256 {
-					items.append(URLQueryItem(name: "cdb4", value: sha256.lowercased()))
+                    items.append(URLQueryItem(name: "cdb4", value: sha256.lowercased()))
 				}
 			}
 		}

@@ -11,7 +11,7 @@ import Webtrekk
 
 class RecommendationTest: WTBaseTestNew {
     
-    override func getCongigName() -> String? {
+    override func getConfigName() -> String? {
         return String("webtrekk_config_recommendations")
     }
     

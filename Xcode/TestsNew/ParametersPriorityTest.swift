@@ -23,7 +23,7 @@ import Webtrekk
 
 class ParametersPriorityTest: WTBaseTestNew {
     
-    override func getCongigName() -> String?{
+    override func getConfigName() -> String?{
             return "webtrekk_prioritization_test"
     }
     

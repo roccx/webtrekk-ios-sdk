@@ -23,7 +23,7 @@ import Foundation
 
 class AutoParameterTest: WTBaseTestNew {
     
-    override func getCongigName() -> String?{
+    override func getConfigName() -> String?{
         if let name = self.name {
             if name.range(of: "testAutoParameterComplex") != nil {
                 return "webtrekk_config_auto_parameter_complex"
