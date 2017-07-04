@@ -97,6 +97,16 @@ class CDBResendTest: WTBaseTestNew {
         doURLSendTestAction() {
             WebtrekkTracking.instance().trackPageView("some page view")
         }
+
+        // validate that all CDB properties were sent:
+        doURLSendTestCheck() {parametersArr in
+            self.processResultAndValidateAllCDBParasSent(parameters: parametersArr)
+        }
+
+        // do a second normal page view request:
+        doURLSendTestAction() {
+            WebtrekkTracking.instance().trackPageView("some other page view")
+        }
         
         // valiadate that the CDB properties are NOT resent:
         doURLSendTestCheck() {parametersArr in
@@ -149,7 +159,7 @@ class CDBResendTest: WTBaseTestNew {
         // just make sure, that this request is sent, but don't check it yet:
         doURLSendTestCheck() { parametersArr in ()
         }
-        
+      
         // do a second CDB tracking request with a different twitterId (this should be merged on the device):
         doURLSendTestAction() {
             var crossDeviceProperties = CrossDeviceProperties()
@@ -161,13 +171,11 @@ class CDBResendTest: WTBaseTestNew {
         doURLSendTestCheck() { parametersArr in ()
         }
 
-        // do a third CDB tracking request with a different windowsId (this should also be merged on the device):
+        // do a normal page view request:
         doURLSendTestAction() {
-            var crossDeviceProperties = CrossDeviceProperties()
-            crossDeviceProperties.windowsId = "newWindowsId"
-            WebtrekkTracking.instance().trackCDB(crossDeviceProperties)
+            WebtrekkTracking.instance().trackPageView("some page view")
         }
-        
+   
         // validate that all stored CDB properties were sent with the last request (including the merged twitterId and windowsId):
         doURLSendTestCheck() {parametersArr in
             self.processResultAndValidateMergedCDBParasSent(parameters: parametersArr)
@@ -217,7 +225,7 @@ class CDBResendTest: WTBaseTestNew {
         validate("55512345", is: parameters["cdb3"], "md5")
         validate("55512345", is: parameters["cdb4"], "md256")
         validate("newTwitterId", is: parameters["cdb11"], "sha256")
-        validate("newWindowsId", is: parameters["cdb9"])
+        validate("windowsId123", is: parameters["cdb9"])
         validate("three333", is: parameters["cdb53"])
         validate("eight888", is: parameters["cdb58"])
     }

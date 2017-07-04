@@ -56,20 +56,16 @@ final class RequestTrackerBuilder {
         // it's a dedicated CDB request:
         if (!global.crossDeviceProperties.isEmpty()) {
         
-            // merge the new CDB properties with the ones already existing on the device
+            // if there are CDB properties already stored on the device, merge the new ones with them and store the result on the device:
             if let oldCDBProperties = CrossDeviceProperties.loadFromDevice() {
                 let newCDBProperties = global.crossDeviceProperties
                 // the new ones have a higher priority (i.e. its properties can overwrite existig ones):
                 // (nil values won't overwrite existing values though)
-                global.crossDeviceProperties = newCDBProperties.merged(over: oldCDBProperties)
+                newCDBProperties.merged(over: oldCDBProperties).saveToDevice()
+            } else {
+                // else just save the cdb properties from the current request to the device:
+                global.crossDeviceProperties.saveToDevice()
             }
-            
-            // save the cdb properties to the device:
-            global.crossDeviceProperties.saveToDevice()
-            
-            // save the lastCdbPropertiesSendTime:
-            let now = Int(Date().timeIntervalSince1970)
-            UserDefaults.standardDefaults.child(namespace: "webtrekk").set(key: lastCdbPropertiesSendTime, to: now)
         }
             
         // it's not a dedicated CDB request:
@@ -78,6 +74,7 @@ final class RequestTrackerBuilder {
                 global.crossDeviceProperties = oldCDBProperties
                 
                 // save the lastCdbPropertiesSendTime:
+                // (This should only be set here. Because if setting it is also triggered by a dedicated CDB request, the automatic sending of the merged properties might never happen. This would only be the case though, if the customer has a suboptimal implementation and sends the dedicated CDB requests too often.)
                 let now = Int(Date().timeIntervalSince1970)
                 UserDefaults.standardDefaults.child(namespace: "webtrekk").set(key: lastCdbPropertiesSendTime, to: now)
             }
@@ -253,8 +250,13 @@ final class RequestTrackerBuilder {
             return nil
         }
         
+        
+        let currentCrossDeviceProperties = global.crossDeviceProperties
+        // reset the crossDeviceProperties so they don't get immediately sent again:
+        global.crossDeviceProperties = CrossDeviceProperties()
+        
         return TrackerRequest(
-            crossDeviceProperties: global.crossDeviceProperties,
+            crossDeviceProperties: currentCrossDeviceProperties,
             event: event,
             properties: requestProperties
         )
