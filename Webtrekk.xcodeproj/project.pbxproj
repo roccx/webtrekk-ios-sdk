@@ -440,7 +440,6 @@
 				0F2D21751EDEA18500D09ADF /* Frameworks */,
 				0F2D21761EDEA18500D09ADF /* Headers */,
 				0F2D21771EDEA18500D09ADF /* Resources */,
-				0FE6377E1EDEC00B006887EC /* Carthage */,
 			);
 			buildRules = (
 			);
@@ -492,25 +491,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		0FE6377E1EDEC00B006887EC /* Carthage */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/CryptoSwift.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Reachability.framework",
-			);
-			name = Carthage;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0F2D21741EDEA18500D09ADF /* Sources */ = {
