@@ -34,13 +34,13 @@ class Campaign{
     
     func processCampaign() {
         
-        // check if compain is done already
+        // check if campaign is already set 
         if let isCampaignSet = sharedDefaults.boolForKey(Campaign.campaignHasProcessed) , isCampaignSet { return
         }
         
         WebtrekkTracking.logger.logDebug("Campaign process is starting")
         
-        // sent request
+        // send request
         
         let session = RequestManager.createUrlSession()
         var urlComponents = URLComponents(string: "https://appinstall.webtrekk.net/appinstall/v1/install")
@@ -80,7 +80,7 @@ class Campaign{
                     return
                 }
                 
-                // parc response
+                // parse response
                 guard let dataG = data, let json = try? JSONSerialization.jsonObject(with: dataG, options: .allowFragments) as! [String:Any],
                     let jsonMedia = json["mediacode"] as? String else {
             
