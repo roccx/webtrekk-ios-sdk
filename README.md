@@ -19,11 +19,11 @@ Xcode 8.0+ and Swift 3.0 starting with version 4.1.0
 
 Xcode 8.3+ and Swift 3.1 starting with version 4.5.1
 
-tvOS support starting with verison 4.2.0 with the follow limitation:
+tvOS support starting with version 4.2.0 with the following limitation:
 No screen resolution and network status automatic tracing support.
 
-watchOS support starting with verison 4.3.0 with the follow limiation
-1. No screen resolution and network status automatic tracking support.
+watchOS support starting with version 4.3.0 with the following limiations:
+1. No screen resolution and network status automatic trackinging support.
 2. No deep link and campaign support.
 
 Installation
@@ -55,7 +55,7 @@ Following properties are part of the migration.
 SSL
 ===
 
-As of iOS 9 Apple is more strictly enforcing the usage of the SSL for network connections. Webtrekk highly recommend and offers the usage of a valid serverUrl with SSL support. In case there is a need to circumvent this the App needs an exception entry within the `Info.plist` this and the regulation Apple bestows upon that are well documented within the [iOS Developer Library](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33)
+As of iOS 9 Apple is more strictly enforcing the usage of the SSL for network connections. Webtrekk highly recommends and offers the usage of a valid serverUrl with SSL support. In case there is a need to circumvent this the App needs an exception entry within the `Info.plist` this and the regulation Apple bestows upon that are well documented within the [iOS Developer Library](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33)
 
 Examples & Unit Tests
 =====================
