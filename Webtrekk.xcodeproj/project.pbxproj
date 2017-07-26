@@ -88,6 +88,14 @@
 		0FE637821EDED520006887EC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE637811EDED520006887EC /* UIKit.framework */; };
 		0FE637841EDED52B006887EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE637831EDED52B006887EC /* Foundation.framework */; };
 		0FE637861EDED536006887EC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE637851EDED536006887EC /* AVFoundation.framework */; };
+		9F9E5F0E1F27719900FC5246 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F0D1F27719900FC5246 /* Foundation.framework */; };
+		9F9E5F101F2771A400FC5246 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F0F1F2771A400FC5246 /* UIKit.framework */; };
+		9F9E5F131F2771D000FC5246 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F111F2771D000FC5246 /* CryptoSwift.framework */; };
+		9F9E5F141F2771D000FC5246 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F121F2771D000FC5246 /* Reachability.framework */; };
+		9F9E5F251F27774500FC5246 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F241F27774500FC5246 /* Foundation.framework */; };
+		9F9E5F271F27775100FC5246 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F261F27775100FC5246 /* UIKit.framework */; };
+		9F9E5F291F27775D00FC5246 /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F281F27775D00FC5246 /* WatchKit.framework */; };
+		9F9E5F2B1F27777C00FC5246 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F2A1F27777C00FC5246 /* CryptoSwift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -177,6 +185,16 @@
 		0FE637881EDED5C1006887EC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0FE637891EDED5C1006887EC /* Webtrekk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Webtrekk.h; sourceTree = "<group>"; };
 		0FE6378A1EDED7AD006887EC /* Webtrekk-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Webtrekk-Bridging-Header.h"; sourceTree = "<group>"; };
+		9F9E5F051F2770A000FC5246 /* Webtrekk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Webtrekk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F9E5F0D1F27719900FC5246 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		9F9E5F0F1F2771A400FC5246 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		9F9E5F111F2771D000FC5246 /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = Carthage/Build/tvOS/CryptoSwift.framework; sourceTree = "<group>"; };
+		9F9E5F121F2771D000FC5246 /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/tvOS/Reachability.framework; sourceTree = "<group>"; };
+		9F9E5F1B1F2775D700FC5246 /* Webtrekk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Webtrekk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F9E5F241F27774500FC5246 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		9F9E5F261F27775100FC5246 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		9F9E5F281F27775D00FC5246 /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
+		9F9E5F2A1F27777C00FC5246 /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = Carthage/Build/watchOS/CryptoSwift.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +207,28 @@
 				0FE637821EDED520006887EC /* UIKit.framework in Frameworks */,
 				0FE6377D1EDEC001006887EC /* CryptoSwift.framework in Frameworks */,
 				0FE637801EDEC041006887EC /* Reachability.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F9E5F011F2770A000FC5246 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F9E5F101F2771A400FC5246 /* UIKit.framework in Frameworks */,
+				9F9E5F0E1F27719900FC5246 /* Foundation.framework in Frameworks */,
+				9F9E5F131F2771D000FC5246 /* CryptoSwift.framework in Frameworks */,
+				9F9E5F141F2771D000FC5246 /* Reachability.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F9E5F171F2775D700FC5246 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F9E5F291F27775D00FC5246 /* WatchKit.framework in Frameworks */,
+				9F9E5F271F27775100FC5246 /* UIKit.framework in Frameworks */,
+				9F9E5F251F27774500FC5246 /* Foundation.framework in Frameworks */,
+				9F9E5F2B1F27777C00FC5246 /* CryptoSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,6 +248,8 @@
 			isa = PBXGroup;
 			children = (
 				0F2D21791EDEA18500D09ADF /* Webtrekk.framework */,
+				9F9E5F051F2770A000FC5246 /* Webtrekk.framework */,
+				9F9E5F1B1F2775D700FC5246 /* Webtrekk.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -398,6 +440,14 @@
 		0FE6377B1EDEC001006887EC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9F9E5F2A1F27777C00FC5246 /* CryptoSwift.framework */,
+				9F9E5F281F27775D00FC5246 /* WatchKit.framework */,
+				9F9E5F261F27775100FC5246 /* UIKit.framework */,
+				9F9E5F241F27774500FC5246 /* Foundation.framework */,
+				9F9E5F111F2771D000FC5246 /* CryptoSwift.framework */,
+				9F9E5F121F2771D000FC5246 /* Reachability.framework */,
+				9F9E5F0F1F2771A400FC5246 /* UIKit.framework */,
+				9F9E5F0D1F27719900FC5246 /* Foundation.framework */,
 				0FE637851EDED536006887EC /* AVFoundation.framework */,
 				0FE637831EDED52B006887EC /* Foundation.framework */,
 				0FE637811EDED520006887EC /* UIKit.framework */,
@@ -429,12 +479,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9F9E5F021F2770A000FC5246 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F9E5F181F2775D700FC5246 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		0F2D21781EDEA18500D09ADF /* Webtrekk */ = {
+		0F2D21781EDEA18500D09ADF /* Webtrekk-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0F2D21811EDEA18500D09ADF /* Build configuration list for PBXNativeTarget "Webtrekk" */;
+			buildConfigurationList = 0F2D21811EDEA18500D09ADF /* Build configuration list for PBXNativeTarget "Webtrekk-iOS" */;
 			buildPhases = (
 				0F2D21741EDEA18500D09ADF /* Sources */,
 				0F2D21751EDEA18500D09ADF /* Frameworks */,
@@ -445,9 +509,45 @@
 			);
 			dependencies = (
 			);
-			name = Webtrekk;
+			name = "Webtrekk-iOS";
 			productName = Webtrekk;
 			productReference = 0F2D21791EDEA18500D09ADF /* Webtrekk.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		9F9E5F041F2770A000FC5246 /* Webtrekk-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F9E5F0A1F2770A000FC5246 /* Build configuration list for PBXNativeTarget "Webtrekk-tvOS" */;
+			buildPhases = (
+				9F9E5F001F2770A000FC5246 /* Sources */,
+				9F9E5F011F2770A000FC5246 /* Frameworks */,
+				9F9E5F021F2770A000FC5246 /* Headers */,
+				9F9E5F031F2770A000FC5246 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Webtrekk-tvOS";
+			productName = Webtrekk;
+			productReference = 9F9E5F051F2770A000FC5246 /* Webtrekk.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		9F9E5F1A1F2775D700FC5246 /* Webtrekk-watchOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F9E5F201F2775D700FC5246 /* Build configuration list for PBXNativeTarget "Webtrekk-watchOS" */;
+			buildPhases = (
+				9F9E5F161F2775D700FC5246 /* Sources */,
+				9F9E5F171F2775D700FC5246 /* Frameworks */,
+				9F9E5F181F2775D700FC5246 /* Headers */,
+				9F9E5F191F2775D700FC5246 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Webtrekk-watchOS";
+			productName = Webtrekk;
+			productReference = 9F9E5F1B1F2775D700FC5246 /* Webtrekk.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -461,6 +561,17 @@
 				TargetAttributes = {
 					0F2D21781EDEA18500D09ADF = {
 						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = 8JS62GK93M;
+						ProvisioningStyle = Automatic;
+					};
+					9F9E5F041F2770A000FC5246 = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 8JS62GK93M;
+						ProvisioningStyle = Automatic;
+					};
+					9F9E5F1A1F2775D700FC5246 = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 8JS62GK93M;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -477,13 +588,29 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0F2D21781EDEA18500D09ADF /* Webtrekk */,
+				0F2D21781EDEA18500D09ADF /* Webtrekk-iOS */,
+				9F9E5F041F2770A000FC5246 /* Webtrekk-tvOS */,
+				9F9E5F1A1F2775D700FC5246 /* Webtrekk-watchOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		0F2D21771EDEA18500D09ADF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F9E5F031F2770A000FC5246 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F9E5F191F2775D700FC5246 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -575,6 +702,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9F9E5F001F2770A000FC5246 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F9E5F161F2775D700FC5246 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -620,7 +761,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -668,7 +809,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -683,7 +824,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 8JS62GK93M;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -696,7 +839,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Webtrekk.Webtrekk;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Webtrekk;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Supporting Files/Webtrekk-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SRCROOT)/Sources/Supporting Files/Webtrekk.h";
@@ -709,6 +852,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 8JS62GK93M;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -721,11 +865,117 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Webtrekk.Webtrekk;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Webtrekk;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Sources/Supporting Files/Webtrekk-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SRCROOT)/Sources/Supporting Files/Webtrekk.h";
 				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		9F9E5F0B1F2770A000FC5246 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 8JS62GK93M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+				);
+				INFOPLIST_FILE = "Sources/Supporting Files/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Webtrekk.Webtrekk;
+				PRODUCT_NAME = Webtrekk;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		9F9E5F0C1F2770A000FC5246 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 8JS62GK93M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+				);
+				INFOPLIST_FILE = "Sources/Supporting Files/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Webtrekk.Webtrekk;
+				PRODUCT_NAME = Webtrekk;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		9F9E5F211F2775D700FC5246 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 8JS62GK93M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/watchOS",
+				);
+				INFOPLIST_FILE = "Sources/Supporting Files/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Webtrekk.Webtrekk;
+				PRODUCT_NAME = Webtrekk;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		9F9E5F221F2775D700FC5246 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 8JS62GK93M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/watchOS",
+				);
+				INFOPLIST_FILE = "Sources/Supporting Files/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Webtrekk.Webtrekk;
+				PRODUCT_NAME = Webtrekk;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Release;
 		};
@@ -741,11 +991,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0F2D21811EDEA18500D09ADF /* Build configuration list for PBXNativeTarget "Webtrekk" */ = {
+		0F2D21811EDEA18500D09ADF /* Build configuration list for PBXNativeTarget "Webtrekk-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0F2D21821EDEA18500D09ADF /* Debug */,
 				0F2D21831EDEA18500D09ADF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9F9E5F0A1F2770A000FC5246 /* Build configuration list for PBXNativeTarget "Webtrekk-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F9E5F0B1F2770A000FC5246 /* Debug */,
+				9F9E5F0C1F2770A000FC5246 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9F9E5F201F2775D700FC5246 /* Build configuration list for PBXNativeTarget "Webtrekk-watchOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F9E5F211F2775D700FC5246 /* Debug */,
+				9F9E5F221F2775D700FC5246 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
