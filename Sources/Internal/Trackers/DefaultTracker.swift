@@ -27,7 +27,11 @@ import UIKit
 #else
 	import AVFoundation
 	import CoreTelephony
-    import Reachability
+    #if CARTHAGE_CONFIG
+        import Reachability
+    #else
+        import ReachabilitySwift
+    #endif
 #endif
 
 
