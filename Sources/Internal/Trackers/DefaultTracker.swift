@@ -23,7 +23,11 @@ import UIKit
 	import WatchKit
 #elseif os(tvOS)
     import AVFoundation
-    import Reachability
+    #if CARTHAGE_CONFIG
+        import Reachability
+    #else
+        import ReachabilitySwift
+    #endif
 #else
 	import AVFoundation
 	import CoreTelephony
