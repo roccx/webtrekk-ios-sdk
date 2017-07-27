@@ -21,7 +21,11 @@ import Foundation
 import UIKit
 
 #if !os(watchOS)
-	import ReachabilitySwift
+    #if CARTHAGE_CONFIG
+        import Reachability
+    #else
+        import ReachabilitySwift
+    #endif
 #endif
 
 
