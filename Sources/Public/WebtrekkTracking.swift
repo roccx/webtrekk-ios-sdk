@@ -24,6 +24,9 @@ import UIKit
 import WatchKit
 #endif
 
+#if os(iOS)
+import WebKit
+#endif
 
 public class WebtrekkTracking {
 
@@ -130,6 +133,38 @@ public class WebtrekkTracking {
         return viewController.automaticTracker
     }
     
+    #endif
+    
+    #if os(iOS)
+    
+    /** Update or create instance of WKWebViewConfiguration class that is used for WKWebView.
+     After that all pages that opens in WKWebView and have PIXEL (starting with version 4.4.0) integration will do tracking with the same everId (the one that application has).
+     if configuration provided in parameter it uses instance and return it back. If parameter is not proveded new instance is created. In any case instance of WKWebViewConfiguration is returned.
+     
+     In case Webtrekk isn't initialized function returns nil and write error message in log.
+    */
+    @discardableResult
+    public static func updateWKWebViewConfiguration(_ configuration: WKWebViewConfiguration? = nil) -> WKWebViewConfiguration? {
+    
+        guard let tracker = tracker else {
+            logger.logError("Error updating WKWebView configuration. Webtrekk isn't initialized.")
+            return nil
+        }
+    
+        let everId = tracker.everId
+        
+        let userScript = WKUserScript(
+            source: "var webtrekkApplicationEverId = \"\(everId)\";",
+            injectionTime: WKUserScriptInjectionTime.atDocumentStart,
+            forMainFrameOnly: false
+        )
+    
+        let configurationLocal = configuration ?? WKWebViewConfiguration()
+        configurationLocal.userContentController.addUserScript(userScript)
+        
+        return configurationLocal
+    }
+
     #endif
 
 }

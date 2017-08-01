@@ -19,12 +19,41 @@
 
 import UIKit
 import Webtrekk
+import WebKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, WKScriptMessageHandler {
 
+    var webView: WKWebView?
+    @IBOutlet var containerView: UIView!
+    var configuration: WKWebViewConfiguration?
+
+    override func loadView(){
+        super.loadView()
+        
+        if self.configuration == nil {
+            self.configuration = WKWebViewConfiguration()
+            WebtrekkTracking.updateWKWebViewConfiguration(self.configuration)
+        }
+        
+        let rect = self.containerView?.frame ?? CGRect(origin: CGPoint(x: 100, y: 300), size: CGSize(width: 100, height: 300))
+
+        self.webView = WKWebView(frame: rect, configuration: self.configuration!)
+        self.view.addSubview(self.webView!)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let url = URL(string: "http://jenkins-yat-dev-01.webtrekk.com/web/hello.html")
+        let req = URLRequest(url: url!)
+        self.webView!.load(req)
+    }
+    
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == "appCallback"{
+            WebtrekkTracking.defaultLogger.logDebug("message body " + (message.body as! String))
+        }
+
     }
 
     override func didReceiveMemoryWarning() {
