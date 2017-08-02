@@ -320,7 +320,7 @@ internal final class RequestManager: NSObject, URLSessionDelegate {
                         }
 
                         let retryDelay = Double(self.currentFailureCount * 5)
-                        logDebug("Request \(url) failed temporarily and will be retried in \(retryDelay) seconds: \(error)")
+                        logWarning("Request \(url) failed temporarily and will be retried in \(retryDelay) seconds: \(error)")
 
                         self.currentFailureCount += 1
                         self.sendNextRequest(maximumDelay: retryDelay)

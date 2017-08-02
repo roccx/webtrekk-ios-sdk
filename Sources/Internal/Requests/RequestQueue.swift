@@ -586,7 +586,7 @@ fileprivate class TextFileReader{
             return (nil, true, 0)
         }
         
-        guard let lineNotOpt = line, let url = URL(string: lineNotOpt) else {
+        guard let lineNotOpt = line, let url = URL(string: lineNotOpt), let _ = url.scheme, let _ = url.host else {
             WebtrekkTracking.defaultLogger.logError("Line in stored url file isn't string or URL. Line: \(line.simpleDescription)")
             return (nil, eof, shift)
         }

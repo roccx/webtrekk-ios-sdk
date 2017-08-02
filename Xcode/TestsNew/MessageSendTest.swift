@@ -32,7 +32,7 @@ class MessageSendTest: WTBaseTestNew {
             } else if (name.range(of: "testConnectionInterruption") != nil) {
                 return "webtrekk_config_message_send_connection_interruption"
             }else if (name.range(of: "testFileCorruption") != nil) {
-                return "webtrekk_config_error_log_disabled"
+                return "webtrekk_config_message_send_manual"
             } else if (name.range(of: "testMigrationFromVersion440") != nil || name.range(of: "testPerformance") != nil || (name.range(of: "testCPULoad") != nil)) {
                 return nil
             } else {
@@ -294,9 +294,7 @@ class MessageSendTest: WTBaseTestNew {
         //do test
         
         // put meesage to file
-        self.httpTester.removeStub()
-        self.httpTester.addConnectionInterruptionStub()
-        
+
         let tracker = WebtrekkTracking.instance()
         let maxRequestsFirst = 200
         
@@ -358,6 +356,8 @@ class MessageSendTest: WTBaseTestNew {
             
             WebtrekkTracking.defaultLogger.logDebug("message with ID: \(parameters["cp101"].simpleDescription) is received")
         }
+        
+        tracker.sendPendingEvents()
         
         //test shouldn't crash
         
