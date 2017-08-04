@@ -18,13 +18,28 @@
 //
 
 import Nimble
-import Webtrekk
+@testable import Webtrekk
 
 class InitializationTest: WTBaseTestNew {
     
+    private var configName: String?
+    
     override func getConfigName() -> String? {
-        return String("webtrekk_bad_config")
+        if let name = self.name {
+            if name.range(of: "testIncorrectConfig") != nil {
+                return "webtrekk_bad_config"
+            } else if (name.range(of: "testTrackIdChange") != nil) {
+                return self.configName
+            } else {
+                return nil
+            }
+            
+        }else {
+            WebtrekkTracking.defaultLogger.logError("This test use incorrect configuration")
+            return nil
+        }
     }
+    
     
     //will crash if test not passed.
     func testIncorrectConfig(){
@@ -33,6 +48,61 @@ class InitializationTest: WTBaseTestNew {
     
         doURLSendTestAction(){
             tracker.trackPageView("IncorrectConfig")
+        }
+    }
+    
+    // test migration configuration from trackID specific to application specific
+    func testConfigurationMigration(){
+        //make configuration trackID specific.
+        let trackId = WebtrekkTracking.instance().trackIds[0]
+        migrationTest(trackId)
+        migrationTest(trackId + ", " + trackId)
+        migrationTest(trackId + "," + trackId)
+    }
+    
+    private func migrationTest(_ baseTrackId: String){
+        releaseWebtrekk()
+        
+        let userDefaults = Foundation.UserDefaults.standard
+        
+        userDefLoop(source: userDefaults, prefix: "webtrekk."){ (key, value) -> Void in
+            //get second part from key
+            let keys = key.components(separatedBy: ".")
+            
+            expect(keys[1].isTrackIdFormat()).to(equal(false))
+            
+            userDefaults.removeObject(forKey: key)
+            
+            let altKey = keys[0] + "." + baseTrackId + "." + keys[1]
+            
+            userDefaults.set(value, forKey: altKey)
+        }
+        
+        initWebtrekk()
+        
+        //check that there is no item with trackID
+        userDefLoop(source: userDefaults, prefix: "webtrekk."){ (key, value) -> Void in
+            //get second part from key
+            let keys = key.components(separatedBy: ".")
+            
+            expect(keys[1].isTrackIdFormat()).to(equal(false))
+        }
+    }
+    
+    //test that trackId can be changed
+    func testTrackIdChange(){
+        releaseWebtrekk()
+        self.configName = "webtrekk_config_alt_trackid"
+        initWebtrekk()
+        
+        expect(WebtrekkTracking.instance().trackIds[0]).to(equal("123451234512346"))
+    }
+    
+    private func userDefLoop(source: UserDefaults, prefix: String, closure: (_ key: String, _ value: Any) -> Void ){
+        for (key, value) in source.dictionaryRepresentation() {
+            if key.hasPrefix(prefix){
+                closure(key, value)
+            }
         }
     }
 }

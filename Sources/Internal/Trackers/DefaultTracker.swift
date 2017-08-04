@@ -98,7 +98,7 @@ final class DefaultTracker: Tracker {
         self.flowObserver = UIFlowObserver(tracker: self)
 
         let sharedDefaults = DefaultTracker.sharedDefaults
-        var defaults = sharedDefaults.child(namespace: configuration.webtrekkId)
+        var defaults = sharedDefaults
         
         var migratedRequestQueue: [URL]?
         if let webtrekkId = configuration.webtrekkId.nonEmpty , !(sharedDefaults.boolForKey(DefaultsKeys.migrationCompleted) ?? false) {
@@ -125,6 +125,8 @@ final class DefaultTracker: Tracker {
             }
         }
         
+        self.convertDefaults()
+        
         var configuration = configuration
         if let configurationData = defaults.dataForKey(DefaultsKeys.configuration) {
             do {
@@ -142,10 +144,6 @@ final class DefaultTracker: Tracker {
         guard let validatedConfiguration = DefaultTracker.validatedConfiguration(configuration) else {
             logError("Invalid configuration initialization error")
             return false
-        }
-        
-        if validatedConfiguration.webtrekkId != configuration.webtrekkId {
-            defaults = DefaultTracker.sharedDefaults.child(namespace: validatedConfiguration.webtrekkId)
         }
         
         configuration = validatedConfiguration
@@ -264,6 +262,22 @@ final class DefaultTracker: Tracker {
 			logError("Multiple tracker instances for the same Webtrekk ID '\(configuration.webtrekkId)' were created. This is not supported and will corrupt tracking.")
 		}
 	}
+    
+    
+    private func convertDefaults(){
+        
+        let settings = DefaultTracker.sharedDefaults
+        let isConverted = settings.boolForKey(DefaultsKeys.isSettingsToAppSpecificConverted)
+
+        // don't do anythig if converstions has been done
+        guard isConverted == nil || !isConverted! else {
+            return
+        }
+        
+        settings.convertDefaultsToAppSpecific()
+        
+        settings.set(key: DefaultsKeys.isSettingsToAppSpecificConverted, to: true)
+    }
 
 
 	internal fileprivate(set) var configuration: TrackerConfiguration! {
@@ -843,11 +857,6 @@ final class DefaultTracker: Tracker {
             
             configuration = validatedConfiguration
             
-			guard configuration.webtrekkId == self.configuration.webtrekkId else {
-				logError("Cannot apply new configuration located at \(updateUrl): Current webtrekkId (\(self.configuration.webtrekkId)) does not match new webtrekkId (\(configuration.webtrekkId)).")
-				return
-			}
-
 			logInfo("Updating from configuration version \(self.configuration.version) to version \(configuration.version) located at \(updateUrl).")
 			self.defaults?.set(key: DefaultsKeys.configuration, to: data)
 
@@ -1091,6 +1100,7 @@ struct DefaultsKeys {
 	fileprivate static let samplingRate = "samplingRate"
     static let adClearId = "adClearId"
     static let crossDeviceProperties = "CrossDeviceProperties"
+    fileprivate static let isSettingsToAppSpecificConverted = "isSettingsToAppSpecificConverted"
 }
 
 private extension TrackingValue {

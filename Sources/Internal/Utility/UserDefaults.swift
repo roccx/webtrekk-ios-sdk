@@ -4,6 +4,7 @@ import Foundation
 internal final class UserDefaults {
 
 	internal static let standardDefaults = UserDefaults(source: Foundation.UserDefaults.standard, keyPrefix: "")
+    private static let separator : String = "."
 
 	fileprivate let keyPrefix: String
 	fileprivate let source: Foundation.UserDefaults
@@ -21,7 +22,7 @@ internal final class UserDefaults {
 
 
 	internal func child(namespace: String) -> UserDefaults {
-		return UserDefaults(source: source, keyPrefix: "\(keyPrefix)\(namespace).")
+		return UserDefaults(source: source, keyPrefix: "\(keyPrefix)\(namespace)\(UserDefaults.separator)")
 	}
 
 
@@ -98,5 +99,18 @@ internal final class UserDefaults {
     
     internal func set(key: String, to value: UInt64?) {
         set(key: key, to: value as AnyObject?)
+    }
+    
+    internal func convertDefaultsToAppSpecific(){
+        for (key, value) in source.dictionaryRepresentation() {
+            if key.hasPrefix(self.keyPrefix){
+                var keys = key.components(separatedBy: ".")
+                if keys.count == 3 && keys[1].isTrackIdFormat() {
+                    source.removeObject(forKey: key)
+                    keys.remove(at: 1)
+                    source.set(value, forKey: keys.joined(separator: UserDefaults.separator))
+                }
+            }
+        }
     }
 }

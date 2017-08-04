@@ -58,6 +58,23 @@ internal extension String {
             return false
         }
     }
+    
+    internal func isTrackIdFormat() -> Bool{
+        
+        let trackIds = self.replacingOccurrences(of: " ", with: "").components(separatedBy: ",")
+        
+        guard trackIds.count > 0 else {
+            return false
+        }
+        
+        for trackId in trackIds {
+            if !CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: trackId)) || trackId.utf8.count != 15 {
+                return false
+            }
+        }
+        
+        return true
+    }
 }
 
 

@@ -155,7 +155,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         removeDefSetting(setting: "configuration")
     }
     
-    private func removeDefSetting(setting: String) {
+    func removeDefSetting(setting: String) {
         Foundation.UserDefaults.standard.removeObject(forKey: getKeyForDefSetting(setting: setting))
     }
     
@@ -165,7 +165,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     }
     
     private func getKeyForDefSetting(setting: String)->String {
-        return "webtrekk.\(getConfID()).\(setting)"
+        return "webtrekk.\(setting)"
     }
     
     func checkDefSettingNoConfig(setting: String) -> Bool{

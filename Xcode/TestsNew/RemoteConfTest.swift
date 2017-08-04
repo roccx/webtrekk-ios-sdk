@@ -19,7 +19,7 @@
 
 import XCTest
 import Nimble
-import Webtrekk
+@testable import Webtrekk
 
 class RemoteConfTest: WTBaseTestNew {
     
@@ -46,6 +46,12 @@ class RemoteConfTest: WTBaseTestNew {
         }
     }
     
+    
+    override func tearDown() {
+        self.removeDefSetting(setting: "configuration")
+        super.tearDown()
+    }
+
     
     
     func testConfigOK()

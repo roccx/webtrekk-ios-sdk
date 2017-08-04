@@ -30,7 +30,12 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     override func loadView(){
         super.loadView()
         
-        if self.configuration == nil {
+        
+        guard  WebtrekkTracking.isInitialized() else {
+            return
+        }
+        
+        if self.configuration == nil{
             self.configuration = WKWebViewConfiguration()
             WebtrekkTracking.updateWKWebViewConfiguration(self.configuration)
         }
@@ -45,7 +50,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         super.viewDidLoad()
         let url = URL(string: "http://jenkins-yat-dev-01.webtrekk.com/web/hello.html")
         let req = URLRequest(url: url!)
-        self.webView!.load(req)
+        self.webView?.load(req)
     }
     
     

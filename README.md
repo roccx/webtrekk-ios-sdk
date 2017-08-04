@@ -26,6 +26,9 @@ watchOS support starting with version 4.3.0 with the following limiations:
 1. No screen resolution and network status automatic trackinging support.
 2. No deep link and campaign support.
 
+Carthage support starting from version 4.5.5
+
+
 Installation
 ============
 
