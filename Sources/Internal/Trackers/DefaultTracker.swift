@@ -67,7 +67,7 @@ final class DefaultTracker: Tracker {
 
 	internal var global = GlobalProperties()
     
-    let exceptionTracker: ExceptionTracker = ExceptionTrackerImpl()
+    let exceptionTracker: ExceptionTracker  = ExceptionTrackerImpl()
     
     var exceptionTrackingImpl: ExceptionTrackerImpl? {
         return self.exceptionTracker as? ExceptionTrackerImpl
@@ -97,22 +97,21 @@ final class DefaultTracker: Tracker {
         
         self.flowObserver = UIFlowObserver(tracker: self)
 
-        let sharedDefaults = DefaultTracker.sharedDefaults
-        var defaults = sharedDefaults
+        let defaults = DefaultTracker.sharedDefaults
         
         var migratedRequestQueue: [URL]?
-        if let webtrekkId = configuration.webtrekkId.nonEmpty , !(sharedDefaults.boolForKey(DefaultsKeys.migrationCompleted) ?? false) {
-            sharedDefaults.set(key: DefaultsKeys.migrationCompleted, to: true)
+        if let webtrekkId = configuration.webtrekkId.nonEmpty , !(defaults.boolForKey(DefaultsKeys.migrationCompleted) ?? false) {
+            defaults.set(key: DefaultsKeys.migrationCompleted, to: true)
             
             if WebtrekkTracking.migratesFromLibraryV3, let migration = Migration.migrateFromLibraryV3(webtrekkId: webtrekkId) {
                 
-                sharedDefaults.set(key: DefaultsKeys.everId, to: migration.everId)
+                defaults.set(key: DefaultsKeys.everId, to: migration.everId)
                 
                 if let appVersion = migration.appVersion {
                     defaults.set(key: DefaultsKeys.appVersion, to: appVersion)
                 }
                 if !DefaultTracker.isOptedOutWasSetManually, let isOptedOut = migration.isOptedOut {
-                    sharedDefaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
+                    defaults.set(key: DefaultsKeys.isOptedOut, to: isOptedOut ? true : nil)
                 }
                 if let samplingRate = migration.samplingRate, let isSampling = migration.isSampling {
                     defaults.set(key: DefaultsKeys.isSampling, to: isSampling)
@@ -515,7 +514,7 @@ final class DefaultTracker: Tracker {
             return
         }
 
-		guard !requestQueueLoaded else {
+		guard !self.requestQueueLoaded else {
 			return
 		}
 
@@ -523,7 +522,7 @@ final class DefaultTracker: Tracker {
 		requestQueueLoaded = true
 
 		// do transition from old request file
-        guard let file = requestQueueBackupFile else {
+        guard let file = self.requestQueueBackupFile else {
 			return
 		}
 

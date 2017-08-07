@@ -127,7 +127,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     }
     
     private func isBackupFileExists() -> Bool{
-        let file = WTBaseTestNew.requestQueueBackupFileForWebtrekkId(getConfID());
+        let file = WTBaseTestNew.requestOldQueueBackupFileForWebtrekkId(getConfID());
         
         return FileManager.default.itemExistsAtURL(file!)
     }
@@ -173,7 +173,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         return object != nil
     }
     
-    static func requestQueueBackupFileForWebtrekkId(_ webtrekkId: String) -> URL? {
+    static func requestOldQueueBackupFileForWebtrekkId(_ webtrekkId: String) -> URL? {
         
         let searchPathDirectory: FileManager.SearchPathDirectory
         #if os(iOS) || os(OSX) || os(watchOS)

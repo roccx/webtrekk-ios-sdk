@@ -196,7 +196,7 @@ class MessageSendTest: WTBaseTestNew {
     func testMigrationFromVersion440(){
         //copy file
         let source = Bundle.main.url(forResource: "requestQueue", withExtension: "archive")
-        let destination = WTBaseTestNew.requestQueueBackupFileForWebtrekkId(getConfID())
+        let destination = WTBaseTestNew.requestOldQueueBackupFileForWebtrekkId(getConfID())
         
         WebtrekkTracking.defaultLogger.minimumLevel = .debug
         
