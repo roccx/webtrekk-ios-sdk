@@ -69,12 +69,26 @@ class RequestQueue {
             saveDirectory = .applicationSupportDirectory
         #endif
         
-        guard let url = FileManager.default.urls(for: saveDirectory, in: .userDomainMask).first else {
-            WebtrekkTracking.defaultLogger.logError("can't get application suport directory. No buffered tracking will be done")
+        let fileManager = FileManager.default
+        
+        guard let url = fileManager.urls(for: saveDirectory, in: .userDomainMask).first else {
+            logError("can't get application suport directory. No buffered tracking will be done")
             return
         }
         
-        self.fileURL = url.appendingPathComponent("Webtrekk").appendingPathComponent(self.fileName)
+        let basePath = url.appendingPathComponent("Webtrekk")
+        
+        if !fileManager.itemExistsAtURL(basePath) {
+            do {
+                try fileManager.createDirectory(at: basePath, withIntermediateDirectories: true, attributes: [URLResourceKey.isExcludedFromBackupKey.rawValue: true])
+            }
+            catch let error {
+                logError("Cannot create directory at '\(basePath)' for storing request queue backup file: \(error)")
+                return
+            }
+        }
+        
+        self.fileURL = basePath.appendingPathComponent(self.fileName)
     }
     
     

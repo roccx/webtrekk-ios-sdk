@@ -614,6 +614,7 @@ final class DefaultTracker: Tracker {
 	#endif
 
 
+    //request for old backup file path. It is required for transiation only
 	private static func requestQueueBackupFileForWebtrekkId(_ webtrekkId: String) -> URL? {
 		checkIsOnMainThread()
 
@@ -639,13 +640,7 @@ final class DefaultTracker: Tracker {
 		directory = directory.appendingPathComponent(webtrekkId)
 
 		if !fileManager.itemExistsAtURL(directory) {
-			do {
-				try fileManager.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [URLResourceKey.isExcludedFromBackupKey.rawValue: true])
-			}
-			catch let error {
-				logError("Cannot create directory at '\(directory)' for storing request queue backup file: \(error)")
-				return nil
-			}
+            return nil
 		}
 
 		return directory.appendingPathComponent("requestQueue.archive")
