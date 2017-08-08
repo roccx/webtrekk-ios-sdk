@@ -26,18 +26,18 @@ internal final class DefaultMediaTracker: MediaTracker {
 
 	internal var mediaProperties: MediaProperties
 	internal var pageName: String?
-	internal var variables = [String : String]()
+    internal var variables : [String : String]
 	internal var viewControllerType: AnyObject.Type?
 
 
-	internal init(handler: MediaEventHandler, mediaName: String, pageName: String?) {
-		checkIsOnMainThread()
-
-		self.handler = handler
-		self.mediaProperties = MediaProperties(name: mediaName)
-		self.pageName = pageName
-	}
-
+    internal init(handler: MediaEventHandler, mediaName: String, pageName: String?, mediaProperties: MediaProperties?, variables: [String : String]?) {
+        checkIsOnMainThread()
+        
+        self.handler = handler
+        self.mediaProperties = mediaProperties ?? MediaProperties(name: mediaName)
+        self.pageName = pageName
+        self.variables = variables ?? [String : String]()
+    }
 
 	internal func trackAction(_ action: MediaEvent.Action) {
 		checkIsOnMainThread()

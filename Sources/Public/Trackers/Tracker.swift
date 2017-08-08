@@ -43,10 +43,10 @@ public protocol Tracker: class {
 	func trackPageView(_ event: PageViewEvent)
 
 	
-	func trackerForMedia(_ mediaName: String, pageName: String) -> MediaTracker
+	func trackerForMedia(_ mediaName: String, pageName: String, mediaProperties : MediaProperties?, variables : [String : String]?) -> MediaTracker
 
 	#if !os(watchOS)
-	func trackerForMedia(_ mediaName: String, pageName: String, automaticallyTrackingPlayer player: AVPlayer) -> MediaTracker
+	func trackerForMedia(_ mediaName: String, pageName: String, automaticallyTrackingPlayer player: AVPlayer, mediaProperties : MediaProperties?, variables : [String : String]?)-> MediaTracker
 	#endif
 
 	
@@ -199,4 +199,17 @@ public extension Tracker {
             global.variables[key] = newValue
         }
     }
+    
+    func trackerForMedia(_ mediaName: String, pageName: String, mediaProperties : MediaProperties? = nil, variables : [String : String]? = nil) -> MediaTracker {
+        
+        return trackerForMedia(mediaName, pageName: pageName, mediaProperties: mediaProperties, variables: variables)
+        
+    }
+    
+    #if !os(watchOS)
+    func trackerForMedia(_ mediaName: String, pageName: String, automaticallyTrackingPlayer player: AVPlayer, mediaProperties : MediaProperties? = nil, variables : [String : String]? = nil) -> MediaTracker {
+        
+        return trackerForMedia(mediaName, pageName: pageName, automaticallyTrackingPlayer: player, mediaProperties: mediaProperties, variables: variables)
+    }
+    #endif
 }

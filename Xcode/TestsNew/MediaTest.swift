@@ -98,6 +98,7 @@ class MediaTest: WTBaseTestNew {
             expect(parametersArr["mg2"]).to(equal("KeyValueFor_Key2"))
             expect(parametersArr["p"]).to(contain("mediaPageName"))
             expect(parametersArr["mi"]).to(equal("mediaName"))
+            expect(parametersArr["mg5"]).to(equal("5Value"))
             
             switch (platPhase, requestNumber){
             case (._init, 1):
@@ -130,9 +131,13 @@ class MediaTest: WTBaseTestNew {
             
             requestNumber = requestNumber + 1
         }
+        let meiaName = "mediaName"
+        var mediaProperties = MediaProperties(name: meiaName)
 
+        mediaProperties.groups = [5: .constant("5Value")]
+
+        let _ = tracker.trackerForMedia("mediaName", pageName: "mediaPageName", automaticallyTrackingPlayer: player, mediaProperties: mediaProperties)
         
-        let _ = tracker.trackerForMedia("mediaName", pageName: "mediaPageName", automaticallyTrackingPlayer: player)
         
         // start play
         player.play()
