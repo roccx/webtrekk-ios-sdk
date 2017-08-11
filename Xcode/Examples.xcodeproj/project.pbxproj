@@ -9,9 +9,7 @@
 /* Begin PBXBuildFile section */
 		28178808EE741308C90A2105 /* Pods_tvOS_SampleTVApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C545A3285EEC349D19BBAFE5 /* Pods_tvOS_SampleTVApp.framework */; };
 		4E5CDE7B178AC071E41B18DC /* Pods_WatchApp_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D69B1D268FC4FC9375115AC4 /* Pods_WatchApp_Extension.framework */; };
-		595595ECA3E9229A3BD8E166 /* Pods_ModuleTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E6B7881E57234D9B68010DA /* Pods_ModuleTest.framework */; };
 		6E99EB9F814BBECBBEB91478 /* Pods_watchOS_WatchApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AADB103160F53E54F123F1A5 /* Pods_watchOS_WatchApp.framework */; };
-		85A5EDCC2EFFB3DBB509277A /* Pods_iOS_Example_ModuleTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB547C7EFB209290DC1F091E /* Pods_iOS_Example_ModuleTest.framework */; };
 		9F06B91B1DD4898D003D15EC /* NextPageInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06B9191DD48837003D15EC /* NextPageInterfaceController.swift */; };
 		9F06B91E1DD4AB00003D15EC /* HTTPTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */; };
 		9F06B9201DD4AB02003D15EC /* HTTPTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06B91C1DD4AA67003D15EC /* HTTPTester.swift */; };
@@ -324,8 +322,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F5B49C21D65E5DD00E58E2B /* AdSupport.framework in Frameworks */,
-				85A5EDCC2EFFB3DBB509277A /* Pods_iOS_Example_ModuleTest.framework in Frameworks */,
-				595595ECA3E9229A3BD8E166 /* Pods_ModuleTest.framework in Frameworks */,
 				D55A269483261A4B71D45B74 /* Pods_iOS_ModuleTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
