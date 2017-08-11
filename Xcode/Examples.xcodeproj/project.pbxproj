@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		28178808EE741308C90A2105 /* Pods_tvOS_SampleTVApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C545A3285EEC349D19BBAFE5 /* Pods_tvOS_SampleTVApp.framework */; };
 		4E5CDE7B178AC071E41B18DC /* Pods_WatchApp_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D69B1D268FC4FC9375115AC4 /* Pods_WatchApp_Extension.framework */; };
+		595595ECA3E9229A3BD8E166 /* Pods_ModuleTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E6B7881E57234D9B68010DA /* Pods_ModuleTest.framework */; };
 		6E99EB9F814BBECBBEB91478 /* Pods_watchOS_WatchApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AADB103160F53E54F123F1A5 /* Pods_watchOS_WatchApp.framework */; };
 		85A5EDCC2EFFB3DBB509277A /* Pods_iOS_Example_ModuleTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB547C7EFB209290DC1F091E /* Pods_iOS_Example_ModuleTest.framework */; };
 		9F06B91B1DD4898D003D15EC /* NextPageInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06B9191DD48837003D15EC /* NextPageInterfaceController.swift */; };
@@ -102,6 +103,7 @@
 		B0547FC902E3C7899B2603FE /* Pods_SampleTVAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 049BBFD71B759A0D96F0E4BE /* Pods_SampleTVAppTests.framework */; };
 		C2B77AAC1ECAEEC80054343D /* CDBResendTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C8D0931ECA059700A73ED5 /* CDBResendTest.swift */; };
 		C2C8D0941ECA059700A73ED5 /* CDBResendTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C8D0931ECA059700A73ED5 /* CDBResendTest.swift */; };
+		D55A269483261A4B71D45B74 /* Pods_iOS_ModuleTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8412DC440F0DEDB595D26465 /* Pods_iOS_ModuleTest.framework */; };
 		DF46AEB01E3209F6001EB97A /* AdClearID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF46AEAE1E32060C001EB97A /* AdClearID.swift */; };
 		DF46AEB11E320A02001EB97A /* AdClearID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF46AEAE1E32060C001EB97A /* AdClearID.swift */; };
 /* End PBXBuildFile section */
@@ -323,6 +325,8 @@
 			files = (
 				9F5B49C21D65E5DD00E58E2B /* AdSupport.framework in Frameworks */,
 				85A5EDCC2EFFB3DBB509277A /* Pods_iOS_Example_ModuleTest.framework in Frameworks */,
+				595595ECA3E9229A3BD8E166 /* Pods_ModuleTest.framework in Frameworks */,
+				D55A269483261A4B71D45B74 /* Pods_iOS_ModuleTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -885,7 +889,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Example-ModuleTest/Pods-iOS-Example-ModuleTest-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-ModuleTest/Pods-iOS-ModuleTest-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		209BB187EB39A47191CB4E57 /* [CP] Embed Pods Frameworks */ = {
@@ -990,7 +994,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-Example-ModuleTest/Pods-iOS-Example-ModuleTest-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOS-ModuleTest/Pods-iOS-ModuleTest-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		86D6A59F46C3757FE42870D6 /* [CP] Check Pods Manifest.lock */ = {
@@ -1447,7 +1451,7 @@
 		};
 		9F415F671D5CAD09002CB83F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3622436282EC4C14E7FC7DEF /* Pods-iOS-Example-ModuleTest.debug.xcconfig */;
+			baseConfigurationReference = 2A36239867BFCFCCC3370F77 /* Pods-iOS-ModuleTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ModuleTest.entitlements;
@@ -1467,7 +1471,7 @@
 		};
 		9F415F681D5CAD09002CB83F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 326E6D01AF37AD639E3CAAD5 /* Pods-iOS-Example-ModuleTest.release.xcconfig */;
+			baseConfigurationReference = F456F33D253AEDB87B0A0A0D /* Pods-iOS-ModuleTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ModuleTest.entitlements;

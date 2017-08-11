@@ -4,20 +4,25 @@ install! "cocoapods", :share_schemes_for_development_pods => false
 
 pod "Webtrekk", :path => ".."
 
+
+def base_pods
+    inherit! :search_paths
+    pod 'OHHTTPStubs', '~> 5.2.1'
+    pod 'OHHTTPStubs/Swift', '~> 5.2.1'
+end
+
+def main_pods
+    base_pods
+    pod 'Nimble', '~> 7.0.1'
+end
+
 abstract_target "iOS" do
 	platform :ios, "8.0"
 
-	target "Example" do
-      target "ModuleTest" do
- 		target "TestsOld" do
-            target "Tests" do
-                inherit! :search_paths
-                pod 'Nimble', '~> 7.0.1'
-                pod 'OHHTTPStubs', '~> 5.2.1'
-                pod 'OHHTTPStubs/Swift', '~> 5.2.1'
-                end
-            end
-		end
+    target "ModuleTest" do
+        target "Tests" do
+        main_pods
+        end
     end
 end
 
@@ -25,11 +30,8 @@ abstract_target "tvOS" do
     platform :tvos, "9.0"
     
     target "SampleTVApp" do
-    target "SampleTVAppTests" do
-        inherit! :search_paths
-        pod 'Nimble', '~> 7.0.1'
-        pod 'OHHTTPStubs', '~> 5.2.1'
-        pod 'OHHTTPStubs/Swift', '~> 5.2.1'
+        target "SampleTVAppTests" do
+        main_pods
         end
     end
 end
@@ -39,10 +41,8 @@ abstract_target "watchOS" do
     
     target "WatchApp" do
         target "WatchApp Extension" do
-            inherit! :search_paths
-            pod "Webtrekk", :path => ".."
-            pod 'OHHTTPStubs', '~> 5.2.1'
-            pod 'OHHTTPStubs/Swift', '~> 5.2.1'
+        pod "Webtrekk", :path => ".."
+        base_pods
         end
     end
 end
