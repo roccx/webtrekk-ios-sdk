@@ -358,7 +358,7 @@
 			isa = PBXGroup;
 			children = (
 				9F9487C01D7DB8060072CB0B /* ModuleTest.entitlements */,
-				9F415F141D5C7C6D002CB83F /* TestsNew */,
+				9F415F141D5C7C6D002CB83F /* Tests */,
 				A3DFB00630AF1B828E7E41A9 /* Frameworks */,
 				F6D5AB716B904C7CC4FFDE6C /* Pods */,
 				495161B81D1DFB0F0006A82D /* Products */,
@@ -425,7 +425,7 @@
 			path = ModuleTest;
 			sourceTree = "<group>";
 		};
-		9F415F141D5C7C6D002CB83F /* TestsNew */ = {
+		9F415F141D5C7C6D002CB83F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */,
@@ -458,7 +458,7 @@
 				9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */,
 				9FE98B481F2F44740016654E /* WebViewIntegrationTest.swift */,
 			);
-			path = TestsNew;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		9F95D40D1DAE7F980068E8F8 /* SampleTVAppTests */ = {
@@ -1390,11 +1390,11 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/TestsNew",
+					"$(PROJECT_DIR)/Tests",
 					"$(PROJECT_DIR)",
 					"Pods/**",
 				);
-				INFOPLIST_FILE = TestsNew/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1410,7 +1410,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "TestsNew/Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ModuleTest.app/ModuleTest";
 			};
 			name = Debug;
@@ -1421,10 +1421,10 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/TestsNew",
+					"$(PROJECT_DIR)/Tests",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = TestsNew/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1440,7 +1440,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "TestsNew/Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ModuleTest.app/ModuleTest";
 			};
 			name = Release;
@@ -1540,7 +1540,7 @@
 				DEVELOPMENT_TEAM = 8JS62GK93M;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/TestsNew",
+					"$(PROJECT_DIR)/Tests",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/TVSupport/SampleTVAppTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1548,7 +1548,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OBJC_BRIDGING_HEADER = "TestsNew/Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Bridging-Header.h";
 				SWIFT_VERSION = 3.1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SampleTVApp.app/SampleTVApp";
 				TVOS_DEPLOYMENT_TARGET = 10.0;
@@ -1566,14 +1566,14 @@
 				DEVELOPMENT_TEAM = 8JS62GK93M;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/TestsNew",
+					"$(PROJECT_DIR)/Tests",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/TVSupport/SampleTVAppTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.webtrekk.SampleTVAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				SWIFT_OBJC_BRIDGING_HEADER = "TestsNew/Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SampleTVApp.app/SampleTVApp";
