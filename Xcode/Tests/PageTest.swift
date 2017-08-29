@@ -118,7 +118,7 @@ class PageTest: WTBaseTestNew {
 
         
         doURLSendTestCheck(){parametersArr in
-            expect(parametersArr["X-WT-UA"]?.removingPercentEncoding!).to(equal("Tracking Library \(WebtrekkTracking.version) (\(UIDevice.current.model); \(operatingSystemName) \(version.majorVersion).\(version.minorVersion)\(version.patchVersion == 0 ? "":".\(version.patchVersion)"); \(Locale.current.identifier))"))
+            expect(parametersArr["X-WT-UA"]?.removingPercentEncoding!).to(equal("Tracking Library \(WebtrekkTracking.version) (\(operatingSystemName) \(version.majorVersion).\(version.minorVersion)\(version.patchVersion == 0 ? "":".\(version.patchVersion)"); x86_64; \(Locale.current.identifier))"))
         }
     }
     

@@ -43,7 +43,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         super.init()
         
         let version = ProcessInfo().operatingSystemVersion
-        self.userAgent = "Tracking Library \(WebtrekkTracking.version) (Apple Watch; watchOS \(version.majorVersion).\(version.minorVersion)\(version.patchVersion == 0 ? "":".\(version.patchVersion)"); \(Locale.current.identifier))"
+        self.userAgent = "Tracking Library \(WebtrekkTracking.version) (watchOS \(version.majorVersion).\(version.minorVersion)\(version.patchVersion == 0 ? "":".\(version.patchVersion)"); \(Environment.deviceModelString); \(Locale.current.identifier))"
         
     }
     

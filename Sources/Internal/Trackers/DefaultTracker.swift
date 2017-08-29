@@ -884,8 +884,8 @@ final class DefaultTracker: Tracker {
 		checkIsOnMainThread()
 
 		let properties = [
-			Environment.deviceModelString,
             Environment.operatingSystemName + " " + Environment.operatingSystemVersionString,
+            Environment.deviceModelString,
 			Locale.current.identifier
 			].joined(separator: "; ")
 

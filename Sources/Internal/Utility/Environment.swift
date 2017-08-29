@@ -1,11 +1,6 @@
 import Foundation
 import UIKit
 
-#if os(watchOS)
-	import WatchKit
-#endif
-
-
 internal struct Environment {
 
 	internal static var advertisingIdentifierManager: ASIdentifierManager? = {
@@ -26,11 +21,16 @@ internal struct Environment {
 
 
 	internal static let deviceModelString: String = {
-		#if os(watchOS)
-			return WKInterfaceDevice.current().model
-		#else
-			return UIDevice.current.model
-		#endif
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8 , value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        
+        return identifier
 	}()
 
 
