@@ -57,6 +57,7 @@
 		9F63E7851DC0E9580001D72E /* InitializationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F63E7841DC0E9580001D72E /* InitializationTest.swift */; };
 		9F63E7881DC0EB180001D72E /* InitializationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F63E7841DC0E9580001D72E /* InitializationTest.swift */; };
 		9F82A7EC1E0816EB00B8E9A9 /* Video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 495161E91D1DFB9C0006A82D /* Video.mp4 */; };
+		9F9285F41F5988980062DD60 /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9285F31F5988980062DD60 /* CryptoTests.swift */; };
 		9F95D3F31DAE41050068E8F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F001D5C7C59002CB83F /* AppDelegate.swift */; };
 		9F95D3FA1DAE41370068E8F8 /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 9F415F091D5C7C59002CB83F /* webtrekk_config.xml */; };
 		9F95D3FF1DAE423E0068E8F8 /* ActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F161D5C7C6D002CB83F /* ActionTest.swift */; };
@@ -245,6 +246,7 @@
 		9F63E7841DC0E9580001D72E /* InitializationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitializationTest.swift; sourceTree = "<group>"; };
 		9F76E59E1D85917200B9597A /* DeepLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		9F8354871D6F1E2400887BEA /* LICENSE.MD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = LICENSE.MD; path = ../LICENSE.MD; sourceTree = "<group>"; };
+		9F9285F31F5988980062DD60 /* CryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoTests.swift; sourceTree = "<group>"; };
 		9F9487C01D7DB8060072CB0B /* ModuleTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ModuleTest.entitlements; sourceTree = "<group>"; };
 		9F95D40E1DAE7FC10068E8F8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SampleTVAppTests/Info.plist; sourceTree = "<group>"; };
 		9FB10A031E28E6E9005D6656 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/AdSupport.framework; sourceTree = DEVELOPER_DIR; };
@@ -457,6 +459,7 @@
 				9FE852141E51F1A100F5915D /* ExceptionCreator.m */,
 				9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */,
 				9FE98B481F2F44740016654E /* WebViewIntegrationTest.swift */,
+				9F9285F31F5988980062DD60 /* CryptoTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1159,6 +1162,7 @@
 				DF46AEB01E3209F6001EB97A /* AdClearID.swift in Sources */,
 				9F415F2C1D5C7C81002CB83F /* HttpBaseTestNew.swift in Sources */,
 				9F30E2021E4CB04000F7BB99 /* ExceptionTrackingTest.swift in Sources */,
+				9F9285F41F5988980062DD60 /* CryptoTests.swift in Sources */,
 				9F0FB5BB1E0A7ED300957440 /* ParametersPriorityTest.swift in Sources */,
 				9F63E7801DC0D5180001D72E /* PageTest.swift in Sources */,
 				9F63E77D1DC0D50A0001D72E /* CDBTest.swift in Sources */,
@@ -1399,13 +1403,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					"\"CryptoSwift\"",
-					"-framework",
-					"\"ReachabilitySwift\"",
-					"-framework",
 					"\"Webtrekk\"",
-					"-framework",
-					"\"Nimble\"",
 					"-all_load",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.tests;
@@ -1429,13 +1427,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
-					"\"CryptoSwift\"",
-					"-framework",
-					"\"ReachabilitySwift\"",
-					"-framework",
 					"\"Webtrekk\"",
-					"-framework",
-					"\"Nimble\"",
 					"-all_load",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = webtrekk.tests;
@@ -1640,7 +1632,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$PODS_CONFIGURATION_BUILD_DIR/Webtrekk-iOS\"",
-					"\"$PODS_CONFIGURATION_BUILD_DIR/CryptoSwift-iOS\"",
 				);
 				IBSC_MODULE = WatchApp_Extension;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/WatchSupport/WatchApp/Info.plist";
@@ -1668,7 +1659,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$PODS_CONFIGURATION_BUILD_DIR/Webtrekk-iOS\"",
-					"\"$PODS_CONFIGURATION_BUILD_DIR/CryptoSwift-iOS\"",
 				);
 				IBSC_MODULE = WatchApp_Extension;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/WatchSupport/WatchApp/Info.plist";

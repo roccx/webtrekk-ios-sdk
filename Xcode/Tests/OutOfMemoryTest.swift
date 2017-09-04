@@ -18,6 +18,7 @@
 //
 
 import XCTest
+import Webtrekk
 
 class OutOfMemoryTest: WTBaseTestNew {
     

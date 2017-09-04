@@ -98,7 +98,7 @@ class InitializationTest: WTBaseTestNew {
         expect(WebtrekkTracking.instance().trackIds[0]).to(equal("123451234512346"))
     }
     
-    private func userDefLoop(source: UserDefaults, prefix: String, closure: (_ key: String, _ value: Any) -> Void ){
+    private func userDefLoop(source: Foundation.UserDefaults, prefix: String, closure: (_ key: String, _ value: Any) -> Void ){
         for (key, value) in source.dictionaryRepresentation() {
             if key.hasPrefix(prefix){
                 closure(key, value)

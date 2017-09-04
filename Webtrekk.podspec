@@ -23,8 +23,6 @@ Pod::Spec.new do |s|
 	s.ios.frameworks     = 'AVFoundation', 'AVKit', 'CoreTelephony'
 	s.watchos.frameworks = 'WatchKit'
 
-	s.dependency 'CryptoSwift', '0.6.7'
-
 	s.ios.dependency 'ReachabilitySwift', '~> 3.0.0'
     s.tvos.dependency 'ReachabilitySwift', '~> 3.0.0'
 end

@@ -17,7 +17,6 @@
 //  Created by Widgetlabs
 //
 
-import CryptoSwift
 import Foundation
 import UIKit
 

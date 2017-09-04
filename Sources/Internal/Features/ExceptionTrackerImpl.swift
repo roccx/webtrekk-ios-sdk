@@ -265,19 +265,23 @@ fileprivate class ExceptionSaveAndSendHelper{
         return normalizeField(field: returnValue, fieldName: "stack return address")
     }
     
-    // make string not more then 255 length
+    // make string not more then 255 length TODO: use Swift4 for this converstions
     private func normalizeField(field: String?, fieldName: String) -> NSString {
         
-        guard let fieldUtf8 = field?.utf8, !fieldUtf8.isEmpty else{
+        guard let fieldUtf8 = field?.utf8CString, !fieldUtf8.isEmpty else{
             return ""
         }
         
         guard fieldUtf8.count <= 255 else {
             WebtrekkTracking.defaultLogger.logWarning("Field \(fieldName) is more then 255 length during excception tracking. Normalize it by cutting to 255 length.")
-            return NSString(string: String(describing: fieldUtf8.prefix(maxParameterLength)))
+            
+            let cutUTF8Field = Array(fieldUtf8.prefix(maxParameterLength))
+            return cutUTF8Field.withUnsafeBufferPointer{ buffer in
+                return NSString(cString: buffer.baseAddress!, encoding: String.Encoding.utf8.rawValue)!
+            }
         }
         
-        return NSString(string: String(describing: fieldUtf8))
+        return NSString(string: field ?? "")
     }
     
     

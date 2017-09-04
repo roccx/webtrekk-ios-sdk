@@ -22,6 +22,7 @@ import Foundation
 import AdSupport
 import Nimble
 import UIKit
+import Webtrekk
 
 class AttributionTest: WTBaseTestNew {
     

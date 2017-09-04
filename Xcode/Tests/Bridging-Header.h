@@ -4,3 +4,4 @@
 
 #include <WebtrekkOld/Webtrekk.h>
 #import "ExceptionCreator.h"
+#import <CommonCrypto/CommonCrypto.h>

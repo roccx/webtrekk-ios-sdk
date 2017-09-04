@@ -19,8 +19,7 @@
 
 import XCTest
 import Nimble
-import Webtrekk
-import CryptoSwift
+@testable import Webtrekk
 
 class CDBResendTest: WTBaseTestNew {
     
