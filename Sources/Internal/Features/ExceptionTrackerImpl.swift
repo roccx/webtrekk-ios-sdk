@@ -276,8 +276,9 @@ fileprivate class ExceptionSaveAndSendHelper{
             WebtrekkTracking.defaultLogger.logWarning("Field \(fieldName) is more then 255 length during excception tracking. Normalize it by cutting to 255 length.")
             
             let cutUTF8Field = Array(fieldUtf8.prefix(maxParameterLength))
-            return cutUTF8Field.withUnsafeBufferPointer{ buffer in
-                return NSString(cString: buffer.baseAddress!, encoding: String.Encoding.utf8.rawValue)!
+            
+            return cutUTF8Field.withUnsafeBytes{ buffer in
+                return NSString(bytes: buffer.baseAddress!, length: maxParameterLength, encoding: String.Encoding.utf8.rawValue)!
             }
         }
         
