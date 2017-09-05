@@ -28,6 +28,7 @@ watchOS support starting with version 4.3.0 with the following limiations:
 
 Carthage support starting from version 4.6.0
 
+Starting with version 4.7.0 library can be included and compiled with XCode 9.0 beta6.
 
 Installation
 ============
