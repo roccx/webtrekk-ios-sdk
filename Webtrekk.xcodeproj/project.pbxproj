@@ -83,19 +83,16 @@
 		0F2D22271EDEA1C500D09ADF /* PropertyValue .swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21DA1EDEA1C500D09ADF /* PropertyValue .swift */; };
 		0F2D22281EDEA1C500D09ADF /* TrackingValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21DB1EDEA1C500D09ADF /* TrackingValue.swift */; };
 		0F2D22291EDEA1C500D09ADF /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21DC1EDEA1C500D09ADF /* WebtrekkTracking.swift */; };
-		0FE6377D1EDEC001006887EC /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE6377C1EDEC001006887EC /* CryptoSwift.framework */; };
 		0FE637801EDEC041006887EC /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE6377F1EDEC041006887EC /* Reachability.framework */; };
 		0FE637821EDED520006887EC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE637811EDED520006887EC /* UIKit.framework */; };
 		0FE637841EDED52B006887EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE637831EDED52B006887EC /* Foundation.framework */; };
 		0FE637861EDED536006887EC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE637851EDED536006887EC /* AVFoundation.framework */; };
 		9F9E5F0E1F27719900FC5246 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F0D1F27719900FC5246 /* Foundation.framework */; };
 		9F9E5F101F2771A400FC5246 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F0F1F2771A400FC5246 /* UIKit.framework */; };
-		9F9E5F131F2771D000FC5246 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F111F2771D000FC5246 /* CryptoSwift.framework */; };
 		9F9E5F141F2771D000FC5246 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F121F2771D000FC5246 /* Reachability.framework */; };
 		9F9E5F251F27774500FC5246 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F241F27774500FC5246 /* Foundation.framework */; };
 		9F9E5F271F27775100FC5246 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F261F27775100FC5246 /* UIKit.framework */; };
 		9F9E5F291F27775D00FC5246 /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F281F27775D00FC5246 /* WatchKit.framework */; };
-		9F9E5F2B1F27777C00FC5246 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F2A1F27777C00FC5246 /* CryptoSwift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -177,7 +174,6 @@
 		0F2D21DA1EDEA1C500D09ADF /* PropertyValue .swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PropertyValue .swift"; sourceTree = "<group>"; };
 		0F2D21DB1EDEA1C500D09ADF /* TrackingValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackingValue.swift; sourceTree = "<group>"; };
 		0F2D21DC1EDEA1C500D09ADF /* WebtrekkTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
-		0FE6377C1EDEC001006887EC /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = Carthage/Build/iOS/CryptoSwift.framework; sourceTree = "<group>"; };
 		0FE6377F1EDEC041006887EC /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/iOS/Reachability.framework; sourceTree = "<group>"; };
 		0FE637811EDED520006887EC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		0FE637831EDED52B006887EC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -188,13 +184,11 @@
 		9F9E5F051F2770A000FC5246 /* Webtrekk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Webtrekk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F9E5F0D1F27719900FC5246 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		9F9E5F0F1F2771A400FC5246 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		9F9E5F111F2771D000FC5246 /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = Carthage/Build/tvOS/CryptoSwift.framework; sourceTree = "<group>"; };
 		9F9E5F121F2771D000FC5246 /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/tvOS/Reachability.framework; sourceTree = "<group>"; };
 		9F9E5F1B1F2775D700FC5246 /* Webtrekk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Webtrekk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F9E5F241F27774500FC5246 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		9F9E5F261F27775100FC5246 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		9F9E5F281F27775D00FC5246 /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
-		9F9E5F2A1F27777C00FC5246 /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = Carthage/Build/watchOS/CryptoSwift.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,7 +199,6 @@
 				0FE637861EDED536006887EC /* AVFoundation.framework in Frameworks */,
 				0FE637841EDED52B006887EC /* Foundation.framework in Frameworks */,
 				0FE637821EDED520006887EC /* UIKit.framework in Frameworks */,
-				0FE6377D1EDEC001006887EC /* CryptoSwift.framework in Frameworks */,
 				0FE637801EDEC041006887EC /* Reachability.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,7 +209,6 @@
 			files = (
 				9F9E5F101F2771A400FC5246 /* UIKit.framework in Frameworks */,
 				9F9E5F0E1F27719900FC5246 /* Foundation.framework in Frameworks */,
-				9F9E5F131F2771D000FC5246 /* CryptoSwift.framework in Frameworks */,
 				9F9E5F141F2771D000FC5246 /* Reachability.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,7 +220,6 @@
 				9F9E5F291F27775D00FC5246 /* WatchKit.framework in Frameworks */,
 				9F9E5F271F27775100FC5246 /* UIKit.framework in Frameworks */,
 				9F9E5F251F27774500FC5246 /* Foundation.framework in Frameworks */,
-				9F9E5F2B1F27777C00FC5246 /* CryptoSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,11 +431,9 @@
 		0FE6377B1EDEC001006887EC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F9E5F2A1F27777C00FC5246 /* CryptoSwift.framework */,
 				9F9E5F281F27775D00FC5246 /* WatchKit.framework */,
 				9F9E5F261F27775100FC5246 /* UIKit.framework */,
 				9F9E5F241F27774500FC5246 /* Foundation.framework */,
-				9F9E5F111F2771D000FC5246 /* CryptoSwift.framework */,
 				9F9E5F121F2771D000FC5246 /* Reachability.framework */,
 				9F9E5F0F1F2771A400FC5246 /* UIKit.framework */,
 				9F9E5F0D1F27719900FC5246 /* Foundation.framework */,
@@ -452,7 +441,6 @@
 				0FE637831EDED52B006887EC /* Foundation.framework */,
 				0FE637811EDED520006887EC /* UIKit.framework */,
 				0FE6377F1EDEC041006887EC /* Reachability.framework */,
-				0FE6377C1EDEC001006887EC /* CryptoSwift.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
