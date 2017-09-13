@@ -16,7 +16,6 @@
 		9FAF68C71F28BA9700040B12 /* Webtrekk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FAF68C61F28BA9700040B12 /* Webtrekk.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		9FAF68C91F28BAD700040B12 /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 9FAF68C81F28BAD700040B12 /* webtrekk_config.xml */; };
 		9FAF68CE1F28BC9F00040B12 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FAF68CA1F28BBAF00040B12 /* Reachability.framework */; };
-		9FAF68CF1F28BCE100040B12 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FAF68CC1F28BC5300040B12 /* CryptoSwift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,7 +52,6 @@
 			files = (
 				9FAF68C71F28BA9700040B12 /* Webtrekk.framework in Frameworks */,
 				9FAF68CE1F28BC9F00040B12 /* Reachability.framework in Frameworks */,
-				9FAF68CF1F28BCE100040B12 /* CryptoSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,7 +228,6 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/Webtrekk.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Reachability.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/CryptoSwift.framework",
 			);
 			name = Carthage;
 			outputPaths = (

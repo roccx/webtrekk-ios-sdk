@@ -46,7 +46,6 @@
 		0F2D22011EDEA1C500D09ADF /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21AE1EDEA1C500D09ADF /* String.swift */; };
 		0F2D22021EDEA1C500D09ADF /* StrongReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21AF1EDEA1C500D09ADF /* StrongReference.swift */; };
 		0F2D22031EDEA1C500D09ADF /* ThreadSynchronization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21B01EDEA1C500D09ADF /* ThreadSynchronization.swift */; };
-		0F2D22041EDEA1C500D09ADF /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21B11EDEA1C500D09ADF /* UIDevice.swift */; };
 		0F2D22051EDEA1C500D09ADF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21B21EDEA1C500D09ADF /* UIViewController.swift */; };
 		0F2D22061EDEA1C500D09ADF /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21B31EDEA1C500D09ADF /* UserDefaults.swift */; };
 		0F2D22071EDEA1C500D09ADF /* WeakReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21B41EDEA1C500D09ADF /* WeakReference.swift */; };
@@ -83,19 +82,28 @@
 		0F2D22271EDEA1C500D09ADF /* PropertyValue .swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21DA1EDEA1C500D09ADF /* PropertyValue .swift */; };
 		0F2D22281EDEA1C500D09ADF /* TrackingValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21DB1EDEA1C500D09ADF /* TrackingValue.swift */; };
 		0F2D22291EDEA1C500D09ADF /* WebtrekkTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2D21DC1EDEA1C500D09ADF /* WebtrekkTracking.swift */; };
-		0FE6377D1EDEC001006887EC /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE6377C1EDEC001006887EC /* CryptoSwift.framework */; };
 		0FE637801EDEC041006887EC /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE6377F1EDEC041006887EC /* Reachability.framework */; };
 		0FE637821EDED520006887EC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE637811EDED520006887EC /* UIKit.framework */; };
 		0FE637841EDED52B006887EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE637831EDED52B006887EC /* Foundation.framework */; };
 		0FE637861EDED536006887EC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE637851EDED536006887EC /* AVFoundation.framework */; };
+		9F1BF20B1F697863006B6F06 /* BatchedCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF1FF1F697863006B6F06 /* BatchedCollection.swift */; };
+		9F1BF20C1F697863006B6F06 /* CSArrayType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2001F697863006B6F06 /* CSArrayType+Extensions.swift */; };
+		9F1BF20D1F697863006B6F06 /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2011F697863006B6F06 /* Digest.swift */; };
+		9F1BF20E1F697863006B6F06 /* DigestType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2021F697863006B6F06 /* DigestType.swift */; };
+		9F1BF20F1F697863006B6F06 /* Generics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2031F697863006B6F06 /* Generics.swift */; };
+		9F1BF2101F697863006B6F06 /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2041F697863006B6F06 /* Int+Extension.swift */; };
+		9F1BF2111F697863006B6F06 /* MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2051F697863006B6F06 /* MD5.swift */; };
+		9F1BF2121F697863006B6F06 /* SHA2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2061F697863006B6F06 /* SHA2.swift */; };
+		9F1BF2131F697863006B6F06 /* UInt32+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2071F697863006B6F06 /* UInt32+Extension.swift */; };
+		9F1BF2141F697863006B6F06 /* UInt64+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2081F697863006B6F06 /* UInt64+Extension.swift */; };
+		9F1BF2151F697863006B6F06 /* Updatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2091F697863006B6F06 /* Updatable.swift */; };
+		9F1BF2161F697863006B6F06 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF20A1F697863006B6F06 /* Utils.swift */; };
 		9F9E5F0E1F27719900FC5246 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F0D1F27719900FC5246 /* Foundation.framework */; };
 		9F9E5F101F2771A400FC5246 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F0F1F2771A400FC5246 /* UIKit.framework */; };
-		9F9E5F131F2771D000FC5246 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F111F2771D000FC5246 /* CryptoSwift.framework */; };
 		9F9E5F141F2771D000FC5246 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F121F2771D000FC5246 /* Reachability.framework */; };
 		9F9E5F251F27774500FC5246 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F241F27774500FC5246 /* Foundation.framework */; };
 		9F9E5F271F27775100FC5246 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F261F27775100FC5246 /* UIKit.framework */; };
 		9F9E5F291F27775D00FC5246 /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F281F27775D00FC5246 /* WatchKit.framework */; };
-		9F9E5F2B1F27777C00FC5246 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F2A1F27777C00FC5246 /* CryptoSwift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -139,7 +147,6 @@
 		0F2D21AE1EDEA1C500D09ADF /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		0F2D21AF1EDEA1C500D09ADF /* StrongReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrongReference.swift; sourceTree = "<group>"; };
 		0F2D21B01EDEA1C500D09ADF /* ThreadSynchronization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadSynchronization.swift; sourceTree = "<group>"; };
-		0F2D21B11EDEA1C500D09ADF /* UIDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIDevice.swift; sourceTree = "<group>"; };
 		0F2D21B21EDEA1C500D09ADF /* UIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		0F2D21B31EDEA1C500D09ADF /* UserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		0F2D21B41EDEA1C500D09ADF /* WeakReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeakReference.swift; sourceTree = "<group>"; };
@@ -177,7 +184,6 @@
 		0F2D21DA1EDEA1C500D09ADF /* PropertyValue .swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PropertyValue .swift"; sourceTree = "<group>"; };
 		0F2D21DB1EDEA1C500D09ADF /* TrackingValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackingValue.swift; sourceTree = "<group>"; };
 		0F2D21DC1EDEA1C500D09ADF /* WebtrekkTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebtrekkTracking.swift; sourceTree = "<group>"; };
-		0FE6377C1EDEC001006887EC /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = Carthage/Build/iOS/CryptoSwift.framework; sourceTree = "<group>"; };
 		0FE6377F1EDEC041006887EC /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/iOS/Reachability.framework; sourceTree = "<group>"; };
 		0FE637811EDED520006887EC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		0FE637831EDED52B006887EC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -185,16 +191,26 @@
 		0FE637881EDED5C1006887EC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0FE637891EDED5C1006887EC /* Webtrekk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Webtrekk.h; sourceTree = "<group>"; };
 		0FE6378A1EDED7AD006887EC /* Webtrekk-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Webtrekk-Bridging-Header.h"; sourceTree = "<group>"; };
+		9F1BF1FF1F697863006B6F06 /* BatchedCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BatchedCollection.swift; path = Crypto/BatchedCollection.swift; sourceTree = "<group>"; };
+		9F1BF2001F697863006B6F06 /* CSArrayType+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CSArrayType+Extensions.swift"; path = "Crypto/CSArrayType+Extensions.swift"; sourceTree = "<group>"; };
+		9F1BF2011F697863006B6F06 /* Digest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Digest.swift; path = Crypto/Digest.swift; sourceTree = "<group>"; };
+		9F1BF2021F697863006B6F06 /* DigestType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DigestType.swift; path = Crypto/DigestType.swift; sourceTree = "<group>"; };
+		9F1BF2031F697863006B6F06 /* Generics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Generics.swift; path = Crypto/Generics.swift; sourceTree = "<group>"; };
+		9F1BF2041F697863006B6F06 /* Int+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Int+Extension.swift"; path = "Crypto/Int+Extension.swift"; sourceTree = "<group>"; };
+		9F1BF2051F697863006B6F06 /* MD5.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MD5.swift; path = Crypto/MD5.swift; sourceTree = "<group>"; };
+		9F1BF2061F697863006B6F06 /* SHA2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SHA2.swift; path = Crypto/SHA2.swift; sourceTree = "<group>"; };
+		9F1BF2071F697863006B6F06 /* UInt32+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UInt32+Extension.swift"; path = "Crypto/UInt32+Extension.swift"; sourceTree = "<group>"; };
+		9F1BF2081F697863006B6F06 /* UInt64+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UInt64+Extension.swift"; path = "Crypto/UInt64+Extension.swift"; sourceTree = "<group>"; };
+		9F1BF2091F697863006B6F06 /* Updatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Updatable.swift; path = Crypto/Updatable.swift; sourceTree = "<group>"; };
+		9F1BF20A1F697863006B6F06 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = Crypto/Utils.swift; sourceTree = "<group>"; };
 		9F9E5F051F2770A000FC5246 /* Webtrekk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Webtrekk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F9E5F0D1F27719900FC5246 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		9F9E5F0F1F2771A400FC5246 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		9F9E5F111F2771D000FC5246 /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = Carthage/Build/tvOS/CryptoSwift.framework; sourceTree = "<group>"; };
 		9F9E5F121F2771D000FC5246 /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/tvOS/Reachability.framework; sourceTree = "<group>"; };
 		9F9E5F1B1F2775D700FC5246 /* Webtrekk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Webtrekk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F9E5F241F27774500FC5246 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		9F9E5F261F27775100FC5246 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		9F9E5F281F27775D00FC5246 /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
-		9F9E5F2A1F27777C00FC5246 /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoSwift.framework; path = Carthage/Build/watchOS/CryptoSwift.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,7 +221,6 @@
 				0FE637861EDED536006887EC /* AVFoundation.framework in Frameworks */,
 				0FE637841EDED52B006887EC /* Foundation.framework in Frameworks */,
 				0FE637821EDED520006887EC /* UIKit.framework in Frameworks */,
-				0FE6377D1EDEC001006887EC /* CryptoSwift.framework in Frameworks */,
 				0FE637801EDEC041006887EC /* Reachability.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,7 +231,6 @@
 			files = (
 				9F9E5F101F2771A400FC5246 /* UIKit.framework in Frameworks */,
 				9F9E5F0E1F27719900FC5246 /* Foundation.framework in Frameworks */,
-				9F9E5F131F2771D000FC5246 /* CryptoSwift.framework in Frameworks */,
 				9F9E5F141F2771D000FC5246 /* Reachability.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,7 +242,6 @@
 				9F9E5F291F27775D00FC5246 /* WatchKit.framework in Frameworks */,
 				9F9E5F271F27775100FC5246 /* UIKit.framework in Frameworks */,
 				9F9E5F251F27774500FC5246 /* Foundation.framework in Frameworks */,
-				9F9E5F2B1F27777C00FC5246 /* CryptoSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,6 +280,7 @@
 		0F2D21841EDEA1C500D09ADF /* Internal */ = {
 			isa = PBXGroup;
 			children = (
+				9F1BF1FE1F69784C006B6F06 /* Crypto */,
 				0F2D21851EDEA1C500D09ADF /* Event Handlers */,
 				0F2D21891EDEA1C500D09ADF /* Features */,
 				0F2D218E1EDEA1C500D09ADF /* Requests */,
@@ -347,7 +361,6 @@
 				0F2D21AE1EDEA1C500D09ADF /* String.swift */,
 				0F2D21AF1EDEA1C500D09ADF /* StrongReference.swift */,
 				0F2D21B01EDEA1C500D09ADF /* ThreadSynchronization.swift */,
-				0F2D21B11EDEA1C500D09ADF /* UIDevice.swift */,
 				0F2D21B21EDEA1C500D09ADF /* UIViewController.swift */,
 				0F2D21B31EDEA1C500D09ADF /* UserDefaults.swift */,
 				0F2D21B41EDEA1C500D09ADF /* WeakReference.swift */,
@@ -440,11 +453,9 @@
 		0FE6377B1EDEC001006887EC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F9E5F2A1F27777C00FC5246 /* CryptoSwift.framework */,
 				9F9E5F281F27775D00FC5246 /* WatchKit.framework */,
 				9F9E5F261F27775100FC5246 /* UIKit.framework */,
 				9F9E5F241F27774500FC5246 /* Foundation.framework */,
-				9F9E5F111F2771D000FC5246 /* CryptoSwift.framework */,
 				9F9E5F121F2771D000FC5246 /* Reachability.framework */,
 				9F9E5F0F1F2771A400FC5246 /* UIKit.framework */,
 				9F9E5F0D1F27719900FC5246 /* Foundation.framework */,
@@ -452,7 +463,6 @@
 				0FE637831EDED52B006887EC /* Foundation.framework */,
 				0FE637811EDED520006887EC /* UIKit.framework */,
 				0FE6377F1EDEC041006887EC /* Reachability.framework */,
-				0FE6377C1EDEC001006887EC /* CryptoSwift.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -467,6 +477,25 @@
 			name = "Supporting Files";
 			path = "Sources/Supporting Files";
 			sourceTree = SOURCE_ROOT;
+		};
+		9F1BF1FE1F69784C006B6F06 /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				9F1BF1FF1F697863006B6F06 /* BatchedCollection.swift */,
+				9F1BF2001F697863006B6F06 /* CSArrayType+Extensions.swift */,
+				9F1BF2011F697863006B6F06 /* Digest.swift */,
+				9F1BF2021F697863006B6F06 /* DigestType.swift */,
+				9F1BF2031F697863006B6F06 /* Generics.swift */,
+				9F1BF2041F697863006B6F06 /* Int+Extension.swift */,
+				9F1BF2051F697863006B6F06 /* MD5.swift */,
+				9F1BF2061F697863006B6F06 /* SHA2.swift */,
+				9F1BF2071F697863006B6F06 /* UInt32+Extension.swift */,
+				9F1BF2081F697863006B6F06 /* UInt64+Extension.swift */,
+				9F1BF2091F697863006B6F06 /* Updatable.swift */,
+				9F1BF20A1F697863006B6F06 /* Utils.swift */,
+			);
+			name = Crypto;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -635,6 +664,8 @@
 				0F2D22171EDEA1C500D09ADF /* BaseProperties.swift in Sources */,
 				0F2D21ED1EDEA1C500D09ADF /* TrackingParameters.swift in Sources */,
 				0F2D21E21EDEA1C500D09ADF /* ExceptionTrackerImpl.swift in Sources */,
+				9F1BF2141F697863006B6F06 /* UInt64+Extension.swift in Sources */,
+				9F1BF20D1F697863006B6F06 /* Digest.swift in Sources */,
 				0F2D21E91EDEA1C500D09ADF /* DefaultMediaTracker.swift in Sources */,
 				0F2D221F1EDEA1C500D09ADF /* MediaTracker.swift in Sources */,
 				0F2D21F41EDEA1C500D09ADF /* ClosedInterval.swift in Sources */,
@@ -642,6 +673,7 @@
 				0F2D22031EDEA1C500D09ADF /* ThreadSynchronization.swift in Sources */,
 				0F2D21F31EDEA1C500D09ADF /* CatchObC.m in Sources */,
 				0F2D221E1EDEA1C500D09ADF /* ExceptionTracker.swift in Sources */,
+				9F1BF2131F697863006B6F06 /* UInt32+Extension.swift in Sources */,
 				0F2D22201EDEA1C500D09ADF /* PageTracker.swift in Sources */,
 				0F2D22271EDEA1C500D09ADF /* PropertyValue .swift in Sources */,
 				0F2D21F81EDEA1C500D09ADF /* Mergeable.swift in Sources */,
@@ -661,10 +693,14 @@
 				0F2D21E61EDEA1C500D09ADF /* RequestTrackerBuilder.swift in Sources */,
 				0F2D22141EDEA1C500D09ADF /* TrackingEventWithUserProperties.swift in Sources */,
 				0F2D221A1EDEA1C500D09ADF /* GlobalProperties.swift in Sources */,
+				9F1BF20F1F697863006B6F06 /* Generics.swift in Sources */,
 				0F2D21EC1EDEA1C500D09ADF /* TrackerConfiguration.swift in Sources */,
+				9F1BF2151F697863006B6F06 /* Updatable.swift in Sources */,
 				0F2D22281EDEA1C500D09ADF /* TrackingValue.swift in Sources */,
+				9F1BF2111F697863006B6F06 /* MD5.swift in Sources */,
 				0F2D22221EDEA1C500D09ADF /* Tracker.swift in Sources */,
 				0F2D21E01EDEA1C500D09ADF /* Campaign.swift in Sources */,
+				9F1BF20C1F697863006B6F06 /* CSArrayType+Extensions.swift in Sources */,
 				0F2D221C1EDEA1C500D09ADF /* PageProperties.swift in Sources */,
 				0F2D220C1EDEA1C500D09ADF /* PageViewEvent.swift in Sources */,
 				0F2D22101EDEA1C500D09ADF /* TrackingEventWithEcommerceProperties.swift in Sources */,
@@ -673,6 +709,7 @@
 				0F2D21F71EDEA1C500D09ADF /* Global.swift in Sources */,
 				0F2D220E1EDEA1C500D09ADF /* TrackingEventWithActionProperties.swift in Sources */,
 				0F2D22111EDEA1C500D09ADF /* TrackingEventWithMediaProperties.swift in Sources */,
+				9F1BF2121F697863006B6F06 /* SHA2.swift in Sources */,
 				0F2D21FB1EDEA1C500D09ADF /* NSRange.swift in Sources */,
 				0F2D21F11EDEA1C500D09ADF /* ASIdentifierManager.swift in Sources */,
 				0F2D220B1EDEA1C500D09ADF /* MediaEvent.swift in Sources */,
@@ -683,10 +720,13 @@
 				0F2D22011EDEA1C500D09ADF /* String.swift in Sources */,
 				0F2D21E11EDEA1C500D09ADF /* DeepLink.swift in Sources */,
 				0F2D21DF1EDEA1C500D09ADF /* PageViewEventHandler.swift in Sources */,
-				0F2D22041EDEA1C500D09ADF /* UIDevice.swift in Sources */,
 				0F2D22121EDEA1C500D09ADF /* TrackingEventWithPageProperties.swift in Sources */,
 				0F2D221B1EDEA1C500D09ADF /* MediaProperties.swift in Sources */,
+				9F1BF20E1F697863006B6F06 /* DigestType.swift in Sources */,
+				9F1BF2101F697863006B6F06 /* Int+Extension.swift in Sources */,
+				9F1BF2161F697863006B6F06 /* Utils.swift in Sources */,
 				0F2D22291EDEA1C500D09ADF /* WebtrekkTracking.swift in Sources */,
+				9F1BF20B1F697863006B6F06 /* BatchedCollection.swift in Sources */,
 				0F2D22071EDEA1C500D09ADF /* WeakReference.swift in Sources */,
 				0F2D220F1EDEA1C500D09ADF /* TrackingEventWithAdvertisementProperties.swift in Sources */,
 				0F2D21EA1EDEA1C500D09ADF /* DefaultPageTracker.swift in Sources */,
