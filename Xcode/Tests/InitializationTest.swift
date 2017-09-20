@@ -25,7 +25,7 @@ class InitializationTest: WTBaseTestNew {
     private var configName: String?
     
     override func getConfigName() -> String? {
-        if let name = self.name {
+        if !self.name.isEmpty {
             if name.range(of: "testIncorrectConfig") != nil {
                 return "webtrekk_bad_config"
             } else if (name.range(of: "testTrackIdChange") != nil) {

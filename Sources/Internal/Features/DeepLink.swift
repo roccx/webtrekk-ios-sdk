@@ -42,7 +42,7 @@ class DeepLink: NSObject{
     }
     
     // method that replaces application in delegate
-    dynamic func wt_application(_ application: UIApplication,
+    @objc dynamic func wt_application(_ application: UIApplication,
                      continue userActivity: NSUserActivity,
                                           restorationHandler: ([AnyObject]?) -> Void) -> Bool {
         

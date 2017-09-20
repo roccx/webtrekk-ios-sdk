@@ -28,12 +28,12 @@ class HttpBaseTestNew: XCTestCase {
     override func setUp() {
         super.setUp()
         httpTester.initHTTPServer()
-        print("Test \""+self.name!+"\" is started----------------------------------")
+        print("Test \""+self.name+"\" is started----------------------------------")
     }
     
     override func tearDown() {
         httpTester.releaseHTTPServer()
-        print("Test \""+self.name!+"\" is finished----------------------------------")
+        print("Test \""+self.name+"\" is finished----------------------------------")
         super.tearDown()
     }
     

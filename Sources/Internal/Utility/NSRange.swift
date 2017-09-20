@@ -37,7 +37,8 @@ internal extension NSRange {
 
 
 	private static func locationForIndex(_ index: String.Index, inString string: String) -> Int {
-		return string.utf16.distance(from: string.utf16.startIndex, to: index.samePosition(in: string.utf16))
+        guard let toPosition = index.samePosition(in: string.utf16) else {return -1}
+		return string.utf16.distance(from: string.utf16.startIndex, to: toPosition)
 	}
 
 

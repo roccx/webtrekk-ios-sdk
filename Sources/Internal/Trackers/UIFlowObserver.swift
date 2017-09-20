@@ -106,7 +106,7 @@ class UIFlowObserver: NSObject {
     }
 
     
-    dynamic func WTapplicationDidBecomeActive() {
+    @objc dynamic func WTapplicationDidBecomeActive() {
     
     #if os(watchOS)
         defer {
@@ -147,7 +147,7 @@ class UIFlowObserver: NSObject {
     #else
 
     // for watchOS only
-    dynamic func WTapplicationDidEnterBackground() {
+    @objc dynamic func WTapplicationDidEnterBackground() {
         defer {
             if class_respondsToSelector(object_getClass(self), #selector(WTapplicationDidEnterBackground)) {
                 self.WTapplicationDidEnterBackground()
@@ -164,7 +164,7 @@ class UIFlowObserver: NSObject {
     
     #endif
     
-    dynamic func WTapplicationWillResignActive() {
+    @objc dynamic func WTapplicationWillResignActive() {
         
         WebtrekkTracking.defaultLogger.logDebug("applicationWillResignActive is called")
         
@@ -207,7 +207,7 @@ class UIFlowObserver: NSObject {
         #endif
     }
     
-    dynamic func WTapplicationWillEnterForeground() {
+    @objc dynamic func WTapplicationWillEnterForeground() {
         
         #if os(watchOS)
             defer {

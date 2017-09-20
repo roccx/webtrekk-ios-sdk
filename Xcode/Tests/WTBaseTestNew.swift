@@ -198,7 +198,10 @@ class WTBaseTestNew: HttpBaseTestNew {
         
         if !fileManager.itemExistsAtURL(directory) {
             do {
-                try fileManager.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [URLResourceKey.isExcludedFromBackupKey.rawValue: true])
+                try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
+                var resourceValue = URLResourceValues()
+                resourceValue.isExcludedFromBackup = true
+                try? directory.setResourceValues(resourceValue)
             }
             catch let error {
                 WebtrekkTracking.defaultLogger.logError("Test: Cannot create directory at '\(directory)' for storing request queue backup file: \(error)")

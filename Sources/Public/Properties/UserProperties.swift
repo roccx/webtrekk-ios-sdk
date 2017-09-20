@@ -115,12 +115,12 @@ public struct UserProperties {
 
             if (rawValue.isBirthday)
             {
-                
-                self.year = Int(rawValue.substring(to:rawValue.characters.index(rawValue.startIndex, offsetBy: 4)))!
+                let yearIndex = rawValue.characters.index(rawValue.startIndex, offsetBy: 4)
+                self.year = Int(rawValue[..<yearIndex])!
                 
                 let monthRange = rawValue.characters.index(rawValue.startIndex, offsetBy: 4)..<rawValue.characters.index(rawValue.startIndex, offsetBy: 6)
-                self.month = Int(rawValue.substring(with: monthRange))!
-                self.day = Int(rawValue.substring(from: rawValue.characters.index(rawValue.startIndex, offsetBy: 6)))!
+                self.month = Int(rawValue[monthRange])!
+                self.day = Int(rawValue[rawValue.characters.index(rawValue.startIndex, offsetBy: 6)...])!
             }else{
                 WebtrekkTracking.logger.logWarning("Incorrect bithday format. Birthday won't be tracked")
                 return nil

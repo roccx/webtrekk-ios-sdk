@@ -43,7 +43,7 @@ class SimpleSync<T> {
         }
     }
     
-    func increment<T2: Integer>(to: T2){
+    func increment<T2: BinaryInteger>(to: T2){
         self.thread.sync(flags: .barrier){
             var val = self.valueInst as! T2
             val += to

@@ -26,19 +26,19 @@ class RemoteConfTest: WTBaseTestNew {
     override func getConfigName() -> String?{
         
         switch self.name {
-        case let name where name?.range(of: "testConfigOK") != nil:
+        case let name where name.range(of: "testConfigOK") != nil:
             return "webtrekk_config_remote_test_exists"
-        case let name where name?.range(of: "testLoadDefaultOK") != nil:
+        case let name where name.range(of: "testLoadDefaultOK") != nil:
             return "webtrekk_config_remote_test_not_exists"
-        case let name where name?.range(of: "testBrokenConfigLoad") != nil:
+        case let name where name.range(of: "testBrokenConfigLoad") != nil:
             return "webtrekk_config_remote_test_broken_scheme"
-        case let name where name?.range(of: "testEmptyConfigLoad") != nil:
+        case let name where name.range(of: "testEmptyConfigLoad") != nil:
             return "webtrekk_config_remote_test_empty_file"
-        case let name where name?.range(of: "testLocked") != nil:
+        case let name where name.range(of: "testLocked") != nil:
             return "webtrekk_config_remote_test_locked"
-        case let name where name?.range(of: "testLargeSize") != nil:
+        case let name where name.range(of: "testLargeSize") != nil:
             return "webtrekk_config_remote_test_large_size"
-        case let name where name?.range(of: "testTagIntegration") != nil:
+        case let name where name.range(of: "testTagIntegration") != nil:
             return "webtrekk_config_remote_test_tag_integration"
         default:
             WebtrekkTracking.defaultLogger.logError("This test use incorrect configuration")

@@ -37,14 +37,14 @@ private func class_getInstanceMethodIgnoringSupertypes(_ clazz: AnyClass, _ name
 internal func swizzleMethod(ofType type: AnyClass, fromSelector: Selector, toSelector: Selector) -> Bool {
 	precondition(fromSelector != toSelector)
 
-	let fromMethod = class_getInstanceMethodIgnoringSupertypes(type, fromSelector)
-	guard fromMethod != nil else {
+	
+	guard let fromMethod = class_getInstanceMethodIgnoringSupertypes(type, fromSelector) else {
 		logError("Selector '\(fromSelector)' was not swizzled with selector '\(toSelector)' since the former is not present in '\(type)'.")
 		return false
 	}
 
-	let toMethod = class_getInstanceMethodIgnoringSupertypes(type, toSelector)
-	guard toMethod != nil else {
+	
+	guard let toMethod = class_getInstanceMethodIgnoringSupertypes(type, toSelector) else {
 		logError("Selector '\(fromSelector)' was not swizzled with selector '\(toSelector)' since the latter is not present in '\(type)'.")
 		return false
 	}
@@ -69,20 +69,13 @@ func addMethodFromAnotherClass(toClass: AnyClass, selectorToUse: Selector, metho
     
     //get method object
     
-    let method = class_getInstanceMethod(fromClass, methodSelector)
-    
-    if  method == nil {
+    guard let method = class_getInstanceMethod(fromClass, methodSelector) else{
         WebtrekkTracking.defaultLogger.logError("can't get method from method selector")
         return false
     }
     
     let methodImpl = method_getImplementation(method)
     let methodTypes = method_getTypeEncoding(method)
-    
-    if  methodImpl == nil {
-        WebtrekkTracking.defaultLogger.logError("can't get method implementation from method")
-        return false
-    }
     
     if  methodTypes == nil {
         WebtrekkTracking.defaultLogger.logError("can't get method types from method")

@@ -76,11 +76,14 @@ class RequestQueue {
             return
         }
         
-        let basePath = url.appendingPathComponent("Webtrekk")
+        var basePath = url.appendingPathComponent("Webtrekk")
         
         if !fileManager.itemExistsAtURL(basePath) {
             do {
-                try fileManager.createDirectory(at: basePath, withIntermediateDirectories: true, attributes: [URLResourceKey.isExcludedFromBackupKey.rawValue: true])
+                try fileManager.createDirectory(at: basePath, withIntermediateDirectories: true)
+                var resourceValue = URLResourceValues()
+                resourceValue.isExcludedFromBackup = true
+                try? basePath.setResourceValues(resourceValue)
             }
             catch let error {
                 logError("Cannot create directory at '\(basePath)' for storing request queue backup file: \(error)")

@@ -38,27 +38,27 @@ class ExceptionTrackingTest: WTBaseTestNew {
     
     override func getConfigName() -> String? {
         switch self.name {
-            case let name where name?.range(of: "testNoErrorLog") != nil:
+            case let name where name.range(of: "testNoErrorLog") != nil:
             return "webtrekk_config_error_log_no"
-            case let name where name?.range(of: "testErrorLogDisable") != nil:
+            case let name where name.range(of: "testErrorLogDisable") != nil:
             return "webtrekk_config_error_log_disabled"
-            case let name where name?.range(of: "testCrashException") != nil:
+            case let name where name.range(of: "testCrashException") != nil:
             return "webtrekk_config_error_log_fatal"
-            case let name where name?.range(of: "testCrashSignal") != nil:
+            case let name where name.range(of: "testCrashSignal") != nil:
             return "webtrekk_config_error_log_fatal"
-            case let name where name?.range(of: "testAfterExceptionCrash") != nil:
+            case let name where name.range(of: "testAfterExceptionCrash") != nil:
             return "webtrekk_config_error_log_fatal"
-            case let name where name?.range(of: "testAfterSignalCrash") != nil:
+            case let name where name.range(of: "testAfterSignalCrash") != nil:
             return "webtrekk_config_error_log_fatal"
-            case let name where name?.range(of: "testInfoErrorLog") != nil:
+            case let name where name.range(of: "testInfoErrorLog") != nil:
             return "webtrekk_config_error_log_info"
-            case let name where name?.range(of: "testExceptionTracking") != nil:
+            case let name where name.range(of: "testExceptionTracking") != nil:
             return "webtrekk_config_error_log_exception"
-            case let name where name?.range(of: "testErrorTracking") != nil:
+            case let name where name.range(of: "testErrorTracking") != nil:
             return "webtrekk_config_error_log_exception"
-            case let name where name?.range(of: "testNSErrorTracking") != nil:
+            case let name where name.range(of: "testNSErrorTracking") != nil:
             return "webtrekk_config_error_log_exception"
-            case let name where name?.range(of: "testNoExceptionTracking") != nil:
+            case let name where name.range(of: "testNoExceptionTracking") != nil:
             return "webtrekk_config_error_log_fatal"
             default:
                 WebtrekkTracking.defaultLogger.logError("This test use incorrect configuration")
@@ -68,13 +68,13 @@ class ExceptionTrackingTest: WTBaseTestNew {
     
     override func setUp() {
         switch self.name {
-        case _ where name?.range(of: "testCrashSignal") != nil:
+        case _ where name.range(of: "testCrashSignal") != nil:
             signal(SIGILL, signalHandler)
             signal(SIGTRAP, signalHandler)
-        case _ where name?.range(of: "testCrashException") != nil:
+        case _ where name.range(of: "testCrashException") != nil:
             NSSetUncaughtExceptionHandler(exceptionHandler)
             signal(SIGABRT, signalHandler)
-        case _ where name?.range(of: "testAfterExceptionCrash") != nil:
+        case _ where name.range(of: "testAfterExceptionCrash") != nil:
             self.initWebtrekkManualy = true
         default:
             break
@@ -85,10 +85,10 @@ class ExceptionTrackingTest: WTBaseTestNew {
     override func tearDown() {
         super.tearDown()
         switch self.name {
-        case _ where name?.range(of: "testCrashSignal") != nil:
+        case _ where name.range(of: "testCrashSignal") != nil:
             signal(SIGILL, SIG_DFL)
             signal(SIGTRAP, SIG_DFL)
-        case _ where name?.range(of: "testCrashException") != nil:
+        case _ where name.range(of: "testCrashException") != nil:
             NSSetUncaughtExceptionHandler(nil)
             signal(SIGABRT, SIG_DFL)
         default:

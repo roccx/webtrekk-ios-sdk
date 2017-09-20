@@ -11,7 +11,7 @@ internal func checkIsOnMainThread(function: StaticString = #function, file: Stat
 
 	var file = String(describing: file)
 	if let range = file.range(of: "/", options: .backwards, range: nil, locale: nil) {
-		file = file[file.index(range.lowerBound, offsetBy: 1) ..< file.endIndex]
+        file = String(file[file.index(range.lowerBound, offsetBy: 1) ..< file.endIndex])
 	}
 
 	logError("[\(file):\(line)] \(function) must be called on the main thread!")

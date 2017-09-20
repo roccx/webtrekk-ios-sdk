@@ -9,7 +9,7 @@ internal extension String {
 			return nil
 		}
 
-		return (0 ..< match.numberOfRanges).map { self[match.rangeAt($0).rangeInString(self)!] }
+        return (0 ..< match.numberOfRanges).map { String(self[match.range(at: $0).rangeInString(self)!]) }
 	}
 
 

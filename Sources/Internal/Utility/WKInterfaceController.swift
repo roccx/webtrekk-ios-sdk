@@ -43,7 +43,7 @@ internal extension WKInterfaceController {
     }
     
     
-    dynamic func wtWillActivate(){
+    @objc dynamic func wtWillActivate(){
         self.wtWillActivate()
         
         guard WebtrekkTracking.isInitialized() else {

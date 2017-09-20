@@ -33,7 +33,7 @@ class AdClearIDTest: WTBaseTestNew {
     
     override func getConfigName() -> String? {
         switch self.name {
-        case let name where name?.range(of: "testNoAdClearIdRequiredPageRequest") != nil || name?.range(of: "testNoAdClearIdRequiredActionRequest") != nil:
+        case let name where name.range(of: "testNoAdClearIdRequiredPageRequest") != nil || name.range(of: "testNoAdClearIdRequiredActionRequest") != nil:
             return "webtrekk_config_no_AdClearId"
         default:
             return "webtrekk_config_auto_parameter_complex"

@@ -144,19 +144,17 @@ extension Migration: CustomStringConvertible {
 
 
 
-private extension NSKeyedUnarchiver {
+extension NSKeyedUnarchiver {
 
 	static func unarchive(file: URL) -> AnyObject? {
 		guard let data = try? Data(contentsOf: file) else {
 			return nil
 		}
 
-		if #available(iOS 9.0, *) {
-            
-            return (try! unarchiveTopLevelObjectWithData(data as NSData) as AnyObject??) ?? nil
-		}
-		else {
-			return unarchiveObject(with: data) as AnyObject?
-		}
+        return unarchive(data: data)
 	}
+    
+    static func unarchive(data: Data) -> AnyObject? {
+            return unarchiveObject(with: data) as AnyObject?
+    }
 }

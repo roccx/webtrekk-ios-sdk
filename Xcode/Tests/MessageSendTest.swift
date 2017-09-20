@@ -24,7 +24,7 @@ class MessageSendTest: WTBaseTestNew {
     
     override func getConfigName() -> String? {
         
-        if let name = self.name {
+        if !self.name.isEmpty {
             if name.range(of: "testManualSend") != nil {
                 return "webtrekk_config_message_send_manual"
             } else if (name.range(of: "testMinimumDelaySend") != nil) {
@@ -49,7 +49,7 @@ class MessageSendTest: WTBaseTestNew {
     
     override func setUp() {
         switch self.name {
-        case _ where name?.range(of: "testMigrationFromVersion440") != nil:
+        case _ where name.range(of: "testMigrationFromVersion440") != nil:
             self.initWebtrekkManualy = true
         default:
             break

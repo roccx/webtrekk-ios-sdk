@@ -336,11 +336,11 @@ fileprivate class ExceptionSaveAndSendHelper{
         var minimumNumber: Int? = nil
         var fileName: String? = nil
         
-        //find file with nimimumID
+        //find file with minimumID
         enumerator?.forEach(){value in
             if let strValue = value as? String, strValue.contains(exceptionFileName){
                 if let range = strValue.range(of: "\\d", options: .regularExpression),
-                    let number = Int(strValue.substring(with: range)){
+                    let number = Int(strValue[range]){
 
                     if minimumNumber == nil || minimumNumber! > number {
                         minimumNumber = number

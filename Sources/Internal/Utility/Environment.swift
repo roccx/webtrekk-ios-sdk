@@ -6,11 +6,17 @@ internal struct Environment {
 	internal static var advertisingIdentifierManager: ASIdentifierManager? = {
 		let selector = #selector(ASIdentifierManager.sharedManager)
 
-		guard let identifierManagerClass = NSClassFromString("ASIdentifierManager") as? NSObjectProtocol , identifierManagerClass.responds(to: selector) else {
+        
+        guard let klass = NSClassFromString("ASIdentifierManager"),
+              let identifierManagerClassType = klass as AnyObject as? NSObjectProtocol else {
+            return nil
+        }
+        
+        guard identifierManagerClassType.responds(to: selector) else {
 			return nil
 		}
 
-		let sharedManager = identifierManagerClass.perform(selector).takeUnretainedValue()
+		let sharedManager = identifierManagerClassType.perform(selector).takeUnretainedValue()
 		return unsafeBitCast(sharedManager, to: ASIdentifierManager.self)
 	}()
 

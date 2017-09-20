@@ -542,13 +542,7 @@ final class DefaultTracker: Tracker {
 		do {
 			let data = try Data(contentsOf: file, options: [])
 
-			let object: AnyObject?
-			if #available(iOS 9.0, *) {
-				object = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data as NSData)
-			}
-			else {
-				object = NSKeyedUnarchiver.unarchiveObject(with: data) as AnyObject?
-			}
+			let object = NSKeyedUnarchiver.unarchive(data: data)
 
 			guard let _queue = object as? [URL] else {
 				logError("Cannot load request queue from '\(file)': Data has wrong format: \(object.simpleDescription)")
@@ -931,7 +925,7 @@ final class DefaultTracker: Tracker {
         
         RequestTrackerBuilder.produceWarningForProperties(properties: configuration.globalProperties)
 
-		func checkProperty<Value: Comparable>(_ name: String, value: Value, allowedValues: ClosedRange<Value>) -> Value {
+		func checkProperty<Value>(_ name: String, value: Value, allowedValues: ClosedRange<Value>) -> Value {
 			guard !allowedValues.contains(value) else {
 				return value
 			}
