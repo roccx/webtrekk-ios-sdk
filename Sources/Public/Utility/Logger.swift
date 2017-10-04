@@ -34,7 +34,7 @@ public final class DefaultTrackingLogger: TrackingLogger {
 			return
 		}
 
-        if #available(iOS 10.0, *), #available(watchOSApplicationExtension 3.0, *) {
+        if #available(iOS 10.0, *), #available(watchOSApplicationExtension 3.0, *), #available(tvOS 10.0, *) {
             NSLog("%@", "[Webtrekk] [\(level.title)] \(message())") // should be replaced with os_log in future
         } else {
             NSLog("%@", "[Webtrekk] [\(level.title)] \(message())")
@@ -61,7 +61,7 @@ public enum TrackingLogLevel: Int {
 	}
     fileprivate var type: OSLogType? {
         
-        guard #available(iOS 10.0, *), #available(watchOSApplicationExtension 3.0, *) else {
+        guard #available(iOS 10.0, *), #available(watchOSApplicationExtension 3.0, *), #available(tvOS 10.0, *) else {
             return nil
         }
         
