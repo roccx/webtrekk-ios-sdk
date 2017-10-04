@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import Webtrekk
 
 class DownloadManager : NSObject, URLSessionDelegate, URLSessionDownloadDelegate {
     
@@ -41,16 +42,20 @@ class DownloadManager : NSObject, URLSessionDelegate, URLSessionDownloadDelegate
     }
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        NSLog("Download task in progress. Expected to write \(Int((totalBytesExpectedToWrite - totalBytesWritten)/1024))")
+        self.log("Download task in progress. Expected to write \(Int((totalBytesExpectedToWrite - totalBytesWritten)/1024))")
     }
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        NSLog("Download task is finished")
+        self.log("Download task is finished")
         try? FileManager.default.removeItem(at: location)
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        NSLog("Test download task completed")
+        self.log("Test download task completed")
+    } 
+    
+    private func log(_ str: String){
+        WebtrekkTracking.defaultLogger.logDebug(str)
     }
     
 }
