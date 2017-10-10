@@ -113,12 +113,22 @@ class PageTest: WTBaseTestNew {
                 return "macOS"
             #endif
         }()
+
+        let modelNumber: String = {
+            #if os(iOS)
+                return "iPhone"
+            #else
+                return "x86_64"
+            #endif
+        }()
+
+        
         
         let version = ProcessInfo().operatingSystemVersion
 
         
         doURLSendTestCheck(){parametersArr in
-            expect(parametersArr["X-WT-UA"]?.removingPercentEncoding!).to(equal("Tracking Library \(WebtrekkTracking.version) (\(operatingSystemName) \(version.majorVersion).\(version.minorVersion)\(version.patchVersion == 0 ? "":".\(version.patchVersion)"); iPhone; \(Locale.current.identifier))"))
+            expect(parametersArr["X-WT-UA"]?.removingPercentEncoding!).to(equal("Tracking Library \(WebtrekkTracking.version) (\(operatingSystemName) \(version.majorVersion).\(version.minorVersion)\(version.patchVersion == 0 ? "":".\(version.patchVersion)"); \(modelNumber); \(Locale.current.identifier))"))
         }
     }
     
