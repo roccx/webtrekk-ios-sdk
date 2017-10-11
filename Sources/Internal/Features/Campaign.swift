@@ -58,7 +58,7 @@ class Campaign{
         
         queryItems.append(URLQueryItem(name: "X-WT-UA", value: DefaultTracker.userAgent))
         
-        urlComponents?.queryItems = queryItems
+        urlComponents?.applyQueryItemsWithAlternativeURLEncoding(queryItems)
         
         guard let url = urlComponents?.url else {
             WebtrekkTracking.logger.logError("can't construct URL for campaign")

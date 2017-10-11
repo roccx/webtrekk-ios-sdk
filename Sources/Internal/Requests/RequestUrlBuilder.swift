@@ -166,17 +166,19 @@ internal final class RequestUrlBuilder {
 
 		append(arr: &parameters, name: "eor", value: "1")
 
-		var urlComponents = URLComponents(url: baseUrl, resolvingAgainstBaseURL: true)
+		let urlComponents = URLComponents(url: baseUrl, resolvingAgainstBaseURL: true)
         
-        guard let _ = urlComponents else {
+        guard var components = urlComponents else {
 			logError("Could not parse baseUrl: \(baseUrl)")
 			return nil
 		}
 
-		urlComponents?.queryItems = parameters
+        // do workaround to encode all characters in query
 
-		guard let url = urlComponents?.url else {
-			logError("Cannot build URL from components: \(urlComponents.simpleDescription)")
+        components.applyQueryItemsWithAlternativeURLEncoding(parameters)
+
+		guard let url = components.url else {
+			logError("Cannot build URL from components: \(components)")
 			return nil
 		}
 
@@ -554,6 +556,29 @@ private extension URLQueryItem {
 
 		self.init(name: "\(name)\(property.0)", value: value)
 	}
+}
+
+
+extension URLComponents {
+    mutating func applyQueryItemsWithAlternativeURLEncoding(_ queryItems: [URLQueryItem]){
+        var csValue = CharacterSet.urlQueryAllowed
+
+        "$',/:?@=&+".forEach { (ch) in
+            csValue.remove(ch.unicodeScalars.first!)
+        }
+        
+        let addQuery = queryItems.map {
+            $0.name.addingPercentEncoding(withAllowedCharacters: csValue)!
+            + "=" + $0.value!.addingPercentEncoding(withAllowedCharacters: csValue)!
+            }.joined(separator: "&")
+        
+        if self.percentEncodedQuery != nil {
+            self.percentEncodedQuery = self.percentEncodedQuery! + "&" + addQuery
+        } else {
+            self.percentEncodedQuery = addQuery
+        }
+        
+    }
 }
 
 

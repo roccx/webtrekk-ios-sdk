@@ -45,21 +45,17 @@ class PageTest: WTBaseTestNew {
             expect(parametersArr["cb2"]).to(equal("value2"))
             expect(parametersArr["cc2"]).to(equal("value2"))
             expect(parametersArr["cs2"]).to(equal("value2"))
-            //expect(parametersArr["ck2"]).to(equal("value2"))
             expect(parametersArr["ca2"]).to(equal("value2"))
             expect(parametersArr["cg2"]).to(equal("value2"))
             expect(parametersArr["uc2"]).to(equal("value2"))
-            //expect(parametersArr["mg2"]).to(equal("value2"))
             
             expect(parametersArr["cp20"]).to(equal("test_pageparam2"))
             expect(parametersArr["cb1"]).to(equal("test_ecomparam1"))
             expect(parametersArr["cc1"]).to(equal("test_adparam1"))
             expect(parametersArr["cs1"]).to(equal("test_sessionparam1"))
-            //expect(parametersArr["ck1"]).to(equal("test_actionparam1"))
             expect(parametersArr["ca1"]).to(equal("test_productcategory1"))
             expect(parametersArr["cg1"]).to(equal("test_pagecategory1"))
             expect(parametersArr["uc1"]).to(equal("test_usercategory1"))
-            //expect(parametersArr["mg1"]).to(equal("test_mediacategory1"))
         }
         
         
@@ -77,22 +73,69 @@ class PageTest: WTBaseTestNew {
             expect(parametersArr["cb2"]).to(equal("value2"))
             expect(parametersArr["cc2"]).to(equal("value2"))
             expect(parametersArr["cs2"]).to(equal("value2"))
-            //expect(parametersArr["ck2"]).to(equal("value2"))
             expect(parametersArr["ca2"]).to(equal("value2"))
             expect(parametersArr["cg2"]).to(equal("value2"))
             expect(parametersArr["uc2"]).to(equal("value2"))
-            //expect(parametersArr["mg2"]).to(equal("value2"))
             
             expect(parametersArr["cp20"]).to(equal("cp20Override"))
             expect(parametersArr["cb1"]).to(equal("test_ecomparam1"))
             expect(parametersArr["cc1"]).to(equal("test_adparam1"))
             expect(parametersArr["cs1"]).to(equal("test_sessionparam1"))
-            //expect(parametersArr["ck1"]).to(equal("test_actionparam1"))
             expect(parametersArr["ca1"]).to(equal("test_productcategory1"))
             expect(parametersArr["cg1"]).to(equal("test_pagecategory1"))
             expect(parametersArr["uc1"]).to(equal("test_usercategory1"))
-            //expect(parametersArr["mg1"]).to(equal("test_mediacategory1"))
         }
+    }
+    
+    func testCoding(){
+        
+        var allAllowedSymbols = CharacterSet.urlQueryAllowed
+        
+        
+        let coddedSymbols = "+=\"',/?:@&#$"
+        
+        coddedSymbols.forEach { (ch) in
+            allAllowedSymbols.remove(ch.unicodeScalars.first!)
+        }
+
+        var allASCIISympbols1 = ""
+        var allASCIISympbols2 = ""
+
+        for i in 0...127 {
+            allASCIISympbols1 = allASCIISympbols1 + String(UnicodeScalar(i)!)
+        }
+        
+        for i in 128...255{
+            allASCIISympbols2 = allASCIISympbols2 + String(UnicodeScalar(i)!)
+        }
+
+        let codedASCIISymbols1 = allASCIISympbols1.addingPercentEncoding(withAllowedCharacters: allAllowedSymbols)
+        let codedASCIISymbols2 = allASCIISympbols2.addingPercentEncoding(withAllowedCharacters: allAllowedSymbols)
+
+        
+        
+        doURLSendTestAction(){
+            let defTracker = WebtrekkTracking.instance()
+            defTracker.global.variables["Key1"] = allASCIISympbols1
+            defTracker.global.variables["Key2"] = allASCIISympbols2
+            defTracker.trackPageView("pageName")
+        }
+        
+        doURLSendTestCheck(){parametersArr in
+            print("key value print for keyValueTestSimple______________")
+            for (key, value) in parametersArr{
+                print(key+"="+value)
+            }
+            expect(parametersArr["cp1"]).to(equal(codedASCIISymbols1))
+            expect(parametersArr["cp2"]).to(equal(codedASCIISymbols2))
+            expect(parametersArr["cb2"]).to(equal(codedASCIISymbols2))
+            expect(parametersArr["cc2"]).to(equal(codedASCIISymbols2))
+            expect(parametersArr["cs2"]).to(equal(codedASCIISymbols2))
+            expect(parametersArr["ca2"]).to(equal(codedASCIISymbols2))
+            expect(parametersArr["cg2"]).to(equal(codedASCIISymbols2))
+            expect(parametersArr["uc2"]).to(equal(codedASCIISymbols2))
+        }
+
     }
     
     func testUserAgent(){
@@ -281,7 +324,7 @@ class PageTest: WTBaseTestNew {
         }
 
         doURLSendTestCheck(){parametersArr in
-                expect(parametersArr["pu"]).to(contain("http://www.sample.com"))
+                expect(parametersArr["pu"]).to(contain("http%3A%2F%2Fwww.sample.com"))
         }
         
         // test correct pu parameter is set
@@ -294,7 +337,7 @@ class PageTest: WTBaseTestNew {
         }
 
         doURLSendTestCheck(){parametersArr in
-                expect(parametersArr["pu"]).to(contain("https://www.webtrekk.com"))
+                expect(parametersArr["pu"]).to(contain("https%3A%2F%2Fwww.webtrekk.com"))
         }
     }
 }

@@ -209,12 +209,16 @@ class RecomendationImpl: Recommendation {
             logError("Can't construct URL for recommendation")
             return nil
         }
+        var queryItems = [URLQueryItem]()
         
         for i in 0..<2 {
             if let value = values[i] {
-                url.queryItems?.append(URLQueryItem(name: keys[i], value: value))
+                queryItems.append(URLQueryItem(name: keys[i], value: value))
             }
         }
+        
+        url.applyQueryItemsWithAlternativeURLEncoding(queryItems)
+        
         return url.url
     }
 
