@@ -21,7 +21,7 @@ Xcode 8.3+ and Swift 3.1 starting with version 4.5.1
 
 Starting with version 4.7.0 library can be included and compiled with XCode 9.0 beta6.
 
-Xcode 9.0+ and Swift 4.0 starting with version 4.7.3
+Xcode 9.0+ and Swift 4.0 starting with version 4.8.0
 
 tvOS support starting with version 4.2.0 with the following limitation:
 No screen resolution and network status automatic tracing support.

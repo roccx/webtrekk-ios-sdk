@@ -238,7 +238,7 @@ class ExceptionTrackingTest: WTBaseTestNew {
             expect(parametersArr["ck910"]).to(equal("2"))
             expect(parametersArr["ck911"]).to(equal("Swift%20Exception"))
             expect(parametersArr["ck912"]).to(equal("unit%20test"))
-            expect(parametersArr["ck916"]).to(equal("key2:value2;key1:"+String(repeating: char, count: 238)))
+            expect(parametersArr["ck916"]).to(equal("key2%3Avalue2;key1%3A"+String(repeating: char, count: 238)))
             expect(parametersArr["ck917"]).to(beNil())
         }
     }
@@ -266,8 +266,8 @@ class ExceptionTrackingTest: WTBaseTestNew {
             expect(parametersArr["ct"]).to(equal("webtrekk_ignore"))
             expect(parametersArr["ck910"]).to(equal("2"))
             expect(parametersArr["ck911"]).to(equal("NSError"))
-            expect(parametersArr["ck912"]).to(equal("code:2,%20domain:SomeDomain"))
-            expect(parametersArr["ck916"]).to(equal("key2:value2;key1:NSError;"))
+            expect(parametersArr["ck912"]).to(equal("code%3A2%2C%20domain%3ASomeDomain"))
+            expect(parametersArr["ck916"]).to(equal("key2%3Avalue2;key1%3ANSError;"))
             expect(parametersArr["ck917"]).to(beNil())
         }
     }
