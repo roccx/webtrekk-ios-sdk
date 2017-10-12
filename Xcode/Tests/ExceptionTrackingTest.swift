@@ -153,10 +153,10 @@ class ExceptionTrackingTest: WTBaseTestNew {
                 expect(parametersArr["ck911"]).to(equal("Example_of_uncatched_exception"))
                 expect(parametersArr["ck912"]).to(equal("Just_for_test"))
                 expect(parametersArr["ck913"]).to(contain("ExceptionTrackingTest"))
-                expect(parametersArr["ck916"]).to(equal("Key2:Value2;Key1:Value1;"))// todo
+                expect(parametersArr["ck916"]).to(equal("Key2%3AValue2;Key1%3AValue1;"))// todo
                 expect(parametersArr["ck917"]).toNot(beNil())
             case 1:
-                expect(parametersArr["ck911"]).to(equal("Signal:%20SIGABRT"))
+                expect(parametersArr["ck911"]).to(equal("Signal%3A%20SIGABRT"))
                 expect(parametersArr["ck913"]).toNot(beNil())
                 requestsAreDone = true
             default:
@@ -180,7 +180,7 @@ class ExceptionTrackingTest: WTBaseTestNew {
             parametersArr in
             expect(parametersArr["ct"]).to(equal("webtrekk_ignore"))
             expect(parametersArr["ck910"]).to(equal("1"))
-            expect(parametersArr["ck911"]).to(equal("Signal:%20SIGILL"))
+            expect(parametersArr["ck911"]).to(equal("Signal%3A%20SIGILL"))
             expect(parametersArr["ck912"]).to(beNil())
             expect(parametersArr["ck913"]).notTo(beNil())
             expect(parametersArr["ck916"]).to(beNil())
