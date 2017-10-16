@@ -19,6 +19,10 @@
 		9F12A9401DC899530006B44F /* RecoItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */; };
 		9F162F3C1E966688006EEF5D /* OutOfMemoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */; };
 		9F26D1A81E7045F5002CA573 /* requestQueue.archive in Resources */ = {isa = PBXBuildFile; fileRef = 9FFA47341E701EA100774AF2 /* requestQueue.archive */; };
+		9F2BAC301F90B7BB002F0E0F /* SetV2EverID.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2BAC2F1F90B7BB002F0E0F /* SetV2EverID.m */; };
+		9F2BAC331F90BACD002F0E0F /* EverIdConversionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2BAC321F90BACD002F0E0F /* EverIdConversionTest.swift */; };
+		9F2D90821F8FB720006DB0E6 /* GetTrackIdTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2D90811F8FB720006DB0E6 /* GetTrackIdTest.swift */; };
+		9F2D90831F8FB735006DB0E6 /* GetTrackIdTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2D90811F8FB720006DB0E6 /* GetTrackIdTest.swift */; };
 		9F30E2021E4CB04000F7BB99 /* ExceptionTrackingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */; };
 		9F34496D1E5DF0710094C006 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F081D5C7C59002CB83F /* ViewController.swift */; };
 		9F415F291D5C7C81002CB83F /* AAMigrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F415F151D5C7C6D002CB83F /* AAMigrationTest.swift */; };
@@ -210,6 +214,10 @@
 		9F12A93E1DC899530006B44F /* RecoItemTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecoItemTableViewCell.swift; sourceTree = "<group>"; };
 		9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OutOfMemoryTest.swift; sourceTree = "<group>"; };
 		9F16F2BD1DB8C9CB007CFB71 /* MessageSendTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageSendTest.swift; sourceTree = "<group>"; };
+		9F2BAC2F1F90B7BB002F0E0F /* SetV2EverID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SetV2EverID.m; sourceTree = "<group>"; };
+		9F2BAC311F90B7E0002F0E0F /* SetV2EverID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetV2EverID.h; sourceTree = "<group>"; };
+		9F2BAC321F90BACD002F0E0F /* EverIdConversionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EverIdConversionTest.swift; sourceTree = "<group>"; };
+		9F2D90811F8FB720006DB0E6 /* GetTrackIdTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetTrackIdTest.swift; sourceTree = "<group>"; };
 		9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExceptionTrackingTest.swift; sourceTree = "<group>"; };
 		9F415F001D5C7C59002CB83F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9F415F021D5C7C59002CB83F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -430,6 +438,7 @@
 		9F415F141D5C7C6D002CB83F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				9F2D90811F8FB720006DB0E6 /* GetTrackIdTest.swift */,
 				9FDEA0441E3F8DC300DC6F32 /* BackToForegroundTest.swift */,
 				9F415F9E1D5CD57B002CB83F /* Bridging-Header.h */,
 				9F415F331D5C8090002CB83F /* WebtrekkOld.framework */,
@@ -460,6 +469,9 @@
 				9F162F3B1E966688006EEF5D /* OutOfMemoryTest.swift */,
 				9FE98B481F2F44740016654E /* WebViewIntegrationTest.swift */,
 				9F9285F31F5988980062DD60 /* CryptoTests.swift */,
+				9F2BAC2F1F90B7BB002F0E0F /* SetV2EverID.m */,
+				9F2BAC311F90B7E0002F0E0F /* SetV2EverID.h */,
+				9F2BAC321F90BACD002F0E0F /* EverIdConversionTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1186,11 +1198,13 @@
 				C2C8D0941ECA059700A73ED5 /* CDBResendTest.swift in Sources */,
 				9F63E7811DC0D51B0001D72E /* ParameterTest.swift in Sources */,
 				9F06B91E1DD4AB00003D15EC /* HTTPTester.swift in Sources */,
+				9F2BAC301F90B7BB002F0E0F /* SetV2EverID.m in Sources */,
 				9F415F291D5C7C81002CB83F /* AAMigrationTest.swift in Sources */,
 				9FFB526B1DC906FB000E4519 /* RecommendationTest.swift in Sources */,
 				9F34496D1E5DF0710094C006 /* ViewController.swift in Sources */,
 				9F63E77F1DC0D5150001D72E /* MediaTest.swift in Sources */,
 				9F63E7831DC0D52B0001D72E /* DeepLink.swift in Sources */,
+				9F2D90821F8FB720006DB0E6 /* GetTrackIdTest.swift in Sources */,
 				9F5A604C1DE2EC6D00EF84E0 /* AutoParameterTest.swift in Sources */,
 				9F0E36851E29224900E815CA /* AttributionTest.swift in Sources */,
 				9FDEA0461E3F8DDD00DC6F32 /* BackToForegroundTest.swift in Sources */,
@@ -1198,6 +1212,7 @@
 				9FE98B4B1F2F44D20016654E /* WebViewIntegrationTest.swift in Sources */,
 				9FE852151E51F1A100F5915D /* ExceptionCreator.m in Sources */,
 				9F63E7821DC0D5230001D72E /* MessageSendTest.swift in Sources */,
+				9F2BAC331F90BACD002F0E0F /* EverIdConversionTest.swift in Sources */,
 				9FFB526E1DC909CF000E4519 /* RecommendationTableViewController.swift in Sources */,
 				9F63E7851DC0E9580001D72E /* InitializationTest.swift in Sources */,
 				9F63E77B1DC0D4B30001D72E /* WTBaseTestNew.swift in Sources */,
@@ -1258,6 +1273,7 @@
 				9F06B9201DD4AB02003D15EC /* HTTPTester.swift in Sources */,
 				9F5FF0CD1DCB7C8E00F53B22 /* RecoItemTableViewCell.swift in Sources */,
 				9FC3E1EB1E5C7D14000D7B43 /* ExceptionTrackingTest.swift in Sources */,
+				9F2D90831F8FB735006DB0E6 /* GetTrackIdTest.swift in Sources */,
 				9F5FF0CF1DCB7C9100F53B22 /* RecommendationTableViewController.swift in Sources */,
 				9F95D4071DAE424B0068E8F8 /* WTBaseTestNew.swift in Sources */,
 				9F95D4031DAE423E0068E8F8 /* MediaTest.swift in Sources */,

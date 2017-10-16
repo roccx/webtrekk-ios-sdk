@@ -14,40 +14,39 @@
 //CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//  Created by Webtrekk on 02/06/17.
+//  Created by arsen.vartbaronov on 13/10/17.
 //
-
 import XCTest
 import Nimble
 import Webtrekk
 
-class GetTrackIdTest: WTBaseTestNew {
+class EverIdConversationTest : WTBaseTestNew {
     
-    override func getConfigName() -> String? {
-        switch self.name {
-        case let name where name.range(of: "test1") != nil:
-            // any config with multiple trackIds:
-            return "webtrekk_config_multiple_trackIds"
-        default:
-            // any config with just one trackId (that's the more common case):
-            return "webtrekk_config_recommendations"
+    override func setUp() {
+        self.initWebtrekkManualy = true
+        super.setUp()
+    }
+    
+    func testEverIdFromV2Conversion() {
+
+        var everId: String = ""
+        doURLSendTestAction() {
+            //delete current EverId
+            self.removeDefSetting(setting: "everId")
+            self.removeDefSetting(setting: "migrationCompleted")
+            //setup EverId as in V2
+            let everIdV2 = SetV2EverID()
+            everId = everIdV2.createEverIDLikeV2()
+            WebtrekkTracking.defaultLogger.logDebug("everId from V2: \(everId)")
+            //do track
+            self.initWebtrekk()
+            let track = WebtrekkTracking.instance()
+            track.trackPageView("someView")
         }
-    }
-    
-    
-    /// Getting the trackIds from an xml config that contains a list of trackIds
-    func test1MultipleTrackIds(){
-        let trackIds = WebtrekkTracking.instance().trackIds
-        expect(trackIds[0]).to(equal("123456789012341"))
-        expect(trackIds[1]).to(equal("123456789012342"))
-        expect(trackIds[2]).to(equal("123456789012343"))
-        expect(trackIds[3]).to(equal("123456789012344"))
-    }
-    
-    
-    /// Getting the trackIds from an xml config that contains only one trackId
-    func test2OneTrackId(){
-        let trackIds = WebtrekkTracking.instance().trackIds
-        expect(trackIds[0]).to(equal("123451234512345"))
+        
+        doURLSendTestCheck() { parametersArr in
+            expect(parametersArr["eid"]).to(equal(everId))
+        }
+        
     }
 }
