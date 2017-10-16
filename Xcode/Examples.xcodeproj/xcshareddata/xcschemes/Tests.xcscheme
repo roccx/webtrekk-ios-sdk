@@ -39,11 +39,6 @@
                BlueprintName = "Tests"
                ReferencedContainer = "container:Examples.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "AAMigrationTest">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>
