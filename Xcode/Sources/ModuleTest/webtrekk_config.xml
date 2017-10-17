@@ -44,7 +44,7 @@
     <resendOnStartEventTime>40</resendOnStartEventTime>
     
     <!--enable or disable exception logging. By default is disabled -->
-    <errorLogEnable>true</errorLogEnable>
+    <errorLogEnable>false</errorLogEnable>
     <!--set log level to do loging 1- only fatals 2 - fatal and catched, 3- all logs. By default = 3 -->
     <errorLogLevel>3</errorLogLevel>
 
