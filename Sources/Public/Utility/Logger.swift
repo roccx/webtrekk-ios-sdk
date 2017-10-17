@@ -35,9 +35,9 @@ public final class DefaultTrackingLogger: TrackingLogger {
 		}
 
         if #available(iOS 10.0, *), #available(watchOSApplicationExtension 3.0, *), #available(tvOS 10.0, *) {
-            NSLog("%@", "[Webtrekk] [\(level.title)] \(message())") // should be replaced with os_log in future
+            print("%@", "[Webtrekk] [\(level.title)] \(message())") // should be replaced with os_log in future
         } else {
-            NSLog("%@", "[Webtrekk] [\(level.title)] \(message())")
+            print("%@", "[Webtrekk] [\(level.title)] \(message())")
         }
 	}
 }
