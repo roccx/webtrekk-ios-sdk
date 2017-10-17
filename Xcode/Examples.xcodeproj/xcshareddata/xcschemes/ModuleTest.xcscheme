@@ -54,76 +54,31 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "AAMigrationTest">
-               </Test>
-               <Test
-                  Identifier = "ActionTest">
-               </Test>
-               <Test
-                  Identifier = "AdClearIDTest">
-               </Test>
-               <Test
                   Identifier = "AttributionTest">
-               </Test>
-               <Test
-                  Identifier = "AutoParameterTest">
                </Test>
                <Test
                   Identifier = "BackToForegroundTest">
                </Test>
                <Test
-                  Identifier = "CDBResendTest">
+                  Identifier = "ExceptionTrackingTest/testAfterExceptionCrash()">
                </Test>
                <Test
-                  Identifier = "CDBTest">
+                  Identifier = "ExceptionTrackingTest/testAfterSignalCrash()">
                </Test>
                <Test
-                  Identifier = "CryptoTest">
+                  Identifier = "ExceptionTrackingTest/testCrashException()">
                </Test>
                <Test
-                  Identifier = "DeepLink">
+                  Identifier = "ExceptionTrackingTest/testCrashSignal()">
                </Test>
                <Test
-                  Identifier = "EverIdConversationTest">
+                  Identifier = "MessageSendTest/testConnectionInterruption()">
                </Test>
                <Test
-                  Identifier = "ExceptionTrackingTest">
-               </Test>
-               <Test
-                  Identifier = "GetTrackIdTest">
-               </Test>
-               <Test
-                  Identifier = "HttpBaseTestNew">
-               </Test>
-               <Test
-                  Identifier = "InitializationTest">
-               </Test>
-               <Test
-                  Identifier = "MediaTest">
-               </Test>
-               <Test
-                  Identifier = "MessageSendTest">
+                  Identifier = "MessageSendTest/testConnectionInterruptionComplex()">
                </Test>
                <Test
                   Identifier = "OutOfMemoryTest">
-               </Test>
-               <Test
-                  Identifier = "ParameterTest">
-               </Test>
-               <Test
-                  Identifier = "ParametersPriorityTest">
-               </Test>
-               <Test
-                  Identifier = "RecommendationTest">
-               </Test>
-               <Test
-                  Identifier = "RemoteConfTest">
-               </Test>
-               <Test
-                  Identifier = "WTBaseTestNew">
-               </Test>
-               <Test
-                  Identifier = "WebViewIntegrationTest">
                </Test>
             </SkippedTests>
          </TestableReference>
