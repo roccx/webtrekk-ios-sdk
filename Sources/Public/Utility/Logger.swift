@@ -66,7 +66,7 @@ public enum TrackingLogLevel: Int {
         }
         
         switch (self) {
-        case .debug:   return .debug
+        case .debug:   return .info
         case .info:    return .info
         case .warning: return .info
         case .error:   return .error
