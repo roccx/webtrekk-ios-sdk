@@ -54,7 +54,7 @@ class HttpBaseTestNew: XCTestCase {
         guard let _ = HTTPTester.request else{
             return
         }
-        NSLog("Send URL is:"+(HTTPTester.request?.url?.absoluteString)!)
+        NSLog("Send URL is:" + (HTTPTester.request?.url?.absoluteString ?? "null"))
         
         closure(httpTester.getReceivedURLParameters((HTTPTester.request?.url?.query)!))
     }
