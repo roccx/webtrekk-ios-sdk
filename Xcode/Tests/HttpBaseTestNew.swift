@@ -56,7 +56,7 @@ class HttpBaseTestNew: XCTestCase {
         }
         NSLog("Send URL is:" + (HTTPTester.request?.url?.absoluteString ?? "null"))
         
-        closure(httpTester.getReceivedURLParameters((HTTPTester.request?.url?.query)!))
+        closure(httpTester.getReceivedURLParameters((HTTPTester.request?.url?.query ?? "")))
     }
 }
 

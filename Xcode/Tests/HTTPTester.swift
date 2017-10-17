@@ -75,6 +75,10 @@ class HTTPTester {
 
     func getReceivedURLParameters(_ query: String) -> [String:String]
     {
+        guard !query.isEmpty else {
+            NSLog("empty query")
+            return [:]
+        }
         let valueKeys = query.characters.split(separator: "&")
         var keyValueMap = [String: String]()
         
