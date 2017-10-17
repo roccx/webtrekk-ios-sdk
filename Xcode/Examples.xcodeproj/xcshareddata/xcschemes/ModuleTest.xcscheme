@@ -102,6 +102,12 @@
                   Identifier = "MediaTest">
                </Test>
                <Test
+                  Identifier = "MessageSendTest">
+               </Test>
+               <Test
+                  Identifier = "OutOfMemoryTest">
+               </Test>
+               <Test
                   Identifier = "ParameterTest">
                </Test>
                <Test
