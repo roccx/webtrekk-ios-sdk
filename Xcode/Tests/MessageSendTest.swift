@@ -198,7 +198,7 @@ class MessageSendTest: WTBaseTestNew {
         let source = Bundle.main.url(forResource: "requestQueue", withExtension: "archive")
         let destination = WTBaseTestNew.requestOldQueueBackupFileForWebtrekkId(getConfID())
         
-        WebtrekkTracking.defaultLogger.minimumLevel = .test
+        WebtrekkTracking.defaultLogger.minimumLevel = .debug
         
         do {
             let destinationToLog = destination?.absoluteString

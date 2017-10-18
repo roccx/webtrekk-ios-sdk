@@ -24,7 +24,7 @@ import Webtrekk
 class ExtensionDelegate: NSObject, WKExtensionDelegate {
 
     func applicationDidFinishLaunching() {
-        WebtrekkTracking.defaultLogger.minimumLevel = .test
+        WebtrekkTracking.defaultLogger.minimumLevel = .debug
         try? WebtrekkTracking.initTrack()
         // Perform any final initialization of your application.
         

@@ -31,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if ProcessInfo.processInfo.environment["XCInjectBundleInto"] == nil {
             if isAfterCrashStart() {
-                WebtrekkTracking.defaultLogger.minimumLevel = .test
+                WebtrekkTracking.defaultLogger.minimumLevel = .debug
                 WebtrekkTracking.defaultLogger.logDebug("Start after crash. Initialize crash configuration.")
                 initWithConfig(configName: "webtrekk_config_error_log_integration_test")
             } else {
@@ -116,7 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         do {
-            WebtrekkTracking.defaultLogger.minimumLevel = .test
+            WebtrekkTracking.defaultLogger.minimumLevel = .debug
             if let name = name {
                 let configFileURL = Bundle.main.url(forResource: name, withExtension: "xml", subdirectory: "Configurations/")
                 try WebtrekkTracking.initTrack(configFileURL)
