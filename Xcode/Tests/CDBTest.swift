@@ -131,9 +131,9 @@ class CDBTest: WTBaseTestNew {
     
     private func doTest(_ cycle: Int){
         if (cycle == 0){
-            NSLog("Start CDB test -------------")
+            self.log(text: "Start CDB test -------------")
         }
-        NSLog("Start test cycle \(cycle)---------------------")
+        self.log(text: "Start test cycle \(cycle)---------------------")
         
         let track = WebtrekkTracking.instance()
         
@@ -185,7 +185,7 @@ class CDBTest: WTBaseTestNew {
                 custom: custom
             ))
         default:
-            NSLog("Incorrect CDB case")
+            self.log(text: "Incorrect CDB case")
         }
         
     }
@@ -201,7 +201,7 @@ class CDBTest: WTBaseTestNew {
             let mdKey = mdKeyName[index];
             let mdValue = mdFieldValue[index]?.lowercased();
             
-            NSLog("test " + parName + " value:" + parValue+"\n")
+            self.log(text: "test " + parName + " value:" + parValue+"\n")
             
             if let key = firstKey {
                 expect(firstValue).to(equal(parameters[key]?.lowercased()), description: "cycle: \(cycle) key:\(key) index: \(index). expected: \(firstValue.simpleDescription) actual:\(parameters[key].simpleDescription)")

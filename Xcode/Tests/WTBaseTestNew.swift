@@ -56,6 +56,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         }
         
         WebtrekkTracking.defaultLogger.minimumLevel = .debug
+        WebtrekkTracking.defaultLogger.testMode = true
         
         do {
             if let configName = getConfigName(){
@@ -251,4 +252,9 @@ class WTBaseTestNew: HttpBaseTestNew {
         
         return url.appendingPathComponent("Webtrekk")
     }
+    
+    func log(text: String){
+        WebtrekkTracking.defaultLogger.logDebug(text)
+    }
+
 }
