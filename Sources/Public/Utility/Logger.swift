@@ -35,7 +35,7 @@ public final class DefaultTrackingLogger: TrackingLogger {
 		}
 
         if #available(iOS 10.0, *), #available(watchOSApplicationExtension 3.0, *), #available(tvOS 10.0, *) {
-            os_log("%@", dso: #dsohandle, log: OSLog.default, type: level.type!, "[Webtrekk] [\(level.title)] \(message())") // should be replaced with os_log in future
+            os_log("%@", dso: #dsohandle, log: OSLog.default, type: level.type!, "[Webtrekk] [\(level.title)] \(message())")
         } else {
             NSLog("%@", "[Webtrekk] [\(level.title)] \(message())")
         }
@@ -45,11 +45,12 @@ public final class DefaultTrackingLogger: TrackingLogger {
 
 public enum TrackingLogLevel: Int {
 
-	case debug   = 1
+    case test   = 0 // it should be used only to indicate minimum Level. It is case used for unit testing
+    case debug   = 1
 	case info    = 2
 	case warning = 3
 	case error   = 4
-
+    case fault = 5
 
 	fileprivate var title: String {
 		switch (self) {
@@ -57,6 +58,8 @@ public enum TrackingLogLevel: Int {
 		case .info:    return "Info"
 		case .warning: return "Warning"
 		case .error:   return "ERROR"
+        case .fault: return "FAULT"
+        case .test: return "Test"
 		}
 	}
     fileprivate var type: OSLogType? {
@@ -66,10 +69,12 @@ public enum TrackingLogLevel: Int {
         }
         
         switch (self) {
-        case .debug:   return .info
+        case .debug:   return .debug
         case .info:    return .info
         case .warning: return .info
         case .error:   return .error
+        case .fault: return .fault
+        case .test: return .info
         }
 
     }

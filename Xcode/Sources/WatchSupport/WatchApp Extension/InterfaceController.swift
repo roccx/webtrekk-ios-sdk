@@ -138,7 +138,7 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
         for value in values {
             let actual = parameters[value.parName]?.removingPercentEncoding
             if actual == nil || actual != value.expected {
-               NSLog("Test Error: expected parameter \(value.parName)=\(value.expected), but actual value:\(actual ?? "nil")")
+               self.log("Test Error: expected parameter \(value.parName)=\(value.expected), but actual value:\(actual ?? "nil")")
                 returnValue = false
             }
         }
@@ -157,12 +157,12 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
             }
             
             guard let _ = HTTPTester.request else{
-                NSLog("Test execution error")
+                self.log("Test execution error")
                 action(nil)
                 return
             }
             
-            NSLog("WatchOS. Send URL has been received")
+            self.log("WatchOS. Send URL has been received")
             
             DispatchQueue.main.async(){
                 action(self.httpTester.getReceivedURLParameters((HTTPTester.request?.url?.query)!))}
@@ -170,13 +170,13 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     }
     
     private func initSpecficStub(){
-        NSLog("Init specificStup")
+        self.log("Init specificStup")
 
         let defaultTracker = WebtrekkTracking.instance() as! DefaultTracker
         
         
         guard let requestManager = defaultTracker.requestManager else {
-            NSLog("Error: request manager is null. Can't establish delegate")
+            self.log("Error: request manager is null. Can't establish delegate")
             return
         }
         
@@ -187,17 +187,21 @@ class InterfaceController: WKInterfaceController, RequestManager.Delegate {
     
     func requestManager (_ requestManager: RequestManager, didSendRequest request: URL){
         HTTPTester.request = URLRequest(url: request)
-        NSLog("Request catched by delegate.")
+        self.log("Request catched by delegate.")
         self.originDelegate?.requestManager(requestManager, didSendRequest: request)
     }
     
     func requestManager (_ requestManager: RequestManager, didFailToSendRequest request: URL, error: RequestManager.ConnectionError){
-        NSLog ("failed request with error \(error).")
+        self.log ("failed request with error \(error).")
         self.originDelegate?.requestManager(requestManager, didFailToSendRequest: request, error: error)
     }
     
     private func logTestResult(isPassed: Bool, testNum: Int = 0){
-        NSLog("Test \(testNum) result.")
-        NSLog("Webtrekk WatchApp Test \(isPassed ? "passed":"failed")")
+        self.log("Test \(testNum) result.")
+        self.log("Webtrekk WatchApp Test \(isPassed ? "passed":"failed")")
+    }
+    
+    private func log(_ text: String){
+        WebtrekkTracking.defaultLogger.logDebug(text)
     }
 }

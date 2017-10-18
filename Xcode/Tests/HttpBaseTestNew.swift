@@ -19,6 +19,7 @@
 
 import XCTest
 import Nimble
+import Webtrekk
 
 class HttpBaseTestNew: XCTestCase {
     
@@ -54,7 +55,7 @@ class HttpBaseTestNew: XCTestCase {
         guard let _ = HTTPTester.request else{
             return
         }
-        NSLog("Send URL is:" + (HTTPTester.request?.url?.absoluteString ?? "null"))
+        WebtrekkTracking.defaultLogger.logDebug("Send URL is:" + (HTTPTester.request?.url?.absoluteString ?? "null"))
         
         closure(httpTester.getReceivedURLParameters((HTTPTester.request?.url?.query ?? "")))
     }

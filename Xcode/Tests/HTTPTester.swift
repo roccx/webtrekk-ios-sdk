@@ -17,6 +17,7 @@
 //  Created by arsen.vartbaronov on 10/11/16.
 //
 import OHHTTPStubs
+import Webtrekk
 
 class HTTPTester {
     static var request: URLRequest?
@@ -76,7 +77,7 @@ class HTTPTester {
     func getReceivedURLParameters(_ query: String) -> [String:String]
     {
         guard !query.isEmpty else {
-            NSLog("empty query")
+            WebtrekkTracking.defaultLogger.logDebug("empty query")
             return [:]
         }
         let valueKeys = query.characters.split(separator: "&")
@@ -88,7 +89,7 @@ class HTTPTester {
                 keyValueMap[String(keyValueArray[0])] = String(keyValueArray[1])
             }else
             {
-                print("incorrect parameter:"+String(valueKey))
+                WebtrekkTracking.defaultLogger.logDebug("incorrect parameter:"+String(valueKey))
             }
         }
         
