@@ -199,6 +199,7 @@ class MessageSendTest: WTBaseTestNew {
         let destination = WTBaseTestNew.requestOldQueueBackupFileForWebtrekkId(getConfID())
         
         WebtrekkTracking.defaultLogger.minimumLevel = .debug
+        WebtrekkTracking.defaultLogger.testMode = true
         
         do {
             let destinationToLog = destination?.absoluteString

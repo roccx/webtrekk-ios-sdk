@@ -56,6 +56,7 @@ class WTBaseTestNew: HttpBaseTestNew {
         }
         
         WebtrekkTracking.defaultLogger.minimumLevel = .debug
+        WebtrekkTracking.defaultLogger.testMode = true
         
         do {
             if let configName = getConfigName(){
