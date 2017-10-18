@@ -27,7 +27,7 @@ class OutOfMemoryTest: WTBaseTestNew {
         switch self.name {
         case _ where name.range(of: "testOutOfMemory") != nil:
             // at the end unmount should be done
-            NSLog("testOutOfMemory has been finished")
+            self.log(text: "testOutOfMemory has been finished")
             
             //wait for unmount
             sleep(2)
