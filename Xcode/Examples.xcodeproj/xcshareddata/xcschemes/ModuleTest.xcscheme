@@ -54,7 +54,13 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "AttributionTest">
+                  Identifier = "AttributionTest/testInstallation()">
+               </Test>
+               <Test
+                  Identifier = "AttributionTest/testStartAttributionWithIDFA()">
+               </Test>
+               <Test
+                  Identifier = "AttributionTest/testStartAttributionWithoutIDFA()">
                </Test>
                <Test
                   Identifier = "BackToForegroundTest">

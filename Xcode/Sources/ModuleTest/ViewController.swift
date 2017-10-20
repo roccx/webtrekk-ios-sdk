@@ -21,7 +21,7 @@ import UIKit
 import Webtrekk
 import WebKit
 
-class ViewController: UIViewController, WKScriptMessageHandler {
+class ViewController: UIViewController, WKScriptMessageHandler, WKNavigationDelegate {
 
     var webView: WKWebView?
     @IBOutlet var containerView: UIView!
@@ -50,6 +50,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         super.viewDidLoad()
         let url = URL(string: "http://jenkins-yat-dev-01.webtrekk.com/web/hello.html")
         let req = URLRequest(url: url!)
+        self.webView?.navigationDelegate = self
         self.webView?.load(req)
     }
     
@@ -64,6 +65,10 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    internal func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        WebtrekkTracking.defaultLogger.logDebug("webView fail with error:\(error.localizedDescription) ")
     }
     
     #if TEST_APP

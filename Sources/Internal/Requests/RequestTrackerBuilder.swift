@@ -30,16 +30,18 @@ final class RequestTrackerBuilder {
     #endif
     
     let campaign: Campaign
+    let appinstallGoal: AppinstallGoal
     let pageURL: String?
     let configuration: TrackerConfiguration
     let global: GlobalProperties
     
     init (_ campaign: Campaign, pageURL: String?, configuration: TrackerConfiguration,
-          global: GlobalProperties){
+          global: GlobalProperties, appInstall: AppinstallGoal){
         self.campaign = campaign
         self.pageURL = pageURL
         self.configuration = configuration
         self.global = global
+        self.appinstallGoal = appInstall
     }
     
     #if !os(watchOS)
@@ -83,7 +85,7 @@ final class RequestTrackerBuilder {
             
             eventByApplyingAutomaticPageTracking(to: &event)
             
-            campaignOverride(to: &event)
+            installGoalSetup(to: &event)
             
             #if !os(watchOS)
                 deepLinkOverride(to: &event)
@@ -123,7 +125,7 @@ final class RequestTrackerBuilder {
     #endif
     
     // override some parameter in request if campaign is completed
-    private func campaignOverride(to event: inout TrackingEvent){
+    private func installGoalSetup(to event: inout TrackingEvent){
         
         guard var _ = event as? TrackingEventWithAdvertisementProperties,
             let _ = event as? TrackingEventWithEcommerceProperties else{
@@ -135,11 +137,14 @@ final class RequestTrackerBuilder {
             var eventWithAdvertisementProperties = event as! TrackingEventWithAdvertisementProperties
             eventWithAdvertisementProperties.advertisementProperties.id = mc
             eventWithAdvertisementProperties.advertisementProperties.action = "c"
-            
+        }
+        
+        if self.appinstallGoal.checkAppinstallGoal() {
             var eventWithEcommerceProperties = event as! TrackingEventWithEcommerceProperties
             var detailsToAdd = eventWithEcommerceProperties.ecommerceProperties.details ?? [Int: TrackingValue]()
             detailsToAdd[900] = "1"
             eventWithEcommerceProperties.ecommerceProperties.details = detailsToAdd
+            self.appinstallGoal.fininshAppinstallGoal()
         }
     }
     
