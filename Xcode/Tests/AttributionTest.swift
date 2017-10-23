@@ -72,16 +72,7 @@ class AttributionTest: WTBaseTestNew {
 
     func testInstallation() {
         
-        var attempt: Int = 0
-        
-        WebtrekkTracking.defaultLogger.logDebug("start wait for campaign process")
-        
-        while (!checkDefSetting(setting: "campaignHasProcessed") && attempt < 16){
-            doSmartWait(sec: 2)
-            attempt += 1
-        }
-        
-        WebtrekkTracking.defaultLogger.logDebug("end wait for campaign process: isSuccess=\(checkDefSettingNoConfig(setting: "campaignHasProcessed"))")
+        waitForCampainProcessed()
         
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
@@ -99,6 +90,9 @@ class AttributionTest: WTBaseTestNew {
     
     //test should be done with already installes and started application
     func testAppInstallNoFirstInstallation(){
+
+        self.waitForCampainProcessed()
+        
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
         }
@@ -109,6 +103,9 @@ class AttributionTest: WTBaseTestNew {
     }
 
     func testAppInstallFirstInstallation(){
+        
+        self.waitForCampainProcessed()
+        
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
         }
@@ -116,5 +113,18 @@ class AttributionTest: WTBaseTestNew {
         doURLSendTestCheck(){parametersArr in
             expect(parametersArr["cb900"]).to(equal("1"))
         }
+    }
+    
+    private func waitForCampainProcessed(){
+        var attempt: Int = 0
+        
+        WebtrekkTracking.defaultLogger.logDebug("start wait for campaign process")
+        
+        while (!checkDefSetting(setting: "campaignHasProcessed") && attempt < 16){
+            doSmartWait(sec: 2)
+            attempt += 1
+        }
+        
+        WebtrekkTracking.defaultLogger.logDebug("end wait for campaign process: isSuccess=\(checkDefSettingNoConfig(setting: "campaignHasProcessed"))")
     }
 }

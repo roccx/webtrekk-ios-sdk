@@ -116,4 +116,8 @@ class Campaign{
         return mediaCode
     }
     
+    func isCampaignProcessed()->Bool {
+        return self.sharedDefaults.boolForKey(Campaign.campaignHasProcessed) ?? false
+    }
+    
 }
