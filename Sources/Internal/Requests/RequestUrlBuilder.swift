@@ -563,7 +563,7 @@ extension URLComponents {
     mutating func applyQueryItemsWithAlternativeURLEncoding(_ queryItems: [URLQueryItem]){
         var csValue = CharacterSet.urlQueryAllowed
 
-        "$',/:?@=&+".forEach { (ch) in
+        "$'/:?@=&+".forEach { (ch) in
             csValue.remove(ch.unicodeScalars.first!)
         }
         

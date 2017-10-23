@@ -92,7 +92,7 @@ class PageTest: WTBaseTestNew {
         var allAllowedSymbols = CharacterSet.urlQueryAllowed
         
         
-        let coddedSymbols = "+=\"',/?:@&#$"
+        let coddedSymbols = "+=\"'/?:@&#$"
         
         coddedSymbols.forEach { (ch) in
             allAllowedSymbols.remove(ch.unicodeScalars.first!)
