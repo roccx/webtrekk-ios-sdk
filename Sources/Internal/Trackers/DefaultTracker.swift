@@ -60,6 +60,7 @@ final class DefaultTracker: Tracker {
 	private var requestQueueLoaded = false
 	private var requestUrlBuilder: RequestUrlBuilder?
     private var campaign: Campaign?
+    private let appinstallGoal = AppinstallGoal()
     private var manualStart: Bool = false;
     var isInitialited: Bool = false
     /**this value override pu parameter if it is setup from code in any other way or configuraion xml*/
@@ -162,7 +163,8 @@ final class DefaultTracker: Tracker {
         
         self.campaign = Campaign(trackID: configuration.webtrekkId)
         
-        campaign?.processCampaign()
+        self.campaign?.processCampaign()
+        self.appinstallGoal.setupAppinstallGoal()
         
         DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
         
@@ -361,7 +363,7 @@ final class DefaultTracker: Tracker {
         let requestProperties = generateRequestProperties()
         
         //merge lowest priority global properties over request properties.
-        let requestBuilder = RequestTrackerBuilder(self.campaign!, pageURL: self.pageURL, configuration: self.configuration!, global: self.global)
+        let requestBuilder = RequestTrackerBuilder(self.campaign!, pageURL: self.pageURL, configuration: self.configuration!, global: self.global, appInstall: self.appinstallGoal)
         
         #if !os(watchOS)
             requestBuilder.setDeepLink(deepLink: self.deepLink)

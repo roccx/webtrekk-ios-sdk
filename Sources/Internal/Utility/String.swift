@@ -83,6 +83,17 @@ internal extension String {
     internal func md5() -> String{
         return self.utf8.lazy.map({ $0 as UInt8 }).md5().toHexString()
     }
+    
+    var coded: String{
+        let codedChar = "$',/:?@=&+"
+        var csValue = CharacterSet.urlQueryAllowed
+        
+        codedChar.forEach { (ch) in
+            csValue.remove(ch.unicodeScalars.first!)
+        }
+
+        return self.addingPercentEncoding(withAllowedCharacters: csValue)!
+    }
 }
 
 

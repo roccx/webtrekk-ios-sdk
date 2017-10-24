@@ -65,14 +65,14 @@ internal final class RequestUrlBuilder {
 		let properties = request.properties
 		let screenSize = "\(properties.screenSize?.width ?? 0)x\(properties.screenSize?.height ?? 0)"
         let libraryVersionOriginal = WebtrekkTracking.version
-        let libraryVersionParced = libraryVersionOriginal.replacingOccurrences(of: ".", with: "")
+        let libraryVersionParced = libraryVersionOriginal.replacingOccurrences(of: ".", with: "").coded
 
 		var parameters = [URLQueryItem]()
         
         switch type {
         case .normal:
             // it has to b not null based on previous check for normal
-            guard let pageName = pageNameOpt else {
+            guard let pageName = pageNameOpt?.coded else {
                 return nil
             }
             
@@ -561,15 +561,10 @@ private extension URLQueryItem {
 
 extension URLComponents {
     mutating func applyQueryItemsWithAlternativeURLEncoding(_ queryItems: [URLQueryItem]){
-        var csValue = CharacterSet.urlQueryAllowed
 
-        "$',/:?@=&+".forEach { (ch) in
-            csValue.remove(ch.unicodeScalars.first!)
-        }
-        
         let addQuery = queryItems.map {
-            $0.name.addingPercentEncoding(withAllowedCharacters: csValue)!
-            + "=" + $0.value!.addingPercentEncoding(withAllowedCharacters: csValue)!
+            let value = $0.name == "p" ? $0.value! : $0.value!.coded
+            return $0.name.coded + "=" + value
             }.joined(separator: "&")
         
         if self.percentEncodedQuery != nil {

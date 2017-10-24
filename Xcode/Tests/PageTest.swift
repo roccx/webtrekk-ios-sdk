@@ -118,7 +118,7 @@ class PageTest: WTBaseTestNew {
             let defTracker = WebtrekkTracking.instance()
             defTracker.global.variables["Key1"] = allASCIISympbols1
             defTracker.global.variables["Key2"] = allASCIISympbols2
-            defTracker.trackPageView("pageName")
+            defTracker.trackPageView("page,Name")
         }
         
         doURLSendTestCheck(){parametersArr in
@@ -134,6 +134,12 @@ class PageTest: WTBaseTestNew {
             expect(parametersArr["ca2"]).to(equal(codedASCIISymbols2))
             expect(parametersArr["cg2"]).to(equal(codedASCIISymbols2))
             expect(parametersArr["uc2"]).to(equal(codedASCIISymbols2))
+            let pPar = parametersArr["p"] ?? ""
+            let comaChar : [Character] = pPar.characters.filter{ $0 == "," }
+
+            expect(pPar.split(separator: ",").count).to(equal(10))
+            expect(comaChar.count).to(equal(9))
+            expect(pPar).to(contain("page%2CName"))
         }
 
     }

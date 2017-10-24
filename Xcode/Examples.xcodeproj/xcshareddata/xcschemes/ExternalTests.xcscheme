@@ -49,6 +49,12 @@
                   Identifier = "AdClearIDTest">
                </Test>
                <Test
+                  Identifier = "AttributionTest/testAppInstallFirstInstallation()">
+               </Test>
+               <Test
+                  Identifier = "AttributionTest/testAppInstallNoFirstInstallation()">
+               </Test>
+               <Test
                   Identifier = "AutoParameterTest">
                </Test>
                <Test

@@ -43,6 +43,13 @@ class AttributionTest: WTBaseTestNew {
         startAttributionTest(useIDFA: false)
     }
     
+    override func setUp() {
+        if let _ = self.name.range(of: "testAppInstallFirstInstallation"){
+            self.removeDefSetting(setting: "appinstallGoalProcessed")
+        }
+        super.setUp()
+    }
+    
     private func startAttributionTest(useIDFA: Bool){
         // get track id
         let trackerID = "123451234512345"
@@ -65,19 +72,7 @@ class AttributionTest: WTBaseTestNew {
 
     func testInstallation() {
         
-        // wait for receiving media code
-        
-        // wait for update configuration
-        var attempt: Int = 0
-        
-        WebtrekkTracking.defaultLogger.logDebug("start wait for campaign process")
-        
-        while (!checkDefSetting(setting: "campaignHasProcessed") && attempt < 16){
-            doSmartWait(sec: 2)
-            attempt += 1
-        }
-        
-        WebtrekkTracking.defaultLogger.logDebug("end wait for campaign process: isSuccess=\(checkDefSettingNoConfig(setting: "campaignHasProcessed"))")
+        waitForCampainProcessed()
         
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
@@ -91,5 +86,45 @@ class AttributionTest: WTBaseTestNew {
         
         //wait till message is processed and deleted from queue
         doSmartWait(sec: 2)
+    }
+    
+    //test should be done with already installes and started application
+    func testAppInstallNoFirstInstallation(){
+
+        self.waitForCampainProcessed()
+        
+        doURLSendTestAction(){
+            WebtrekkTracking.instance().trackPageView("pageName")
+        }
+        
+        doURLSendTestCheck(){parametersArr in
+            expect(parametersArr["cb900"]).to(beNil())
+        }
+    }
+
+    func testAppInstallFirstInstallation(){
+        
+        self.waitForCampainProcessed()
+        
+        doURLSendTestAction(){
+            WebtrekkTracking.instance().trackPageView("pageName")
+        }
+        
+        doURLSendTestCheck(){parametersArr in
+            expect(parametersArr["cb900"]).to(equal("1"))
+        }
+    }
+    
+    private func waitForCampainProcessed(){
+        var attempt: Int = 0
+        
+        WebtrekkTracking.defaultLogger.logDebug("start wait for campaign process")
+        
+        while (!checkDefSetting(setting: "campaignHasProcessed") && attempt < 16){
+            doSmartWait(sec: 2)
+            attempt += 1
+        }
+        
+        WebtrekkTracking.defaultLogger.logDebug("end wait for campaign process: isSuccess=\(checkDefSettingNoConfig(setting: "campaignHasProcessed"))")
     }
 }
