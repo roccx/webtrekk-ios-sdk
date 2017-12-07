@@ -115,12 +115,12 @@ public struct UserProperties {
 
             if (rawValue.isBirthday)
             {
-                let yearIndex = rawValue.characters.index(rawValue.startIndex, offsetBy: 4)
+                let yearIndex = rawValue.index(rawValue.startIndex, offsetBy: 4)
                 self.year = Int(rawValue[..<yearIndex])!
                 
-                let monthRange = rawValue.characters.index(rawValue.startIndex, offsetBy: 4)..<rawValue.characters.index(rawValue.startIndex, offsetBy: 6)
+                let monthRange = rawValue.index(rawValue.startIndex, offsetBy: 4)..<rawValue.index(rawValue.startIndex, offsetBy: 6)
                 self.month = Int(rawValue[monthRange])!
-                self.day = Int(rawValue[rawValue.characters.index(rawValue.startIndex, offsetBy: 6)...])!
+                self.day = Int(rawValue[rawValue.index(rawValue.startIndex, offsetBy: 6)...])!
             }else{
                 WebtrekkTracking.logger.logWarning("Incorrect bithday format. Birthday won't be tracked")
                 return nil
@@ -158,13 +158,13 @@ public struct UserProperties {
 private extension String  {
     var isBirthday : Bool {
         get{
-            return characters.count == 8 && self.rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil
+            return self.count == 8 && self.rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil
         }
     }
     
     var isGender: Bool {
         get{
-            return characters.count == 1 && (self == "1" || self == "2" || self == "3")
+            return self.count == 1 && (self == "1" || self == "2" || self == "3")
         }
     }
 }

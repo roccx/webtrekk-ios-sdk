@@ -204,7 +204,7 @@ class ExceptionTrackingTest: WTBaseTestNew {
             expect(parametersArr["ck916"]).to(beNil())
             expect(parametersArr["ck917"]).to(beNil())
             let pPar = parametersArr["p"] ?? ""
-            let comaChar : [Character] = pPar.characters.filter{ $0 == "," }
+            let comaChar : [Character] = pPar.filter{ $0 == "," }
             expect(comaChar.count).to(equal(9))
         }
         

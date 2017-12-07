@@ -90,7 +90,7 @@ class Campaign{
             
                WebtrekkTracking.logger.logDebug("Media code is received:\(jsonMedia)")
             
-               let mc = String(jsonMedia.characters.split(separator: "=", maxSplits:1)[1])
+               let mc = String(jsonMedia.split(separator: "=", maxSplits:1)[1])
                 
                 guard !mc.isEmpty else {
                     WebtrekkTracking.logger.logError("media code length is zero")

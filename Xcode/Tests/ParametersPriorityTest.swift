@@ -124,7 +124,6 @@ class ParametersPriorityTest: WTBaseTestNew {
             expect(parametersArr["ba"]).to(equal("GLConfProductName"))
             expect(parametersArr["ca11"]).to(equal("GLConfproductCat11"))
             expect(parametersArr["ca12"]).to(equal("GLproductCat12"))
-            expect(parametersArr["ca3"]).to(equal("PrCatGlobalConfStaticValue"))
             expect(parametersArr["co"]).to(equal("300"))
             expect(parametersArr["qn"]).to(equal("5"))
             expect(parametersArr["st"]).to(equal("add"))

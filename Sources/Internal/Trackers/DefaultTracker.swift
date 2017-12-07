@@ -70,6 +70,8 @@ final class DefaultTracker: Tracker {
     
     let exceptionTracker: ExceptionTracker  = ExceptionTrackerImpl()
     
+    let productListTracker: ProductListTracker = ProductListTrackerImpl()
+    
     var exceptionTrackingImpl: ExceptionTrackerImpl? {
         return self.exceptionTracker as? ExceptionTrackerImpl
     }
@@ -373,8 +375,10 @@ final class DefaultTracker: Tracker {
             return
         }
         
-		if shouldEnqueueNewEvents, let requestUrl = requestUrlBuilder?.urlForRequest(request, type: type) {
-			requestManager?.enqueueRequest(requestUrl, maximumDelay: configuration.maximumSendDelay)
+        if shouldEnqueueNewEvents{
+            let requestUrls = requestUrlBuilder?.urlForRequests(request, type: type)
+            requestUrls?.forEach(){requestManager?.enqueueRequest($0, maximumDelay: configuration.maximumSendDelay)}
+			
 		}
 
 		self.isFirstEventAfterAppUpdate = false
@@ -1092,6 +1096,7 @@ struct DefaultsKeys {
     static let adClearId = "adClearId"
     static let crossDeviceProperties = "CrossDeviceProperties"
     fileprivate static let isSettingsToAppSpecificConverted = "isSettingsToAppSpecificConverted"
+    static let productListOrder = "productListOrder"
 }
 
 private extension TrackingValue {

@@ -118,7 +118,6 @@
         <productCategories>
             <parameter id="1" key="KeyPrCatGlobalConf"></parameter>
             <parameter id="11" key="KeyPrCatGlobalConfOver"></parameter>
-            <parameter id="3">PrCatGlobalConfStaticValue</parameter>
         </productCategories>
         <actionParameter>
             <parameter id="1">test_actionparam1</parameter>
