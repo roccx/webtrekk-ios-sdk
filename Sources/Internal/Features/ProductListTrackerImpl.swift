@@ -18,11 +18,17 @@
 //
 //
 
+#if os(watchOS)
 import WatchKit
+#endif
 
 internal final class ProductListTrackerImpl: ProductListTracker {
     private var ecommerceProperties = [EcommerceProperties.Status: EcommerceProperties]()
     private let orderSaver = ProductOrderSaver()
+    
+    init() {
+        self.orderSaver.load()
+    }
     
     func addTrackingData(products: [EcommerceProperties.Product], type: EcommerceProperties.Status) {
         

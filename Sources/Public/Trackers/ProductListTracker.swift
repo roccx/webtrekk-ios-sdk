@@ -19,7 +19,10 @@
 //
 
 import Foundation
+
+#if os(watchOS)
 import WatchKit
+#endif
 
 public protocol ProductListTracker: class {
     /** add products to be tracked. Can be called several times. It isn't time consuming operation. Can be called during scrolling monitor.*/
