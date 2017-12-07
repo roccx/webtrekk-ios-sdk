@@ -19,6 +19,7 @@
 //
 
 import Foundation
+import UIKit
 
 #if os(watchOS)
 import WatchKit
