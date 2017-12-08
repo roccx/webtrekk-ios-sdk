@@ -405,6 +405,194 @@ class ProductListTest: WTBaseTestNew{
     }
     
     
+    func testSaveOrderData(){
+        var productListTracking = WebtrekkTracking.instance().productListTracker
+        var product5 = getProductWithInd(ind: 5)
+        var product6 = getProductWithInd(ind: 6)
+        
+        // track list
+        productListTracking.addTrackingData(products: [product5, product6], type: .list)
+        
+        doURLSendTestAction(){
+            productListTracking.track(commonProperties: PageViewEvent(pageProperties: PageProperties(name: "pageName")))
+        }
+        
+       doURLSendTestCheck(){_ in }
+        // track add
+        product5.position = nil
+        product6.position = nil
+        
+        productListTracking.addTrackingData(products: [product6, product5], type: .addedToBasket)
+        
+        doURLSendTestAction(){
+            productListTracking.track(commonProperties: PageViewEvent(pageProperties: PageProperties(name: "pageName")))
+        }
+
+        self.doURLSendTestCheck(){_ in }
+        
+        // restart Webtrekk
+        self.releaseWebtrekk()
+        self.initWebtrekk()
+        
+        productListTracking = WebtrekkTracking.instance().productListTracker
+        
+        var product7 = getProductWithInd(ind: 7)
+ 
+        // track product7
+        productListTracking.addTrackingData(products: [product7], type: .list)
+        
+        doURLSendTestAction(){
+            productListTracking.track(commonProperties: PageViewEvent(pageProperties: PageProperties(name: "pageName")))
+        }
+        
+        doURLSendTestCheck(){_ in }
+        
+        //add product 7
+        product7.position = nil
+        
+        productListTracking.addTrackingData(products: [product7], type: .addedToBasket)
+        
+        doURLSendTestAction(){
+            productListTracking.track(commonProperties: PageViewEvent(pageProperties: PageProperties(name: "pageName")))
+        }
+        
+        self.doURLSendTestCheck(){_ in }
+        
+        // conf purchase
+        
+        productListTracking.addTrackingData(products: [product7, product5, product6], type: .purchased)
+  
+        doURLSendTestAction(){
+            productListTracking.track(commonProperties: PageViewEvent(pageProperties: PageProperties(name: "pageName")))
+        }
+
+        
+        doURLSendTestCheck(){parameters in
+            expect(parameters["st"]).to(equal("conf"))
+            expect(parameters["ba"]).to(equal(product6.getName() + ";" + product5.getName()+";" + product7.getName()))
+            expect(parameters["plp"]).to(equal("6;5;7"))
+        }
+    }
+    
+    func testDataSize(){
+        //test 255 size
+        let productListTracking = WebtrekkTracking.instance().productListTracker
+        var fieldSize = 0
+        let maxFieldSize = 600
+        var products = [EcommerceProperties.Product]()
+        var ind = 0
+        
+        repeat{
+            let product = getProductWithInd(ind: ind)
+            ind = ind + 1
+            fieldSize = fieldSize + getProductMaxFieldSize(product: product)
+            products.append(product)
+        }while fieldSize < maxFieldSize
+        
+        productListTracking.addTrackingData(products: products, type: .list)
+        
+        doURLSendTestAction(){
+            productListTracking.track(commonProperties: PageViewEvent(pageProperties: PageProperties(name: "pageName")))
+        }
+        
+        let lock = NSLock()
+        var finishWait = false
+        
+        self.httpTester.removeStub()
+        self.httpTester.addNormalStub(){query in
+            lock.lock()
+            defer{
+                lock.unlock()
+            }
+            
+            let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
+            let position = String(describing: ind - 1)
+            
+            parameters.forEach(){ key, value in
+
+                expect(value.count).to(beLessThan(256), description: "for parameter \(key) value \(value) has more then 255 characters ")
+                if key == "plp" {
+                    value.split(separator: ";").forEach(){item in
+                        finishWait = (position == String (describing: item))
+                    }
+                }
+            }
+        }
+        
+        expect(finishWait).toEventually(equal(true), timeout:10000)
+        
+        self.httpTester.removeStub()
+        self.httpTester.addStandardStub()
+        
+        productListTracking.addTrackingData(products: [products[0]], type: .purchased)
+        
+        doURLSendTestAction(){
+            productListTracking.track(commonProperties: PageViewEvent(pageProperties: PageProperties(name: "pageName")))
+        }
+        
+        self.doURLSendTestCheck(){_ in }
+        
+        let value200Length = String(repeating: "a", count: 200)// because ; is added
+        
+        //test 8 kB
+        
+        var productsLongURL = [EcommerceProperties.Product]()
+        let maxProductsNum = 50
+        finishWait = false
+        
+        
+        for i in 0 ..< maxProductsNum {
+            var product = self.getProductWithInd(ind: i)
+            product.details = [Int: TrackingValue]()
+            product.categories = [Int: TrackingValue]()
+            product.details?[i] = .constant(value200Length)
+            product.categories?[i] = .constant(value200Length)
+            productsLongURL.append(product)
+        }
+        
+        productListTracking.addTrackingData(products: productsLongURL, type: .list)
+        
+        doURLSendTestAction(){
+            productListTracking.track(commonProperties: PageViewEvent(pageProperties: PageProperties(name: "pageName")))
+        }
+
+        self.httpTester.removeStub()
+        self.httpTester.addNormalStub(){query in
+            lock.lock()
+            defer{
+                lock.unlock()
+            }
+            
+            let lenght = query.url!.absoluteString.count
+            
+            WebtrekkTracking.defaultLogger.logDebug("url length is \(lenght)")
+            expect(lenght).to(beLessThan(1024*8), description: "string is more then 8196 length")
+
+            let parameters = self.httpTester.getReceivedURLParameters((query.url?.query!)!)
+            parameters.forEach(){ key, value in
+                if key == "ba" {
+                    value.split(separator: ";").forEach(){item in
+                        finishWait = (productsLongURL[maxProductsNum - 1].getName() == String (describing: item))
+                    }
+                }
+            }
+        }
+        
+        expect(finishWait).toEventually(equal(true), timeout:10000)
+        
+        self.httpTester.removeStub()
+        self.httpTester.addStandardStub()
+        
+        // reset add values
+        productListTracking.addTrackingData(products: [products[0]], type: .purchased)
+        
+        doURLSendTestAction(){
+            productListTracking.track(commonProperties: PageViewEvent(pageProperties: PageProperties(name: "pageName")))
+        }
+        
+        self.doURLSendTestCheck(){_ in }
+    }
+
     
     private func getProductWithInd(ind: Int) -> EcommerceProperties.Product {
         return EcommerceProperties.Product(name: "productId\(ind)",
@@ -419,11 +607,45 @@ class ProductListTest: WTBaseTestNew{
             voucherValue: "voucher\(ind)",
             soldOut: ind % 2 == 0)
     }
+    
+    private func getProductMaxFieldSize(product: EcommerceProperties.Product) -> Int{
+    
+    func getMaxSize(dictionary:[Int: TrackingValue]) -> Int{
+        var maxSize = 0
+        
+        dictionary.forEach(){key, value in
+            if let value = value.value, value.count > maxSize {
+                maxSize = value.count
+            }
+        }
+        
+        return maxSize
+    }
+
+        var maxSize = 0;
+        if let details = product.details, maxSize < getMaxSize(dictionary: details) {
+            maxSize = getMaxSize(dictionary: details)
+        } else if let categories = product.categories, maxSize < getMaxSize(dictionary: categories) {
+            maxSize = getMaxSize(dictionary: categories)
+        }else if let name = product.name, maxSize < name.count {
+            maxSize = name.count
+        }else if let _ = product.priceNum, maxSize < product.getPriceNum().count {
+            maxSize = product.getPriceNum().count
+        }else if let price = product.price, maxSize < price.count {
+            maxSize = price.count
+        }else if let variant = product.variant, maxSize < variant.count {
+            maxSize = variant.count
+        }else if let voucher = product.voucher, maxSize < voucher.count {
+            maxSize = voucher.count
+        }else if let _ = product.grossMargin, maxSize < product.getGrosMargin().count {
+            maxSize = product.getGrosMargin().count
+        }else if let _ = product.position, maxSize < product.getPosition().count {
+            maxSize = product.getPosition().count
+        }
+        return maxSize
+    }
 }
 
-func saveOrderDataTest(){
-    
-}
 
 extension TrackingValue {
     var value: String? {
@@ -502,4 +724,5 @@ extension EcommerceProperties.Product {
         return value
     }
 }
+
 

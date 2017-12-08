@@ -166,28 +166,35 @@ internal final class ProductListTrackerImpl: ProductListTracker {
                                       positionLastValue: item["p_last"] as? Int)
                         self.products[name] = order
                         
-                        if let addOrderComp = addOrder, maxOrder < addOrderComp {
+                        if let addOrderComp = addOrder, addOrderComp != Int.max, maxOrder < addOrderComp {
                             maxOrder = addOrderComp
                         }
                     }
                 }
             } else {
-               WebtrekkTracking.defaultLogger.logError("can't load project order information")
+               WebtrekkTracking.defaultLogger.logDebug("No saved product order information")
             }
             
             self.currentAddPosition = maxOrder + 1
         }
         
         func save(){
-            var jsonObject = [[String:Any?]]()
+            var jsonObject = [[String:Any]]()
             
             self.products.forEach() { (key, value) in
-                let jsonItem : [String:Any?] = [
+                var jsonItem : [String:Any] = [
                 "id" : key,
-                "add_order" : value.addOrder,
-                "p_first" : value.positionFirstValue,
-                "p_last" : value.positionLastValue
+                "add_order" :  value.addOrder
                 ]
+                
+                if let positionFirstValue = value.positionFirstValue {
+                    jsonItem["p_first"] = positionFirstValue
+                }
+
+                if let positionLastValue = value.positionLastValue {
+                    jsonItem["p_last"] = positionLastValue
+                }
+
                 jsonObject.append(jsonItem)
             }
             

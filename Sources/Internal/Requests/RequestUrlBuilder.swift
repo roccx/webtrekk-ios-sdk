@@ -73,7 +73,7 @@ internal final class RequestUrlBuilder {
         repeat {
             // begin cycle
             var parameters = [URLQueryItem]()
-            sizeMonitor.currentRequestSize = 0;
+            sizeMonitor.currentRequestSize = 1024; //reserve for non product items
             
             switch type {
             case .normal:
@@ -171,7 +171,7 @@ internal final class RequestUrlBuilder {
                 return urls
             }
             
-            sizeMonitor.currentRequestSize = size + 5 // 5 is size of eor=1
+            sizeMonitor.currentRequestSize += size + 5 // 5 is size of eor=1
 
             if let ecommerceProperties = (event as? TrackingEventWithEcommerceProperties)?.ecommerceProperties {
                 parameters += ecommerceProperties.asQueryItems(for: request, sizeMonitor: sizeMonitor)
@@ -502,11 +502,13 @@ private extension EcommerceProperties {
         }
 
         
+        var productsSize = 0
+
         for ind in nextProductId ..< products.count {
             let product = products[ind]
             var itemsWithAddedProduct = items
-            var newProductSize = 0
             var isLengthMore255 = false
+            var newProductsSize = 0
             
             productsLoop: for productType in ProductProperties.values {
                 
@@ -523,8 +525,6 @@ private extension EcommerceProperties {
                         
                         let value = values?[key]?.serialized(for: request)
                         let newValue = getAddValue(value: items[paramName], valueToAdd: value)
-
-                        newProductSize = newProductSize + getFieldSize(name: paramName, value: value)
 
                         if newValue.count > 255 {
                             isLengthMore255 = true
@@ -543,8 +543,6 @@ private extension EcommerceProperties {
                     let value = getProductSingleProperties(type: productType, product: product)
                     let newValue = getAddValue(value: items[key], valueToAdd: value)
 
-                    newProductSize = newProductSize + getFieldSize(name: key, value: value)
-
                     if newValue.count > 255 {
                         isLengthMore255 = true
                         break;
@@ -552,18 +550,19 @@ private extension EcommerceProperties {
                     itemsWithAddedProduct[key] = newValue
                 }
             }
+            itemsWithAddedProduct.forEach({if !$1.isEmpty {newProductsSize += getFieldSize(name: $0, value: $1)}})
             
-            guard sizeMonitor.currentRequestSize + newProductSize < URLSizeMonitor.maxRequestSize && !isLengthMore255 else {
+            guard sizeMonitor.currentRequestSize + newProductsSize < URLSizeMonitor.maxRequestSize && !isLengthMore255 else {
                 break
             }
-            
+            productsSize = newProductsSize
             items = itemsWithAddedProduct
-            sizeMonitor.addSize(addSize: newProductSize)
             sizeMonitor.currentProduct = ind + 1 // save last processed product ID
         }
 
-        items.forEach({queryItems.append(URLQueryItem(name: $0, value: $1))})
-        mergedItems.forEach({queryItems.append(URLQueryItem(name: $0, value: $1))})
+        sizeMonitor.addSize(addSize: productsSize)
+        items.forEach({if !$1.isEmpty {queryItems.append(URLQueryItem(name: $0, value: $1))}})
+        mergedItems.forEach({if !$1.isEmpty {queryItems.append(URLQueryItem(name: $0, value: $1))}})
 		return queryItems
 	}
 }
