@@ -80,7 +80,7 @@ class HTTPTester {
             WebtrekkTracking.defaultLogger.logDebug("empty query")
             return [:]
         }
-        let valueKeys = query.characters.split(separator: "&")
+        let valueKeys = query.split(separator: "&")
         var keyValueMap = [String: String]()
         
         for valueKey in valueKeys{

@@ -77,6 +77,7 @@
 		9FB10A041E28E6E9005D6656 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB10A031E28E6E9005D6656 /* AdSupport.framework */; };
 		9FBA48111DD1FECA00956ACF /* WatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 9FFF2E7D1DCCC5CB00DB0F84 /* WatchApp.app */; };
 		9FBA48161DD20A2A00956ACF /* webtrekk_config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 9FBA48141DD209B200956ACF /* webtrekk_config.xml */; };
+		9FC0ECF31FCEC6BC008E2F4B /* ProductListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0ECF21FCEC6BC008E2F4B /* ProductListTest.swift */; };
 		9FC171D91DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC171D81DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift */; };
 		9FC3E1EB1E5C7D14000D7B43 /* ExceptionTrackingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F30E2011E4CB04000F7BB99 /* ExceptionTrackingTest.swift */; };
 		9FC3E1EC1E5C80CE000D7B43 /* ExceptionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE852141E51F1A100F5915D /* ExceptionCreator.m */; };
@@ -259,6 +260,7 @@
 		9F95D40E1DAE7FC10068E8F8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SampleTVAppTests/Info.plist; sourceTree = "<group>"; };
 		9FB10A031E28E6E9005D6656 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/AdSupport.framework; sourceTree = DEVELOPER_DIR; };
 		9FBA48141DD209B200956ACF /* webtrekk_config.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = webtrekk_config.xml; path = "Sources/WatchSupport/WatchApp Extension/webtrekk_config.xml"; sourceTree = SOURCE_ROOT; };
+		9FC0ECF21FCEC6BC008E2F4B /* ProductListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductListTest.swift; sourceTree = "<group>"; };
 		9FC171D81DDB243A00DA0C26 /* NextPageRelationInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextPageRelationInterfaceController.swift; sourceTree = "<group>"; };
 		9FC183801DAE1D64000F6106 /* SampleTVApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleTVApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC183901DAE1D64000F6106 /* SampleTVAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleTVAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -472,6 +474,7 @@
 				9F2BAC2F1F90B7BB002F0E0F /* SetV2EverID.m */,
 				9F2BAC311F90B7E0002F0E0F /* SetV2EverID.h */,
 				9F2BAC321F90BACD002F0E0F /* EverIdConversionTest.swift */,
+				9FC0ECF21FCEC6BC008E2F4B /* ProductListTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1206,6 +1209,7 @@
 				9F63E7831DC0D52B0001D72E /* DeepLink.swift in Sources */,
 				9F2D90821F8FB720006DB0E6 /* GetTrackIdTest.swift in Sources */,
 				9F5A604C1DE2EC6D00EF84E0 /* AutoParameterTest.swift in Sources */,
+				9FC0ECF31FCEC6BC008E2F4B /* ProductListTest.swift in Sources */,
 				9F0E36851E29224900E815CA /* AttributionTest.swift in Sources */,
 				9FDEA0461E3F8DDD00DC6F32 /* BackToForegroundTest.swift in Sources */,
 				9F63E77E1DC0D50D0001D72E /* ActionTest.swift in Sources */,

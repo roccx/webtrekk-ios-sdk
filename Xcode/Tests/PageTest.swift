@@ -135,7 +135,7 @@ class PageTest: WTBaseTestNew {
             expect(parametersArr["cg2"]).to(equal(codedASCIISymbols2))
             expect(parametersArr["uc2"]).to(equal(codedASCIISymbols2))
             let pPar = parametersArr["p"] ?? ""
-            let comaChar : [Character] = pPar.characters.filter{ $0 == "," }
+            let comaChar : [Character] = pPar.filter{ $0 == "," }
 
             expect(pPar.split(separator: ",").count).to(equal(10))
             expect(comaChar.count).to(equal(9))

@@ -65,6 +65,9 @@ public protocol Tracker: class {
     
     /** return exceptoin tracking object that can be used for exception and error tracking in application */
     var exceptionTracker: ExceptionTracker { get }
+    
+    /** return product list tracker instace for product list tracking */
+    var productListTracker: ProductListTracker { get }
 }
 
 

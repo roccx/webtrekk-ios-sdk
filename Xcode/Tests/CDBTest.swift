@@ -214,7 +214,7 @@ class CDBTest: WTBaseTestNew {
     }
     
     private func convertStringToAddress(_ value: String) -> CrossDeviceProperties.Address {
-        let addressConponents = value.characters.split(separator: "|")
+        let addressConponents = value.split(separator: "|")
         return CrossDeviceProperties.Address(firstName: String(addressConponents[0]),
             lastName: String(addressConponents[1]), street: String(addressConponents[3]),
             streetNumber: String(addressConponents[4]), zipCode: String(addressConponents[2]))

@@ -95,10 +95,6 @@
             <parameter id="1">test_sessionparam1</parameter>
             <parameter id="2" key="Key2"></parameter>
         </sessionParameter>
-        <ecomParameter>
-            <parameter id="1">test_ecomparam1</parameter>
-            <parameter id="2" key="Key2"></parameter>
-        </ecomParameter>
         <userCategories>
             <parameter id="1">test_usercategory1</parameter>
             <parameter id="2" key="Key2"></parameter>
@@ -116,9 +112,6 @@
             <parameter id="1">test_actionparam1</parameter>
             <parameter id="2" key="Key2"></parameter>
         </actionParameter>
-        <productCategories>
-            <parameter id="2" key="Key2"></parameter>
-        </productCategories>
         <mediaCategories>
             <parameter id="1">test_mediacategory1</parameter>
             <parameter id="2" key="Key2"></parameter>
@@ -197,10 +190,6 @@
                 <parameter id="1">test_sessionparam1Override</parameter>
                 <parameter id="2" key="KeyOver1"></parameter>
             </sessionParameter>
-            <ecomParameter>
-                <parameter id="1">test_ecomparam1Override</parameter>
-                <parameter id="2" key="KeyOver1"></parameter>
-            </ecomParameter>
             <userCategories>
                 <parameter id="1">test_usercategory1Override</parameter>
                 <parameter id="2" key="KeyOver1"></parameter>
@@ -217,9 +206,6 @@
                 <parameter id="1">test_actionparam1Override</parameter>
                 <parameter id="2" key="KeyOver1"></parameter>
             </actionParameter>
-            <productCategories>
-                <parameter id="2" key="KeyOver1"></parameter>
-            </productCategories>
             <mediaCategories>
                 <parameter id="1">test_mediacategory1Override</parameter>
                 <parameter id="2" key="KeyOver1"></parameter>
