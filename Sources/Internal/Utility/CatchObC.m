@@ -10,7 +10,7 @@
 
 @implementation CatchObC
 
-+ (BOOL)catchException:(void(^)())tryBlock error:(__autoreleasing NSError **)error {
++ (BOOL)catchException:(void(^)(void))tryBlock error:(__autoreleasing NSError **)error {
     @try {
         tryBlock();
         return YES;

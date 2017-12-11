@@ -4,7 +4,7 @@ import Foundation
 internal extension NSRange {
 
 	internal init(forString string: String) {
-		self.init(range: string.characters.startIndex ..< string.characters.endIndex, inString: string)
+		self.init(range: string.startIndex ..< string.endIndex, inString: string)
 	}
 
 
