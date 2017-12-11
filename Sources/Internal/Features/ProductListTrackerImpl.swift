@@ -32,6 +32,7 @@ internal final class ProductListTrackerImpl: ProductListTracker {
         self.orderSaver.load()
     }
     
+    /** implementation of ProductListTracker interface*/
     func addTrackingData(products: [EcommerceProperties.Product], type: EcommerceProperties.Status) {
         
         let productResults = products.filter(){ (product) -> Bool in
@@ -60,6 +61,7 @@ internal final class ProductListTrackerImpl: ProductListTracker {
     typealias UIController = WKInterfaceController
     #endif
 
+     /** implementation of ProductListTracker interface*/
     func track(commonProperties: PageViewEvent, viewController: UIController? = nil) {
         let webtrekk = WebtrekkTracking.instance()
         //setup ecommens status for each properties
@@ -125,7 +127,7 @@ internal final class ProductListTrackerImpl: ProductListTracker {
         self.ecommerceProperties.removeAll()
     }
     
-    
+    /** this class is store data about product position and save it to memory*/
     private class ProductOrderSaver{
         private struct Order{
             var addOrder = Int.max
@@ -149,7 +151,7 @@ internal final class ProductListTrackerImpl: ProductListTracker {
         private var products  = [String : Order]()
         private var currentAddPosition = 0
         
-        
+        /** load data fro userDefaults*/
         func load(){
             var maxOrder = -1
             self.products.removeAll()
@@ -178,6 +180,7 @@ internal final class ProductListTrackerImpl: ProductListTracker {
             self.currentAddPosition = maxOrder + 1
         }
         
+        /*save data to user defaults*/
         func save(){
             var jsonObject = [[String:Any]]()
             
@@ -205,6 +208,7 @@ internal final class ProductListTrackerImpl: ProductListTracker {
             }
         }
         
+        /** store position of product */
         func savePositions(product: EcommerceProperties.Product){
             let position = product.position!
             let name = product.name!
@@ -219,6 +223,7 @@ internal final class ProductListTrackerImpl: ProductListTracker {
             }
         }
         
+        /** save position of add */
         func saveAddOrder(product: EcommerceProperties.Product){
             if let _ = self.products[product.name!] {
                 self.products[product.name!]?.addOrder = currentAddPosition
@@ -227,7 +232,6 @@ internal final class ProductListTrackerImpl: ProductListTracker {
             }
             currentAddPosition = currentAddPosition + 1
         }
-        
         
         func getFirstPosition(product: String?) -> Int? {
             if let product = product{
@@ -253,7 +257,9 @@ internal final class ProductListTrackerImpl: ProductListTracker {
             }
         }
         
+        /** delete all data from memory*/
         func deleteAll(){
+            products.removeAll()
             self.userDefaults.remove(key: DefaultsKeys.productListOrder)
         }
         

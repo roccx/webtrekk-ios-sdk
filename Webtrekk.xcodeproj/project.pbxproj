@@ -98,6 +98,8 @@
 		9F1BF2141F697863006B6F06 /* UInt64+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2081F697863006B6F06 /* UInt64+Extension.swift */; };
 		9F1BF2151F697863006B6F06 /* Updatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF2091F697863006B6F06 /* Updatable.swift */; };
 		9F1BF2161F697863006B6F06 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1BF20A1F697863006B6F06 /* Utils.swift */; };
+		9F4400231FDE887600F7CE04 /* ProductListTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4400221FDE887600F7CE04 /* ProductListTracker.swift */; };
+		9F4400251FDE893D00F7CE04 /* ProductListTrackerImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4400241FDE893D00F7CE04 /* ProductListTrackerImpl.swift */; };
 		9F49813C1F9F975700BFD9F1 /* AppIntstallGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F49813B1F9F975700BFD9F1 /* AppIntstallGoal.swift */; };
 		9F9E5F0E1F27719900FC5246 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F0D1F27719900FC5246 /* Foundation.framework */; };
 		9F9E5F101F2771A400FC5246 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F0F1F2771A400FC5246 /* UIKit.framework */; };
@@ -204,6 +206,8 @@
 		9F1BF2081F697863006B6F06 /* UInt64+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UInt64+Extension.swift"; path = "Crypto/UInt64+Extension.swift"; sourceTree = "<group>"; };
 		9F1BF2091F697863006B6F06 /* Updatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Updatable.swift; path = Crypto/Updatable.swift; sourceTree = "<group>"; };
 		9F1BF20A1F697863006B6F06 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = Crypto/Utils.swift; sourceTree = "<group>"; };
+		9F4400221FDE887600F7CE04 /* ProductListTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductListTracker.swift; sourceTree = "<group>"; };
+		9F4400241FDE893D00F7CE04 /* ProductListTrackerImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductListTrackerImpl.swift; sourceTree = "<group>"; };
 		9F49813B1F9F975700BFD9F1 /* AppIntstallGoal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppIntstallGoal.swift; sourceTree = "<group>"; };
 		9F9E5F051F2770A000FC5246 /* Webtrekk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Webtrekk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F9E5F0D1F27719900FC5246 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -306,6 +310,7 @@
 		0F2D21891EDEA1C500D09ADF /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				9F4400241FDE893D00F7CE04 /* ProductListTrackerImpl.swift */,
 				9F49813B1F9F975700BFD9F1 /* AppIntstallGoal.swift */,
 				0F2D218A1EDEA1C500D09ADF /* Campaign.swift */,
 				0F2D218B1EDEA1C500D09ADF /* DeepLink.swift */,
@@ -431,6 +436,7 @@
 		0F2D21CF1EDEA1C500D09ADF /* Trackers */ = {
 			isa = PBXGroup;
 			children = (
+				9F4400221FDE887600F7CE04 /* ProductListTracker.swift */,
 				0F2D21D01EDEA1C500D09ADF /* ExceptionTracker.swift */,
 				0F2D21D11EDEA1C500D09ADF /* MediaTracker.swift */,
 				0F2D21D21EDEA1C500D09ADF /* PageTracker.swift */,
@@ -700,6 +706,7 @@
 				9F1BF20F1F697863006B6F06 /* Generics.swift in Sources */,
 				0F2D21EC1EDEA1C500D09ADF /* TrackerConfiguration.swift in Sources */,
 				9F1BF2151F697863006B6F06 /* Updatable.swift in Sources */,
+				9F4400231FDE887600F7CE04 /* ProductListTracker.swift in Sources */,
 				0F2D22281EDEA1C500D09ADF /* TrackingValue.swift in Sources */,
 				9F1BF2111F697863006B6F06 /* MD5.swift in Sources */,
 				0F2D22221EDEA1C500D09ADF /* Tracker.swift in Sources */,
@@ -710,6 +717,7 @@
 				0F2D22101EDEA1C500D09ADF /* TrackingEventWithEcommerceProperties.swift in Sources */,
 				0F2D21F51EDEA1C500D09ADF /* Dictionary.swift in Sources */,
 				0F2D220A1EDEA1C500D09ADF /* ActionEvent.swift in Sources */,
+				9F4400251FDE893D00F7CE04 /* ProductListTrackerImpl.swift in Sources */,
 				0F2D21F71EDEA1C500D09ADF /* Global.swift in Sources */,
 				0F2D220E1EDEA1C500D09ADF /* TrackingEventWithActionProperties.swift in Sources */,
 				0F2D22111EDEA1C500D09ADF /* TrackingEventWithMediaProperties.swift in Sources */,

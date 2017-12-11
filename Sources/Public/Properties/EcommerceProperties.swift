@@ -80,6 +80,7 @@ public struct EcommerceProperties {
 		)
 	}
 
+    /** merge products informaiton from different source of information*/
     internal func mergedProducts(products: [Product]?, over: [Product]?) -> [Product]?{
         
         guard let products = products else {

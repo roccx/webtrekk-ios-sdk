@@ -39,7 +39,7 @@ public protocol ProductListTracker: class {
         func track(commonProperties: PageViewEvent, viewController: WKInterfaceController?)
     #endif
 }
-
+/** that is extension to make possible optional parameter viewController for track*/
 public extension ProductListTracker {
     
     #if !os(watchOS)

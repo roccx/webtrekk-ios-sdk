@@ -412,6 +412,7 @@ private extension EcommerceProperties {
         return name.count + (value?.coded.count ?? 0) + 2
     }
 
+    /** merge all products to as less request as possible with ";"*/
     private func mergeProductQueryItems(for request: TrackerRequest, sizeMonitor: URLSizeMonitor, mergedItems: [String: String]) -> [URLQueryItem] {
 
         var queryItems = [URLQueryItem]()
