@@ -28,6 +28,7 @@ class WTBaseTestNew: HttpBaseTestNew {
     static var lifeCicleIsInited = false
     var initWebtrekkManualy = false
     var isCheckFinishCondition = true
+    var isWaitForCampaignFinished = true
 
     override func setUp() {
         super.setUp()
@@ -77,8 +78,27 @@ class WTBaseTestNew: HttpBaseTestNew {
         
         doInitiateApplicationLifecycleOneMoreTime()
         checkStartCondition()
+        if self.isWaitForCampaignFinished {
+            waitForCampaignFinished()
+        }
     }
 
+    private func waitForCampaignFinished(){
+        var attempt: Int = 0
+        
+        while !self.isCampaignFinished && attempt < 100 {
+            self.doSmartWait(sec: 1.0)
+            attempt += 1
+        }
+        
+        WebtrekkTracking.defaultLogger.logDebug("end wait for campaign process: isSuccess=\(checkDefSettingNoConfig(setting: "campaignHasProcessed"))")
+    }
+    
+    private var isCampaignFinished : Bool {
+        return (Foundation.UserDefaults.standard.object(forKey: getKeyForDefSetting(setting: "campaignHasProcessed")) as? Bool) ?? false
+    }
+    
+    
     func releaseWebtrekk(){
         clearCashedConf()
         rollBackAutoTrackingMethodsSwizz()

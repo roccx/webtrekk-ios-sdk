@@ -44,13 +44,19 @@ class AttributionTest: WTBaseTestNew {
     }
     
     override func setUp() {
-        if let _ = self.name.range(of: "testAppInstallFirstInstallation"){
+        if self.name.range(of: "testAppInstallFirstInstallation") != nil || self.name.range(of: "testAppInstallCallback") != nil {
             self.removeDefSetting(setting: "appinstallGoalProcessed")
         }
+        
+        if self.name.range(of: "testStartAttributionWithIDFA") != nil || self.name.range(of: "testStartAttributionWithoutIDFA") != nil {
+            self.isWaitForCampaignFinished = false
+        }
+        
         super.setUp()
     }
     
     private func startAttributionTest(useIDFA: Bool){
+        
         // get track id
         let trackerID = "123451234512345"
         
@@ -72,8 +78,6 @@ class AttributionTest: WTBaseTestNew {
 
     func testInstallation() {
         
-        waitForCampainProcessed()
-        
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
         }
@@ -91,8 +95,6 @@ class AttributionTest: WTBaseTestNew {
     //test should be done with already installes and started application
     func testAppInstallNoFirstInstallation(){
 
-        self.waitForCampainProcessed()
-        
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
         }
@@ -104,8 +106,6 @@ class AttributionTest: WTBaseTestNew {
 
     func testAppInstallFirstInstallation(){
         
-        self.waitForCampainProcessed()
-        
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
         }
@@ -115,16 +115,8 @@ class AttributionTest: WTBaseTestNew {
         }
     }
     
-    private func waitForCampainProcessed(){
-        var attempt: Int = 0
+    func testAppInstallWithCallback(){
         
-        WebtrekkTracking.defaultLogger.logDebug("start wait for campaign process")
-        
-        while (!checkDefSetting(setting: "campaignHasProcessed") && attempt < 16){
-            doSmartWait(sec: 2)
-            attempt += 1
-        }
-        
-        WebtrekkTracking.defaultLogger.logDebug("end wait for campaign process: isSuccess=\(checkDefSettingNoConfig(setting: "campaignHasProcessed"))")
     }
+    
 }

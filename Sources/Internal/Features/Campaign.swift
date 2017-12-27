@@ -19,16 +19,24 @@
 
 import Foundation
 
-class Campaign{
+class Campaign: NSObject{
     
     let trackID: String
     static let campaignHasProcessed = "campaignHasProcessed"
     static let savedMediaCode = "mediaCode"
     private let sharedDefaults = UserDefaults.standardDefaults.child(namespace: "webtrekk")
+    private var campaignProcessTimeOut: Date?
+    private var timer: Timer?
+    static let timeoutValue =  TimeInterval(90)
+    static let interval = TimeInterval(30)
 
     
     init(trackID: String){
         self.trackID = trackID
+    }
+    
+    deinit {
+       self.timer?.invalidate()
     }
     
     
@@ -39,10 +47,10 @@ class Campaign{
         }
         
         WebtrekkTracking.logger.logDebug("Campaign process is starting")
+        self.campaignProcessTimeOut = Date(timeIntervalSinceNow: Campaign.timeoutValue)
         
         // send request
         
-        let session = RequestManager.createUrlSession()
         var urlComponents = URLComponents(string: "https://appinstall.webtrekk.net/appinstall/v1/install")
         
         guard urlComponents != nil  else {
@@ -65,6 +73,19 @@ class Campaign{
             return
         }
         
+        sendInstallCampaignRequest(url: url)
+        
+    }
+    
+    @objc
+    private func timerFireMethod(timer: Timer){
+        if let url = timer.userInfo as? URL {
+            sendInstallCampaignRequest(url: url)
+        }
+    }
+    
+    private func sendInstallCampaignRequest(url: URL){
+        let session = RequestManager.createUrlSession()
         let task = session.dataTask(with: url, completionHandler: { data, response, error in
             if let error = error {
                 WebtrekkTracking.logger.logError("Install campaign request error:\(error)")
@@ -75,22 +96,32 @@ class Campaign{
                 }
                 
                 guard responseGuard.statusCode == 200 else {
-                    WebtrekkTracking.logger.logDebug("No campaign for this applicaiton. Response:\(response.simpleDescription)")
-                    self.sharedDefaults.set(key: Campaign.campaignHasProcessed, to: true)
+                    WebtrekkTracking.logger.logDebug("Attempt to get campaign error. Response:\(response.simpleDescription)")
+                    
+                    if self.campaignProcessTimeOut?.compare(Date()) == .orderedAscending {
+                         WebtrekkTracking.logger.logDebug("getting campaign timeout")
+                        self.timer?.invalidate()
+                        self.sharedDefaults.set(key: Campaign.campaignHasProcessed, to: true)
+                    } else if self.timer == nil {
+                        self.timer = Timer.scheduledTimer(timeInterval: Campaign.interval, target: self, selector: #selector(Campaign.timerFireMethod(timer:)),
+                                           userInfo: url, repeats: true)
+                    }
                     return
                 }
+                
+                self.timer?.invalidate()
                 
                 // parse response
                 guard let dataG = data, let json = try? JSONSerialization.jsonObject(with: dataG, options: .allowFragments) as! [String:Any],
                     let jsonMedia = json["mediacode"] as? String else {
-            
-                    WebtrekkTracking.logger.logError("Incorrect JSON response for Campaign tracking:\(data.simpleDescription)")
-                    return
+                        
+                        WebtrekkTracking.logger.logError("Incorrect JSON response for Campaign tracking:\(data.simpleDescription)")
+                        return
                 }
-            
-               WebtrekkTracking.logger.logDebug("Media code is received:\(jsonMedia)")
-            
-               let mc = String(jsonMedia.split(separator: "=", maxSplits:1)[1])
+                
+                WebtrekkTracking.logger.logDebug("Media code is received:\(jsonMedia)")
+                
+                let mc = String(jsonMedia.split(separator: "=", maxSplits:1)[1])
                 
                 guard !mc.isEmpty else {
                     WebtrekkTracking.logger.logError("media code length is zero")

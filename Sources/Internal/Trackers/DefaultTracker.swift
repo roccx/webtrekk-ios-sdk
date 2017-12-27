@@ -161,13 +161,18 @@ final class DefaultTracker: Tracker {
         self.manualStart = configuration.maximumSendDelay == 0
         self.requestManager = RequestManager(manualStart: self.manualStart)
         self.requestQueueBackupFile = DefaultTracker.requestQueueBackupFileForWebtrekkId(configuration.webtrekkId)
-        self.requestUrlBuilder = RequestUrlBuilder(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId)
         
         self.campaign = Campaign(trackID: configuration.webtrekkId)
         
-        self.campaign?.processCampaign()
+        guard let campaign = self.campaign else {
+            return false
+        }
+        
+        campaign.processCampaign()
         self.appinstallGoal.setupAppinstallGoal()
         
+        self.requestUrlBuilder = RequestUrlBuilder(serverUrl: configuration.serverUrl, webtrekkId: configuration.webtrekkId, campaign: campaign)
+
         DefaultTracker.instances[ObjectIdentifier(self)] = WeakReference(self)
         
         requestManager?.delegate = self
@@ -376,8 +381,8 @@ final class DefaultTracker: Tracker {
         }
         
         if shouldEnqueueNewEvents{
-            let requestUrls = requestUrlBuilder?.urlForRequests(request, type: type)
-            requestUrls?.forEach(){requestManager?.enqueueRequest($0, maximumDelay: configuration.maximumSendDelay)}
+            let requestUrls = self.requestUrlBuilder?.urlForRequests(request, type: type)
+            requestUrls?.forEach(){self.requestManager?.enqueueRequest($0, maximumDelay: configuration.maximumSendDelay)}
 			
 		}
 
