@@ -27,6 +27,7 @@ import Webtrekk
 class AttributionTest: WTBaseTestNew {
     
     private let mediaCode = "media_code"
+    private let mediaCodePostBack = "media_code_postback"
     
 
     override func getConfigName() -> String?{
@@ -44,7 +45,7 @@ class AttributionTest: WTBaseTestNew {
     }
     
     override func setUp() {
-        if self.name.range(of: "testAppInstallFirstInstallation") != nil || self.name.range(of: "testAppInstallCallback") != nil {
+        if self.name.range(of: "testAppInstallFirstInstallation") != nil || self.name.range(of: "testAppInstallWithPostCallback") != nil {
             self.removeDefSetting(setting: "appinstallGoalProcessed")
         }
         
@@ -52,6 +53,17 @@ class AttributionTest: WTBaseTestNew {
             self.isWaitForCampaignFinished = false
         }
         
+        if self.name.range(of: "testAppInstallWithPostCallback") != nil {
+            self.removeDefSetting(setting: "campaignHasProcessed")
+            self.removeDefSetting(setting: "mediaCode")
+            
+            let trackerId = "123451234512345"
+            
+            let url = "https://appinstall.webtrekk.net/appinstall/v1/postback?mc="+mediaCodePostBack+"&trackid="+trackerId+"&app_name=null"
+            
+            UIApplication.shared.openURL(URL(string:url)!)
+        }
+
         super.setUp()
     }
     
@@ -115,8 +127,19 @@ class AttributionTest: WTBaseTestNew {
         }
     }
     
-    func testAppInstallWithCallback(){
+    func testAppInstallWithPostCallback(){
         
+        //TODO function don't work as webtrekk is in beackround need to do simple GET call instead of URL open
+
+        doURLSendTestAction(){
+            WebtrekkTracking.instance().trackPageView("pageName")
+        }
+        
+        doURLSendTestCheck(){parametersArr in
+            expect(parametersArr["mc"]).to(equal(mediaCodePostBack))
+            expect(parametersArr["mca"]).to(equal("c"))
+            expect(parametersArr["cb900"]).to(equal("1"))
+        }
     }
     
 }
