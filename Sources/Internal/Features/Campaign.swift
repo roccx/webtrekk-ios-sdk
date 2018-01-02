@@ -27,8 +27,8 @@ class Campaign: NSObject{
     private let sharedDefaults = UserDefaults.standardDefaults.child(namespace: "webtrekk")
     private var campaignProcessTimeOut: Date?
     private var timer: Timer?
-    static let timeoutValue =  TimeInterval(90)
-    static let interval = TimeInterval(30)
+    static let timeoutValue =  TimeInterval(60)
+    static let interval = TimeInterval(20)
 
     
     init(trackID: String){

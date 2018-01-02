@@ -57,11 +57,8 @@ class AttributionTest: WTBaseTestNew {
             self.removeDefSetting(setting: "campaignHasProcessed")
             self.removeDefSetting(setting: "mediaCode")
             
-            let trackerId = "123451234512345"
+            self.doPostCall()
             
-            let url = "https://appinstall.webtrekk.net/appinstall/v1/postback?mc="+mediaCodePostBack+"&trackid="+trackerId+"&app_name=null"
-            
-            UIApplication.shared.openURL(URL(string:url)!)
         }
 
         super.setUp()
@@ -129,8 +126,6 @@ class AttributionTest: WTBaseTestNew {
     
     func testAppInstallWithPostCallback(){
         
-        //TODO function don't work as webtrekk is in beackround need to do simple GET call instead of URL open
-
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
         }
@@ -140,6 +135,27 @@ class AttributionTest: WTBaseTestNew {
             expect(parametersArr["mca"]).to(equal("c"))
             expect(parametersArr["cb900"]).to(equal("1"))
         }
+    }
+    
+    private func doPostCall(){
+        let session = URLSession.shared
+        
+        let trackerId = "123451234512345"
+        
+        // get adv
+        let advID = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+        
+        let url = "https://appinstall.webtrekk.net/appinstall/v1/postback?mc=\(mediaCodePostBack)&trackid=\(trackerId)&app_name=null&aid=\(advID)"
+        
+        NSLog("call postback url: \(url)")
+        
+        let task = session.dataTask(with: URLRequest(url: URL(string: url)!)) { data, response, error in
+            if let error = error {
+                NSLog("incorrect post request \(error.localizedDescription)")
+            }
+        }
+        
+        task.resume()
     }
     
 }
