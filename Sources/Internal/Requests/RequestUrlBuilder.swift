@@ -24,12 +24,16 @@ import UIKit
 internal final class RequestUrlBuilder {
 
 	internal var baseUrl: URL
+    private let sharedDefaults = UserDefaults.standardDefaults.child(namespace: "webtrekk")
+    private let pendingQueueStore = StorePendingRequest()
+    private let campaign: Campaign
 
 
-	internal init(serverUrl: URL, webtrekkId: String) {
+	internal init(serverUrl: URL, webtrekkId: String, campaign: Campaign) {
 		self.baseUrl = RequestUrlBuilder.buildBaseUrl(serverUrl: serverUrl, webtrekkId: webtrekkId)
 		self.serverUrl = serverUrl
 		self.webtrekkId = webtrekkId
+        self.campaign = campaign
 	}
 
 
@@ -134,12 +138,8 @@ internal final class RequestUrlBuilder {
             }
             
             if let advertisementProperties = (event as? TrackingEventWithAdvertisementProperties)?.advertisementProperties {
-                if let action = advertisementProperties.action {
-                    append(arr: &parameters, name: "mca", value: action)
-                }
-                if let id = advertisementProperties.id {
-                    append(arr: &parameters, name: "mc", value: id)
-                }
+                self.addAdvCommonProperties(parameters: &parameters, mediaCode: advertisementProperties.id, action: advertisementProperties.action)
+
                 if let details = advertisementProperties.details {
                     parameters += details.mapNotNil { URLQueryItem(name: "cc", property: $0, for: request) }
                 }
@@ -177,28 +177,80 @@ internal final class RequestUrlBuilder {
                 parameters += ecommerceProperties.asQueryItems(for: request, sizeMonitor: sizeMonitor)
             }
             
-            append(arr: &parameters, name: "eor", value: "1")
-
-            let urlComponents = URLComponents(url: self.baseUrl, resolvingAgainstBaseURL: true)
-
-            guard var components = urlComponents else {
-                logError("Could not parse baseUrl: \(self.baseUrl)")
-                return urls
+            if self.isCampaignFinished {
+                if self.pendingQueueStore.exist {
+                    if let parameters = self.pendingQueueStore.load() {
+                        parameters.forEach({ (item) in
+                            var pendingParameters = item
+                            self.updateCampaign(parameters: &pendingParameters)
+                            
+                            self.addLastParametersItem(parameters: &pendingParameters)
+                            if let url = createURLFromParameters(parameters: pendingParameters){
+                                urls.append(url)
+                            }
+                        })
+                    }
+                    self.pendingQueueStore.clearQueue()
+                } else {
+                   self.updateCampaign(parameters: &parameters)
+                }
+                
+                self.addLastParametersItem(parameters: &parameters)
+                guard let url = createURLFromParameters(parameters: parameters) else {
+                    return urls
+                }
+                
+                urls.append(url)
+                
+            } else {
+                self.pendingQueueStore.save(parameters: parameters)
             }
-            
-            // do workaround to encode all characters in query
-            components.applyQueryItemsWithAlternativeURLEncoding(parameters)
-
-            guard let url = components.url else {
-                logError("Cannot build URL from components: \(components)")
-                return urls
-            }
-            urls.append(url)
 
         } while sizeMonitor.currentProduct < productsCount
 		
         return urls
 	}
+    
+    private func updateCampaign(parameters: inout [URLQueryItem]){
+        if let mc = self.campaign.getAndDeletSavedMediaCode() {
+            self.addAdvCommonProperties(parameters: &parameters, mediaCode: mc, action: "c")
+        }
+    }
+    
+    private func addAdvCommonProperties(parameters: inout [URLQueryItem], mediaCode: String?, action: String?){
+        if let mediaCode = mediaCode {
+            append(arr: &parameters, name: "mc", value: mediaCode)
+        }
+        if let action = action {
+            append(arr: &parameters, name: "mca", value: action)
+        }
+    }
+    
+    private func addLastParametersItem(parameters: inout [URLQueryItem]){
+        parameters.append(URLQueryItem(name: "eor", value: "1"))
+    }
+    
+    private var isCampaignFinished : Bool {
+        return self.campaign.isCampaignProcessed()
+    }
+    
+    private func createURLFromParameters(parameters: [URLQueryItem]) -> URL?{
+        let urlComponents = URLComponents(url: self.baseUrl, resolvingAgainstBaseURL: true)
+        
+        guard var components = urlComponents else {
+            logError("Could not parse baseUrl: \(self.baseUrl)")
+            return nil
+        }
+        
+        // do workaround to encode all characters in query
+        components.applyQueryItemsWithAlternativeURLEncoding(parameters)
+        
+        guard let url = components.url else {
+            logError("Cannot build URL from components: \(components)")
+            return nil
+        }
+        return url
+    }
     
     private func getQuerySize(parameters: [URLQueryItem], baseUrl: URL) -> Int? {
         let components = URLComponents(url: self.baseUrl, resolvingAgainstBaseURL: true)

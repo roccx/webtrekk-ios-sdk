@@ -132,17 +132,6 @@ final class RequestTrackerBuilder {
                 return
         }
         
-        guard self.campaign.isCampaignProcessed() else {
-            return
-        }
-        
-        if let mc = self.campaign.getAndDeletSavedMediaCode() {
-            
-            var eventWithAdvertisementProperties = event as! TrackingEventWithAdvertisementProperties
-            eventWithAdvertisementProperties.advertisementProperties.id = mc
-            eventWithAdvertisementProperties.advertisementProperties.action = "c"
-        }
-        
         if self.appinstallGoal.checkAppinstallGoal() {
             var eventWithEcommerceProperties = event as! TrackingEventWithEcommerceProperties
             var detailsToAdd = eventWithEcommerceProperties.ecommerceProperties.details ?? [Int: TrackingValue]()

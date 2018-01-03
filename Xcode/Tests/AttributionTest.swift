@@ -27,6 +27,7 @@ import Webtrekk
 class AttributionTest: WTBaseTestNew {
     
     private let mediaCode = "media_code"
+    private let mediaCodePostBack = "media_code_postback"
     
 
     override func getConfigName() -> String?{
@@ -44,13 +45,27 @@ class AttributionTest: WTBaseTestNew {
     }
     
     override func setUp() {
-        if let _ = self.name.range(of: "testAppInstallFirstInstallation"){
+        if self.name.range(of: "testAppInstallFirstInstallation") != nil || self.name.range(of: "testAppInstallWithPostCallback") != nil {
             self.removeDefSetting(setting: "appinstallGoalProcessed")
         }
+        
+        if self.name.range(of: "testStartAttributionWithIDFA") != nil || self.name.range(of: "testStartAttributionWithoutIDFA") != nil {
+            self.isWaitForCampaignFinished = false
+        }
+        
+        if self.name.range(of: "testAppInstallWithPostCallback") != nil {
+            self.removeDefSetting(setting: "campaignHasProcessed")
+            self.removeDefSetting(setting: "mediaCode")
+            
+            self.doPostCall()
+            
+        }
+
         super.setUp()
     }
     
     private func startAttributionTest(useIDFA: Bool){
+        
         // get track id
         let trackerID = "123451234512345"
         
@@ -72,8 +87,6 @@ class AttributionTest: WTBaseTestNew {
 
     func testInstallation() {
         
-        waitForCampainProcessed()
-        
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
         }
@@ -91,8 +104,6 @@ class AttributionTest: WTBaseTestNew {
     //test should be done with already installes and started application
     func testAppInstallNoFirstInstallation(){
 
-        self.waitForCampainProcessed()
-        
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
         }
@@ -104,8 +115,6 @@ class AttributionTest: WTBaseTestNew {
 
     func testAppInstallFirstInstallation(){
         
-        self.waitForCampainProcessed()
-        
         doURLSendTestAction(){
             WebtrekkTracking.instance().trackPageView("pageName")
         }
@@ -115,16 +124,38 @@ class AttributionTest: WTBaseTestNew {
         }
     }
     
-    private func waitForCampainProcessed(){
-        var attempt: Int = 0
+    func testAppInstallWithPostCallback(){
         
-        WebtrekkTracking.defaultLogger.logDebug("start wait for campaign process")
-        
-        while (!checkDefSetting(setting: "campaignHasProcessed") && attempt < 16){
-            doSmartWait(sec: 2)
-            attempt += 1
+        doURLSendTestAction(){
+            WebtrekkTracking.instance().trackPageView("pageName")
         }
         
-        WebtrekkTracking.defaultLogger.logDebug("end wait for campaign process: isSuccess=\(checkDefSettingNoConfig(setting: "campaignHasProcessed"))")
+        doURLSendTestCheck(){parametersArr in
+            expect(parametersArr["mc"]).to(equal(mediaCodePostBack))
+            expect(parametersArr["mca"]).to(equal("c"))
+            expect(parametersArr["cb900"]).to(equal("1"))
+        }
     }
+    
+    private func doPostCall(){
+        let session = URLSession.shared
+        
+        let trackerId = "123451234512345"
+        
+        // get adv
+        let advID = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+        
+        let url = "https://appinstall.webtrekk.net/appinstall/v1/postback?mc=\(mediaCodePostBack)&trackid=\(trackerId)&app_name=null&aid=\(advID)"
+        
+        NSLog("call postback url: \(url)")
+        
+        let task = session.dataTask(with: URLRequest(url: URL(string: url)!)) { data, response, error in
+            if let error = error {
+                NSLog("incorrect post request \(error.localizedDescription)")
+            }
+        }
+        
+        task.resume()
+    }
+    
 }
