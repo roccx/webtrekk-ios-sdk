@@ -107,6 +107,7 @@
 		9F9E5F251F27774500FC5246 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F241F27774500FC5246 /* Foundation.framework */; };
 		9F9E5F271F27775100FC5246 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F261F27775100FC5246 /* UIKit.framework */; };
 		9F9E5F291F27775D00FC5246 /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F9E5F281F27775D00FC5246 /* WatchKit.framework */; };
+		9FE24FE81FFCD9490074A8CA /* StorePendingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FE24FE71FFCD9490074A8CA /* StorePendingRequest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -217,6 +218,7 @@
 		9F9E5F241F27774500FC5246 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		9F9E5F261F27775100FC5246 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		9F9E5F281F27775D00FC5246 /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS3.2.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
+		9FE24FE71FFCD9490074A8CA /* StorePendingRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorePendingRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -323,6 +325,7 @@
 		0F2D218E1EDEA1C500D09ADF /* Requests */ = {
 			isa = PBXGroup;
 			children = (
+				9FE24FE71FFCD9490074A8CA /* StorePendingRequest.swift */,
 				0F2D218F1EDEA1C500D09ADF /* RequestManager.swift */,
 				0F2D21901EDEA1C500D09ADF /* RequestQueue.swift */,
 				0F2D21911EDEA1C500D09ADF /* RequestTrackerBuilder.swift */,
@@ -683,6 +686,7 @@
 				0F2D21F31EDEA1C500D09ADF /* CatchObC.m in Sources */,
 				0F2D221E1EDEA1C500D09ADF /* ExceptionTracker.swift in Sources */,
 				9F1BF2131F697863006B6F06 /* UInt32+Extension.swift in Sources */,
+				9FE24FE81FFCD9490074A8CA /* StorePendingRequest.swift in Sources */,
 				0F2D22201EDEA1C500D09ADF /* PageTracker.swift in Sources */,
 				0F2D22271EDEA1C500D09ADF /* PropertyValue .swift in Sources */,
 				0F2D21F81EDEA1C500D09ADF /* Mergeable.swift in Sources */,
