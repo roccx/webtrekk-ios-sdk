@@ -98,7 +98,8 @@ internal final class UserDefaults {
 	}
     
     internal func set(key: String, to value: UInt64?) {
-        set(key: key, to: value as AnyObject?)
+        let correctValue = value == nil ? nil : NSNumber(value: value!)
+        set(key: key, to: correctValue as AnyObject?)
     }
     
     internal func convertDefaultsToAppSpecific(){
