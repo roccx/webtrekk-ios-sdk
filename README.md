@@ -1,6 +1,7 @@
-Webtrekk Tracking Library for Swift
-===================================
+Webtrekk Tracking Library
+==========================
 
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Webtrekk.svg?style=flat-square)](https://cocoapods.org/pods/Webtrekk) ![Carthage](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat) ![Platform support](https://img.shields.io/badge/platform-ios%20%7C%20tvos%20%7C%20watchos-lightgrey.svg?style=flat-square)
 
 The Webtrekk SDK allows you to track user activities, screen flow and media usage for an App. All data is send to the Webtrekk tracking system for further analysis.
 
@@ -36,9 +37,14 @@ Carthage support starting from version 4.6.0
 Installation
 ============
 
-Using [CocoaPods](htttp://cocoapods.org) the installation of the Webtrekk SDK is done by simply adding it to your project's `Podfile`:
+[CocoaPods](htttp://cocoapods.org) (*Podfile*):
 
-pod 'Webtrekk'
+`pod 'Webtrekk'`
+
+[Carthage](https://github.com/Carthage/Carthage) (*Cartfile*):
+
+`github "Webtrekk/webtrekk-ios-sdk"`
+
 
 Migrating from Webtrekk SDK V3
 ==============================
@@ -62,7 +68,7 @@ Following properties are part of the migration.
 SSL
 ===
 
-As of iOS 9 Apple is more strictly enforcing the usage of the SSL for network connections. Webtrekk highly recommends and offers the usage of a valid serverUrl with SSL support. In case there is a need to circumvent this the App needs an exception entry within the `Info.plist` this and the regulation Apple bestows upon that are well documented within the [iOS Developer Library](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33)
+As of iOS 9 Apple is more strictly enforcing the usage of SSL for network connections. Webtrekk highly recommends and offers the usage of a valid serverUrl with SSL support. In case there is a need to circumvent this. The App will need an exception entry within the `Info.plist`. Apple's regulations about this are well documented within the [iOS Developer Library](https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW33)
 
 Examples & Unit Tests
 =====================
