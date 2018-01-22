@@ -25,10 +25,10 @@ Starting with version 4.7.0 library can be included and compiled with XCode 9.0 
 Xcode 9.0+ and Swift 4.0 starting with version 4.8.0
 
 tvOS support starting with version 4.2.0 with the following limitation:
-No screen resolution and network status automatic tracing support.
+No screen resolution and automatic network status tracking support.
 
 watchOS support starting with version 4.3.0 with the following limiations:
-1. No screen resolution and network status automatic trackinging support.
+1. No screen resolution and automatic network status tracking support.
 2. No deep link and campaign support.
 
 Carthage support starting from version 4.6.0
