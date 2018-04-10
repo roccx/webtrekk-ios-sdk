@@ -27,7 +27,7 @@ internal struct Environment {
 	internal static let deviceModelString: String = {
 
         //define if this is call from simulator. Required for testing.
-        #if targetEnvironment(simulator)
+        #if (arch(i386) || arch(x86_64)) && os(iOS)
 
         return "iPhone"
 
