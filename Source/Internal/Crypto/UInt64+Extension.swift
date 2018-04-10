@@ -15,7 +15,7 @@ extension UInt64 {
 //CHANGED BY WEBTREKK TO SUPPORT BOTH 4.0 AND 3.1 SWIFT VERSIONS
     #if swift(>=3.2)
     @_specialize(where T == ArraySlice<UInt8>)
-    init<T: Collection>(bytes: T) where T.Iterator.Element == UInt8, T.IndexDistance == Int, T.Index == Int {
+    init<T: Collection>(bytes: T) where T.Iterator.Element == UInt8, T.Index == Int {
         self = UInt64(bytes: bytes, fromIndex: bytes.startIndex)
     }
     #else
@@ -28,7 +28,7 @@ extension UInt64 {
 
     #if swift(>=3.2)
     @_specialize(where T == ArraySlice<UInt8>)
-    init<T: Collection>(bytes: T, fromIndex index: T.Index) where T.Iterator.Element == UInt8, T.IndexDistance == Int, T.Index == Int {
+    init<T: Collection>(bytes: T, fromIndex index: T.Index) where T.Iterator.Element == UInt8, T.Index == Int {
         let val0 = UInt64(bytes[index.advanced(by: 0)]) << 56
         let val1 = UInt64(bytes[index.advanced(by: 1)]) << 48
         let val2 = UInt64(bytes[index.advanced(by: 2)]) << 40
